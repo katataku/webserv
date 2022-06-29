@@ -6,7 +6,7 @@
 /*   By: takkatao <takkatao@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 21:37:49 by adbenoit          #+#    #+#             */
-/*   Updated: 2022/06/29 17:01:06 by takkatao         ###   ########.fr       */
+/*   Updated: 2022/06/29 17:02:06 by takkatao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class ASpell;
 
 class ATarget {
-    protected:
+      protected:
     std::string type;
 
  public:
