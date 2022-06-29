@@ -5,5 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker-compose build webserv
-      - run: docker-compose up webserv
+      - name: compose-build
+        shell: bash
+        run: docker-compose build webserv
+      - name: run google test
+        shell: bash
+        run: docker-compose up webserv
