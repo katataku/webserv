@@ -10,4 +10,7 @@ jobs:
         run: docker-compose build webserv
       - name: run google test
         shell: bash
-        run: docker-compose up webserv
+        run: docker-compose up -d
+      - name: run google test
+        shell: bash
+        run: docker-compose exec -T make test
