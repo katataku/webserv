@@ -26,6 +26,10 @@ re: fclean all
 
 -include $(DEPS)
 
+.PHONY: test
+test:
+	make -C tests
+	
 .PHONY: lint
 lint:
 	cpplint --filter=-legal/copyright srcs/**/*.hpp srcs/**/*.cpp

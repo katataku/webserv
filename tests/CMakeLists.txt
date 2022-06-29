@@ -4,25 +4,23 @@ project(webserv C CXX)
 find_package(GTest REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB SRCS "../srcs/**/*.c")
+file(GLOB SRCS "../srcs/**/*.cpp")
 
-include_directories("../libft/includes")
-include_directories("../includes")
+include_directories("../srcs/**")
 
 add_library(webserv
         STATIC
-#        ${SRCS}
-#        ../main.c
+        ${SRCS}
 )
 
 add_executable(main
         main.cpp
         utils.cpp
-        )
+)
 
 target_link_libraries(main
-    PRIVATE
-    GTest::GTest
-    GTest::Main
-    webserv
+        PRIVATE
+        GTest::GTest
+        GTest::Main
+        webserv
 )
