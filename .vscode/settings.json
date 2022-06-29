@@ -1,0 +1,10 @@
+{
+	"cpplint.filters": [
+		"-legal/copyright"
+	],
+	"C/C++ Include Guard.Suffix": "_",
+	"C/C++ Include Guard.Macro Type": "Filepath",
+	"C/C++ Include Guard.Remove Extension": false,
+	"C/C++ Include Guard.Comment Style": "Line",
+	"C/C++ Include Guard.Spaces After Endif": 2
+}
