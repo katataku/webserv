@@ -15,4 +15,7 @@ RUN apt-get update && apt-get install -y \
 # REF: https://stackoverflow.com/questions/24295876/cmake-cannot-find-googletest-required-library-in-ubuntu
 RUN (cd /usr/src/googletest && cmake . && cmake --build . --target install)
 
+# cpplintのインストール
+RUN pip install cpplint
+
 ENTRYPOINT ["tail", "-f", "/dev/null"]

@@ -1,0 +1,19 @@
+name: checker
+on: [push, pull_request]
+jobs:
+  googletest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: docker-compose build webserv
+      - name: compose up
+        shell: bash
+        run: docker-compose up -d
+      - name: cpplint
+        shell: bash
+        run: docker-compose exec -T webserv make lint
+      - name: Googleテスト
+        shell: bash
+        run: docker-compose exec -T webserv make test
