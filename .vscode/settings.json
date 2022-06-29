@@ -2,6 +2,9 @@
 	"cpplint.filters": [
 		"-legal/copyright"
 	],
+	"cpplint.excludes": [
+		"tests/build"
+	],
 	"C/C++ Include Guard.Suffix": "_",
 	"C/C++ Include Guard.Macro Type": "Filepath",
 	"C/C++ Include Guard.Remove Extension": false,

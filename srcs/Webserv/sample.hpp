@@ -6,12 +6,12 @@
 /*   By: takkatao <takkatao@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 21:37:49 by adbenoit          #+#    #+#             */
-/*   Updated: 2022/06/29 13:39:50 by takkatao         ###   ########.fr       */
+/*   Updated: 2022/06/29 16:23:48 by takkatao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INCLUDES_SAMPLE_HPP_
-#define INCLUDES_SAMPLE_HPP_
+#ifndef SRCS_WEBSERV_SAMPLE_HPP_
+#define SRCS_WEBSERV_SAMPLE_HPP_
 
 #include <string>
 
@@ -33,4 +33,4 @@ class ATarget {
     void getHitBySpell(const ASpell &) const;
 };
 
-#endif  // INCLUDES_SAMPLE_HPP_
+#endif  // SRCS_WEBSERV_SAMPLE_HPP_
