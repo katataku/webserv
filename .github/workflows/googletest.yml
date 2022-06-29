@@ -1,6 +1,3 @@
-# GitHub Action to run cpplint recursively on all pushes and pull requests
-# https://github.com/cpplint/GitHub-Action-for-cpplint
-
 name: googletest
 on: [push, pull_request]
 jobs:
