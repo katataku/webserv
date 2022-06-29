@@ -6,14 +6,14 @@
 /*   By: takkatao <takkatao@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 21:37:49 by adbenoit          #+#    #+#             */
-/*   Updated: 2022/06/29 11:36:18 by takkatao         ###   ########.fr       */
+/*   Updated: 2022/06/29 13:39:50 by takkatao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ATARGET_HPP
-#define ATARGET_HPP
+#ifndef INCLUDES_SAMPLE_HPP_
+#define INCLUDES_SAMPLE_HPP_
 
-#include "ASpell.hpp"
+#include <string>
 
 class ASpell;
 
@@ -23,7 +23,7 @@ class ATarget {
 
  public:
     ATarget();
-    ATarget(const std::string &);
+    explicit ATarget(const std::string &);
     ATarget(const ATarget &);
     virtual ~ATarget();
     ATarget &operator=(const ATarget &);
@@ -33,4 +33,4 @@ class ATarget {
     void getHitBySpell(const ASpell &) const;
 };
 
-#endif
+#endif  // INCLUDES_SAMPLE_HPP_
