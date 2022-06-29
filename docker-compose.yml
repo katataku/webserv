@@ -5,6 +5,8 @@ services:
     container_name: webserv
     build:
       context: .
-      dockerfile: .
+      dockerfile: Dockerfile
+    ports:
+     - "8080:80"
     volumes:
       - .:/app
