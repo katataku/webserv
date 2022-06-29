@@ -5,6 +5,6 @@ services:
     container_name: webserv
     build:
       context: .
-      dockerfile: .
+      dockerfile: Dockerfile
     volumes:
       - .:/app
