@@ -18,4 +18,5 @@ RUN (cd /usr/src/googletest && cmake . && cmake --build . --target install)
 # cpplintのインストール
 RUN pip install cpplint
 
+# prevent container from terminating
 ENTRYPOINT ["tail", "-f", "/dev/null"]
