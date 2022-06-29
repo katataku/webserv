@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   sample.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: takkatao <takkatao@student.42tokyo.jp>     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/14 21:37:49 by adbenoit          #+#    #+#             */
-/*   Updated: 2022/06/29 17:02:06 by takkatao         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef SRCS_WEBSERV_SAMPLE_HPP_
 #define SRCS_WEBSERV_SAMPLE_HPP_
 
@@ -18,7 +6,7 @@
 class ASpell;
 
 class ATarget {
-      protected:
+ protected:
     std::string type;
 
  public:

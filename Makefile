@@ -29,3 +29,8 @@ re: fclean all
 .PHONY: lint
 lint:
 	cpplint --filter=-legal/copyright srcs/**/*.hpp srcs/**/*.cpp
+
+.PHONY: setup
+setup:
+	cp ./.githooks/cpplint.sh ./.git/hooks/pre-commit
+	chmod +x ./.git/hooks/pre-commit
