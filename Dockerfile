@@ -3,13 +3,14 @@ FROM debian:stable-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    cmake \
-    make \
-    gcc \
-    googletest \
-    g++ \
-    python3-pip \
-    valgrind
+	cmake \
+	make \
+	gcc \
+	googletest \
+	g++ \
+	python3-pip \
+	valgrind \
+	clang-tidy
 
 # GoogleTestsのインストール
 # REF: https://stackoverflow.com/questions/24295876/cmake-cannot-find-googletest-required-library-in-ubuntu
