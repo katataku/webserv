@@ -43,3 +43,12 @@ tidy:
 setup:
 	cp ./.githooks/cpplint.sh ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
+
+.PHONY: build
+build:
+	docker compose build
+
+.PHONY: login
+login:
+	docker compose up -d
+	docker exec -it webserv /bin/bash
