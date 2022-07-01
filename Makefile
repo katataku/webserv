@@ -48,11 +48,11 @@ setup:
 CONTAINER = webserv
 DOCKER_COMPOSE_FILE = ./docker/$(CONTAINER)/docker-compose.yml
 
-.PHONY:build
+.PHONY: build
 build:
 	docker compose -f $(DOCKER_COMPOSE_FILE) build 
 
-.PHONY:up
+.PHONY: up
 up:
 	docker compose -f $(DOCKER_COMPOSE_FILE) up -d
 
@@ -60,10 +60,13 @@ up:
 login:
 	docker exec -it $(CONTAINER) /bin/bash
 
-.PHONY:down
+.PHONY: down
 down:
 	docker compose -f $(DOCKER_COMPOSE_FILE) down --timeout 1
 
+.PHONY: docker_re
+docker_re: down build up
+	
 .PHONY:prune
 prune:
 	docker system  prune
