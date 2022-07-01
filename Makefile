@@ -41,7 +41,7 @@ tidy:
 
 .PHONY: setup
 setup:
-	cp ./.githooks/cpplint.sh ./.git/hooks/pre-commit
+	cp ./.githooks/pre-commit ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
 
 .PHONY: build
