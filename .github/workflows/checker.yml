@@ -7,13 +7,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
         shell: bash
-        run: docker-compose build webserv
+        run: docker-compose build -f ./docker/webserv/docker-compose.yml webserv
       - name: compose up
         shell: bash
-        run: docker-compose up -d
+        run: docker-compose -f ./docker/webserv/docker-compose.yml up -d
       - name: cpplint
         shell: bash
-        run: docker-compose exec -T webserv make lint
+        run: docker-compose -f ./docker/webserv/docker-compose.yml exec -T webserv make lint
       - name: Googleテスト
         shell: bash
-        run: docker-compose exec -T webserv make test
+        run: docker-compose -f ./docker/webserv/docker-compose.yml exec -T webserv make test

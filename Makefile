@@ -44,11 +44,26 @@ setup:
 	cp ./.githooks/pre-commit ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
 
-.PHONY: build
+
+CONTAINER = webserv
+DOCKER_COMPOSE_FILE = ./docker/$(CONTAINER)/docker-compose.yml
+
+.PHONY:build
 build:
-	docker compose build
+	docker compose -f $(DOCKER_COMPOSE_FILE) build 
+
+.PHONY:up
+up:
+	docker compose -f $(DOCKER_COMPOSE_FILE) up -d
 
 .PHONY: login
 login:
-	docker compose up -d
-	docker exec -it webserv /bin/bash
+	docker exec -it $(CONTAINER) /bin/bash
+
+.PHONY:down
+down:
+	docker compose -f $(DOCKER_COMPOSE_FILE) down --timeout 1
+
+.PHONY:prune
+prune:
+	docker system  prune
