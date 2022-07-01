@@ -52,7 +52,9 @@ upload_dir = "/var/www/localhost/files"
 
 print_header()
 
-print(os.environ['REQUEST_METHOD'])
+print("REQUEST_METHOD: ", os.environ['REQUEST_METHOD'], "<br>")
+print("PATH_INFO: ", os.environ['PATH_INFO'], "<br>")
+
 form = cgi.FieldStorage()
 print(form)
 
