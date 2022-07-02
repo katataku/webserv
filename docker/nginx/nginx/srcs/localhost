@@ -1,0 +1,23 @@
+server {
+	listen 8080;
+
+	autoindex on;
+	server_name cgitest;
+	set $base /var/www/localhost;
+	root $base;
+	index index.html;
+
+	location ~ [^/]\.py(/|$)  {
+		fastcgi_split_path_info ^(.+?\.py)(/.*)$;
+		if (!-f $document_root$fastcgi_script_name) {
+			return 404;
+		}
+		gzip off;
+		include fastcgi_params;
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+		fastcgi_index index.py;
+		fastcgi_param DOCUMENT_ROOT $realpath_root/cgi-bin;
+		fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+		fastcgi_param PATH_INFO $fastcgi_path_info;
+	}
+}

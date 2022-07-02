@@ -1,4 +1,5 @@
 webserv
+!webserv/
 
 .DS_Store
 **/build/*

@@ -6,49 +6,107 @@ OBJS = $(SRCS:%.cpp=%.o)
 DEPS = $(OBJS:%.o=%.d)
 INCS = -Isrcs/**/**.hpp
 
-$(NAME): $(OBJS)
+# -------------------------- Rules For Build ------------------------------
+
+$(NAME): $(OBJS) ## Build webserver
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCS) -o $@ -c $<
 
-all: $(NAME)
+all: $(NAME) ## Build webserver
 
-fclean: clean
+fclean: clean ## Delete executable webserver
 	$(RM) $(NAME)
 
-clean:
+clean: ## Delete webserver object files
 	$(RM) $(OBJS) $(DEPS)
 
-re: fclean all
+re: fclean all ## Rebuild webserver
 
 .PHONY: all fclean clean re
 
 -include $(DEPS)
 
+# -------------------------- Rules For Test -------------------------------
+
 .PHONY: test
-test:
+test: ## Exec unit tests for webserver
 	make -C tests
-	
+
+# -------------------- Rules For Static Analyser --------------------------
+
 .PHONY: lint
-lint:
+lint: ## Lint webserver source files
 	cpplint --filter=-legal/copyright srcs/**/*.hpp srcs/**/*.cpp
 
 .PHONY: tidy
-tidy:
-	clang-tidy srcs/Webserv/sample.hpp -fix -header-filter=.* -checks=-clang-analyzer-security.insecureAPI.bzero,readability-convert-member-functions-to-static,readability-const-return-type,readability-identifier-naming,readability-make-member-function-const,readability-non-const-parameter,readability-qualified-auto,readability-redundant-control-flow,readability-redundant-member-init,readability-else-after-return,readability-implicit-bool-conversion,readability-simplify-boolean-expr,readability-static-accessed-through-instance,cppcoreguidelines-init-variables,cppcoreguidelines-virtual-class-destructor,cppcoreguidelines-prefer-member-initializer,llvm-include-order,misc-definitions-in-headers,misc-unused-parameters,modernize-redundant-void-arg,modernize-use-bool-literals,bugprone-copy-constructor-init,bugprone-virtual-near-miss,portability-restrict-system-includes,performance-for-range-copy,performance-inefficient-vector-operation,performance-type-promotion-in-math-fn,
+tidy: ## Tidy webserver source files
+	clang-tidy srcs/**/*.hpp srcs/**/*.cpp -fix -header-filter=.* \
+		-checks=-clang-analyzer-security.insecureAPI.bzero,readability-convert-member-functions-to-static,readability-const-return-type,readability-identifier-naming,readability-make-member-function-const,readability-non-const-parameter,readability-qualified-auto,readability-redundant-control-flow,readability-redundant-member-init,readability-else-after-return,readability-implicit-bool-conversion,readability-simplify-boolean-expr,readability-static-accessed-through-instance,cppcoreguidelines-init-variables,cppcoreguidelines-virtual-class-destructor,cppcoreguidelines-prefer-member-initializer,llvm-include-order,misc-definitions-in-headers,misc-unused-parameters,modernize-redundant-void-arg,modernize-use-bool-literals,bugprone-copy-constructor-init,bugprone-virtual-near-miss,portability-restrict-system-includes,performance-for-range-copy,performance-inefficient-vector-operation,performance-type-promotion-in-math-fn,
 
+# ------------------------ Rules For Developer ----------------------------
 
 .PHONY: setup
-setup:
+setup: ## Set up hooks for commit
 	cp ./.githooks/pre-commit ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
 
-.PHONY: build
-build:
-	docker compose build
+# ------------------------- Rules For Docker ------------------------------
 
-.PHONY: login
-login:
-	docker compose up -d
-	docker exec -it webserv /bin/bash
+CONTAINER = webserv
+DOCKER_COMPOSE_FILE = ./docker/$(CONTAINER)/docker-compose.yml
+
+.PHONY: dc-build
+dc-build: ## Build docker container
+	docker compose -f $(DOCKER_COMPOSE_FILE) build 
+
+.PHONY: dc-up
+dc-up: ## Run docker container
+	docker compose -f $(DOCKER_COMPOSE_FILE) up -d
+
+.PHONY: dc-login
+dc-login: ## Login docker container
+	docker exec -it $(CONTAINER) /bin/bash
+
+.PHONY: dc-down
+dc-down: ## Down docker container
+	docker compose -f $(DOCKER_COMPOSE_FILE) down --timeout 1
+
+.PHONY: dc-re
+dc-re: dc-build dc-build dc-up ## Rebuild docker image and run container
+	
+
+# ----------------------- Rules For Nginx Container -----------------------
+
+.PHONY: dc-nginx-build
+dc-nginx-build: ## Build nginx container
+	make dc-build CONTAINER=nginx
+
+.PHONY: dc-nginx-up
+dc-nginx-up: ## Run nginx container
+	make dc-up CONTAINER=nginx
+
+.PHONY: dc-nginx-login
+dc-nginx-login: ## Login nginx container
+	make dc-login CONTAINER=nginx
+
+.PHONY: dc-nginx-down
+dc-nginx-down: ## Down nginx container
+	make dc-down CONTAINER=nginx
+
+.PHONY: dc-nginx-re 
+dc-nginx-re: dc-nginx-down dc-nginx-build dc-nginx-up ## Rebuild nginx image and run container
+
+.PHONY: dc-prune
+dc-prune: ## Delete unused docker object (images, containers, networks)
+	docker system  prune
+
+# ---------------------------- Rules For Help -----------------------------
+
+.PHONY: help
+help: ## Display this help screen
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: h
+h: help ## shorthand 'help' command

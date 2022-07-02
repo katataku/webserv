@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="file upload">
+  <meta name="keywords" content="upload">
+  <title>File upload</title>
+</head>
+
+<body>
+  <form action="/cgi-bin/test.py" enctype="multipart/form-data" method="POST">
+    File name:
+    <input type="file" name="upload_file" required multiple>
+    <input type="submit" value="Upload">
+  </form>
+</body>
+
+</html>
