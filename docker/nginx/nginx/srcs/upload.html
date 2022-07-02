@@ -10,11 +10,52 @@
 </head>
 
 <body>
-  <form action="/cgi-bin/test.py" enctype="multipart/form-data" method="POST">
+  <h2>POST </h2>
+
+  <form action="/cgi-bin/file_manager.py" enctype="multipart/form-data" method="POST" name="post_form">
     File name:
     <input type="file" name="upload_file" required multiple>
     <input type="submit" value="Upload">
   </form>
+
+  <h2>GET </h2>
+
+  <form action="" method="GET" name="get_form">
+    File name:
+    <input type="text" name="get_file" required>
+    <input type="button" onclick="func_get()" value="getを実行">
+  </form>
+
+  <script language="javascript" type="text/javascript">
+    const func_get = () => {
+      document.get_form.action = `/cgi-bin/file_manager.py/${document.get_form.get_file.value}`;
+      document.get_form.get_file.disabled = true;
+      document.get_form.submit();
+    };
+  </script>
+
+  <h2>DELETE </h2>
+  ブラウザではDELETEメソッドは送信できません。コマンドラインから以下のコマンドを実行してみてください。
+  <form id="delete_filename_form">
+    <input type="text" name="input_value" value="" placeholder="ファイル名を入力">
+    <pre>
+      <code>
+        <div id="input_value_box">
+          curl -X DELETE http://localhost:8081/cgi-bin/file_manager.py/ファイル名
+        </div>
+      </code>
+    </pre>
+  </form>
+  <script>
+    const formTestInputValue = document.forms.delete_filename_form.input_value;
+    formTestInputValue.addEventListener('input', () => {
+      let inputValueBox = document.getElementById('input_value_box');
+      inputValueBox.textContent = 'curl -X DELETE http://localhost:8081/cgi-bin/file_manager.py/' + formTestInputValue.value
+    })
+  </script>
+
+  <p>you can see uploaded files <a href="/files/">here</a></p>
+
 </body>
 
 </html>
