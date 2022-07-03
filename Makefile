@@ -32,7 +32,7 @@ re: fclean all ## Rebuild webserver
 
 .PHONY: test
 test: ## Exec unit tests for webserver
-	make -C tests
+	make -C tests/google_test
 
 # -------------------- Rules For Static Analyser --------------------------
 
