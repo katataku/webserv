@@ -3,7 +3,7 @@ import os    # 既存ファイルの有無を確認するため
 import sys    # exit()するため
 import cgi
 
-upload_dir = "/var/www/localhost/files"
+upload_dir = "/var/www/files"
 
 def print_header():
 	print('Content-Type: text/html')

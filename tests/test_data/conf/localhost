@@ -3,9 +3,17 @@ server {
 
 	autoindex on;
 	server_name cgitest;
-	set $base /var/www/localhost;
+	set $base /var/www;
 	root $base;
 	index index.html;
+
+	location /files/ {
+		root /var/www;
+	}
+
+	location / {
+		root /var/www/html;
+	}
 
 	location ~ [^/]\.py(/|$)  {
 		fastcgi_split_path_info ^(.+?\.py)(/.*)$;
