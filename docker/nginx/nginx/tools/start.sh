@@ -1,9 +1,9 @@
 #------------------------ boot database  ----------------------------------------
-cp /app/tests/test_data/conf/localhost /etc/nginx/sites-available
+cp /app/test_data/conf/localhost /etc/nginx/sites-available
 ln -s /etc/nginx/sites-available/localhost /etc/nginx/sites-enabled
 
-cp /app/tests/test_data/public/html/upload.html /var/www/html/
-cp /app/tests/test_data/public/cgi-bin/file_manager.py /var/www/cgi-bin/
+cp /app/sample_data/html/upload.html /var/www/html/
+cp /app/sample_data/cgi-bin/file_manager.py /var/www/cgi-bin/
 
 chmod 777 /var/www/cgi-bin/file_manager.py
 mkdir /var/www/files
