@@ -42,8 +42,7 @@ lint: ## Lint webserver source files
 
 .PHONY: tidy
 tidy: ## Tidy webserver source files
-	clang-tidy srcs/**/*.hpp srcs/**/*.cpp -fix -header-filter=.* \
-		-checks=-clang-analyzer-security.insecureAPI.bzero,readability-convert-member-functions-to-static,readability-const-return-type,readability-identifier-naming,readability-make-member-function-const,readability-non-const-parameter,readability-qualified-auto,readability-redundant-control-flow,readability-redundant-member-init,readability-else-after-return,readability-implicit-bool-conversion,readability-simplify-boolean-expr,readability-static-accessed-through-instance,cppcoreguidelines-init-variables,cppcoreguidelines-virtual-class-destructor,cppcoreguidelines-prefer-member-initializer,llvm-include-order,misc-definitions-in-headers,misc-unused-parameters,modernize-redundant-void-arg,modernize-use-bool-literals,bugprone-copy-constructor-init,bugprone-virtual-near-miss,portability-restrict-system-includes,performance-for-range-copy,performance-inefficient-vector-operation,performance-type-promotion-in-math-fn,
+	clang-tidy srcs/**/*.hpp srcs/**/*.cpp -fix
 
 # ------------------------ Rules For Developer ----------------------------
 
