@@ -24,6 +24,10 @@ clean: ## Delete webserver object files
 
 re: fclean all ## Rebuild webserver
 
+.PHONY: debug
+debug: ## Build in debug mode
+	$(CXX) -D DEBUG=true -o $(NAME) $(CXXFLAGS) $(INCS) $(SRCS)
+
 .PHONY: all fclean clean re
 
 -include $(DEPS)
@@ -44,12 +48,20 @@ lint: ## Lint webserver source files
 tidy: ## Tidy webserver source files
 	clang-tidy srcs/**/*.hpp srcs/**/*.cpp -fix
 
+.PHONY: syntax
+syntax: ## Check syntax of source files
+	c++ -fsyntax-only srcs/**/*.hpp srcs/**/*.cpp
+
 # ------------------------ Rules For Developer ----------------------------
 
 .PHONY: setup
 setup: ## Set up hooks for commit
 	cp ./.githooks/pre-commit ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
+
+.PHONY: uninstall
+uninstall: ## Uninstall hooks for commit
+	rm -f ./.git/hooks/pre-commit
 
 # ------------------------- Rules For Docker ------------------------------
 
