@@ -1,3 +1,24 @@
+# webserv設定ファイル
+設定ファイルはwebservの起動時に読み込まれる。
+
+設定ファイルが読み込まれるまではクライアントからのリクエストを待ち受けない。
+
+## 設定ファイルの構成
+設定ファイルは単一ディレクティブとブロックディレクティブから構成されます。
+
+単一ディレクティブはパラメータ名と設定値が空白で分けられセミコロンで終わります。 ブロックディレクティブは波括弧の中に単一ディレクトリとブロックディレクティブを定義します。
+
+ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれます。 webservではmain, http, server, locationの4つのコンテキストがあります。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはmainコンテキストに属します。
+
+複数サーバーが設定されている場合は一番始めに定義されたサーバーをデフォルトサーバーとする。
+
+#### 相談
+- コンテキストはどこまで対応する？mainとhttpは省略できそう
+- CGI周りは一旦全部無視しています。もう少しちゃんと調べないと。
+- コメントアウトは対応させる？
+
+## 設定可能な項目一覧
+
 ### [server_name]
 virtual serverの名前を設定する。
 
@@ -43,6 +64,201 @@ listen localhost:8000;
 ホスト名がローカルホスト以外の場合の挙動
 1つのサーバーに複数渡せる？
 
+### [error_page]
+特定のエラーに対して表示するページを設定することができる。
+
+設定されていない場合はデフォルトのエラーページが表示される。
+
+Usage: 
+```
+Syntax:	error_page code ... uri;
+Default: —
+Context: http, server, location, if in location
+```
+
+Example:
+```
+error_page 404 /404.html;
+error_page 500 502 503 504 /50x.html;
+```
+
+#### 相談
+> error_page 404 =200 /empty.gif;
+
+上記のように書くとステータスを変えることができるけれど対応しない予定。
+
+#### 確認
+Contextを複数取れるので要確認。
+
+### [client_max_body_size]
+リクエストボディで許可する最大サイズを設定する。
+
+設定値を超えるリクエストが来た場合は413(Request Entity Too Large)を返す。
+
+Usage: 
+```
+Syntax:	client_max_body_size size;
+Default: client_max_body_size 1m;
+Context: http, server, location
+```
+
+Example:
+```
+client_max_body_size 1m;
+```
+
+#### 相談
+- Setting size to 0 disables checking of client request body size.
+これは対応する？
+
+#### 確認
+1mなどの表記ができるみたいなので他に対応しているものについて確認。
+- Please be aware that browsers cannot correctly display this error.
+ブラウザ側の挙動も確認しておく？
+
+### [root]
+リクエストに対するルートディレクトリを設定する。
+
+正規表現は使えない。
+
+Usage: 
+```
+Syntax:	root path;
+Default: root html;
+Context: http, server, location, if in location
+```
+
+Example:
+```
+location /i/ {
+    root /data/w3;
+}
+```
+
+The /data/w3/i/top.gif file will be sent in response to the “/i/top.gif” request.
+
+#### 相談
+
+#### 確認
+デフォルト値どういうことだろう。
+
+### [limit_except]
+
+Usage: 
+```
+Syntax:	limit_except method ...
+Default: —
+Context: location
+```
+
+Example:
+```
+limit_except GET POST
+```
+
+#### 相談
+- Allowing the GET method makes the HEAD method also allowed.
+Getを許可するとHEADも自動的に許可されるが、そもそもwebservではHEADには対応しない？
+
+GET, POST, DELETE以外のMethodが設定された場合の挙動。
+
+#### 確認
+この設定で除外されたRequestMethodに対するエラーコード。
+認識があってるが実際に動かして試してみたい。
+
+### [autoindex]
+ディレクトリの一覧表示を行うかどうかを設定できる。
+
+Usage: 
+```
+Syntax:	autoindex on | off;
+Default: autoindex off;
+Context: http, server, location
+```
+
+Example:
+```
+autoindex on;
+```
+
+#### 相談
+- Set a default file to answer if the request is a directory.
+この項目はnginxに該当する設定があるというよりかはautoindexがonのときのページを用意しろということ？？
+
+#### 確認
+
+### [rewrite]
+If the specified regular expression matches a request URI, URI is changed as specified in the replacement string. The rewrite directives are executed sequentially in order of their appearance in the configuration file. It is possible to terminate further processing of the directives using flags. If a replacement string starts with “http://”, “https://”, or “$scheme”, the processing stops and the redirect is returned to a client.
+
+Usage: 
+```
+Syntax:	rewrite regex replacement [flag];
+Default: —
+Context: server, location, if
+```
+
+Example:
+```
+```
+
+#### 相談
+正規表現対応する？
+
+#### 確認
+挙動の確認。他のvirtual serverにリダイレクトできる？
+
+### [http]
+Provides the configuration file context in which the HTTP server directives are specified.
+
+Usage: 
+```
+Syntax:	http { ... }
+Default: —
+Context: main
+```
+
+### [server]
+Sets configuration for a virtual server. There is no clear separation between IP-based (based on the IP address) and name-based (based on the “Host” request header field) virtual servers. Instead, the listen directives describe all addresses and ports that should accept connections for the server, and the server_name directive lists all server names. Example configurations are provided in the “How nginx processes a request” document.
+
+Usage: 
+```
+Syntax:	server { ... }
+Default: —
+Context: http
+```
+
+### [location]
+Sets configuration depending on a request URI.
+
+複数マッチした場合は最長のものにする。
+
+Usage: 
+```
+Syntax:	location [ = | ~ | ~* | ^~ ] uri { ... }
+location @name { ... }
+Default: —
+Context: server, location
+```
+
+#### 相談
+- 正規表現には対応させる？
+- locationのネストに対応させる？
+
+#### 確認
+- 相対パス表記できる？
+- A location can either be defined by a prefix string, or by a regular expression.
+- ネストできるっぽい。
+
+
 [server_name]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server_name
 [listen]: https://nginx.org/en/docs/http/ngx_http_core_module.html#listen
-
+[error_page]: https://nginx.org/en/docs/http/ngx_http_core_module.html#error_page
+[client_max_body_size]: https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
+[root]: https://nginx.org/en/docs/http/ngx_http_core_module.html#root
+[limit_except]: https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
+[autoindex]: https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex
+[rewrite]: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite
+[http]: https://nginx.org/en/docs/http/ngx_http_core_module.html#http
+[location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
+[server]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server
+[location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
