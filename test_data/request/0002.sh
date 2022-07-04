@@ -1,1 +1,1 @@
-curl -s --include http://localhost:8081/upload.html
+curl -s --include -X POST -F upload_file=@./Makefile  http://localhost:8081/cgi-bin/file_manager.py

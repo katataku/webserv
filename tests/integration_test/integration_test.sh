@@ -58,6 +58,20 @@ function do_test() {
     PICKUP_CMD="grep Content-Type:"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
+	echo -n "  Content-Length: "
+    PICKUP_CMD="grep Content-Length:"
+    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
+
+	echo -n "  Transfer-Encoding: "
+    PICKUP_CMD="grep Transfer-Encoding:"
+    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
+
+	echo -n "  \"success</p>\": "
+    PICKUP_CMD="grep success</p>"
+    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
+
+
+
     # サマリーの出力
     echo -n "[${CONFIG_NO}-${REQUEST_NO}]test finish. Conclusion:"
 	if [ $IS_OK -eq 1 ] ; then
