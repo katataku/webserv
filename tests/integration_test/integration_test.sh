@@ -49,10 +49,10 @@ function do_test() {
     PICKUP_CMD="sed -n 1p"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
-    # 3行目のtimestampなので失敗想定のテスト(結合テスト自体の動作確認用)
-	echo -n "  time line: "
-    PICKUP_CMD="sed -n 3p"
-    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
+#    # 3行目のtimestampなので失敗想定のテスト(結合テスト自体の動作確認用)
+#	echo -n "  time line: "
+#    PICKUP_CMD="sed -n 3p"
+#    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
 	echo -n "  Content-Type: "
     PICKUP_CMD="grep Content-Type:"
@@ -75,17 +75,6 @@ function start_server_container() {
     cp ${CONFIG_PATH}${CONFIG_NO} ${CONFIG_PATH}localhost
     make dc-nginx-re > /dev/null 2>&1
     sleep 1 #コンテナ起動待ち
-}
-
-function print_final_conclusion() {
-    echo    "----------------------------"
-    echo -n "ALL test finish. Final Conclusion:"
-    if [ ${NG_SUM} -eq 0 ] ; then
-        printf " ${GREEN}[✓]"
-    else
-        printf " ${RED}[-]"
-    fi
-    printf "(OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
 }
 
 
@@ -113,4 +102,12 @@ echo ""
     REQUEST_NO=0001
     do_test
 
-print_final_conclusion
+echo    "----------------------------"
+echo -n "ALL test finish. Final Conclusion:"
+if [ ${NG_SUM} -eq 0 ] ; then
+    printf " ${GREEN}[✓](OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
+    exit 0
+else
+    printf " ${RED}[-](OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
+    exit 1
+fi
