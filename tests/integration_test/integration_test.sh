@@ -27,6 +27,7 @@ function do_single_command_check(){
 		printf "${GREEN}OK${NC}"
 	else
 		printf "${RED}NG${NC}"
+        $@
         IS_OK=0
 	fi
     echo ""
