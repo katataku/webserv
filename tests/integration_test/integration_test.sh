@@ -27,7 +27,6 @@ function do_single_command_check(){
 		printf "${GREEN}OK${NC}"
 	else
 		printf "${RED}NG${NC}"
-        $@
         IS_OK=0
 	fi
     echo ""
@@ -81,7 +80,7 @@ function do_test() {
 	else
         NG_SUM=$(( ${NG_SUM}+1))
 		printf " ${RED}[-]${NC}\n"
-		diff ${ACTUAL_FILE_NAME} ${EXPECTED_FILE_NAME}
+		#diff ${ACTUAL_FILE_NAME} ${EXPECTED_FILE_NAME}
 	fi
 }
 
