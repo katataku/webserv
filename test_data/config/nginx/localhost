@@ -29,3 +29,11 @@ server {
 		fastcgi_param PATH_INFO $fastcgi_path_info;
 	}
 }
+
+
+
+server{
+	listen 9090;
+
+	.php
+}
