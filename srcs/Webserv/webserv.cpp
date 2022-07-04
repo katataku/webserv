@@ -24,13 +24,17 @@ int main(int ac, char **av) {
 
   // TODO Serverクラスを作るか
   // Server serv(conf);
-  Socket serv = Socket::OpenListenSocket(conf);
+  // Socket serv = Socket::OpenListenSocket(conf);
+  int listenfd = Socket::OpenListenRawSocket(conf); // ソケットのfdを取り合えずそのまま返す
 
-  // serv.Listen();
-
+  // #if DEBUG
+  // std::cerr << "[debug] server is listening to " << serv.GetFd() << std::endl;
+  // assert(serv.GetFd() >= 0);
+  // #endif
   #if DEBUG
-  std::cerr << "[debug] server is listening to " << serv.GetFd() << std::endl;
-  assert(serv.GetFd() >= 0);
+  std::cerr << "[debug] server is listening to " << listenfd << std::endl;
+  std::cerr << "[debug] here?" << std::endl;
+  // assert(listenfd >= 0);
   #endif
 
   // Socket client;
@@ -38,12 +42,15 @@ int main(int ac, char **av) {
   Request req;
   Response res;
   while (true) {
-    Socket client = serv.Accept();
+    // Socket client = serv.Accept();
+    int clientfd = Socket::RawAccept(listenfd);
+
     #if DEBUG
     std::cerr << "[debug] server accept client connection" << std::endl;
     #endif
 
-    req_str = client.Receive();
+    // req_str = client.Receive();
+    req_str = Socket::RawReceive(clientfd);
     #if DEBUG
     std::cerr << "[debug] server receive HTTP request from client" << std::endl;
     std::cerr << CYAN << "<<<<< Request From Client" << RESET << std::endl;
@@ -65,9 +72,13 @@ int main(int ac, char **av) {
     std::cerr << RED << ">>>>> Response From Server" << RESET << std::endl;
     #endif
 
-    client.Send(res);
+    // client.Send(res);
+    Socket::RawSend(clientfd, res);
     #if DEBUG
     std::cerr << "[debug] Success to send HTTP response to client" << std::endl;
     #endif
+
+    close(clientfd);
   }
+  close(listenfd);
 }

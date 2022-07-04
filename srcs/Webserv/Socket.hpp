@@ -45,6 +45,17 @@ class Socket {
     return Socket(new_socket);
   }
 
+  static int RawAccept(int listenfd) {
+    addr client_addr;
+    length socket_addrlen = sizeof(addr_storage);
+
+    int new_socket = accept(listenfd, (addr *)&client_addr, &socket_addrlen);
+    if (new_socket < 0) {
+      error("Error: Failed to accept");
+    }
+    return new_socket;
+  }
+
   void Send(const Response& resp) {
     // char buf[kBufSize];
     char* buf = nullptr;
@@ -68,11 +79,45 @@ class Socket {
     #endif
   }
 
+  static void RawSend(int clientfd, const Response& resp) {
+    // char buf[kBufSize];
+    char* buf = nullptr;
+
+    // send header
+    buf = const_cast<char *>(resp.GetHeader().c_str());
+    std::size_t len = resp.GetHeader().length();
+    ssize_t sendbytes = send(clientfd, buf, len, 0);
+
+    #if DEBUG
+    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    #endif
+
+    // send body
+    buf = const_cast<char *>(resp.GetBody().c_str());
+    len = resp.GetBody().length();
+    sendbytes = send(clientfd, buf, len, 0);
+  
+    #if DEBUG
+    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    #endif
+  }
+
   // TODO 一回しか読み取ってない
   std::string Receive() const {
     /* receive the response */
     char buf[kBufSize];
     ssize_t recvbytes = recv(sockfd_, buf, kBufSize, 0);
+    #if DEBUG
+    std::cerr << "[debug] server received " << recvbytes << " bytes" << std::endl;
+    #endif
+    buf[recvbytes] = '\0';
+
+    return std::string(buf);
+  }
+
+  static std::string RawReceive(int clientfd) {
+    char buf[kBufSize];
+    ssize_t recvbytes = recv(clientfd, buf, kBufSize, 0);
     #if DEBUG
     std::cerr << "[debug] server received " << recvbytes << " bytes" << std::endl;
     #endif
@@ -120,6 +165,41 @@ class Socket {
     #endif
 
     return Socket(listenfd);
+  }
+
+  static int OpenListenRawSocket(const Config& conf) {
+    addr_info hints, *listp = nullptr;
+    bzero(&hints, sizeof(addr_info));
+    hints.ai_socktype = SOCK_STREAM;              // Connections only
+    hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;  // Accept connections
+    hints.ai_flags |= AI_NUMERICSERV;             // Using port
+    int rc = 0;
+    if ((rc = getaddrinfo(NULL, conf.GetPort().c_str(), &hints, &listp)) != 0) {
+      fprintf(stderr, "Error: %s\n", gai_strerror(rc));
+      exit(1);
+    }
+    int listenfd = 0;
+    for (addr_info* p = listp; p != nullptr; p = p->ai_next) {
+      if ((listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) < 0) {
+        continue;
+      }
+      // Avoid already address bind
+      int optval = 1;
+      setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
+
+      if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) {
+        break;
+      }
+      close(listenfd);
+    }
+    freeaddrinfo(listp);
+
+    if (listen(listenfd, 1024) < 0) {
+      close(listenfd);
+      return -1;
+    }
+
+    return listenfd;
   }
 
   #if DEBUG

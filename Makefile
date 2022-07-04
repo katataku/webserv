@@ -26,7 +26,7 @@ re: fclean all ## Rebuild webserver
 
 .PHONY: debug
 debug: ## Build in debug mode
-	$(CXX) -D DEBUG=true -o $(NAME) $(CXXFLAGS) $(INCS) $(SRCS)
+	$(CXX) -D DEBUG=true -o $(NAME) $(CXXFLAGS) $(INCS) $(SRCS) -g -fsanitize=address
 
 .PHONY: all fclean clean re
 

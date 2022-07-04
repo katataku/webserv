@@ -9,14 +9,6 @@
 #include "Socket.hpp"
 #include "utils.hpp"
 
-  std::string method_;
-  std::string uri_;
-  std::string path_;
-  std::string extension_;
-  std::string query_;
-  std::string version_;
-  std::string mime_;
-
 // Request class
 class Request {
  public:
