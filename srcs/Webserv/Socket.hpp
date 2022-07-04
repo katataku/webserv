@@ -1,24 +1,25 @@
-#ifndef SOCKET_HPP
-#define SOCKET_HPP
+#ifndef SRCS_WEBSERV_SOCKET_HPP_
+#define SRCS_WEBSERV_SOCKET_HPP_
 
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
+#include <string.h>
+#include <string>
+#include <sys/socket.h>
 
-#include "Config.hpp"
-#include "Response.hpp"
-#include "utils.hpp"
+#include "./Config.hpp"
+#include "./Response.hpp"
+#include "./utils.hpp"
 
 class Socket {
  public:
   // Canonical Form
   Socket() {}
-  Socket(const char* port)
+  explicit Socket(const char* port)
       : port_(port) {}
-  Socket(int sockfd)
+  explicit Socket(int sockfd)
       : sockfd_(sockfd) {}
   ~Socket() { close(sockfd_); }
   Socket(const Socket& other) {
@@ -27,7 +28,7 @@ class Socket {
   Socket& operator=(const Socket& other) {
     if (this == &other) return *this;
 
-    this->sockfd_ = dup(other.sockfd_); // TODO
+    this->sockfd_ = dup(other.sockfd_);
     this->port_ = other.port_;
     this->socket_addr_ = other.socket_addr_;
     return *this;
@@ -38,7 +39,7 @@ class Socket {
     addr client_addr;
     length socket_addrlen = sizeof(socket_addr_);
 
-    int new_socket = accept(sockfd_, (addr *)&client_addr, &socket_addrlen);
+    int new_socket = accept(sockfd_, reinterpret_cast<addr *>(&client_addr), &socket_addrlen);
     if (new_socket < 0) {
       error("Error: Failed to accept");
     }
@@ -51,7 +52,7 @@ class Socket {
     struct sockaddr_storage clientaddr;
     socklen_t clientlen = sizeof(struct sockaddr_storage);
 
-    int new_socket = accept(listenfd, (addr *)&clientaddr, &clientlen);
+    int new_socket = accept(listenfd, reinterpret_cast<sockaddr *>(&clientaddr), &clientlen);
     if (new_socket < 0) {
       error("Error: Failed to accept");
     }
@@ -76,7 +77,7 @@ class Socket {
     buf = const_cast<char *>(resp.GetBody().c_str());
     len = resp.GetBody().length();
     sendbytes = send(sockfd_, buf, len, 0);
-  
+
     #if DEBUG
     std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
     #endif
@@ -104,7 +105,7 @@ class Socket {
     len = body.length();
     buf = const_cast<char *>(body.c_str());
     sendbytes = send(clientfd, buf, len, 0);
-  
+
     #if DEBUG
     std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
     #endif
@@ -125,7 +126,7 @@ class Socket {
     #endif
   }
 
-  // TODO 一回しか読み取ってない
+  // TODO(iyamada) 一回しか読み取ってない
   std::string Receive() const {
     /* receive the response */
     char buf[kBufSize];
@@ -231,7 +232,7 @@ class Socket {
 
  private:
   // Constant value
-  static const int kQueueSize = 1024; // TODO iyamada configで変更できるように
+  static const int kQueueSize = 1024;  // TODO(iyamada) configで変更できるように
   static const int kBufSize = 4096;
 
   // Define type
@@ -242,9 +243,9 @@ class Socket {
   typedef socklen_t                length;
 
   // Member variables
-  int           sockfd_;      // socket discriptor
-  const char*   port_;        // port number
-  addr_internet socket_addr_; // socket address
+  int           sockfd_;       // socket discriptor
+  const char*   port_;         // port number
+  addr_internet socket_addr_;  // socket address
 };
 
 #endif  // SRCS_WEBSERV_SOCKET_HPP_

@@ -1,5 +1,5 @@
-#ifndef RESPONSE_HPP
-#define RESPONSE_HPP
+#ifndef SRCS_WEBSERV_RESPONSE_HPP_
+#define SRCS_WEBSERV_RESPONSE_HPP_
 
 #include <iostream>
 #include <string>
@@ -32,4 +32,4 @@ std::ostream& operator<<(std::ostream& out, const Response& rhs) {
   return out;
 }
 
-#endif  // RESPONSE_HPP
+#endif  // SRCS_WEBSERV_RESPONSE_HPP_

@@ -1,13 +1,14 @@
-#ifndef REQUEST_HPP
-#define REQUEST_HPP
+#ifndef SRCS_WEBSERV_REQUEST_HPP_
+#define SRCS_WEBSERV_REQUEST_HPP_
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 
-#include "Response.hpp"
-#include "Socket.hpp"
-#include "utils.hpp"
+#include "./Response.hpp"
+#include "./Socket.hpp"
+#include "./utils.hpp"
 
 // Request class
 class Request {
@@ -41,7 +42,7 @@ class Request {
   std::string GetExtension() const { return extension_; }
   std::string GetMIME() const { return mime_; }
 
-  // TODO GETメソッドだけ
+  // TODO(iyamada) GETメソッドだけ
   Response ExecMethod() {
     Response resp;
     std::string body;
@@ -102,7 +103,7 @@ class Request {
     return resp;
   }
 
-  // TODO 必要最低限、エッジケースはカバーしてない
+  // TODO(iyamada) 必要最低限、エッジケースはカバーしてない
   static Request Parse(const std::string& req) {
     Request ret;
     std::string request_line = GetToken(req, "\r\n");
@@ -111,16 +112,16 @@ class Request {
     std::cerr << "[debug] request_line   : " << request_line << std::endl;
     #endif
 
-    // TODO とりあえず、すでに' 'や'\r\n'でトークナイズされているとした
+    // TODO(iyamada) とりあえず、すでに' 'や'\r\n'でトークナイズされているとした
     // Parse <method> <uri> <http version>
     std::string method = GetToken(request_line, " ");
     request_line = Consume(request_line, " ");
     std::string uri = GetToken(request_line, " ");
     std::string path;
     if (uri == "/") {
-      path = "html/index.html"; // TODO configで決められるように？
+      path = "html/index.html";  // TODO(iyamada) configで決められるように？
     } else {
-      // TODO URIからファイルパスを取得
+      // TODO(iyamada) URIからファイルパスを取得
       path = uri;
     }
     request_line = Consume(request_line, " ");
@@ -179,7 +180,7 @@ class Request {
     std::cerr << "[debug] MIME           : " << mime << std::endl;
     #endif
 
-    // TODO パースしないといけない
+    // TODO(iyamada) パースしないといけない
     std::string next = Consume(req, "\r\n");
 
     return ret;

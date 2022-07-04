@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
 
-#include "Config.hpp"
-#include "Request.hpp"
-#include "Response.hpp"
-#include "Socket.hpp"
+#include "./Config.hpp"
+#include "./Request.hpp"
+#include "./Response.hpp"
+#include "./Socket.hpp"
 
 #define CYAN "\033[36m"
 #define RED "\033[31m"
@@ -51,10 +51,10 @@ int main(int ac, char **av) {
   std::cerr << "[debug] Success to parse config" << std::endl;
   #endif
 
-  // TODO Serverクラスを作るか
+  // TODO(iyamada) Serverクラスを作るか
   // Server serv(conf);
   // Socket serv = Socket::OpenListenSocket(conf);
-  int listenfd = Socket::OpenListenRawSocket(conf); // ソケットのfdを取り合えずそのまま返す
+  int listenfd = Socket::OpenListenRawSocket(conf);  // ソケットのfdを取り合えずそのまま返す
 
   // #if DEBUG
   // std::cerr << "[debug] server is listening to " << serv.GetFd() << std::endl;

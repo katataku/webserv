@@ -27,6 +27,9 @@ inline std::string GetFileExt(const std::string& path) {
   return path.substr(dot_at+1);
 }
 
-inline void error(const char *msg) { perror(msg); exit(0); }
+inline void error(const char *msg) {
+  perror(msg);
+  exit(0);
+}
 
 #endif  // SRCS_WEBSERV_UTILS_HPP_

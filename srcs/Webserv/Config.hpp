@@ -1,11 +1,11 @@
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef SRCS_WEBSERV_CONFIG_HPP_
+#define SRCS_WEBSERV_CONFIG_HPP_
 
 #include <string>
 
 class Config {
  public:
-  // TODO iyamada 取りあえず
+  // TODO(iyamada) 取りあえず
   Config() {}
   ~Config() {}
   Config(const Config& other) { *this = other; }
@@ -15,7 +15,7 @@ class Config {
     this->port_ = other.port_;
     return *this;
   }
-  Config(const std::string& port) : port_(port) {}
+  explicit Config(const std::string& port) : port_(port) {}
 
   // Member funcs
   static Config Parse(const char* path) {
@@ -28,4 +28,4 @@ class Config {
   std::string port_;
 };
 
-#endif /* CONFIG_HPP */
+#endif  // SRCS_WEBSERV_CONFIG_HPP_
