@@ -17,6 +17,9 @@ jobs:
       - name: clang-tidy
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make tidy
-      - name: Googleテスト
+      - name: 単体テスト
         shell: bash
-        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make test
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make utest
+      - name: 結合テスト
+        shell: bash
+        run: make itest

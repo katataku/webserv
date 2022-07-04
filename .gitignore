@@ -1,5 +1,6 @@
 webserv
 !webserv/
+localhost
 
 .DS_Store
 **/build/*
