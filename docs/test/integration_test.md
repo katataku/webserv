@@ -18,4 +18,4 @@
 - Content-Typeの一致確認
 - Content-Lengthの一致確認
 - Transfer-Encodingの一致確-認
-- "success</p>"の一致確認（ファイルアップロード成功時にCGIプログラムから生成される文言。POSTが成功したかどうかの確認に代替する。）
+- `success</p>`の一致確認（ファイルアップロード成功時にCGIプログラムから生成される文言。POSTが成功したかどうかの確認に代替する。）
