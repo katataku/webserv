@@ -31,8 +31,19 @@ re: fclean all ## Rebuild webserver
 # -------------------------- Rules For Test -------------------------------
 
 .PHONY: test
-test: ## Exec unit tests for webserver
+test: utest ## Exec all tests for webserver
+
+.PHONY: utest
+utest: ## Exec unit tests for webserver
 	make -C tests/unit_test
+
+INTEGRATION_TEST_SHELL = ./tests/integration_test/integration_test.sh
+.PHONY: itest
+itest: ## Exec unit tests for webserver
+	@if [ ! -x $(INTEGRATION_TEST_SHELL) ]; then\
+		chmod +x $(INTEGRATION_TEST_SHELL);\
+	fi
+	$(INTEGRATION_TEST_SHELL)
 
 # -------------------- Rules For Static Analyser --------------------------
 
@@ -73,7 +84,7 @@ dc-down: ## Down docker container
 	docker compose -f $(DOCKER_COMPOSE_FILE) down --timeout 1
 
 .PHONY: dc-re
-dc-re: dc-build dc-build dc-up ## Rebuild docker image and run container
+dc-re: dc-down dc-build dc-up ## Rebuild docker image and run container
 	
 
 # ----------------------- Rules For Nginx Container -----------------------
