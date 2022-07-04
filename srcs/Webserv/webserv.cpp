@@ -10,6 +10,35 @@
 #define RED "\033[31m"
 #define RESET "\033[0m"
 
+void StartTransact(int clientfd) {
+  std::string req_str = Socket::RawReceive(clientfd);
+  #if DEBUG
+  std::cerr << "[debug] server receive HTTP request from client" << std::endl;
+  std::cerr << CYAN << "<<<<< Request From Client" << RESET << std::endl;
+  std::cerr << req_str << std::endl;
+  std::cerr << CYAN << ">>>>> Request From Client" << RESET << std::endl;
+  #endif
+
+  Request req = Request::Parse(req_str);
+  #if DEBUG
+  std::cerr << "[debug] Success to parse request" << std::endl;
+  std::cerr << req << std::endl;
+  #endif
+
+  Response res = req.ExecMethod();
+  #if DEBUG
+  std::cerr << "[debug] Success to exec some operation" << std::endl;
+  std::cerr << RED << "<<<<< Response From Server" << RESET << std::endl;
+  std::cerr << res << std::endl;
+  std::cerr << RED << ">>>>> Response From Server" << RESET << std::endl;
+  #endif
+
+  Socket::RawSend(clientfd, res);
+  // // client.Send(res);
+  // Socket::RawSend(clientfd, res);
+  // // Socket::RawSend(clientfd, req_str);
+}
+
 int main(int ac, char **av) {
   if (ac != 2) {
     std::cerr << "Usage: " << av[0] << " <config file path>" << std::endl;
@@ -37,10 +66,6 @@ int main(int ac, char **av) {
   // assert(listenfd >= 0);
   #endif
 
-  // Socket client;
-  std::string req_str;
-  Request req;
-  Response res;
   while (true) {
     // Socket client = serv.Accept();
     int clientfd = Socket::RawAccept(listenfd);
@@ -49,35 +74,7 @@ int main(int ac, char **av) {
     std::cerr << "[debug] server accept client connection" << std::endl;
     #endif
 
-    // req_str = client.Receive();
-    req_str = Socket::RawReceive(clientfd);
-    #if DEBUG
-    std::cerr << "[debug] server receive HTTP request from client" << std::endl;
-    std::cerr << CYAN << "<<<<< Request From Client" << RESET << std::endl;
-    std::cerr << req_str << std::endl;
-    std::cerr << CYAN << ">>>>> Request From Client" << RESET << std::endl;
-    #endif
-
-    req = Request::Parse(req_str);
-    #if DEBUG
-    std::cerr << "[debug] Success to parse request" << std::endl;
-    std::cerr << req << std::endl;
-    #endif
-
-    res = req.ExecMethod();
-    #if DEBUG
-    std::cerr << "[debug] Success to exec some operation" << std::endl;
-    std::cerr << RED << "<<<<< Response From Server" << RESET << std::endl;
-    std::cerr << res << std::endl;
-    std::cerr << RED << ">>>>> Response From Server" << RESET << std::endl;
-    #endif
-
-    // client.Send(res);
-    Socket::RawSend(clientfd, res);
-    #if DEBUG
-    std::cerr << "[debug] Success to send HTTP response to client" << std::endl;
-    #endif
-
+    StartTransact(clientfd);
     close(clientfd);
   }
   close(listenfd);

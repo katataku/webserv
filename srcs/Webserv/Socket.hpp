@@ -46,10 +46,12 @@ class Socket {
   }
 
   static int RawAccept(int listenfd) {
-    addr client_addr;
-    length socket_addrlen = sizeof(addr_storage);
+    // addr client_addr;
+    // length socket_addrlen = sizeof(addr_storage);
+    struct sockaddr_storage clientaddr;
+    socklen_t clientlen = sizeof(struct sockaddr_storage);
 
-    int new_socket = accept(listenfd, (addr *)&client_addr, &socket_addrlen);
+    int new_socket = accept(listenfd, (addr *)&clientaddr, &clientlen);
     if (new_socket < 0) {
       error("Error: Failed to accept");
     }
@@ -65,6 +67,7 @@ class Socket {
     std::size_t len = resp.GetHeader().length();
     ssize_t sendbytes = send(sockfd_, buf, len, 0);
 
+    (void)sendbytes;
     #if DEBUG
     std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
     #endif
@@ -83,20 +86,40 @@ class Socket {
     // char buf[kBufSize];
     char* buf = nullptr;
 
+    std::string header = resp.GetHeader();
+
     // send header
-    buf = const_cast<char *>(resp.GetHeader().c_str());
-    std::size_t len = resp.GetHeader().length();
+    std::size_t len = header.length();
+    buf = const_cast<char *>(header.c_str());
     ssize_t sendbytes = send(clientfd, buf, len, 0);
 
+    (void)sendbytes;
     #if DEBUG
     std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
     #endif
 
+    std::string body = resp.GetBody();
+
     // send body
-    buf = const_cast<char *>(resp.GetBody().c_str());
-    len = resp.GetBody().length();
+    len = body.length();
+    buf = const_cast<char *>(body.c_str());
     sendbytes = send(clientfd, buf, len, 0);
   
+    #if DEBUG
+    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    #endif
+  }
+
+    static void RawSend(int clientfd, const std::string& msg) {
+    // char buf[kBufSize];
+    char* buf = nullptr;
+
+    // send header
+    buf = const_cast<char *>(msg.c_str());
+    std::size_t len = msg.length();
+    ssize_t sendbytes = send(clientfd, buf, len, 0);
+
+    (void)sendbytes;
     #if DEBUG
     std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
     #endif

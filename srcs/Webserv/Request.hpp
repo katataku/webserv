@@ -44,17 +44,8 @@ class Request {
   // TODO GETメソッドだけ
   Response ExecMethod() {
     Response resp;
+    std::string body;
 
-    // Set header
-    std::string header = "HTTP/1.1 200 OK\r\n";
-    header += "Content-Type: " + mime_ + "\r\n";
-    resp.SetHeader(header);
-
-    #if DEBUG
-    std::cerr << "[debug] header : " << header << std::endl;
-    #endif
-
-    // Set body
     if (method_ == "GET") {
       std::ifstream ifs("./sample_data/" + path_);
       std::stringstream ss;
@@ -67,18 +58,46 @@ class Request {
       #endif
 
       if (!ifs) {
-        error("Error: No such file");
+        std::string header = "HTTP/1.1 204 No Content\r\n";
+        header += "Content-Type: text/html\r\n";
+        std::string body = "<html><title>surume Error</title><body><p>204 No Content</p></body></html>\r\n";
+        std::stringstream ss(body.length());
+        header += "Content-length: " + ss.str() + "\r\n\r\n";
+        resp.SetHeader(header);
+        resp.SetBody(body);
+        #if DEBUG
+        std::cerr << "[debug] header : " << header << std::endl;
+        #endif
+        return resp;
       }
 
       ss << ifs.rdbuf();
-      resp.SetBody(ss.str());
-      #if DEBUG
-      std::cerr << "[debug] body : " << ss.str() << std::endl;
-      #endif
+      body = ss.str();
+      resp.SetBody(body);
     } else {
-      std::cerr << "Error: unknown method" << std::endl;
-      std::exit(1);
+      std::string header = "HTTP/1.1 501 Not Implemented\r\n";
+      std::string body = "<html><title>surume Error</title><body><p>501 Not Implemented</p></body></html>\r\n";
+      std::stringstream ss(body.length());
+      header += "Content-length: " + ss.str() + "\r\n";
+      header += "Content-Type: text/html\r\n\r\n";
+      resp.SetHeader(header);
+      resp.SetBody(body);
+      #if DEBUG
+      std::cerr << "[debug] header : " << header << std::endl;
+      #endif
+      return resp;
     }
+
+    // Set header
+    std::string header = "HTTP/1.1 200 OK\r\n";
+    std::stringstream ss(body.length());
+    header += "Content-length: " + ss.str() + "\r\n";
+    header += "Content-Type: " + mime_ + "\r\n\r\n";
+    resp.SetHeader(header);
+
+    #if DEBUG
+    std::cerr << "[debug] header : " << header << std::endl;
+    #endif
 
     return resp;
   }
@@ -100,6 +119,9 @@ class Request {
     std::string path;
     if (uri == "/") {
       path = "html/index.html"; // TODO configで決められるように？
+    } else {
+      // TODO URIからファイルパスを取得
+      path = uri;
     }
     request_line = Consume(request_line, " ");
 
@@ -112,6 +134,15 @@ class Request {
     // Get file extension
     std::string extension = GetFileExt(path);
     ret.SetExtension(extension);
+
+    #if DEBUG
+    std::cerr << "[debug] method         : " << method << std::endl;
+    std::cerr << "[debug] URI            : " << uri << std::endl;
+    std::cerr << "[debug] path           : " << path << std::endl;
+    std::cerr << "[debug] http version   : " << httpver << std::endl;
+    std::cerr << "[debug] file extension : " << extension << std::endl;
+    #endif
+
 
     // Determine MIME from file extension
     std::string mime;
@@ -145,10 +176,6 @@ class Request {
     ret.SetMIME(mime);
 
     #if DEBUG
-    std::cerr << "[debug] method         : " << method << std::endl;
-    std::cerr << "[debug] URI            : " << uri << std::endl;
-    std::cerr << "[debug] http version   : " << httpver << std::endl;
-    std::cerr << "[debug] file extension : " << extension << std::endl;
     std::cerr << "[debug] MIME           : " << mime << std::endl;
     #endif
 
