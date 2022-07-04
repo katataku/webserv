@@ -31,7 +31,7 @@ re: fclean all ## Rebuild webserver
 # -------------------------- Rules For Test -------------------------------
 
 .PHONY: test
-test: utest ## Exec all tests for webserver
+test: utest itest ## Exec all tests for webserver
 
 .PHONY: utest
 utest: ## Exec unit tests for webserver
