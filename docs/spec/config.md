@@ -8,16 +8,13 @@
 
 単一ディレクティブはパラメータ名と設定値が空白で分けられセミコロンで終わります。 ブロックディレクティブは波括弧の中に単一ディレクトリとブロックディレクティブを定義します。
 
-ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれます。 webservではmain, http, server, locationの4つのコンテキストがあります。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはmainコンテキストに属します。
+ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれます。 webservではhttp, server, locationの3つのコンテキストがあります。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはhttpコンテキストに属します。
 
 複数サーバーが設定されている場合は一番始めに定義されたサーバーをデフォルトサーバーとする。
 
 `#`が現れるとその行末まではコメントアウトとして解釈される。
 
 設定値に正規表現を使用することはできず通常テキストで指定する必要がある。
-
-#### 相談
-- コンテキストはどこまで対応する？mainとhttpは省略できそう
 
 ## 設定可能な項目一覧
 
@@ -72,7 +69,7 @@ Usage:
 ```
 Syntax:	error_page code ... uri;
 Default: —
-Context: http, server, location, if in location
+Context: http, server, location
 ```
 
 Example:
@@ -80,10 +77,6 @@ Example:
 error_page 404 /404.html;
 error_page 500 502 503 504 /50x.html;
 ```
-
-#### 確認
-Contextを複数取れるので要確認。
-if in location
 
 ### [client_max_body_size]
 リクエストボディで許可する最大サイズを設定する（単位はバイト）。
@@ -107,55 +100,60 @@ client_max_body_size 1024;
 #### 確認
 ブラウザ側の挙動も確認しておく？
 
-### [root]
-リクエストに対するルートディレクトリを設定する。
-
-
+### [alias]
+ロケーションで指定されたパスに対するエイリアスを設定できる。
 
 Usage: 
 ```
-Syntax:	root path;
-Default: root html;
-Context: http, server, location, if in location
-```
-
-Example:
-```
-location /i/ {
-    root /data/w3;
-}
-```
-
-The /data/w3/i/top.gif file will be sent in response to the “/i/top.gif” request.
-
-#### 相談
-
-#### 確認
-デフォルト値どういうことだろう。
-
-### [limit_except]
-
-Usage: 
-```
-Syntax:	limit_except method ...
+Syntax: alias path;
 Default: —
 Context: location
 ```
 
 Example:
 ```
-limit_except GET POST
+location /kapouet {
+    alias /tmp/www;
+}
+```
+url  is /tmp/www/pouic/toto/pouet.
+
+### 備考
+rootには対応しない。rootとaliasの違い。
+
+```
+location /kapouet {
+    alias /tmp/www;
+}
+
+location /kapouet {
+    root /tmp/www;
+}
 ```
 
-#### 相談
-- Allowing the GET method makes the HEAD method also allowed.
-Getを許可するとHEADも自動的に許可されるが、そもそもwebservではHEADには対応しない？
+`/kapouet/pouic/toto/pouet`のURLにアクセスした場合、それぞれ以下にアクセスされる。
+- /tmp/www/pouic/toto/pouet
+- /tmp/www/kapouet/pouic/toto/pouet
 
-GET, POST, DELETE以外のMethodが設定された場合の挙動。
+
+### [limit_except]
+
+Usage: 
+```
+Syntax:	limit_except method ... { deny all; }
+Default: —
+Context: location
+```
+
+Example:
+```
+limit_except GET POST { deny all; }
+```
 
 #### 確認
 この設定で除外されたRequestMethodに対するエラーコード。
 認識があってるが実際に動かして試してみたい。
+`{ deny all; }`がないとnginx本家では構文エラーになる？ならなければ取り除く。
 
 ### [autoindex]
 ディレクトリの一覧表示を行うかどうかを設定できる。
@@ -172,11 +170,20 @@ Example:
 autoindex on;
 ```
 
-#### 相談
-- Set a default file to answer if the request is a directory.
-この項目はnginxに該当する設定があるというよりかはautoindexがonのときのページを用意しろということ？？
+### [index]
+ディレクトリのデフォルトページを設定する。
 
-#### 確認
+Usage:
+```
+Syntax:	index file;
+Default: index index.html;
+Context: http, server, location
+```
+
+Example:
+```
+index index.html;
+```
 
 ### [rewrite]
 If the specified regular expression matches a request URI, URI is changed as specified in the replacement string. The rewrite directives are executed sequentially in order of their appearance in the configuration file. It is possible to terminate further processing of the directives using flags. If a replacement string starts with “http://”, “https://”, or “$scheme”, the processing stops and the redirect is returned to a client.
@@ -185,28 +192,17 @@ Usage:
 ```
 Syntax:	rewrite regex replacement [flag];
 Default: —
-Context: server, location, if
+Context: server, location
 ```
 
 Example:
 ```
 ```
 
-#### 相談
-正規表現対応する？
-
 #### 確認
-挙動の確認。他のvirtual serverにリダイレクトできる？
-
-### [http]
-Provides the configuration file context in which the HTTP server directives are specified.
-
-Usage: 
-```
-Syntax:	http { ... }
-Default: —
-Context: main
-```
+挙動の確認。
+- 内部的なリダイレクト。virtual hostにリダイレクト。
+- 302を返すリダイレクト。
 
 ### [server]
 Sets configuration for a virtual server. There is no clear separation between IP-based (based on the IP address) and name-based (based on the “Host” request header field) virtual servers. Instead, the listen directives describe all addresses and ports that should accept connections for the server, and the server_name directive lists all server names. Example configurations are provided in the “How nginx processes a request” document.
@@ -228,33 +224,12 @@ Usage:
 Syntax:	location [ = | ~ | ~* | ^~ ] uri { ... }
 location @name { ... }
 Default: —
-Context: server, location
+Context: server
 ```
-
-#### 相談
-- 正規表現には対応させる？
-- locationのネストに対応させる？
 
 #### 確認
 - 相対パス表記できる？
 - A location can either be defined by a prefix string, or by a regular expression.
-- ネストできるっぽい。
-
-### [index]
-ディレクトリのデフォルトページを設定する。
-
-Usage:
-```
-Syntax:	index file;
-Default: index index.html;
-Context: http, server, location
-```
-
-Example:
-```
-index index.html;
-```
-
 
 [server_name]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server_name
 [listen]: https://nginx.org/en/docs/http/ngx_http_core_module.html#listen
@@ -264,7 +239,6 @@ index index.html;
 [limit_except]: https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
 [autoindex]: https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex
 [rewrite]: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite
-[http]: https://nginx.org/en/docs/http/ngx_http_core_module.html#http
 [location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
 [server]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server
 [index]: https://nginx.org/en/docs/http/ngx_http_index_module.html#index
