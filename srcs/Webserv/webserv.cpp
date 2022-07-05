@@ -54,16 +54,12 @@ int main(int ac, char **av) {
   // TODO(iyamada) Serverクラスを作るか
   // Server serv(conf);
   // Socket serv = Socket::OpenListenSocket(conf);
-  int listenfd = Socket::OpenListenRawSocket(conf);  // ソケットのfdを取り合えずそのまま返す
+  int listenfd = Socket::OpenListenRawSocket(conf);
 
-  // #if DEBUG
-  // std::cerr << "[debug] server is listening to " << serv.GetFd() << std::endl;
-  // assert(serv.GetFd() >= 0);
-  // #endif
   #if DEBUG
   std::cerr << "[debug] server is listening to " << listenfd << std::endl;
   std::cerr << "[debug] here?" << std::endl;
-  // assert(listenfd >= 0);
+  assert(listenfd >= 0);
   #endif
 
   while (true) {

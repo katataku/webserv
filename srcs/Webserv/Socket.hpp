@@ -4,10 +4,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <string.h>
 #include <string>
-#include <sys/socket.h>
+#include <unistd.h>
 
 #include "./Config.hpp"
 #include "./Response.hpp"
@@ -36,10 +34,11 @@ class Socket {
 
   // Member functions
   Socket Accept() {
-    addr client_addr;
-    length socket_addrlen = sizeof(socket_addr_);
+    addr clientaddr;
+    length addrlen = sizeof(socket_addr_);
 
-    int new_socket = accept(sockfd_, reinterpret_cast<addr *>(&client_addr), &socket_addrlen);
+    int new_socket = accept(sockfd_,
+        reinterpret_cast<addr *>(&clientaddr), &addrlen);
     if (new_socket < 0) {
       error("Error: Failed to accept");
     }
@@ -47,44 +46,38 @@ class Socket {
   }
 
   static int RawAccept(int listenfd) {
-    // addr client_addr;
-    // length socket_addrlen = sizeof(addr_storage);
     struct sockaddr_storage clientaddr;
     socklen_t clientlen = sizeof(struct sockaddr_storage);
 
-    int new_socket = accept(listenfd, reinterpret_cast<sockaddr *>(&clientaddr), &clientlen);
+    int new_socket = accept(listenfd,
+        reinterpret_cast<sockaddr *>(&clientaddr), &clientlen);
     if (new_socket < 0) {
       error("Error: Failed to accept");
     }
     return new_socket;
   }
 
-  void Send(const Response& resp) {
-    // char buf[kBufSize];
-    char* buf = nullptr;
-
+  void Send(const Response& resp) const {
     // send header
-    buf = const_cast<char *>(resp.GetHeader().c_str());
     std::size_t len = resp.GetHeader().length();
-    ssize_t sendbytes = send(sockfd_, buf, len, 0);
+    ssize_t bytes = send(sockfd_, resp.GetHeader().c_str(), len, 0);
 
-    (void)sendbytes;
+    (void)bytes;
     #if DEBUG
-    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    std::cerr << "[debug] server sent " << bytes << " bytes" << std::endl;
     #endif
 
     // send body
-    buf = const_cast<char *>(resp.GetBody().c_str());
     len = resp.GetBody().length();
-    sendbytes = send(sockfd_, buf, len, 0);
+    bytes = send(sockfd_, resp.GetBody().c_str(), len, 0);
 
+    (void)bytes;
     #if DEBUG
-    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    std::cerr << "[debug] server sent " << bytes << " bytes" << std::endl;
     #endif
   }
 
   static void RawSend(int clientfd, const Response& resp) {
-    // char buf[kBufSize];
     char* buf = nullptr;
 
     std::string header = resp.GetHeader();
@@ -92,11 +85,11 @@ class Socket {
     // send header
     std::size_t len = header.length();
     buf = const_cast<char *>(header.c_str());
-    ssize_t sendbytes = send(clientfd, buf, len, 0);
+    ssize_t bytes = send(clientfd, buf, len, 0);
 
-    (void)sendbytes;
+    (void)bytes;
     #if DEBUG
-    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    std::cerr << "[debug] server sent " << bytes << " bytes" << std::endl;
     #endif
 
     std::string body = resp.GetBody();
@@ -104,10 +97,11 @@ class Socket {
     // send body
     len = body.length();
     buf = const_cast<char *>(body.c_str());
-    sendbytes = send(clientfd, buf, len, 0);
+    bytes = send(clientfd, buf, len, 0);
 
+    (void)bytes;
     #if DEBUG
-    std::cerr << "[debug] server sent " << sendbytes << " bytes" << std::endl;
+    std::cerr << "[debug] server sent " << bytes << " bytes" << std::endl;
     #endif
   }
 
@@ -130,29 +124,27 @@ class Socket {
   std::string Receive() const {
     /* receive the response */
     char buf[kBufSize];
-    ssize_t recvbytes = recv(sockfd_, buf, kBufSize, 0);
+    ssize_t bytes = recv(sockfd_, buf, kBufSize, 0);
     #if DEBUG
-    std::cerr << "[debug] server received " << recvbytes << " bytes" << std::endl;
+    std::cerr << "[debug] server received " << bytes << " bytes" << std::endl;
     #endif
-    buf[recvbytes] = '\0';
+    buf[bytes] = '\0';
 
     return std::string(buf);
   }
 
   static std::string RawReceive(int clientfd) {
     char buf[kBufSize];
-    ssize_t recvbytes = recv(clientfd, buf, kBufSize, 0);
+    ssize_t bytes = recv(clientfd, buf, kBufSize, 0);
     #if DEBUG
-    std::cerr << "[debug] server received " << recvbytes << " bytes" << std::endl;
+    std::cerr << "[debug] server received " << bytes << " bytes" << std::endl;
     #endif
-    buf[recvbytes] = '\0';
+    buf[bytes] = '\0';
 
     return std::string(buf);
   }
 
   static Socket OpenListenSocket(const Config& conf) {
-    // Get socket addres list
-    // const char* port = conf.GetPort().c_str();
     addr_info hints, *listp = nullptr;
     bzero(&hints, sizeof(addr_info));
     hints.ai_socktype = SOCK_STREAM;              // Connections only
@@ -165,12 +157,14 @@ class Socket {
     }
     int listenfd = 0;
     for (addr_info* p = listp; p != nullptr; p = p->ai_next) {
-      if ((listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) < 0) {
+      listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+      if (listenfd < 0) {
         continue;
       }
       // Avoid already address bind
       int optval = 1;
-      setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
+      setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
+          (const void*)&optval, sizeof(int));
 
       if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) {
         break;
@@ -181,7 +175,7 @@ class Socket {
 
     if (listen(listenfd, 1024) < 0) {
       close(listenfd);
-      return -1;
+      return Socket(-1);
     }
 
     #if DEBUG
@@ -204,12 +198,14 @@ class Socket {
     }
     int listenfd = 0;
     for (addr_info* p = listp; p != nullptr; p = p->ai_next) {
-      if ((listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) < 0) {
+      listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+      if (listenfd < 0) {
         continue;
       }
       // Avoid already address bind
       int optval = 1;
-      setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
+      setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
+          (const void*)&optval, sizeof(int));
 
       if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) {
         break;

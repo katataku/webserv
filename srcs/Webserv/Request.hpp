@@ -61,7 +61,10 @@ class Request {
       if (!ifs) {
         std::string header = "HTTP/1.1 204 No Content\r\n";
         header += "Content-Type: text/html\r\n";
-        std::string body = "<html><title>surume Error</title><body><p>204 No Content</p></body></html>\r\n";
+        std::string body = "<html>";
+        body += "<title>surume Error</title>";
+        body += "<body><p>204 No Content</p></body>";
+        body += "</html>\r\n";
         std::stringstream ss(body.length());
         header += "Content-length: " + ss.str() + "\r\n\r\n";
         resp.SetHeader(header);
@@ -77,7 +80,10 @@ class Request {
       resp.SetBody(body);
     } else {
       std::string header = "HTTP/1.1 501 Not Implemented\r\n";
-      std::string body = "<html><title>surume Error</title><body><p>501 Not Implemented</p></body></html>\r\n";
+      std::string body = "<html>";
+      body += "<title>surume Error</title>";
+      body += "<body><p>501 Not Implemented</p></body>";
+      body += "</html>\r\n";
       std::stringstream ss(body.length());
       header += "Content-length: " + ss.str() + "\r\n";
       header += "Content-Type: text/html\r\n\r\n";
@@ -153,7 +159,9 @@ class Request {
       mime = "text/css";
     } else if (extension == "ico") {
       mime = "image/vnd.microsoft.icon";
-    } else if (extension == "jpeg" || extension == "jpg" || extension == "JPG") {
+    } else if (extension == "jpeg"
+        || extension == "jpg"
+        || extension == "JPG") {
       mime = "image/jpeg";
     } else if (extension == "js") {
       mime = "text/javascript";
@@ -196,7 +204,7 @@ class Request {
   std::string mime_;
 };
 
-std::ostream& operator<<(std::ostream& out, const Request& rhs) {
+inline std::ostream& operator<<(std::ostream& out, const Request& rhs) {
   out << "method       : " << rhs.GetMethod() << "\n";
   out << "URI          : " << rhs.GetURI() << "\n";
   out << "HTTP version : " << rhs.GetHTTPVersion() << "\n";
