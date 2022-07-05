@@ -240,6 +240,21 @@ Context: server, location
 - A location can either be defined by a prefix string, or by a regular expression.
 - ネストできるっぽい。
 
+### [index]
+ディレクトリのデフォルトページを設定する。
+
+Usage:
+```
+Syntax:	index file;
+Default: index index.html;
+Context: http, server, location
+```
+
+Example:
+```
+index index.html;
+```
+
 
 [server_name]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server_name
 [listen]: https://nginx.org/en/docs/http/ngx_http_core_module.html#listen
@@ -252,4 +267,4 @@ Context: server, location
 [http]: https://nginx.org/en/docs/http/ngx_http_core_module.html#http
 [location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
 [server]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server
-[location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
+[index]: https://nginx.org/en/docs/http/ngx_http_index_module.html#index
