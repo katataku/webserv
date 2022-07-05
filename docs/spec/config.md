@@ -12,10 +12,12 @@
 
 複数サーバーが設定されている場合は一番始めに定義されたサーバーをデフォルトサーバーとする。
 
+`#`が現れるとその行末まではコメントアウトとして解釈される。
+
+設定値に正規表現を使用することはできず通常テキストで指定する必要がある。
+
 #### 相談
 - コンテキストはどこまで対応する？mainとhttpは省略できそう
-- CGI周りは一旦全部無視しています。もう少しちゃんと調べないと。
-- コメントアウトは対応させる？
 
 ## 設定可能な項目一覧
 
@@ -34,12 +36,9 @@ Example:
 server_name example.com www.example.com;
 ```
 
-#### 相談
-正規表現などには対応しない予定
-
 #### 確認
-これは何に使われる？複数設定することも可能。
-
+これは何に使われる？リダイレクト？
+複数設定を許可するかどうかは用途を確認した後判断。
 
 ### [listen]
 サーバーがリクエストを受け付けるホスト名とポート番号を設定する。
@@ -47,7 +46,7 @@ server_name example.com www.example.com;
 Usage: 
 ```
 Syntax: listen host:port
-Default: Required
+Default: listen 127.0.0.1:8000;
 Context: server
 ```
 
@@ -82,44 +81,36 @@ error_page 404 /404.html;
 error_page 500 502 503 504 /50x.html;
 ```
 
-#### 相談
-> error_page 404 =200 /empty.gif;
-
-上記のように書くとステータスを変えることができるけれど対応しない予定。
-
 #### 確認
 Contextを複数取れるので要確認。
+if in location
 
 ### [client_max_body_size]
-リクエストボディで許可する最大サイズを設定する。
+リクエストボディで許可する最大サイズを設定する（単位はバイト）。
+
+0以下の値は設定できない。
 
 設定値を超えるリクエストが来た場合は413(Request Entity Too Large)を返す。
 
 Usage: 
 ```
 Syntax:	client_max_body_size size;
-Default: client_max_body_size 1m;
+Default: client_max_body_size 1024;
 Context: http, server, location
 ```
 
 Example:
 ```
-client_max_body_size 1m;
+client_max_body_size 1024;
 ```
 
-#### 相談
-- Setting size to 0 disables checking of client request body size.
-これは対応する？
-
 #### 確認
-1mなどの表記ができるみたいなので他に対応しているものについて確認。
-- Please be aware that browsers cannot correctly display this error.
 ブラウザ側の挙動も確認しておく？
 
 ### [root]
 リクエストに対するルートディレクトリを設定する。
 
-正規表現は使えない。
+
 
 Usage: 
 ```
