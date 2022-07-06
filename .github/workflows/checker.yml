@@ -14,9 +14,9 @@ jobs:
       - name: cpplint
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make lint
-      # - name: clang-tidy
-      #   shell: bash
-      #   run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make tidy
-      # - name: Googleテスト
-      #   shell: bash
-      #   run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make test
+      - name: clang-tidy
+        shell: bash
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make tidy
+      - name: Googleテスト
+        shell: bash
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make test
