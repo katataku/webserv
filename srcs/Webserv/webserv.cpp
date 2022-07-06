@@ -11,8 +11,8 @@
 #define RED "\033[31m"
 #define RESET "\033[0m"
 
-void StartTransact(int clientfd) {
-  std::string req_str = Socket::RawReceive(clientfd);
+void StartTransact(const Socket& client) {
+  std::string req_str = client.Receive();
   #if DEBUG
   std::cerr << "[debug] server receive HTTP request from client" << std::endl;
   std::cerr << CYAN << "<<<<< Request From Client" << RESET << std::endl;
@@ -34,10 +34,7 @@ void StartTransact(int clientfd) {
   std::cerr << RED << ">>>>> Response From Server" << RESET << std::endl;
   #endif
 
-  Socket::RawSend(clientfd, res);
-  // // client.Send(res);
-  // Socket::RawSend(clientfd, res);
-  // // Socket::RawSend(clientfd, req_str);
+  client.Send(res);
 }
 
 int main(int ac, char **av) {
@@ -53,26 +50,15 @@ int main(int ac, char **av) {
   #endif
 
   // TODO(iyamada) Serverクラスを作るか
-  // Server serv(conf);
-  // Socket serv = Socket::OpenListenSocket(conf);
-  int listenfd = Socket::OpenListenRawSocket(conf);
-
-  #if DEBUG
-  std::cerr << "[debug] server is listening to " << listenfd << std::endl;
-  std::cerr << "[debug] here?" << std::endl;
-  assert(listenfd >= 0);
-  #endif
+  Socket serv = Socket::OpenListenSocket(conf);
 
   while (true) {
-    // Socket client = serv.Accept();
-    int clientfd = Socket::RawAccept(listenfd);
+    Socket client = serv.Accept();
 
     #if DEBUG
     std::cerr << "[debug] server accept client connection" << std::endl;
     #endif
 
-    StartTransact(clientfd);
-    close(clientfd);
+    StartTransact(client);
   }
-  close(listenfd);
 }
