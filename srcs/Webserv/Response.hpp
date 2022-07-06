@@ -28,7 +28,7 @@ class Response {
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Response& rhs) {
-  out << rhs.GetHeader() << "\r\n" << rhs.GetBody();
+  out << rhs.GetHeader() << "\r\n";  // << rhs.GetBody();
   return out;
 }
 
