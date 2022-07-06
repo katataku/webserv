@@ -144,14 +144,14 @@ location /kapouet {
 
 Usage: 
 ```
-Syntax:	limit_except method ... { deny all; }
+Syntax:	limit_except method ... {}
 Default: —
 Context: location
 ```
 
 Example:
 ```
-limit_except GET POST { deny all; }
+limit_except GET POST {}
 ```
 
 ### [autoindex]
