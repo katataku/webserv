@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include <string>
 
@@ -39,7 +40,6 @@ void StartTransact(int clientfd) {
   // // Socket::RawSend(clientfd, req_str);
 }
 
-// $(CXX) -D DEBUG=true -o $(NAME) $(CXXFLAGS) $(INCS) $(SRCS) -g -fsanitize=address
 int main(int ac, char **av) {
   if (ac != 2) {
     std::cerr << "Usage: " << av[0] << " <config file path>" << std::endl;
