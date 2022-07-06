@@ -138,6 +138,10 @@ location /kapouet {
 
 ### [limit_except]
 
+設定されたリクエストメソッド以外のリクエストを制限する。
+
+許可されていないメソッドでのリクエストに対しては403(Forbidden)を返す。
+
 Usage: 
 ```
 Syntax:	limit_except method ... { deny all; }
@@ -149,11 +153,6 @@ Example:
 ```
 limit_except GET POST { deny all; }
 ```
-
-#### 確認
-この設定で除外されたRequestMethodに対するエラーコード。
-認識があってるが実際に動かして試してみたい。
-`{ deny all; }`がないとnginx本家では構文エラーになる？ならなければ取り除く。
 
 ### [autoindex]
 ディレクトリの一覧表示を行うかどうかを設定できる。
