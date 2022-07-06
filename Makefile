@@ -1,10 +1,15 @@
 NAME = webserv
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic -MMD -MP
-SRCS = srcs/**/webserv.cpp
+SRCS = $(wildcard srcs/*/*.cpp)
 OBJS = $(SRCS:%.cpp=%.o)
 DEPS = $(OBJS:%.o=%.d)
+HEADERS = $(OBJS:%.o=%.d)
 INCS = -Isrcs/**/**.hpp
+
+ifdef DEBUG
+	CXXFLAGS += -D DEBUG=true -g -fsanitize=address
+endif
 
 # -------------------------- Rules For Build ------------------------------
 
@@ -23,6 +28,9 @@ clean: ## Delete webserver object files
 	$(RM) $(OBJS) $(DEPS)
 
 re: fclean all ## Rebuild webserver
+
+debug: fclean ## Build in debug mode
+	make DEBUG=true
 
 .PHONY: all fclean clean re
 
@@ -46,7 +54,7 @@ tidy: ## Tidy webserver source files
 
 .PHONY: syntax
 syntax: ## Check syntax of source files
-	${CXX} -fsyntax-only srcs/**/*.hpp srcs/**/*.cpp
+	${CXX} -fsyntax-only srcs/**/*.hpp $(SRCS)
 
 # ------------------------ Rules For Developer ----------------------------
 
