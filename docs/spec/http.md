@@ -36,11 +36,19 @@ GET / HTTP/1.1
 
 ### 設定可能なヘッダー一覧
 
+記載範囲外のヘッダーがリクエストに含まれていた場合は何も処理をしない。（エラーとせずに処理を継続する。）
+
 ヘッダー名 | リクエスト | レスポンス
  -- | -- | --
 [Accept](#accept) | ◯(任意) | ✖︎
 [Date](#Date) | ◯(必須) | ◯(必須)
-[Content-Length](#content-length) | ◯(必須) | ◯(必須)
+[Content-Encoding](#content-encoding) | TBD | TBD
+[Content-Length](#content-length) | TBD | TBD
+[Content-type](#content-type) | TBD | TBD
+[Server](#Server)| TBD | TBD
+[Host](#host)| TBD | TBD
+
+- Expect
 
 ### Accept
 
@@ -60,6 +68,26 @@ Example:
 
 ```http
 Content-Length: 4891
+```
+
+### Content-Encoding
+
+コンテンツのエンコード方式を示します。下記は、コンテンツが gzip 形式で圧縮されていることを示します。（→ Accept-Encoding）
+
+Example:
+
+```http
+Content-Encoding: gzip
+```
+
+### Host
+
+HTTP/1.1で唯一の必須ヘッダーです。ブラウザからサーバに対して、サーバ名を送信します。サーバが名前ベースの仮想ホストをサポートしている場合、この名前を手がかりにどのサーバとして振舞うか決定されます。たとえば、<http://aaa.sample.dom/> と <http://bbb.sample.dom/> は実は同じサーバ（IPアドレス：61.206.47.206）ですが、Hostヘッダーでホスト名を指定することにより、仮想的に2つのサーバとして振舞うことが可能になります。
+
+Example:
+
+```http
+Host: aaa.sample.dom
 ```
 
 ## 参考
