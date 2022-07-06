@@ -51,8 +51,6 @@ CheckOptions:
     value:           llvm
   - key:             modernize-use-bool-literals.IgnoreMacros
     value:           'true'
-  - key:             modernize-use-nullptr.NullMacros
-    value:           'NULL'
   - key:             performance-for-range-copy.AllowedTypes
     value:           ''
   - key:             performance-for-range-copy.WarnOnAllAutoCopies
