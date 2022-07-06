@@ -4,8 +4,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <string>
 #include <unistd.h>
+
+#include <string>
 
 #include "./Config.hpp"
 #include "./Response.hpp"
