@@ -4,8 +4,28 @@ classDiagram
     WebservConfig "1" *-- "1..*" ServerContext
     ServerContext "1" *-- "1..*" LocationContext
 
+    Webserv *-- SuperVisor
+    Webserv *-- ServerLocation
+    SuperVisor --> Worker : use
+    Worker --> ServerLocation : use
+
     class Webserv {
         +Run()
+    }
+
+    class SuperVisor {
+
+    }
+
+    class Worker {
+        +Socket socket;
+        +Exec()
+    }
+
+    class ServerLocation {
+        +int port
+        +string host
+        +string path
     }
 ```
 
