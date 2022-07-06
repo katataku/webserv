@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <sstream>
 #include <string>
 
 inline std::string Consume(const std::string& s, const std::string& sep) {
@@ -30,6 +32,13 @@ inline std::string GetFileExt(const std::string& path) {
 inline void error(const char *msg) {
   perror(msg);
   exit(0);
+}
+
+template < typename T >
+std::string numtostr(T n) {
+  std::stringstream ss;
+  ss << n;
+  return ss.str();
 }
 
 #endif  // SRCS_WEBSERV_UTILS_HPP_

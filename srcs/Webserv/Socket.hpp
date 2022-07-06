@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <strings.h>
 #include <unistd.h>
 
 #include <string>
@@ -79,7 +80,7 @@ class Socket {
   }
 
   static void RawSend(int clientfd, const Response& resp) {
-    char* buf = nullptr;
+    char* buf;
 
     std::string header = resp.GetHeader();
 
@@ -108,7 +109,7 @@ class Socket {
 
     static void RawSend(int clientfd, const std::string& msg) {
     // char buf[kBufSize];
-    char* buf = nullptr;
+    char* buf;
 
     // send header
     buf = const_cast<char *>(msg.c_str());
@@ -146,7 +147,7 @@ class Socket {
   }
 
   static Socket OpenListenSocket(const Config& conf) {
-    addr_info hints, *listp = nullptr;
+    addr_info hints, *listp;
     bzero(&hints, sizeof(addr_info));
     hints.ai_socktype = SOCK_STREAM;              // Connections only
     hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;  // Accept connections
@@ -157,7 +158,7 @@ class Socket {
       exit(1);
     }
     int listenfd = 0;
-    for (addr_info* p = listp; p != nullptr; p = p->ai_next) {
+    for (addr_info* p = listp; p; p = p->ai_next) {
       listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listenfd < 0) {
         continue;
@@ -187,7 +188,7 @@ class Socket {
   }
 
   static int OpenListenRawSocket(const Config& conf) {
-    addr_info hints, *listp = nullptr;
+    addr_info hints, *listp;
     bzero(&hints, sizeof(addr_info));
     hints.ai_socktype = SOCK_STREAM;              // Connections only
     hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;  // Accept connections
@@ -198,7 +199,7 @@ class Socket {
       exit(1);
     }
     int listenfd = 0;
-    for (addr_info* p = listp; p != nullptr; p = p->ai_next) {
+    for (addr_info* p = listp; p; p = p->ai_next) {
       listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
       if (listenfd < 0) {
         continue;

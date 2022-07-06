@@ -48,7 +48,7 @@ class Request {
     std::string body;
 
     if (method_ == "GET") {
-      std::ifstream ifs("./sample_data/" + path_);
+      std::ifstream ifs(std::string("./sample_data/" + path_).c_str());
       std::stringstream ss;
 
       #if DEBUG
@@ -65,8 +65,8 @@ class Request {
         body += "<title>surume Error</title>";
         body += "<body><p>204 No Content</p></body>";
         body += "</html>\r\n";
-        std::stringstream ss(body.length());
-        header += "Content-length: " + ss.str() + "\r\n\r\n";
+        // std::stringstream ss(body.length());
+        header += "Content-length: " + numtostr(body.length()) + "\r\n\r\n";
         resp.SetHeader(header);
         resp.SetBody(body);
         #if DEBUG
@@ -84,8 +84,8 @@ class Request {
       body += "<title>surume Error</title>";
       body += "<body><p>501 Not Implemented</p></body>";
       body += "</html>\r\n";
-      std::stringstream ss(body.length());
-      header += "Content-length: " + ss.str() + "\r\n";
+      // std::stringstream ss(body.length());
+      header += "Content-length: " + numtostr(body.length()) + "\r\n";
       header += "Content-Type: text/html\r\n\r\n";
       resp.SetHeader(header);
       resp.SetBody(body);
@@ -97,8 +97,8 @@ class Request {
 
     // Set header
     std::string header = "HTTP/1.1 200 OK\r\n";
-    std::stringstream ss(body.length());
-    header += "Content-length: " + ss.str() + "\r\n";
+    // std::stringstream ss(body.length());
+    header += "Content-length: " + numtostr(body.length()) + "\r\n";
     header += "Content-Type: " + mime_ + "\r\n\r\n";
     resp.SetHeader(header);
 
