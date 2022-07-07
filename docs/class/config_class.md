@@ -74,54 +74,50 @@ classDiagram
 ```
 
 ## 擬似コード
-```
+```cpp
 Webserv {
-config = WebserverConfig();
-serverLocations = config.CreateServerLocations();
-ServerLocationFacade facade(serverLocations);
-SuperVisor sv(facade);
-sv.Run();
-}
+    // IDEA: 別途Lexer&Parserの責務を持ったクラスを定義しても良いかもしれない。
+    void Run() {
+        WebservConfig config = WebservConfig.Parse();
+        vector<ServerLocation> locations = config.CreateServerLocations();
+        ServerLocationFacade facade(locations);
+        SuperVisor sv(facade);
+        sv.Watch();
+    }
+};
 
+// ソケット周りのクラスが固まっていないので雰囲気で書いている。
 SuperVisor {
-fd_set mask;
-fd_set copy_mask;
+    // Constructorでやる？
+    void Setup() {
+        // 待ち受けるポートの数だけlisten fdを用意する
+        Acceptor.CreateListner();
+    }
 
-SuperVisor {
-    // 待ち受けるソケットの分だけListenerを生成する
-    Listener()
-    // IO多重化の準備(maskの初期化)
-}
-
-// listend_fd
-// socke_fd
-
-void Watch() {
-    Socket sockets[];
-    while (1) {
-        copy_mask = mask;
-        select(copy_mask, ...);
-        for(;) {
-            if (IS_SET(listend_fd)) {
-                Scoket *s = Listener.Accept();
-                sockets.add(s);
-            } else if (IS_SET(socke_fd)) {
-                Worker w(s);
-                w.Exec();
+    void Watch() {
+        while (1) {
+            vector<Socket> sockets = Acceptor.Select();
+            for (socket in sockets) {
+                if (socket.isListner()) {
+                    // acceptしてfdを生成してselectの対象にする
+                    Acceptor.AddListner(socket);
+                } else {
+                    Worker w(socket);
+                    w.Exec();
+                }
             }
         }
     }
-}
-}
+};
 
-Worker {
-void Exec() {
-    Request *reqeust = Request.Parse(Socket.read());
-    ServerLocation sl = ServerLocationGateway.Choose(port, host, path);
-    Reponse *reponse = Someone.Exec(request, sl);
-    Socket.Write(response);
-}
-}
+Woker {
+    void Exec() {
+        Request request = Request.Parse(socket_);
+        ServerLocation sl = facade_.Choose(port, host, path);
+        Response response = Someone.Exec(request, sl);
+        Response.Write(socket_);
+    }
+};
 ```
 
 ## メモ
