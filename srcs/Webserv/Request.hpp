@@ -14,7 +14,6 @@
 class Request {
  public:
   Request() {}
-  ~Request() {}
   Request(const Request& other) { *this = other; }
   Request& operator=(const Request& other) {
     if (this != &other) {
@@ -28,6 +27,7 @@ class Request {
     }
     return *this;
   }
+  ~Request() {}
 
   void SetMethod(const std::string& method) { method_ = method; }
   void SetURI(const std::string& uri) { uri_ = uri; }

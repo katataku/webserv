@@ -7,7 +7,6 @@
 class Response {
  public:
   Response() {}
-  ~Response() {}
   Response(const Response& other) { *this = other; }
   Response& operator=(const Response& other) {
     if (this != &other) {
@@ -16,6 +15,7 @@ class Response {
     }
     return *this;
   }
+  ~Response() {}
 
   void SetHeader(const std::string& header) { header_ = header; }
   void SetBody(const std::string& body) { body_ = body; }

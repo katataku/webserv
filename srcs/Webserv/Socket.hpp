@@ -21,7 +21,6 @@ class Socket {
       : port_(port) {}
   explicit Socket(int sockfd)
       : sockfd_(sockfd), port_(NULL) {}
-  ~Socket() { close(sockfd_); }
   Socket(const Socket& other) {
     *this = other;
   }
@@ -33,6 +32,7 @@ class Socket {
     }
     return *this;
   }
+  ~Socket() { close(sockfd_); }
 
   // Member functions
   Socket Accept() {
