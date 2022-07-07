@@ -17,6 +17,7 @@ classDiagram
         +bool autoindex
         +string index_page
         +CreateServerLocations()
+        +Parse(string)
     }
 
     %% TODO: listenディレクトリは複数指定できるかを確認 %%
