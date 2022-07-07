@@ -121,10 +121,6 @@ Woker {
 ```
 
 ## メモ
-- 実際の処理の実行とResponseを生成する部分。
-- 全体的にメンバ変数とメンバ関数を追加していきたい
-- Configのparseする責務のクラスが必要。Lexer, Parse用のクラス。
-- ServerLocationの持ち方はこれでいい？結局ServerとLocationで別に持ったほうがいいかも。デフォルトサーバー。
-- WorkerがどのServerLocationを使うかのためにhostとportとpathの情報が必要
-hostとpathはRequestを読まないと分からない。portはlisten_fdごとに判別するしかない？
-Socketに持たせる必要があるかも。
+- ServerLocationはServerとLocationに分けたほうがいい可能性もある。
+- WorkerがどのServerLocationを使うかを判別するためにhost, port, pathの3つが必要。
+- hostとpathはRequestを読まないと分からない。portについてはlisten_fdごとに判別するしかないかもしれない。
