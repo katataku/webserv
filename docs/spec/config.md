@@ -39,7 +39,6 @@ server_name example.com www.example.com;
 ```
 
 #### 確認
-
 これは何に使われる？リダイレクト？
 複数設定を許可するかどうかは用途を確認した後判断。
 
