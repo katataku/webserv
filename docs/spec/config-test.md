@@ -32,3 +32,14 @@ server {
 ```
 Error:
 invalid number of arguments in "limit_except" directive
+
+### listen
+Example:
+```
+server {
+	listen 8080;
+	listen 8080;
+}
+```
+
+a duplicate listen 0.0.0.0:8080
