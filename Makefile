@@ -54,7 +54,7 @@ tidy: ## Tidy webserver source files
 
 .PHONY: syntax
 syntax: ## Check syntax of source files
-	${CXX} -fsyntax-only srcs/**/*.hpp $(SRCS)
+	$(CXX) -fsyntax-only srcs/**/*.hpp $(SRCS)
 
 # ------------------------ Rules For Developer ----------------------------
 
