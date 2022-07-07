@@ -10,10 +10,10 @@ class Response {
   ~Response() {}
   Response(const Response& other) { *this = other; }
   Response& operator=(const Response& other) {
-    if (this == &other) return *this;
-
-    this->header_ = other.header_;
-    this->body_ = other.body_;
+    if (this != &other) {
+      this->header_ = other.header_;
+      this->body_ = other.body_;
+    }
     return *this;
   }
 

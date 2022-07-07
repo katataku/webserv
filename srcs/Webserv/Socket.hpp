@@ -26,11 +26,11 @@ class Socket {
     *this = other;
   }
   Socket& operator=(const Socket& other) {
-    if (this == &other) return *this;
-
-    this->sockfd_ = dup(other.sockfd_);
-    this->port_ = other.port_;
-    this->socket_addr_ = other.socket_addr_;
+    if (this != &other) {
+      this->sockfd_ = dup(other.sockfd_);
+      this->port_ = other.port_;
+      this->socket_addr_ = other.socket_addr_;
+    }
     return *this;
   }
 

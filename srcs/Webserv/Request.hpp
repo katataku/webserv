@@ -17,15 +17,15 @@ class Request {
   ~Request() {}
   Request(const Request& other) { *this = other; }
   Request& operator=(const Request& other) {
-    if (this == &other) return *this;
-
-    this->method_ = other.method_;
-    this->uri_ = other.uri_;
-    this->path_ = other.path_;
-    this->extension_ = other.extension_;
-    this->query_ = other.query_;
-    this->version_ = other.version_;
-    this->mime_ = other.mime_;
+    if (this != &other) {
+      this->method_ = other.method_;
+      this->uri_ = other.uri_;
+      this->path_ = other.path_;
+      this->extension_ = other.extension_;
+      this->query_ = other.query_;
+      this->version_ = other.version_;
+      this->mime_ = other.mime_;
+    }
     return *this;
   }
 

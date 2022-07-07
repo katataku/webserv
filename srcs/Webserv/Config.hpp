@@ -11,9 +11,9 @@ class Config {
   Config(const Config& other) { *this = other; }
 
   Config& operator=(const Config& other) {
-    if (this == &other) return *this;
-
-    this->port_ = other.port_;
+    if (this != &other) {
+      this->port_ = other.port_;
+    }
     return *this;
   }
   
