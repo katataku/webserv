@@ -11,19 +11,37 @@ classDiagram
     ServerLocationFacade --> ServerLocation: use
 
     class WebservConfig {
-        +error_page
+        +vector<ServerContext> server_contexts;
+        +map<int, string> error_pages
+        +int client_max_body_size
+        +bool autoindex
+        +string index_page
         +CreateServerLocations()
     }
 
+    %% TODO: listenディレクトリは複数指定できるかを確認 %%
+    %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
-        +server_name
-        +host
-        +port
-        +error_page
+        +vector<LocationContext> location_contexts;
+        +map<int, string> error_pages
+        +int client_max_body_size
+        +bool autoindex
+        +string index_page
+        +redirect : server & location
+        +vector<string> server_names : only server
+        +host : only server
+        +port : only server
     }
 
     class LocationContext {
-        +error_page
+        +map<int, string> error_pages
+        +int client_max_body_size
+        +bool autoindex
+        +string index_page
+        +redirect
+        +vector<string> allow_methods
+        +string path
+        +string alias
     }
 
     class Webserv {
@@ -54,11 +72,6 @@ classDiagram
         +string path
     }
 ```
-
-## idea
-- WorkerがどのServerLocationを使うかのためにhostとportとpathの情報が必要
-hostとpathはRequestを読まないと分からない。portはlisten_fdごとに判別するしかない？
-Socketに持たせる必要があるかも。
 
 ## 擬似コード
 ```
@@ -116,4 +129,6 @@ void Exec() {
 - 全体的にメンバ変数とメンバ関数を追加していきたい
 - Configのparseする責務のクラスが必要。Lexer, Parse用のクラス。
 - ServerLocationの持ち方はこれでいい？結局ServerとLocationで別に持ったほうがいいかも。デフォルトサーバー。
-- Config
+- WorkerがどのServerLocationを使うかのためにhostとportとpathの情報が必要
+hostとpathはRequestを読まないと分からない。portはlisten_fdごとに判別するしかない？
+Socketに持たせる必要があるかも。
