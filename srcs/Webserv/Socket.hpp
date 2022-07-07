@@ -128,7 +128,7 @@ class Socket {
 
  private:
   // Constant value
-  static const int kQueueSize = 1024;  // TODO(iyamada) configで変更できるように
+  static const int kQueueSize = 1024;
   static const int kBufSize = 4096;
 
   // Define type
