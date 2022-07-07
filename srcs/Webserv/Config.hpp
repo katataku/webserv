@@ -9,7 +9,7 @@ class Config {
   Config() {}
   explicit Config(const std::string& port) : port_(port) {}
   Config(const Config& other) { *this = other; }
- 
+
   Config& operator=(const Config& other) {
     if (this == &other) return *this;
 
@@ -25,7 +25,7 @@ class Config {
     (void)path;
     return Config("80");
   }
-  std::string GetPort() const { return port_; }
+  std::string port() const { return port_; }
 
  private:
   std::string port_;

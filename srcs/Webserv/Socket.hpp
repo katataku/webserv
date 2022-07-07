@@ -88,7 +88,7 @@ class Socket {
     hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;  // Accept connections
     hints.ai_flags |= AI_NUMERICSERV;             // Using port
     int rc = 0;
-    if ((rc = getaddrinfo(NULL, conf.GetPort().c_str(), &hints, &listp)) != 0) {
+    if ((rc = getaddrinfo(NULL, conf.port().c_str(), &hints, &listp)) != 0) {
       fprintf(stderr, "Error: %s\n", gai_strerror(rc));
       exit(1);
     }
