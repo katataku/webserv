@@ -7,7 +7,8 @@ classDiagram
     Webserv *-- SuperVisor
     Webserv *-- ServerLocation
     SuperVisor --> Worker : use
-    Worker --> ServerLocation : use
+    Worker --> ServerLocationGateway : use
+    ServerLocationGateway --> ServerLocation: use
 
     class WebservConfig {
         +error_page
@@ -40,6 +41,10 @@ classDiagram
         +Exec() : void
     }
 
+    %% どのServerLocationを使用するかを決定する責務 %%
+    class ServerLocationFacade {
+    }
+
     %% configを元に各locationごとの設定 %%
     class ServerLocation {
         +int port
@@ -56,28 +61,46 @@ Socketに持たせる必要があるかも。
 ## 擬似コード
 ```
 SuperVisor {
+fd_set mask;
+fd_set copy_mask;
 
 SuperVisor {
-    Socket.Listen();
-    IO多重化の準備
+    // 待ち受けるソケットの分だけListenerを生成する
+    Listener()
+    // IO多重化の準備(maskの初期化)
 }
+
+// listend_fd
+// socke_fd
 
 void Watch() {
+    Socket sockets[];
     while (1) {
-        Scoket *s = Sokcet.Accept();
-        Worker w(s);
-        w.Exec();
+        copy_mask = mask;
+        select(copy_mask, ...);
+        for(;) {
+            if (IS_SET(listend_fd)) {
+                Scoket *s = Listener.Accept();
+                sockets.add(s);
+            } else if (IS_SET(socke_fd)) {
+                Worker w(s);
+                w.Exec();
+            }
+        }
     }
 }
-
 }
 
 Worker {
 void Exec() {
     Request *reqeust = Request.Parse(Socket.read());
     ServerLocation sl = ServerLocationGateway.Choose(port, host, path);
-    Reponset *reponse = Someone.Exec(request, sl);
+    Reponse *reponse = Someone.Exec(request, sl);
     Socket.Write(response);
 }
 }
 ```
+
+## メモ
+- 実際の処理の実行とResponseを生成する部分。
+- Watchの
