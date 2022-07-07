@@ -16,8 +16,8 @@ class Config {
     }
     return *this;
   }
-  
-   ~Config() {}
+
+  ~Config() {}
 
 
   // Member funcs
