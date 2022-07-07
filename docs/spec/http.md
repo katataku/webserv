@@ -98,8 +98,8 @@ RFCでは必須と決められているが今回は対応しない。
 [Host](#host)| ◯(必須) | ✖︎
 [Transfer-Encoding](#Transfer-Encoding)| ◯(任意) | ◯(任意)
 [Content-Length](#content-length) | ◯(任意) | ◯(任意)
-[Server](#Server)| ✖︎ | ◯(必須)
 [Expect](#Expect)| ◯(任意) | ✖︎
+[Allow](#allow)| ✖︎ | ✖◯(任意)
 
 ### Host
 
@@ -138,6 +138,28 @@ Example:
 ```http
 Transfer-Encoding: chunked
 ```
+
+### Expect
+
+いろいろな目的で使用されます。
+
+Example:
+
+```http
+Expect: 100-continue
+```
+
+### Allow
+
+オリジンサーバは、 405 (Method Not Allowed) レスポンス内には、Allow ヘッダを生成しなければならない。
+
+Example:
+
+```http
+Allow: GET, POST, DELETE
+```
+
+[RFC7231](#https://triple-underscore.github.io/RFC7231-ja.html#header.allow)
 
 ## 参考
 
