@@ -7,15 +7,18 @@ class Config {
  public:
   // TODO(iyamada) 取りあえず
   Config() {}
-  ~Config() {}
+  explicit Config(const std::string& port) : port_(port) {}
   Config(const Config& other) { *this = other; }
+ 
   Config& operator=(const Config& other) {
     if (this == &other) return *this;
 
     this->port_ = other.port_;
     return *this;
   }
-  explicit Config(const std::string& port) : port_(port) {}
+  
+   ~Config() {}
+
 
   // Member funcs
   static Config Parse(const char* path) {
