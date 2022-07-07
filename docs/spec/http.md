@@ -2,19 +2,45 @@
 
 ## 設定ファイルの構成
 
+### リクエスト
+
+クライアントは、 HTTPリクエストをサーバへ送信する。 それは、順に次のものからなる、リクエストメッセージの形をとる：
+
+1. [request-line](#request-line)
+
+1. 次を包含している、いくつかの[ヘッダー](#ヘッダー) ：\
+要請の改変子／クライアント情報／表現メタデータ
+
+1. ヘッダー節の終端を指示する空行
+
+1. 最後に、ペイロード本体を包含しているメッセージ本体（もし在れば）
+
+### レスポンス
+
+サーバは、クライアントからのリクエストに対し、［ 1 個以上の HTTP レスポンスメッセージ ］を送信して、レスポンドする。 そのそれぞれは、順に、次のものからなる：
+
+1. [status-line](#status-line)
+
+1. 次を包含する、 0個以上の [ヘッダー](#ヘッダー) ：\
+サーバ情報／リソースメタデータ／表現メタデータ
+
+1. ヘッダー節の終端を指示する空行
+
+1. 最後に、ペイロードボディを包含しているメッセージボディ（もし在れば）
+
 ## 項目
 
-### リクエスト行
+### request-line
 
 Usage:
 
 ``` http
-Syntax: メソッド パス名 HTTP/バージョン
+Syntax: メソッド パス名 プロトコルバージョン
 ```
 
-- 利用可能メソッドは後述。
+- [利用可能なメソッド一覧](#設定可能なメソッド一覧)に記載のメソッド。
 - パス名は/aaa/bbb/ccc.htmlのような、スラッシュで始まるパス名や、http:// などで始まるURLを指定。
-- バージョンは1.1で固定。
+- プロトコルバージョンは1.1で固定。
 
 Example:
 
@@ -22,42 +48,67 @@ Example:
 GET / HTTP/1.1
 ```
 
+### status-line
+
+Usage:
+
+``` http
+Syntax: プロトコルバージョン ステータスコード 自由フレーズ 
+```
+
+- プロトコルバージョンは1.1で固定。
+- [利用可能なメソッド一覧](#設定可能なメソッド一覧)に記載のメソッド。
+- パス名は/aaa/bbb/ccc.htmlのような、スラッシュで始まるパス名や、http:// などで始まるURLを指定。
+
+Example:
+
+``` http
+HTTP/1.1 200 OK
+```
+
 ## メソッド
 
 ### 設定可能なメソッド一覧
 
+以下のメソッドを設定可能とする。
+
 - GET
-- HEAD
 - POST
 - DELETE
-- PUT？
+
+### HOSTメソッドについて
+
+RFCでは必須と決められているが今回は対応しない。
+
+[RFC7231](https://triple-underscore.github.io/RFC7231-ja.html#section-4)
+
+```
+すべての一般用サーバは、 GET および HEAD をサポートしなければならない。 他のメソッドのサポートは、すべて任意選択である。
+```
 
 ## ヘッダー
 
 ### 設定可能なヘッダー一覧
 
 記載範囲外のヘッダーがリクエストに含まれていた場合は何も処理をしない。（エラーとせずに処理を継続する。）
+<!-- ◯(必須) | ◯(任意) | ✖︎ -->
 
 ヘッダー名 | リクエスト | レスポンス
  -- | -- | --
-[Accept](#accept) | ◯(任意) | ✖︎
-[Date](#Date) | ◯(必須) | ◯(必須)
-[Content-Encoding](#content-encoding) | TBD | TBD
-[Content-Length](#content-length) | TBD | TBD
-[Content-type](#content-type) | TBD | TBD
-[Server](#Server)| TBD | TBD
-[Host](#host)| TBD | TBD
+[Host](#host)| ◯(必須) | ✖︎
+[Transfer-Encoding](#Transfer-Encoding)| ◯(任意) | ◯(任意)
+[Content-Length](#content-length) | ◯(任意) | ◯(任意)
+[Server](#Server)| ✖︎ | ◯(必須)
+[Expect](#Expect)| ◯(任意) | ✖︎
 
-- Expect
+### Host
 
-### Accept
-
-ブラウザが受信可能なデータ形式（MIMEタイプ）をサーバに伝えます。アスタリスク（*）は「すべて」を意味します。下記は、ブラウザがGIFやJPEG、その他どんな形式のデータでも受信可能であることを示します。（→ Content-Type）
+HTTP/1.1で唯一の必須ヘッダーです。ブラウザからサーバに対して、サーバ名を送信します。サーバが名前ベースの仮想ホストをサポートしている場合、この名前を手がかりにどのサーバとして振舞うか決定されます。たとえば、<http://aaa.sample.dom/> と <http://bbb.sample.dom/> は実は同じサーバ（IPアドレス：61.206.47.206）ですが、Hostヘッダーでホスト名を指定することにより、仮想的に2つのサーバとして振舞うことが可能になります。
 
 Example:
 
 ```http
-Accept: image/gif, image/jpeg, */*
+Host: aaa.sample.dom
 ```
 
 ### Content-Length
@@ -70,24 +121,22 @@ Example:
 Content-Length: 4891
 ```
 
-### Content-Encoding
+### Transfer-Encoding
 
-コンテンツのエンコード方式を示します。下記は、コンテンツが gzip 形式で圧縮されていることを示します。（→ Accept-Encoding）
+転送に使用されるエンコード形式を示します。
 
-Example:
+以下の転送エンコード形式に対応する。
 
-```http
-Content-Encoding: gzip
-```
+- chunked
 
-### Host
+未対応のエンコード形式のデータを受信したときには、501 (Not Implemented) でレスポンドする。
 
-HTTP/1.1で唯一の必須ヘッダーです。ブラウザからサーバに対して、サーバ名を送信します。サーバが名前ベースの仮想ホストをサポートしている場合、この名前を手がかりにどのサーバとして振舞うか決定されます。たとえば、<http://aaa.sample.dom/> と <http://bbb.sample.dom/> は実は同じサーバ（IPアドレス：61.206.47.206）ですが、Hostヘッダーでホスト名を指定することにより、仮想的に2つのサーバとして振舞うことが可能になります。
+送信者は「Transfer-Encodingヘッダを包含する どのメッセージにも， Content-Length ヘッダを送信してはならない。」と規定されている。そのため、Transfer-EncodingとContent-Lengthを同時に受信した際には、400(Bad Request)でレスポンドする。
 
 Example:
 
 ```http
-Host: aaa.sample.dom
+Transfer-Encoding: chunked
 ```
 
 ## 参考
