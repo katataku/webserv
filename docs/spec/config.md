@@ -4,11 +4,11 @@
 設定ファイルが読み込まれるまではクライアントからのリクエストを待ち受けない。
 
 ## 設定ファイルの構成
-設定ファイルは単一ディレクティブとブロックディレクティブから構成されます。
+設定ファイルは単一ディレクティブとブロックディレクティブから構成される。
 
-単一ディレクティブはパラメータ名と設定値が空白で分けられセミコロンで終わります。 ブロックディレクティブは波括弧の中に単一ディレクトリとブロックディレクティブを定義します。
+単一ディレクティブはパラメータ名と設定値が空白で分けられセミコロンで終わる。 ブロックディレクティブは波括弧の中に単一ディレクトリとブロックディレクティブを定義する。
 
-ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれます。 webservではhttp, server, locationの3つのコンテキストがあります。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはhttpコンテキストに属します。
+ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれる。 webservではhttp, server, locationの3つのコンテキストがある。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはhttpコンテキストに属する。
 
 複数サーバーが設定されている場合は一番始めに定義されたサーバーをデフォルトサーバーとする。
 
@@ -55,10 +55,10 @@ listen localhost:8000;
 
 #### 相談
 ホスト名やポートは省略可能にする？実装的には必須にするのが楽。
+1つのserver directive内に複数定義することが可能。対応する？
 
 #### 確認
 ホスト名がローカルホスト以外の場合の挙動
-1つのサーバーに複数渡せる？
 
 ### [error_page]
 特定のエラーに対して表示するページを設定することができる。
@@ -234,6 +234,7 @@ Context: server
 [listen]: https://nginx.org/en/docs/http/ngx_http_core_module.html#listen
 [error_page]: https://nginx.org/en/docs/http/ngx_http_core_module.html#error_page
 [client_max_body_size]: https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
+[alias]: https://nginx.org/en/docs/http/ngx_http_core_module.html#alias
 [root]: https://nginx.org/en/docs/http/ngx_http_core_module.html#root
 [limit_except]: https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
 [autoindex]: https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex
