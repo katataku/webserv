@@ -1,15 +1,13 @@
 name: checker
 on:
+  push:
+    branches:
+      - main
   pull_request:
     paths-ignore:
       - 'docs/**'
-      - '.github/**'
-      - '.githooks/**'
-      - '.vscode/**'
       - 'sample_data'
       - 'README.md'
-      - 'Makefile'
-      - 'docker/**'
 
 jobs:
   googletest:

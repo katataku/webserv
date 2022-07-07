@@ -16,10 +16,8 @@ RUN apt-get update && apt-get install -y \
 # REF: https://stackoverflow.com/questions/24295876/cmake-cannot-find-googletest-required-library-in-ubuntu
 RUN (cd /usr/src/googletest && cmake . && cmake --build . --target install)
 
-# cpplintおよびマークダウンフォーマッタのインストール
-RUN pip install cpplint \
-    mdformat \
-    mdformat-gfm
+# cpplintのインストール
+RUN pip install cpplint
 
 # prevent container from terminating
 ENTRYPOINT ["tail", "-f", "/dev/null"]
