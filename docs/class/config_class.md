@@ -22,7 +22,7 @@ classDiagram
     %% TODO: listenディレクトリは複数指定できるかを確認 %%
     %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
-        +vector<LocationContext> location_contexts;
+        +vector~LocationContext~ location_contexts;
         +map<int, string> error_pages
         +int client_max_body_size
         +bool autoindex
