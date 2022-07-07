@@ -9,6 +9,7 @@ on:
       - 'sample_data'
       - 'README.md'
       - 'Makefile'
+      - 'docker/**'
 
 jobs:
   googletest:
