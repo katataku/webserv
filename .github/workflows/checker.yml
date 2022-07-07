@@ -8,6 +8,7 @@ on:
       - '.vscode/**'
       - 'sample_data'
       - 'README.md'
+      - 'Makefile'
 
 jobs:
   googletest:
