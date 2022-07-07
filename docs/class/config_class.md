@@ -7,11 +7,12 @@ classDiagram
     Webserv *-- SuperVisor
     Webserv *-- ServerLocation
     SuperVisor --> Worker : use
-    Worker --> ServerLocationGateway : use
-    ServerLocationGateway --> ServerLocation: use
+    Worker --> ServerLocationFacade : use
+    ServerLocationFacade --> ServerLocation: use
 
     class WebservConfig {
         +error_page
+        +CreateServerLocations()
     }
 
     class ServerContext {
@@ -31,6 +32,7 @@ classDiagram
 
     %% IO多重化とソケットクラスを生成してWorkerに処理を依頼するまでを担当する%%
     class SuperVisor {
+        -ServerLocationFacade facade_
         +Watch()
     }
 
@@ -60,6 +62,14 @@ Socketに持たせる必要があるかも。
 
 ## 擬似コード
 ```
+Webserv {
+config = WebserverConfig();
+serverLocations = config.CreateServerLocations();
+ServerLocationFacade facade(serverLocations);
+SuperVisor sv(facade);
+sv.Run();
+}
+
 SuperVisor {
 fd_set mask;
 fd_set copy_mask;
@@ -103,4 +113,7 @@ void Exec() {
 
 ## メモ
 - 実際の処理の実行とResponseを生成する部分。
-- Watchの
+- 全体的にメンバ変数とメンバ関数を追加していきたい
+- Configのparseする責務のクラスが必要。Lexer, Parse用のクラス。
+- ServerLocationの持ち方はこれでいい？結局ServerとLocationで別に持ったほうがいいかも。デフォルトサーバー。
+- Config
