@@ -99,7 +99,7 @@ RFCでは必須と決められているが今回は対応しない。
 [Transfer-Encoding](#Transfer-Encoding)| ◯(任意) | ◯(任意)
 [Content-Length](#content-length) | ◯(任意) | ◯(任意)
 [Expect](#Expect)| ◯(任意) | ✖︎
-[Allow](#allow)| ✖︎ | ✖◯(任意)
+[Allow](#allow)| ✖︎ | ◯(任意)
 
 ### Host
 
@@ -159,7 +159,7 @@ Example:
 Allow: GET, POST, DELETE
 ```
 
-[RFC7231](#https://triple-underscore.github.io/RFC7231-ja.html#header.allow)
+[RFC7231](https://triple-underscore.github.io/RFC7231-ja.html#header.allow)
 
 ## 参考
 
