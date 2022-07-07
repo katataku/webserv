@@ -63,6 +63,7 @@ classDiagram
 
     %% どのServerLocationを使用するかを決定する責務 %%
     class ServerLocationFacade {
+        +Choose(port, host, path)　ServerLocation
     }
 
     %% configを元に各locationごとの設定 %%
