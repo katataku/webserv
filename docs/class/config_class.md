@@ -11,8 +11,8 @@ classDiagram
     ServerLocationFacade --> ServerLocation: use
 
     class WebservConfig {
-        +vector<ServerContext> server_contexts;
-        +map<int, string> error_pages
+        +vector~ServerContext~ contexts_
+        +map~int, string~ error_pages
         +int client_max_body_size
         +bool autoindex
         +string index_page
@@ -23,24 +23,24 @@ classDiagram
     %% TODO: listenディレクトリは複数指定できるかを確認 %%
     %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
-        +vector~LocationContext~ location_contexts;
-        +map<int, string> error_pages
-        +int client_max_body_size
-        +bool autoindex
-        +string index_page
-        +redirect : server & location
-        +vector<string> server_names : only server
-        +host : only server
-        +port : only server
-    }
-
-    class LocationContext {
-        +map<int, string> error_pages
+        +vector~LocationContext~ contexts_
+        +map~int, string~ error_pages
         +int client_max_body_size
         +bool autoindex
         +string index_page
         +redirect
-        +vector<string> allow_methods
+        +vector~string~ server_names
+        +host
+        +port
+    }
+
+    class LocationContext {
+        +map~int, string~ error_pages
+        +int client_max_body_size
+        +bool autoindex
+        +string index_page
+        +redirect
+        +vector~string~ allow_methods
         +string path
         +string alias
     }
@@ -52,19 +52,19 @@ classDiagram
     %% IO多重化とソケットクラスを生成してWorkerに処理を依頼するまでを担当する%%
     class SuperVisor {
         -ServerLocationFacade facade_
-        +Watch()
+        +Watch() void
     }
 
     %% Socketを元に具体的な処理を担当する。 %%
     %% Requestを受け付けてResponseの返却をする %%
     class Worker {
         -Socket socket;
-        +Exec() : void
+        +Exec() void
     }
 
     %% どのServerLocationを使用するかを決定する責務 %%
     class ServerLocationFacade {
-        +Choose(port, host, path)　ServerLocation
+        +Choose(port, host, path) ServerLocation
     }
 
     %% configを元に各locationごとの設定 %%
