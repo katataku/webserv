@@ -1,27 +1,33 @@
-- Class図
+- Class 図
 
-``` mermaid
+// クラス図に型を追記する
+
+```mermaid
 classDiagram
   class Socket {
     -socketfd
     +Send()
     +Recieve()
-    <!-- +CreateListener() -->
     +IsListening()
+    <!-- +CreateListener() -->
   }
 
   class IOMultiplexer {
-    +Socket[]
-    +AddSocket()
+    -Socket[]
     +Init()
     +Wait()
-    +CreateListenerSocket()
+    -AddSocket()
+    -CreateListenerSocket()
   }
+
+  IOMultiplexer "1" *-- "0..n" Socket
 ```
 
 - 疑似コード
 
-``` cpp
+// メソッドの処理の流れをかく
+
+```cpp
 
 class Socket {
   int socketfd
@@ -47,7 +53,9 @@ class IOMultiplexer {
     // publicにして直接扱うようにしたい（コピーしたくない）
     Socket[] sockets // クラスでこれを持つかは悩み中
 
-    // 
+    GetterSocket(index)
+
+    //
     CreateListenerSocket()
 
     // listenソケットをセットするやつ
@@ -63,6 +71,9 @@ class IOMultiplexer {
     Wait()
 }
 
+// ポートのリストをとる
+// ServerLocationFacade.Getpostlist
+
 class SuperVisor {
     // Socket Acceptor
     // Socket Listenerでは？
@@ -76,19 +87,20 @@ class SuperVisor {
     }
 
     void Watch() {
-        IOMultiplexer iomul
-        // iomul.AddSocket(Listener)
-        listensokc = iomul.CreateListenerSocket()
+        IOMultiplexer iomul()
+
         iomul.Init()
+          //iomul.CreateListenerSocket()
+          //iomul.Init(listener)
 
         while (1) {
-            numofready = iomul.Wait()
-            for i = 0; i < numofready; ++i {
-                if iomul.sockets[i].IsListening() {
-                    iomul.AddNewClient()
-                    continue
-                }
-                StartTransact(iomul.sockets[i]) // 適当。Workerに移譲するとか
+            List socketlist = iomul.Wait()
+            for socket in socketlist
+            {
+              if (socket is accept必要)
+                iomul.Accept(socket)
+              else
+                Worker.Exec(socket)
             }
         }
     }
@@ -97,32 +109,41 @@ class SuperVisor {
 ```
 
 ## メモ
-listenソケットを作るにはポート番号を知る必要がある
-ポート番号はConfigから取れる
-Configはfacade経由で取ろうとしている
-つまり、SuperVisorでfacadeを持つ必要がある
 
-なんかSuperVisorの責務多くない？
+listen ソケットを作るにはポート番号を知る必要がある
+ポート番号は Config から取れる
+Config は facade 経由で取ろうとしている
+つまり、SuperVisor で facade を持つ必要がある
 
-I/O多重化をクラス化するの難しい
-selectもepollも生のfdを何かしらの構造体にセットする
-クラス化した時のコピーとか代入するときに、fdをdupしているけどそれが使えるかはわからない気がする
+なんか SuperVisor の責務多くない？
 
-selectもepollも、処理手順に共通項があるはず
-1. fd集合の初期化
-  - select
-    - fd_setの初期化
-  - epoll
-    - listen状態のソケットを作成し、epollインスタンスへの参照
-2. Wait（ready状態になるまで待つ）
-  - select
-    - selectシステムコールを呼ぶ
-  - epoll
-    - epoll_waitシステムコールを呼ぶ
-3. fd集合をループで回す
-  - それはこいつがやらなくて良い
-4. 新しくコネクションが確立されたらacceptしてクライアントとのソケットを作成し、そうじゃなかったらすでにあるソケットへ何かしらする
-  - epoll
-    - epoll_eventとかをよしなにしてepoll_ctlでそのソケットをepollインスタンスに参照させる必要がある
-  - select
+I/O 多重化をクラス化するの難しい
+select も epoll も生の fd を何かしらの構造体にセットする
+クラス化した時のコピーとか代入するときに、fd を dup しているけどそれが使えるかはわからない気がする
+
+select も epoll も、処理手順に共通項があるはず
+
+1. fd 集合の初期化
+
+- select
+  - fd_set の初期化
+- epoll
+  - listen 状態のソケットを作成し、epoll インスタンスへの参照
+
+2. Wait（ready 状態になるまで待つ）
+
+- select
+  - select システムコールを呼ぶ
+- epoll
+  - epoll_wait システムコールを呼ぶ
+
+3. fd 集合をループで回す
+
+- それはこいつがやらなくて良い
+
+4. 新しくコネクションが確立されたら accept してクライアントとのソケットを作成し、そうじゃなかったらすでにあるソケットへ何かしらする
+
+- epoll
+  - epoll_event とかをよしなにして epoll_ctl でそのソケットを epoll インスタンスに参照させる必要がある
+- select
   　　- おんなじ感じ
