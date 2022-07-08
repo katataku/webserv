@@ -56,7 +56,7 @@ tidy: ## Tidy webserver source files
 	clang-tidy srcs/**/*.hpp srcs/**/*.cpp -fix
 
 .PHONY: mdformat
-mdformat: ## format Markdown files
+mdformat: ## Format Markdown files
 	mdformat README.md docs/
 
 # ------------------------ Rules For Developer ----------------------------
