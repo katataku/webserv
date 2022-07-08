@@ -1,29 +1,32 @@
 ```mermaid
 classDiagram
-
-   class Request_facade{
-        +select_request(socket) Request
+   class RequestFacade{
+        map~socket, Request~ list
+        +Select_request(socket) Request
     }
-
 
    class Request{
         string method
         string URI
-        map~string, string~ header
+        string host;
+        string content-length;
+        string Transfer-Encoding;
         string request_body
-        bool is_finish_to_read
+        bool IsFinishToRead
         
         Request()
-        Parse(socker) socket
-        +get_port() int
-        +get_host() string
-        +get_path() string
-        +is_finish_to_read() bool
+        Parse(Socker) void
+        +getPort() int
+        +getHost() string
+        +getPath() string
+        +IsFinishToRead() bool
     }
 
     class Response{
-        Status_code status_code
-        map~string, string~ header
+        int status_code
+        string Connection;
+        string Allow;
+        string Location;
 
         Response()
         Response(int)
@@ -31,21 +34,15 @@ classDiagram
         +Write(Socket) void
     }
 
-    class Status_code{
-        string status_code
 
-        Status_code(int)
-        +get_status_code() string
-        +get_status_message() string
-    }
+Request <-- RequestFacade : generate
 
-Request <-- Request_facade : generate
+Worker <-- RequestFacade : generateしたもの or すでにあるものを返す
+Worker --> RequestFacade : Requestクラスのインスタンスを依頼
+
 
 Request  <--  Worker :call
 Response  <--  Worker :call
-
-
-Response "1" <-- "1" Status_code
 ```
 
 ## 擬似コード
@@ -55,51 +52,64 @@ Response "1" <-- "1" Status_code
 requestを選択するためのFacade.
 Requestの途中でrcve終了→再度epoll→途中から継続して読み込みののちに処理を開始するための仕組み。
 */
-Request_Facade{
-    Request select_request(socket){};
+RequestFacade{
+    private:
+        map<socket, Request> list
+    Request select_request(socket)
+    {
+        if (list not in socket)
+            list[socket] = new Request;
+        return list[socket];
+    };
+}
+Request{
+    Parse(string){
+
+    }
 }
 
 Worker {
     Worker(){
-        Request_facade request_facade = new Request_facade()
+        RequestFacade RequestFacade = new RequestFacade()
     }
 
-    void Exec() {
-        for socket in socket_list
-        {
-            if (accept){
+    void Exec(socket) {
+        Request& request  = RequestFacade(socket_)
+        try {
+            string str = socket.read();
+            request.Parse(str);
 
-            }
-            else
+            if (request.IsFinishToRead())
             {
-                Request request  = request_facade(socket_)
-                try {
-                    request.Parse(socket_);
+                ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
-                    if (request.is_finish_to_read())
-                    {
-                        ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
+                //案１
+                Response response = exec_request_and_ResponseBuilder.Exec(request_message, sl);
 
-                        Response response = Someone.Exec(request_message, sl);
-                        Response.Write(socket_), ;
-                    }
-                }
-                catch(400 error的な)
-                {
-                    Response response = new response(400);
-                    Response.Write(socket_), ;
-                }
-                catch(500 error的な)
-                {
-                    Response response = new response(500);
-                    Response.Write(socket_), ;
-                }
-                ...
+                //案２
+                ExecConclustion conclusion = exec_requst.exec(request_message, sl);
+                Response response = ResponseBuilder.build(conclusion);
 
-
-
+                Response.Write(socket_), ;
+                RequestFacade.finish(socket_);
+                socket.should_close_socket = true;
             }
         }
+        catch(400 error的な)
+        {
+            Response response = new response(400);
+            Response.Write(socket_), ;
+            RequestFacade.finish(socket_);
+            socket.should_close_socket = true;
+        }
+        catch(500 error的な)
+        {
+            Response response = new response(500);
+            Response.Write(socket_), ;
+            RequestFacade.finish(socket_);
+            socket.should_close_socket = true;
+        }
+        ...
     }
 };
 ```
