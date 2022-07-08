@@ -1,0 +1,20 @@
+name: doc-format
+on:
+  push:
+    paths:
+      - docs/**
+      - README.md
+
+jobs:
+  mdformat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+      - name: Get Python version
+        run: python -V
+      - name: Install dependencies
+        run: pip install mdformat mdformat-gfm
+      - name: Check format
+        run: mdformat --check README.md docs/

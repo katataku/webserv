@@ -2,6 +2,7 @@
 
 - cpplintインストール
 - clang-tidyのインストール
+- [mdformat]のインストール
 
 # vscode拡張機能
 
@@ -24,3 +25,5 @@
 - up: make up CONTAINER=nginx
 - login: make login CONTAINER=nginx
 - down: make down CONTAINER=nginx
+
+[mdformat]: https://github.com/executablebooks/mdformat
