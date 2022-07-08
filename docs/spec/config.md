@@ -236,23 +236,17 @@ Context: http
 
 ### [location]
 
-Sets configuration depending on a request URI.
+リクエストのURIごとの設定を行う。
 
-複数マッチした場合は最長のものにする。
+複数マッチした場合は最長一致のものにする。
 
 Usage:
 
 ```
-Syntax:	location [ = | ~ | ~* | ^~ ] uri { ... }
-location @name { ... }
+Syntax:	location uri { ... }
 Default: —
 Context: server
 ```
-
-#### 確認
-
-- 相対パス表記できる？
-- A location can either be defined by a prefix string, or by a regular expression.
 
 [alias]: https://nginx.org/en/docs/http/ngx_http_core_module.html#alias
 [autoindex]: https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex
