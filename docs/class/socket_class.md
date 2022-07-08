@@ -7,8 +7,6 @@ classDiagram
     -bool is_listening
     +Send()* void
     +Recieve()* string
-    +IsListening()* bool
-    <!-- +CreateListener() -->
   }
 
   class IOMultiplexer {
