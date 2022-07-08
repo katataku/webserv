@@ -1,46 +1,92 @@
 ```mermaid
 classDiagram
-   class Request_message{
-    Request_line request_line
-    Request_headers request_headers
-    string request_body
-    +get_request_message() string
-    +parse_request_message(string) void
+
+   class Request_facade{
+        +select_request(socket) Request
     }
 
-   class Request_line{
-    string method
-    string URI
-    string protocol_version
+
+   class Request{
+        string method
+        string URI
+        map~string, string~ header
+        string request_body
+        bool is_finish_to_read
+        
+        Request()
+        Parse(socker) socket
+        +get_port() int
+        +get_host() string
+        +get_path() string
+        +is_finish_to_read() bool
     }
 
-   class Request_headers{
-    std::map~string, string~ header;
+    class Response{
+        Status_code status_code
+        map~string, string~ header
+
+        Response()
+        Response(int)
+        string response_body
+        +Write(Socket) void
     }
 
-    class Response_message{
-    Status_line status_line
-    Response_headers response_headers
-    string response_body
-    +get_response_message() string
-    +parse_response_message(string) void
+    class Status_code{
+        string status_code
+
+        Status_code(int)
+        +get_status_code() string
+        +get_status_message() string
     }
 
-   class Status_line{
-    string protocol_version
-    int status_code
-    string  reason-phrase
+Request <-- Request_facade : generate
+
+Request  <--  Worker :call
+Response  <--  Worker :call
+
+
+Response "1" <-- "1" Status_code
+```
+
+## 擬似コード
+
+```cpp
+Worker {
+    Worker(){
+        Request_facade request_facade = new Request_facade()
     }
 
-   class Response_headers{
-    std::map~string, string~ header;
+    void Exec() {
+        for socket in socket_list
+        {
+            Request request  = request_facade(socket)
+            try {
+                request.Parse(socket_);
+
+                if (request. is_finish_to_read())
+                {
+                    int port = request.get_port();
+                    string host = request.get_host();
+                    string path = request.get_path();
+                    ServerLocation sl = facade_.Choose(port, host, path);
+
+                    Response response = Someone.Exec(request_message, sl);
+                    Response.Write(socket_), ;
+                }
+            }
+            catch(400 error的な)
+            {
+                Response response = new response(400);
+                Response.Write(socket_), ;
+            }
+            catch(500 error的な)
+            {
+                Response response = new response(500);
+                Response.Write(socket_), ;
+            }
+            ...
+
+        }
     }
-
-Request_message "1" <-- "1" Request_line
-Request_message "1" <-- "1" Request_headers
-
-
-Response_message "1" <-- "1" Status_line
-Response_message "1" <-- "1" Response_headers
-
+};
 ```
