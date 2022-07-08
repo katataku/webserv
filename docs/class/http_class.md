@@ -51,6 +51,14 @@ Response "1" <-- "1" Status_code
 ## 擬似コード
 
 ```cpp
+/*
+requestを選択するためのFacade.
+Requestの途中でrcve終了→再度epoll→途中から継続して読み込みののちに処理を開始するための仕組み。
+*/
+Request_Facade{
+    Request select_request(socket){};
+}
+
 Worker {
     Worker(){
         Request_facade request_facade = new Request_facade()
@@ -59,33 +67,38 @@ Worker {
     void Exec() {
         for socket in socket_list
         {
-            Request request  = request_facade(socket)
-            try {
-                request.Parse(socket_);
+            if (accept){
 
-                if (request. is_finish_to_read())
+            }
+            else
+            {
+                Request request  = request_facade(socket_)
+                try {
+                    request.Parse(socket_);
+
+                    if (request. is_finish_to_read())
+                    {
+                        ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
+
+                        Response response = Someone.Exec(request_message, sl);
+                        Response.Write(socket_), ;
+                    }
+                }
+                catch(400 error的な)
                 {
-                    int port = request.get_port();
-                    string host = request.get_host();
-                    string path = request.get_path();
-                    ServerLocation sl = facade_.Choose(port, host, path);
-
-                    Response response = Someone.Exec(request_message, sl);
+                    Response response = new response(400);
                     Response.Write(socket_), ;
                 }
-            }
-            catch(400 error的な)
-            {
-                Response response = new response(400);
-                Response.Write(socket_), ;
-            }
-            catch(500 error的な)
-            {
-                Response response = new response(500);
-                Response.Write(socket_), ;
-            }
-            ...
+                catch(500 error的な)
+                {
+                    Response response = new response(500);
+                    Response.Write(socket_), ;
+                }
+                ...
 
+
+
+            }
         }
     }
 };
