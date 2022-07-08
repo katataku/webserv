@@ -76,7 +76,7 @@ Worker {
                 try {
                     request.Parse(socket_);
 
-                    if (request. is_finish_to_read())
+                    if (request.is_finish_to_read())
                     {
                         ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
