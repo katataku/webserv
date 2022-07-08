@@ -6,6 +6,7 @@ classDiagram
     }
 
    class Request{
+        string unparsedString
         string method
         string URI
         string host;
@@ -63,7 +64,40 @@ RequestFacade{
     };
 }
 Request{
-    Parse(string){
+    request(){
+        unparsedString = "";
+        finish_to_read_header = false;
+    }
+
+    //他チームのアドバイスを参考に追加
+    Parse(string str){
+        str = unparsedString + str;
+        if (not finish_to_read_header)
+        {
+            if ("\n\n" is in str)
+            {
+                str = parse_header(str);//body部分をstrとして返す。
+                finish_to_read_header = true;
+            }
+        }
+        if (finish_to_read_header)
+        {
+            if (str.size() == content-length)
+            {
+                parse_body(str)
+            } 
+            else if (transfer-encoding = 'chunked' && str is in 最後のチャンク)
+            {
+                str = unchunk(str)
+                parse_body(str)
+            }
+            else
+            {
+                unparsedString = str
+            }
+
+        }
+
 
     }
 }
