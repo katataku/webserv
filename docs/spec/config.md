@@ -210,14 +210,18 @@ Example:
 index index.html;
 ```
 
-### [rewrite]
+### [return]
 
-If the specified regular expression matches a request URI, URI is changed as specified in the replacement string. The rewrite directives are executed sequentially in order of their appearance in the configuration file. It is possible to terminate further processing of the directives using flags. If a replacement string starts with “http://”, “https://”, or “$scheme”, the processing stops and the redirect is returned to a client.
+一時的なリダイレクト(302)を設定する。
+
+URLは"http://"もしくは"https://"で始まる必要がある。
+
+In addition, a URL for temporary redirect with the code 302 can be specified as the sole parameter. Such a parameter should start with the “http://”, “https://”, or “$scheme” string. A URL can contain variables.
 
 Usage:
 
 ```
-Syntax:	rewrite regex replacement [flag];
+Syntax: return URL;
 Default: —
 Context: server, location
 ```
@@ -225,14 +229,8 @@ Context: server, location
 Example:
 
 ```
+return https://www.google.com;
 ```
-
-#### 確認
-
-挙動の確認。
-
-- 内部的なリダイレクト。virtual hostにリダイレクト。
-- 302を返すリダイレクト。
 
 ### [server]
 
@@ -274,6 +272,6 @@ Context: server
 [limit_except]: https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
 [listen]: https://nginx.org/en/docs/http/ngx_http_core_module.html#listen
 [location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
-[rewrite]: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite
+[return]: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return
 [server]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server
 [server_name]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server_name
