@@ -112,7 +112,7 @@ class Socket {
 
     if (listen(listenfd, 1024) < 0) {
       close(listenfd);
-      return Socket(-1);
+      throw std::runtime_error("Failed to listen");
     }
 
     #if DEBUG
