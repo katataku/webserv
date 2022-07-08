@@ -20,18 +20,15 @@ classDiagram
         +Parse(string)
     }
 
-    %% TODO: listenディレクトリは複数指定できるかを確認 %%
-    %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
         +vector~LocationContext~ contexts_
         +map~int, string~ error_pages
         +int client_max_body_size
         +bool autoindex
         +string index_page
-        +redirect
+        +string redirect_url
         +string server_name
-        +host
-        +port
+        +int port
     }
 
     class LocationContext {
@@ -39,7 +36,7 @@ classDiagram
         +int client_max_body_size
         +bool autoindex
         +string index_page
-        +redirect
+        +string redirect
         +vector~string~ allow_methods
         +string path
         +string alias
