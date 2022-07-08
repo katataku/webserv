@@ -70,14 +70,14 @@ HTTP/1.1 200 OK
 | -------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 200      | OK                         | GET/DELETEの処理が正常に完了した場合に使用する。                                                                                                                                                                     |
 | 201      | Created                    | POSTの処理が正常に完了した場合に使用する。                                                                                                                                                                           |
-| 301      | Moved Permanently          | configにリダイレクト設定がされていた場合に使用する。                                                                                                                                                                     |
+| 302      | Found                      | configにリダイレクト設定がされていた場合に使用する。[Location](#location)  ヘッダーを必含めること。                                                                                                                                  |
 | 400      | Bad Request                | リクエスト内容のパースに失敗した場合、あるいは不正な内容が含まれていた場合全般に使用する。                                                                                                                                                     |
 | 404      | Not Found                  | リクエスト内容は正常だが、リソースが見つからない場合に使用する。                                                                                                                                                                  |
 | 405      | Method Not Allowed         | [利用可能なメソッド一覧](#%E8%A8%AD%E5%AE%9A%E5%8F%AF%E8%83%BD%E3%81%AA%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%E4%B8%80%E8%A6%A7)に未記載のメソッドの場合、あるいはconfigで許可されていないメソッドの場合に使用する。レスポンスには[Allow](#allow)ヘッダーを含めること。 |
 | 413      | Payload Too Large          | 要求されたpayloadのサイズがconfigで設定したサイズを超える場合に使用する。                                                                                                                                                       |
 | 414      | URI Too Long               | URI文字長が1024文字以上の場合に使用する。 1024という値は決め。                                                                                                                                                             |
 | 500      | Internal Server Error      | CGIプログラムが異常終了した際に使用する。                                                                                                                                                                            |
-| 501      | Not Implemented      | [Transfer-Encoding](#Transfer-Encoding)において、未対応の値が含まれている場合に使用する。                                                                                                                                                                            |
+| 501      | Not Implemented            | [Transfer-Encoding](#Transfer-Encoding)において、未対応の値が含まれている場合に使用する。                                                                                                                                  |
 | 505      | HTTP Version Not Supported | このHTTPバージョンが1.1以外の場合に使用する。                                                                                                                                                                        |
 
 ## メソッド
@@ -111,6 +111,7 @@ HTTP/1.1 200 OK
 | [Content-Length](#content-length)       | ◯(任意) | ◯(必須) |
 | [Transfer-Encoding](#Transfer-Encoding) | ◯(任意) | ✖︎    |
 | [Allow](#allow)                         | ✖︎    | ◯(任意) |
+| [Location](#location)                   | ✖︎    | ◯(任意) |
 
 ### Host
 
@@ -187,6 +188,16 @@ Allow: GET, POST, DELETE
 ```
 
 [RFC7231](https://triple-underscore.github.io/RFC7231-ja.html#header.allow)
+
+### Location
+
+エンティティの場所が移動した場合など、ブラウザが要求したURLとは別のURLへジャンプさせたい場合に使用します。302リダイレクトをレスポンドする際には、必ず付与するものとする。
+
+Example:
+
+```http
+Location: http://www.yyy.zzz/aaa.html
+```
 
 ## 参考
 
