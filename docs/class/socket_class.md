@@ -75,22 +75,24 @@ class IOMultiplexer {
 
 // Socket、IOMultiplexerの使い方について記述するためSuperVisorの擬似コードを記載
 class SuperVisor {
-    ServerLocationFacade facade
+    private:
+        ServerLocationFacade facade
 
-    void Watch() {
-        IOMultiplexer iomul
-        string[] port_list = ServerLocationFacade.Getpostlist()
-        iomul.Init(port_list)
-        while (1) {
-            Socket[] sockets = iomul.Wait()
-            for socket in sockets {
-                if socket.IsListening
-                    iomul.Accept(socket)
-                else
-                    Worker.Exec(socket)
+    public:
+        void Watch() {
+            IOMultiplexer iomul
+            string[] port_list = ServerLocationFacade.Getpostlist()
+            iomul.Init(port_list)
+            while (1) {
+                Socket[] sockets = iomul.Wait()
+                for socket in sockets {
+                    if socket.IsListening
+                        iomul.Accept(socket)
+                    else
+                        Worker.Exec(socket)
+                }
             }
         }
-    }
 }
 
 ```
