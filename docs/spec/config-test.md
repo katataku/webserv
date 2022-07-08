@@ -52,4 +52,4 @@ server {
 }
 ```
 
-a duplicate listen 0.0.0.0:8080
+"listen" directive is allowed only one.
