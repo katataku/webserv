@@ -76,6 +76,7 @@ classDiagram
 ```
 
 ## 擬似コード
+
 ```cpp
 Webserv {
     // IDEA: 別途Lexer&Parserの責務を持ったクラスを定義しても良いかもしれない。
@@ -123,6 +124,7 @@ Woker {
 ```
 
 ## メモ
+
 - ServerLocationはServerとLocationに分けたほうがいい可能性もある。
 - WorkerがどのServerLocationを使うかを判別するためにhost, port, pathの3つが必要。
 - hostとpathはRequestを読まないと分からない。portについてはlisten_fdごとに判別するしかないかもしれない。
