@@ -1,23 +1,22 @@
 - Class 図
 
-// クラス図に型を追記する
-
 ```mermaid
 classDiagram
   class Socket {
-    -socketfd
-    +Send()
-    +Recieve()
-    +IsListening()
+    -int socketfd
+    -bool is_listening
+    +Send()* void
+    +Recieve()* string
+    +IsListening()* bool
     <!-- +CreateListener() -->
   }
 
   class IOMultiplexer {
-    -Socket[]
-    +Init()
-    +Wait()
-    -AddSocket()
-    -CreateListenerSocket()
+    -Socket[] sockets
+    -CreateListenerSocket(string port)* void
+    +Init()* void
+    +Wait()* Socket[]
+    +Accept(Socket)* void
   }
 
   IOMultiplexer "1" *-- "0..n" Socket
@@ -25,125 +24,73 @@ classDiagram
 
 - 疑似コード
 
-// メソッドの処理の流れをかく
-
 ```cpp
 
 class Socket {
-  int socketfd
+  private:
+      int socketfd
+      bool is_listening
 
-  // Responseを受け取りソケットに書き込む
-  void Send(Response)
+  public:
+      // Responseを受け取りソケットに書き込む
+      void Send(string)
 
-  // ソケットを読み込み、何かしらのデータとして返す
-  string Recieve()
-  Request Recieve()
+      // ソケットを読み込み、何かしらのデータとして返す
+      string Recieve()
 
-  // リスニング状態のソケットを返す
-  // Socket CreateListener(WebservConfig)
-  // Socket CreateListener(port)
-  // void CreateListener(port)
-
-  // ソケットがリスニング状態か確認(getsockoptで情報を取得できる)
-  bool IsListening()
+      // ソケットがリスニング状態か確認
+      bool IsListening()
 }
 
-// I/O多重化の債務をやってくれるやつ（インターフェースにしても良いけど、select使う気はほぼ0なのでやる意味はあんまりない）
+// I/O多重化の債務をやってくれるやつ
 class IOMultiplexer {
-    // publicにして直接扱うようにしたい（コピーしたくない）
-    Socket[] sockets // クラスでこれを持つかは悩み中
+    private:
+        // ソケット群
+        Socket[] sockets
 
-    GetterSocket(index)
+        // listen状態のソケット
+        CreateListenerSocket(string port)
 
-    //
-    CreateListenerSocket()
+    public:
+        // socket群を初期化するやつ
+        void Init(string[] port_list) {
+            for port in port_list {
+                CreateListenerSocket(port)
+            }
+            ... // epoll固有の実装なので省略
+        }
 
-    // listenソケットをセットするやつ
-    AddSocket(Socket)
+        // ソケット群がready状態になるまで待機
+        Socket[] Wait() {
+          ... // epoll固有の実装なので省略
+        }
 
-    // listenソケットがreadyになるとソケット群にクライアントとのソケットを追加したいのでそれを担うやつ
-    AddNewClient()
-
-    // socket群を初期化するやつ
-    Init() // 他のクラスと命名を統一化するためにもSetupでも良い
-
-    // ソケット群がready状態になるまで待機
-    Wait()
+        // listen状態のソケットを受け取り、acceptして新しいクライアントとのソケットをソケット群に追加
+        void Accept(Socket listener) {
+          Socket client = listener.Accept()
+          ... // epoll固有の実装なので省略
+          sockets.Add(client)
+        }
 }
 
-// ポートのリストをとる
-// ServerLocationFacade.Getpostlist
-
+// Socket、IOMultiplexerの使い方について記述するためSuperVisorの擬似コードを記載
 class SuperVisor {
-    // Socket Acceptor
-    // Socket Listenerでは？
     ServerLocationFacade facade
 
-    // Constructorでやる？
-    void Setup() {
-        // 待ち受けるポートの数だけlisten fdを用意する
-        // Acceptor.CreateListner()
-        Listener.CreateListner(facade.Chose().port())
-    }
-
     void Watch() {
-        IOMultiplexer iomul()
-
-        iomul.Init()
-          //iomul.CreateListenerSocket()
-          //iomul.Init(listener)
-
+        IOMultiplexer iomul
+        string[] port_list = ServerLocationFacade.Getpostlist()
+        iomul.Init(port_list)
         while (1) {
-            List socketlist = iomul.Wait()
-            for socket in socketlist
-            {
-              if (socket is accept必要)
-                iomul.Accept(socket)
-              else
-                Worker.Exec(socket)
+            Socket[] sockets = iomul.Wait()
+            for socket in sockets {
+                if socket.IsListening
+                    iomul.Accept(socket)
+                else
+                    Worker.Exec(socket)
             }
         }
     }
 }
 
 ```
-
-## メモ
-
-listen ソケットを作るにはポート番号を知る必要がある
-ポート番号は Config から取れる
-Config は facade 経由で取ろうとしている
-つまり、SuperVisor で facade を持つ必要がある
-
-なんか SuperVisor の責務多くない？
-
-I/O 多重化をクラス化するの難しい
-select も epoll も生の fd を何かしらの構造体にセットする
-クラス化した時のコピーとか代入するときに、fd を dup しているけどそれが使えるかはわからない気がする
-
-select も epoll も、処理手順に共通項があるはず
-
-1. fd 集合の初期化
-
-- select
-  - fd_set の初期化
-- epoll
-  - listen 状態のソケットを作成し、epoll インスタンスへの参照
-
-2. Wait（ready 状態になるまで待つ）
-
-- select
-  - select システムコールを呼ぶ
-- epoll
-  - epoll_wait システムコールを呼ぶ
-
-3. fd 集合をループで回す
-
-- それはこいつがやらなくて良い
-
-4. 新しくコネクションが確立されたら accept してクライアントとのソケットを作成し、そうじゃなかったらすでにあるソケットへ何かしらする
-
-- epoll
-  - epoll_event とかをよしなにして epoll_ctl でそのソケットを epoll インスタンスに参照させる必要がある
-- select
-  　　- おんなじ感じ
