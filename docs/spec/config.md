@@ -113,10 +113,6 @@ Example:
 client_max_body_size 1024;
 ```
 
-#### 確認
-
-ブラウザ側の挙動も確認しておく？
-
 ### [alias]
 
 ロケーションで指定されたパスに対するエイリアスを設定できる。
@@ -167,7 +163,7 @@ location /kapouet {
 Usage:
 
 ```
-Syntax:	limit_except method ... {}
+Syntax:	limit_except method ...;
 Default: —
 Context: location
 ```
@@ -175,7 +171,7 @@ Context: location
 Example:
 
 ```
-limit_except GET POST {}
+limit_except GET POST;
 ```
 
 ### [autoindex]

@@ -10,7 +10,7 @@ Example:
 
 ```
 server {
-    limit_except GET POST DELETE {}
+    limit_except GET POST DELETE;
 }
 ```
 
@@ -23,7 +23,7 @@ Example:
 
 ```
 server {
-    limit_except HOGE {}
+    limit_except HOGE;
 }
 ```
 
@@ -34,7 +34,7 @@ Example:
 
 ```
 server {
-    limit_except {}
+    limit_except;
 }
 ```
 
