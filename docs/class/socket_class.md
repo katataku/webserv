@@ -6,7 +6,7 @@ classDiagram
     -socketfd
     +Send()
     +Recieve()
-    +CreateListener()
+    <!-- +CreateListener() -->
     +IsListening()
   }
 
@@ -15,6 +15,7 @@ classDiagram
     +AddSocket()
     +Init()
     +Wait()
+    +CreateListenerSocket()
   }
 ```
 
@@ -33,9 +34,9 @@ class Socket {
   Request Recieve()
 
   // リスニング状態のソケットを返す
-  Socket CreateListener(WebservConfig)
-  Socket CreateListener(port)
-  void CreateListener(port)
+  // Socket CreateListener(WebservConfig)
+  // Socket CreateListener(port)
+  // void CreateListener(port)
 
   // ソケットがリスニング状態か確認(getsockoptで情報を取得できる)
   bool IsListening()
@@ -45,6 +46,9 @@ class Socket {
 class IOMultiplexer {
     // publicにして直接扱うようにしたい（コピーしたくない）
     Socket[] sockets // クラスでこれを持つかは悩み中
+
+    // 
+    CreateListenerSocket()
 
     // listenソケットをセットするやつ
     AddSocket(Socket)
@@ -73,7 +77,8 @@ class SuperVisor {
 
     void Watch() {
         IOMultiplexer iomul
-        iomul.AddSocket(Listener)
+        // iomul.AddSocket(Listener)
+        listensokc = iomul.CreateListenerSocket()
         iomul.Init()
 
         while (1) {
