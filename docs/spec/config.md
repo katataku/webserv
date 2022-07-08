@@ -22,7 +22,11 @@
 
 ### [server_name]
 
-virtual serverの名前を設定する。
+仮想サーバーの名前を設定する。
+
+同一のポートで複数の仮想サーバーがリクエストを待ち受けている場合、HTTPリクエストのHostヘッダを見てどの仮想サーバーの処理を振り分けるかを決定する。
+
+Hostヘッダがどのサーバー名ともマッチしない場合はデフォルトサーバーに処理が振り分けられる。
 
 Usage:
 
@@ -37,11 +41,6 @@ Example:
 ```
 server_name example.com;
 ```
-
-#### 確認
-
-これは何に使われる？リダイレクト？
-複数設定を許可するかどうかは用途を確認した後判断。
 
 ### [listen]
 
@@ -211,8 +210,6 @@ index index.html;
 
 URLは"http://"もしくは"https://"で始まる必要がある。
 
-In addition, a URL for temporary redirect with the code 302 can be specified as the sole parameter. Such a parameter should start with the “http://”, “https://”, or “$scheme” string. A URL can contain variables.
-
 Usage:
 
 ```
@@ -228,8 +225,6 @@ return https://www.google.com;
 ```
 
 ### [server]
-
-Sets configuration for a virtual server. There is no clear separation between IP-based (based on the IP address) and name-based (based on the “Host” request header field) virtual servers. Instead, the listen directives describe all addresses and ports that should accept connections for the server, and the server_name directive lists all server names. Example configurations are provided in the “How nginx processes a request” document.
 
 Usage:
 
