@@ -84,7 +84,7 @@ class SuperVisor {
             while (1) {
                 Socket[] sockets = iomul.Wait()
                 for socket in sockets {
-                    if socket.IsListening
+                    if socket.IsListening()
                         iomul.Accept(socket)
                     else
                         Worker.Exec(socket)
