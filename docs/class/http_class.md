@@ -66,30 +66,33 @@ RequestFacade{
 Request{
     request(){
         unparsedString = "";
-        finish_to_read_header = false;
+        IsFinishToReadHeader = false;
+        IsFinishToReadBody = false;
     }
 
     //他チームのアドバイスを参考に追加
     Parse(string str){
         str = unparsedString + str;
-        if (not finish_to_read_header)
+        if (not IsFinishToReadHeader)
         {
             if ("\n\n" is in str)
             {
                 str = parse_header(str);//body部分をstrとして返す。
-                finish_to_read_header = true;
+                IsFinishToReadHeader = true;
             }
         }
-        if (finish_to_read_header)
+        if (IsFinishToReadHeader)
         {
             if (str.size() == content-length)
             {
                 parse_body(str)
+                IsFinishToReadBody = true; 
             } 
             else if (transfer-encoding = 'chunked' && str is in 最後のチャンク)
             {
                 str = unchunk(str)
                 parse_body(str)
+                IsFinishToReadBody = true; 
             }
             else
             {
@@ -113,7 +116,7 @@ Worker {
             string str = socket.read();
             request.Parse(str);
 
-            if (request.IsFinishToRead())
+            if (request.IsFinishToReadBody())
             {
                 ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
