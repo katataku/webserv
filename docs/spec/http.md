@@ -111,8 +111,8 @@ RFCでは必須と決められているが、今回は対応しない。
 | --------------------------------------- | ----- | ----- |
 | [Host](#host)                           | ◯(必須) | ✖︎    |
 | [Connection](#connection)               | ✖︎    | ◯(必須) |
-| [Transfer-Encoding](#Transfer-Encoding) | ◯(任意) | ◯(任意) |
 | [Content-Length](#content-length)       | ◯(任意) | ◯(任意) |
+| [Transfer-Encoding](#Transfer-Encoding) | ◯(任意) | ◯(任意) |
 | [Allow](#allow)                         | ✖︎    | ◯(任意) |
 
 ### Host
@@ -125,6 +125,14 @@ Example:
 Host: aaa.sample.dom
 ```
 
+サーバは、次のいずれかに該当するどのリクエストメッセージに対しても、ステータスコード400 (Bad Request) でレスポンドする。
+
+- HTTP/1.1メッセージであって、Hostヘッダーを欠くもの。
+- 複数個のHostヘッダーを包含するもの。
+- 包含するHostヘッダーのヘッダー値が妥当でないもの。
+
+[RFC](https://triple-underscore.github.io/RFC7230-ja.html#section-5.4)
+
 ### Connection
 
 すべてのレスポンスに`Connection: close`を含めてレスポンドする。
@@ -136,6 +144,7 @@ Connection: close
 ```
 
 今回のサーバは持続的な接続をサポートしない方針とする。したがって、RFCの定めにより、close値を含めたレスポンスを返すものとする。
+
 [RFC](https://triple-underscore.github.io/RFC7230-ja.html#p.Connection)
 
 ### Content-Length
