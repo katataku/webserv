@@ -29,7 +29,7 @@ classDiagram
         +bool autoindex
         +string index_page
         +redirect
-        +vector~string~ server_names
+        +string server_name
         +host
         +port
     }

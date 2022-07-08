@@ -27,7 +27,7 @@ virtual serverの名前を設定する。
 Usage:
 
 ```
-Syntax:	server_name name ...;
+Syntax:	server_name name;
 Default: server_name "";
 Context: server
 ```
@@ -35,7 +35,7 @@ Context: server
 Example:
 
 ```
-server_name example.com www.example.com;
+server_name example.com;
 ```
 
 #### 確認
