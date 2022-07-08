@@ -53,3 +53,17 @@ server {
 ```
 
 "listen" directive is allowed only one.
+
+Example:
+
+```
+server {
+	listen 65536;
+}
+
+server {
+	listen 0;
+}
+```
+
+invalid port in "65536" of the "listen" directive

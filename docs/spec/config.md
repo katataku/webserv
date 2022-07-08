@@ -45,36 +45,31 @@ server_name example.com;
 
 ### [listen]
 
-サーバーがリクエストを受け付けるホスト名とポート番号を設定する。
+サーバーがリクエストを受け付けるポート番号を設定する。
+
+アドレスは固定でlocalhost(127.0.0.1)が用いられる。
 
 Usage:
 
 ```
-Syntax: listen host:port
-Default: listen 127.0.0.1:8000;
+Syntax: listen port
+Default: listen 80;
 Context: server
 ```
 
 Example:
 
 ```
-listen 127.0.0.1:8000;
-listen localhost:8000;
+listen 8080;
 ```
-
-#### 相談
-
-ホスト名やポートは省略可能にする？実装的には必須にするのが楽。
-
-#### 確認
-
-ホスト名がローカルホスト以外の場合の挙動
 
 ### [error_page]
 
 特定のエラーに対して表示するページを設定することができる。
 
 設定されていない場合はデフォルトのエラーページが表示される。
+
+同一のコンテキスト内で特定のエラーコードに対するエラーページが複数設定されている場合は最初に定義された値が使用される。
 
 Usage:
 
@@ -135,7 +130,7 @@ location /kapouet {
 
 url  is /tmp/www/pouic/toto/pouet.
 
-### 備考
+#### 備考
 
 rootには対応しない。rootとaliasの違い。
 
