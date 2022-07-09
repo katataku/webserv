@@ -1,6 +1,7 @@
 {
 	"cpplint.filters": [
-		"-legal/copyright"
+		"-legal/copyright",
+		"-build/include_subdir"
 	],
 	"cpplint.excludes": [
 		"tests/build"
