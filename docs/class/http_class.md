@@ -2,36 +2,32 @@
 classDiagram
    class RequestFacade{
         map~socket, Request~ list
-        +Select_request(socket) Request
+        +SelectRequest(Socket) Request
+        +Finish(Socket) void
     }
 
    class Request{
-        string unparsedString
+        string unparsed_string
         string method
         string URI
-        string host;
-        string content-length;
-        string Transfer-Encoding;
+        string host
+        string content-length
+        string transfer-encoding
         string request_body
         bool IsFinishToRead
         
-        Request()
-        Parse(Socker) void
-        +getPort() int
-        +getHost() string
-        +getPath() string
+        +Parse(Socket) void
         +IsFinishToRead() bool
     }
 
     class Response{
         int status_code
-        string Connection;
-        string Allow;
-        string Location;
-
-        Response()
-        Response(int)
+        string connection
+        string allow
+        string location
         string response_body
+
+        +Response(int)
         +Write(Socket) void
     }
 
@@ -65,43 +61,47 @@ RequestFacade{
 }
 Request{
     request(){
-        unparsedString = "";
+        unparsed_string = "";
         IsFinishToReadHeader = false;
-        IsFinishToReadBody = false;
+        IsReady = false;
     }
 
     //他チームのアドバイスを参考に追加
     Parse(string str){
-        str = unparsedString + str;
+        str = unparsed_string + str;
         if (not IsFinishToReadHeader)
         {
             if ("\n\n" is in str)
             {
-                str = parse_header(str);//body部分をstrとして返す。
+                header, body = split(str, "\n\n")
+                ParseHeader(header);
+                unparsed_string = body
                 IsFinishToReadHeader = true;
             }
         }
         if (IsFinishToReadHeader)
         {
-            if (str.size() == content-length)
+            if (str.size() >= content-length)
             {
-                parse_body(str)
-                IsFinishToReadBody = true; 
+                ParseBody(str)
+                IsReady = true; 
             } 
             else if (transfer-encoding = 'chunked' && str is in 最後のチャンク)
             {
                 str = unchunk(str)
-                parse_body(str)
-                IsFinishToReadBody = true; 
+                ParseBody(str)
+                IsReady = true; 
             }
-            else
+            else if (ヘッダーだけ)
             {
-                unparsedString = str
+                IsReady = true; 
+            } 
+            else
             }
-
+            {
+                unparsed_string += str
+            }
         }
-
-
     }
 }
 
@@ -116,7 +116,7 @@ Worker {
             string str = socket.read();
             request.Parse(str);
 
-            if (request.IsFinishToReadBody())
+            if (request.IsReady())
             {
                 ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
@@ -127,8 +127,8 @@ Worker {
                 ExecConclustion conclusion = exec_requst.exec(request_message, sl);
                 Response response = ResponseBuilder.build(conclusion);
 
-                Response.Write(socket_), ;
-                RequestFacade.finish(socket_);
+                Response.Write(socket_);
+                RequestFacade.Finish(socket_);
                 socket.should_close_socket = true;
             }
         }
@@ -136,14 +136,14 @@ Worker {
         {
             Response response = new response(400);
             Response.Write(socket_), ;
-            RequestFacade.finish(socket_);
+            RequestFacade.Finish(socket_);
             socket.should_close_socket = true;
         }
         catch(500 error的な)
         {
             Response response = new response(500);
             Response.Write(socket_), ;
-            RequestFacade.finish(socket_);
+            RequestFacade.Finish(socket_);
             socket.should_close_socket = true;
         }
         ...
