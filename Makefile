@@ -61,7 +61,7 @@ lint: ## Lint webserver source files
 
 .PHONY: tidy
 tidy: ## Tidy webserver source files
-	clang-tidy -fix $(HEADERS) $(SRCS) -- $(CXXFLAGS) $(INCS)
+	clang-tidy $(HEADERS) $(SRCS) -- $(CXXFLAGS) $(INCS)
 
 .PHONY: syntax
 syntax: ## Check syntax of source files
