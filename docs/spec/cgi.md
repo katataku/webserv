@@ -2,12 +2,13 @@
 
 ## CGIとは
 
-> Common Gateway Interface（CGI）[22]は、HTTP [1]、[4]サーバーとCGIスクリプトがクライアント要求に応答する責任を共有できます。
+> Common Gateway Interface（CGI）\[22\]は、HTTP \[1\]、\[4\]サーバーとCGIスクリプトがクライアント要求に応答する責任を共有できます。
 
 ## 前提
-- 　CGIプログラムは、次のメタ変数（環境変数と読み替えて良いはず）と同時に起動される。SCRIPT_NAME、PATH_INFO、QUERY_STRING
 
-> From the meta-variables thus generated, a URI, the 'Script-URI', can be constructed. This MUST have the property that if the client had accessed this URI instead, then the script would have been executed with the same values for the SCRIPT_NAME, PATH_INFO and QUERY_STRING meta-variables. 
+- CGIプログラムは、次のメタ変数（環境変数と読み替えて良いはず）と同時に起動される。SCRIPT_NAME、PATH_INFO、QUERY_STRING
+
+> From the meta-variables thus generated, a URI, the 'Script-URI', can be constructed. This MUST have the property that if the client had accessed this URI instead, then the script would have been executed with the same values for the SCRIPT_NAME, PATH_INFO and QUERY_STRING meta-variables.
 
 - Script-URIは次のように定義される。SCRIPT_NAMEはscript-path、PATH_INFOはextra-path。
 
@@ -80,6 +81,7 @@ value        = token | quoted-string
   - 設定されていなかったら適切な値を設定しようとする（MAY）
 
 ### GATEWAY_INTERFACE
+
 - これを設定する（MUST）
 - CGIのバージョンは1.1で良い（RFC3875が1.1）
 
@@ -126,6 +128,7 @@ PATH_TRANSLATED = *<any character>
 - PATH_INFOがNULLの場合、PATH_TRANSLATEDはNULLかセットされていない
 
 ### QUERY_STRING
+
 - URLエンコードされたクエリ文字列が入っている（%とかはいった文字列）
 - クエリ文字列をパースした結果はコンテキストによって変化する（エンコーディング方法）
   - HTMLのformだとapplication/x-www-form-urlencodedを使い、`+`、`&`、`=`は予約語に
@@ -140,6 +143,7 @@ uric         = reserved | unreserved | escaped
 ```
 
 ### REMOTE_ADDR
+
 - クライアントのネットワークアドレス
 - メタ変数に設定（MUST）
 - ipv6についてはRFC 4291
@@ -154,6 +158,7 @@ hexseq       = 1*4hex *( ":" 1*4hex )
 ```
 
 ### REQUEST_METHOD
+
 - MUST
 - 大文字小文字を区別
 
@@ -164,6 +169,7 @@ extension-method = "PUT" | "DELETE" | token
 ```
 
 ### SCRIPT_NAME
+
 - MUST
 - CGIスクリプトを識別できる名前（URLエンコーディングされていない）
 - 先頭の`/`はパスの一部でない
@@ -174,6 +180,7 @@ SCRIPT_NAME = "" | ( "/" path )
 ```
 
 ### SERVER_NAME
+
 - サーバーのホスト名
 - 大文字小文字を区別しないホスト名、もしくはネットワークアドレスがはいる
 - 複数ある場合は正しいホスト名をセットする
@@ -183,6 +190,7 @@ SERVER_NAME = server-name server-name = hostname | ipv4-address | ( "[" ipv6-add
 ```
 
 ### SERVER_PORT
+
 - MUST
 - サーバーのポート
 
@@ -191,6 +199,7 @@ SERVER_PORT = server-port server-port = 1*digit
 ```
 
 ### SERVER_PROTOCOL
+
 - MUST
 - CGIリクエストに使われるアプリケーションのプロトコル？
 - サーバー・クライアント間で使われているプロトコルバージョンと一致しないかも(MAYなのでHTTP/1.1に固定)
@@ -203,6 +212,7 @@ protocol          = token
 ```
 
 ### SERVER_SOFTWARE
+
 - サーバーソフトウェアの名前とバージョン
 
 ```
@@ -214,6 +224,7 @@ ctext           = <any TEXT excluding "(" and ")">
 ```
 
 ## リクエストのbody
+
 - POSTとかでファイルを扱うとき、特に定義されていない限り、標準入力かファイルディスクリプタから読む
 
 ```
@@ -230,31 +241,37 @@ extension-data = *OCTET
   - これが一番楽？
 
 ## リクエストメソッド
-　
+
 ### GET
+
 - 特になし
 
 ### POST
+
 - 処理前にCONTENT_LENGTHの値をチェック（MUST）
 
 ### HEAD
+
 - リクエストにbodyを含めてはいけない
 - もし含まれていたらサーバー側で無視する
 
 ## スクリプトコマンドライン？
-> Some systems support a method for supplying an array of strings to the CGI script. 
+
+> Some systems support a method for supplying an array of strings to the CGI script.
 
 - 実装しなくて良いんじゃない
 
 # CGIレスポンス
 
 ## 処理
+
 - スクリプトは常に空でないレスポンスを返す(MUST)
 - 返す方法はシステムによる。定義されていなかったら、標準出力に出力
 - リクエストの処理中とかレスポンスを返すときREQUEST_METHODのチェック(MUST)？
 - タイムアウト処理(MAYだけどした方が良いんじゃない)
 
 ## Response Types
+
 - レスポンスはヘッダーとボディがあり、空行で分かれている
 - ヘッダーは一つ以上のフィールドを持っている
 - ボディはNULLかも
@@ -270,6 +287,7 @@ CGI-Response = document-response | local-redir-response | client-redir-response 
 ```
 
 ### Document Response
+
 > The CGI script can return a document to the user in a document response, with an optional error code indicating the success status of the response.
 
 - canということは返さなくて良いの
@@ -280,7 +298,8 @@ document-response = Content-Type [ Status ] *other-field NL response-body
 ```
 
 ## Response Header Fields
-> The response header fields are either CGI or extension header fields to be interpreted by the server, or protocol-specific header fields to be included in the response returned to the client. 
+
+> The response header fields are either CGI or extension header fields to be interpreted by the server, or protocol-specific header fields to be included in the response returned to the client.
 
 - ただクライアントにそのまま返せるやつを返すわけではないんか
 
@@ -304,6 +323,7 @@ field-content   = *( token | separator | quoted-string )
   - field-value内の複数tokenの間
 
 ### Content-Type
+
 - Internet Media Type（拡張子的な）
 
 ```
@@ -315,6 +335,7 @@ Content-Type = "Content-Type:" media-type NL
 - なのでスクリプトはcharsetも指定するべき(SHOULD)
 
 ### Location
+
 - なんだこれ
 
 ```
@@ -332,6 +353,7 @@ extra           = ":" | "@" | "&" | "=" | "+" | "$" | ","
 ```
 
 ### Status
+
 - 3桁の数字とそれに基づいたフレーズ
 
 ```
@@ -352,13 +374,15 @@ reason-phrase  = *TEXT
     - 知らないREQUEST_METHODだ...
 
 ### Protocol-Specific Header Fields
+
 - サーバーはCGIからのヘッダーをHTTPヘッダーに変換する必要がある
   - ex
     - 改行とか
       - US-ASCII LFはHTTPだと、US-ASCII CR+LF
-- > The script MUST NOT return any header fields that relate to client-side communication issues and could affect the server's ability to send the response to the client. 
+- > The script MUST NOT return any header fields that relate to client-side communication issues and could affect the server's ability to send the response to the client.
 
 ### Response Message-Body
+
 - サーバーはスクリプトからのbodyを全て読まないといけない
 
 ```
@@ -368,6 +392,7 @@ response-body = *OCTET4
 ### System Specifications
 
 ## UNIX
+
 - Cならgetenv関数で環境変数からメタ変数の値をとる
 - コマンドラインはargcとargvから取れるけど...
 - メタ変数とヘッダーフィールド、CHARはUS-ASCII charsetが使われる
@@ -378,14 +403,17 @@ response-body = *OCTET4
 # 実装について
 
 ## サーバー側
+
 - `.`、`..`の挙動に注意
 - パスの長さとか
 
 ## Recommendations for Scripts
-- >If the script does not intend processing the PATH_INFO data, then it should reject the request with 404 Not Found if PATH_INFO is not NULL.
+
+- > If the script does not intend processing the PATH_INFO data, then it should reject the request with 404 Not Found if PATH_INFO is not NULL.
 - どういう状況だこれ
 
 # メモ
+
 - RFCで定められている中でもMUSTで対応すべきもの、RECOMMENDEDなものなどいくつかレベルがある。MUSTとREQUIREDなものだけで良いんじゃないかと思う
 - 全体的にCGIプログラムはスクリプト前提な気がする
 - Basic認証しているならMUST、みたいな項目は省略
