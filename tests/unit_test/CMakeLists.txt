@@ -5,8 +5,9 @@ find_package(GTest REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB SRCS "../../srcs/**/*.cpp")
+file(GLOB INCS "../../srcs/**")
 
-include_directories("../../srcs/**")
+include_directories(${INCS})
 
 add_library(webserv
         STATIC
