@@ -5,7 +5,7 @@ SRCS = $(wildcard srcs/*/*.cpp)
 OBJS = $(SRCS:%.cpp=%.o)
 DEPS = $(OBJS:%.o=%.d)
 HEADERS = $(wildcard srcs/*/*.hpp)
-INCS = -Isrcs/**/**.hpp
+INCS = $(addprefix -I,$(wildcard srcs/*)) 
 
 ifdef DEBUG
 	CXXFLAGS += -D DEBUG=true -g -fsanitize=address

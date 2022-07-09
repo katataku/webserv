@@ -1,64 +1,19 @@
-#include <cassert>
-#include <iostream>
-#include <string>
+#include "Webserv.hpp"
 
-#include "./Config.hpp"
-#include "./Request.hpp"
-#include "./Response.hpp"
-#include "./Socket.hpp"
+Webserv::Webserv() { logging = Logging(__FUNCTION__); }
 
-#define CYAN "\033[36m"
-#define RED "\033[31m"
-#define RESET "\033[0m"
+Webserv::Webserv(Webserv const &other) { *this = other; }
 
-void StartTransact(const Socket& client) {
-  std::string req_str = client.Receive();
-  #if DEBUG
-  std::cerr << "[debug] server receive HTTP request from client" << std::endl;
-  std::cerr << CYAN << "<<<<< Request From Client" << RESET << std::endl;
-  std::cerr << req_str << std::endl;
-  std::cerr << CYAN << ">>>>> Request From Client" << RESET << std::endl;
-  #endif
-
-  Request req = Request::Parse(req_str);
-  #if DEBUG
-  std::cerr << "[debug] Success to parse request" << std::endl;
-  std::cerr << req << std::endl;
-  #endif
-
-  Response res = req.ExecMethod();
-  #if DEBUG
-  std::cerr << "[debug] Success to exec some operation" << std::endl;
-  std::cerr << RED << "<<<<< Response From Server" << RESET << std::endl;
-  std::cerr << res << std::endl;
-  std::cerr << RED << ">>>>> Response From Server" << RESET << std::endl;
-  #endif
-
-  client.Send(res);
+Webserv &Webserv::operator=(Webserv const &other) {
+    if (this != &other) {
+        (void)other;
+    }
+    return *this;
 }
 
-int main(int ac, char **av) {
-  if (ac != 2) {
-    std::cerr << "Usage: " << av[0] << " <config file path>" << std::endl;
-    return 0;
-  }
+Webserv::~Webserv() {}
 
-  Config conf = Config::Parse(av[1]);
-
-  #if DEBUG
-  std::cerr << "[debug] Success to parse config" << std::endl;
-  #endif
-
-  // TODO(iyamada) Serverクラスを作るか
-  Socket serv = Socket::OpenListenSocket(conf);
-
-  while (true) {
-    Socket client = serv.Accept();
-
-    #if DEBUG
-    std::cerr << "[debug] server accept client connection" << std::endl;
-    #endif
-
-    StartTransact(client);
-  }
+void Webserv::Run(int argc, char **argv) {
+    (void)argc;
+    logging.Debug(argv[0]);
 }

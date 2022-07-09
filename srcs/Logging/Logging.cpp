@@ -13,8 +13,8 @@ void Logging::PrintLog(std::string str, std::string error_level) {
     localtime_r(&ts.tv_sec, &t);
     strftime(buf, 32, "%Y/%m/%d %H:%M:%S", &t);
 
-    std::cout << std::string(buf) << "[" << this->caller_name << "]"
-              << error_level << " " << str << std::endl;
+    std::cout << std::string(buf) << " [" << error_level << "] "
+              << this->caller_name << " " << str << std::endl;
 }
 
 void Logging::Fatal(std::string str) {

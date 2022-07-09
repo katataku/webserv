@@ -1,0 +1,21 @@
+#ifndef SRCS_WEBSERV_WEBSERV_HPP_
+#define SRCS_WEBSERV_WEBSERV_HPP_
+
+#include <string.h>
+
+#include "Logging.hpp"
+
+class Webserv {
+ public:
+    Webserv();
+    Webserv(Webserv const &other);
+    Webserv &operator=(Webserv const &other);
+    ~Webserv();
+
+    void Run(int, char **);
+
+ private:
+    Logging logging;
+};
+
+#endif  // SRCS_WEBSERV_WEBSERV_HPP_
