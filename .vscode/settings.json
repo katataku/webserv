@@ -39,5 +39,8 @@
 		"performance-for-range-copy",
 		"performance-inefficient-vector-operation",
 		"performance-type-promotion-in-math-fn",
+	],
+	"C_Cpp.default.includePath": [
+		"${workspaceFolder}/srcs/**",
 	]
 }
