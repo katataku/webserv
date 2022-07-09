@@ -9,7 +9,7 @@ class Socket {
     Socket &operator=(Socket const &other);
     ~Socket();
 
-    bool is_listening();
+    bool is_listening() const;
 
  private:
     bool is_listening_;

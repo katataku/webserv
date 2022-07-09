@@ -13,4 +13,4 @@ Socket &Socket::operator=(Socket const &other) {
 
 Socket::~Socket() {}
 
-bool Socket::is_listening() { return is_listening_; }
+bool Socket::is_listening() const { return this->is_listening_; }

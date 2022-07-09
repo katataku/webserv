@@ -1,6 +1,6 @@
 #include "IOMultiplexer.hpp"
 
-IOMultiplexer::IOMultiplexer() {}
+IOMultiplexer::IOMultiplexer() : logging_(Logging(__FUNCTION__)) {}
 
 IOMultiplexer::IOMultiplexer(IOMultiplexer const &other) { *this = other; }
 
@@ -16,4 +16,7 @@ IOMultiplexer::~IOMultiplexer() {}
 void IOMultiplexer::Init(std::vector<std::string> vec) { (void)vec; }
 
 std::vector<Socket> IOMultiplexer::Wait() { return std::vector<Socket>(); }
-void IOMultiplexer::Accept(Socket &socket) { (void)socket; }
+void IOMultiplexer::Accept(Socket &socket) {
+    (void)socket;
+    this->logging_.Debug("Accept");
+}

@@ -13,7 +13,7 @@ class Webserv {
     void Run(int, char **);
 
  private:
-    Logging logging;
+    Logging logging_;
 };
 
 #endif  // SRCS_WEBSERV_WEBSERV_HPP_

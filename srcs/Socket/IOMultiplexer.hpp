@@ -19,6 +19,7 @@ class IOMultiplexer {
     void Accept(Socket &);
 
  private:
+    Logging logging_;
 };
 
 #endif  // SRCS_SOCKET_IOMULTIPLEXER_HPP_

@@ -26,8 +26,8 @@ void SuperVisor::Watch() {
     IOMultiplexer mux;
     std::vector<std::string> ports = facade_.GetPorts();
     mux.Init(ports);
-    while (1) {
-        logging_.Debug("start loop");
+    while (true) {
+        this->logging_.Debug("start loop");
         std::vector<Socket> sockets = mux.Wait();
         std::vector<Socket>::iterator it = sockets.begin();
         for (; it != sockets.end(); it++) {

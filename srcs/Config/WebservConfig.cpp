@@ -14,5 +14,5 @@ WebservConfig &WebservConfig::operator=(WebservConfig const &other) {
 WebservConfig::~WebservConfig() {}
 WebservConfig *WebservConfig::Parse() { return new WebservConfig(); }
 std::vector<ServerLocation> *WebservConfig::CreateServerLocations() {
-    return new std::vector<ServerLocation>;
+    return new std::vector<ServerLocation>();
 }
