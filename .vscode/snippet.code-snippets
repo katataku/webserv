@@ -19,6 +19,7 @@
         "scope": "cpp",
         "prefix": "canonicalheadertemplate",
         "body": [
+            "#include \"Logging.hpp\"",
             "class ${TM_FILENAME_BASE} {",
             "\tpublic:",
             "\t\t${TM_FILENAME_BASE}();",
