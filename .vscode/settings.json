@@ -42,5 +42,10 @@
 	],
 	"C_Cpp.default.includePath": [
 		"${workspaceFolder}/srcs/**",
-	]
+	],
+	"files.associations": {
+		"vector": "cpp",
+		"iosfwd": "cpp",
+		"*.md": "cpp"
+	}
 }
