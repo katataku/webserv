@@ -1,6 +1,7 @@
 #ifndef SRCS_WEBSERV_SERVERLOCATIONFACADE_HPP_
 #define SRCS_WEBSERV_SERVERLOCATIONFACADE_HPP_
 
+#include <string>
 #include <vector>
 
 #include "Logging.hpp"
@@ -13,6 +14,8 @@ class ServerLocationFacade {
     explicit ServerLocationFacade(std::vector<ServerLocation> *);
     ServerLocationFacade &operator=(ServerLocationFacade const &other);
     ~ServerLocationFacade();
+
+    std::vector<std::string> GetPorts();
 
  private:
     std::vector<ServerLocation> *server_locations_;

@@ -18,3 +18,7 @@ ServerLocationFacade::~ServerLocationFacade() {}
 
 ServerLocationFacade::ServerLocationFacade(std::vector<ServerLocation> *vec)
     : server_locations_(vec) {}
+
+std::vector<std::string> ServerLocationFacade::GetPorts() {
+    return std::vector<std::string>();
+}
