@@ -1,3 +1,5 @@
+worker以降はなくて良い
+
 ```mermaid
 classDiagram
     Webserv *-- WebservConfig
@@ -5,41 +7,21 @@ classDiagram
     ServerContext "1" *-- "1..*" LocationContext
 
     Webserv *-- SuperVisor
-    Webserv *-- ServerLocation
-    SuperVisor --> Worker : use
-    Worker --> ServerLocationFacade : use
-    ServerLocationFacade --> ServerLocation: use
+
+    IOMultiplexer "1" *-- "0..n" Socket
+    SuperVisor --> IOMultiplexer: use
 
     class WebservConfig {
-        +vector~ServerContext~ contexts_
-        +map~int, string~ error_pages
-        +int client_max_body_size
-        +bool autoindex
-        +string index_page
         +CreateServerLocations()
         +Parse(string)
     }
 
+    %% TODO: listenディレクトリは複数指定できるかを確認 %%
+    %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
-        +vector~LocationContext~ contexts_
-        +map~int, string~ error_pages
-        +int client_max_body_size
-        +bool autoindex
-        +string index_page
-        +string redirect_url
-        +string server_name
-        +int port
     }
 
     class LocationContext {
-        +map~int, string~ error_pages
-        +int client_max_body_size
-        +bool autoindex
-        +string index_page
-        +string redirect
-        +vector~string~ allow_methods
-        +string path
-        +string alias
     }
 
     class Webserv {
@@ -48,80 +30,111 @@ classDiagram
 
     %% IO多重化とソケットクラスを生成してWorkerに処理を依頼するまでを担当する%%
     class SuperVisor {
-        -ServerLocationFacade facade_
         +Watch() void
     }
 
-    %% Socketを元に具体的な処理を担当する。 %%
-    %% Requestを受け付けてResponseの返却をする %%
-    class Worker {
-        -Socket socket;
-        +Exec() void
-    }
+  class Socket {
+    +Send()* void
+    +Recieve()* string
+  }
 
-    %% どのServerLocationを使用するかを決定する責務 %%
-    class ServerLocationFacade {
-        +Choose(port, host, path) ServerLocation
-    }
+  class IOMultiplexer {
+    +Init()* void
+    +Wait()* Socket[]
+    +Accept(Socket)* void
+  }
 
-    %% configを元に各locationごとの設定 %%
-    class ServerLocation {
-        +int port
-        +string host
-        +string path
-    }
 ```
 
 ## 擬似コード
 
 ```cpp
-Webserv {
+
+class Webserv {
     // IDEA: 別途Lexer&Parserの責務を持ったクラスを定義しても良いかもしれない。
     void Run() {
-        WebservConfig config = WebservConfig.Parse();
-        vector<ServerLocation> locations = config.CreateServerLocations();
-        ServerLocationFacade facade(locations);
-        SuperVisor sv(facade);
-        sv.Watch();
+        WebservConfig config = WebservConfig.Parse()
+        vector<ServerLocation> locations = config.CreateServerLocations()
+        ServerLocationFacade facade(locations)
+        SuperVisor sv(facade)
+        sv.Watch()
     }
-};
+}
 
-// ソケット周りのクラスが固まっていないので雰囲気で書いている。
-SuperVisor {
-    // Constructorでやる？
-    void Setup() {
-        // 待ち受けるポートの数だけlisten fdを用意する
-        Acceptor.CreateListner();
-    }
+class SuperVisor {
+    ServerLocationFacade facade
 
     void Watch() {
+        IOMultiplexer iomul
+        string[] port_list = ServerLocationFacade.Getpostlist()
+        iomul.Init(port_list)
         while (1) {
-            vector<Socket> sockets = Acceptor.Select();
-            for (socket in sockets) {
-                if (socket.isListner()) {
-                    // acceptしてfdを生成してselectの対象にする
-                    Acceptor.AddListner(socket);
-                } else {
-                    Worker w(socket);
-                    w.Exec();
-                }
+            Socket[] sockets = iomul.Wait()
+            for socket in sockets {
+                if socket.IsListening()
+                    iomul.Accept(socket)
+                else
+                    Worker.Exec(socket)
             }
         }
     }
-};
+}
 
-Woker {
+
+class Socket {
+  private:
+      int socketfd
+      bool is_listening
+
+  public:
+      // Responseを受け取りソケットに書き込む
+      void Send(string)
+
+      // ソケットを読み込み、何かしらのデータとして返す
+      string Recieve()
+
+      // ソケットがリスニング状態か確認
+      bool IsListening()
+}
+
+// I/O多重化の債務をやってくれるやつ
+class IOMultiplexer {
+    private:
+        // ソケット群
+        Socket[] sockets
+
+        // listen状態のソケット
+        CreateListenerSocket(string port)
+
+    public:
+        // socket群を初期化するやつ
+        void Init(string[] port_list) {
+            for port in port_list {
+                CreateListenerSocket(port)
+            }
+            ... // epoll固有の実装なので省略
+        }
+
+        // ソケット群がready状態になるまで待機
+        Socket[] Wait() {
+          ... // epoll固有の実装なので省略
+        }
+
+        // listen状態のソケットを受け取り、acceptして新しいクライアントとのソケットをソケット群に追加
+        void Accept(Socket listener) {
+          Socket client = listener.Accept()
+          ... // epoll固有の実装なので省略
+          sockets.Add(client)
+        }
+}
+
+class Woker {
     void Exec() {
-        Request request = Request.Parse(socket_);
-        ServerLocation sl = facade_.Choose(port, host, path);
-        Response response = Someone.Exec(request, sl);
-        Response.Write(socket_);
+        Request request = Request.Parse(socket_)
+        ServerLocation sl = facade_.Choose(port, host, path)
+        Response response = Someone.Exec(request, sl)
+        Response.Write(socket_)
     }
-};
+}
+
 ```
-
-## メモ
-
-- ServerLocationはServerとLocationに分けたほうがいい可能性もある。
-- WorkerがどのServerLocationを使うかを判別するためにhost, port, pathの3つが必要。
-- hostとpathはRequestを読まないと分からない。portについてはlisten_fdごとに判別するしかないかもしれない。
