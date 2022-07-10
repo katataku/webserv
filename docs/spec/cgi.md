@@ -6,11 +6,7 @@
 
 ## 前提
 
-- CGIプログラムは、次のメタ変数（環境変数と読み替えて良いはず）と同時に起動される。SCRIPT_NAME、PATH_INFO、QUERY_STRING
-
-> From the meta-variables thus generated, a URI, the 'Script-URI', can be constructed. This MUST have the property that if the client had accessed this URI instead, then the script would have been executed with the same values for the SCRIPT_NAME, PATH_INFO and QUERY_STRING meta-variables.
-
-- Script-URIは次のように定義される。SCRIPT_NAMEはscript-path、PATH_INFOはextra-path。
+- CGIプログラムは、次のメタ変数（環境変数）と同時に起動される。SCRIPT_NAME、PATH_INFO、QUERY_STRING
 
 ```
 script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra-path> "?" <query-string>
@@ -20,7 +16,7 @@ script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra
 
 ## CGIへのリクエスト
 
-- 以下はMUSTって書いてないけどそんな雰囲気を感じる
+### メタ変数（環境変数）
 
 ```
 meta-variable-name = "AUTH_TYPE" | "CONTENT_LENGTH" |
