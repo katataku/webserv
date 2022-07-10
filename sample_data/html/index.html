@@ -1,6 +1,35 @@
+<!DOCTYPE html>
 <html>
- <body>
-  <p> Hello world </p>
-  <p><img src="images/photo.jpg" alt="parakeet"></p>
- </body>
+  <head>
+    <meta charset="utf-8">
+    <title>Webserv</title>
+  </head>
+  <body>
+
+    <div class="header">
+      <h1>Welcome to Webserv test page!</h1>
+    </div>
+
+    <div class="uploader">
+      <h2>ファイルアップローダー</h2>
+      <p>かたおかさん作のCGIスクリプトを試したい人向け</p>
+      <a href="upload.html"> upload.htmlに移動 </a>
+    </div>
+
+    <div class="display_image">
+      <h2>画像表示テスト</h2>
+      <p>Webservが画像データを処理できているかのテスト</p>
+      <p><img src="/images/photo.jpg" alt="parakeet"></p>
+    </div>
+
+    <div class="cgi_request_dumper">
+      <h2>CGI Requestテスト</h2>
+      <p>CGI Requestとしてどのような値が渡されているかのテスト</p>
+      <p>クエリとしてCGIプログラムに渡したい文字列を入力してください</p>
+      <form action="/cgi-bin/cgi-req-dumper.py" method="GET">
+        <input type="text" name="query" size="32"><br>
+        <input type="submit" value="送信">
+      </form>
+    </div>
+  </body>
 </html>
