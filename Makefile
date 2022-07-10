@@ -5,7 +5,7 @@ SRCS = $(wildcard srcs/*/*.cpp)
 OBJS = $(SRCS:%.cpp=%.o)
 DEPS = $(OBJS:%.o=%.d)
 HEADERS = $(wildcard srcs/*/*.hpp)
-INCS = -Isrcs/**/**.hpp
+INCS = $(addprefix -I,$(wildcard srcs/*)) 
 
 ifdef DEBUG
 	CXXFLAGS += -D DEBUG=true -g -fsanitize=address
@@ -57,11 +57,11 @@ itest: ## Exec unit tests for webserver
 
 .PHONY: lint
 lint: ## Lint webserver source files
-	cpplint --filter=-legal/copyright $(HEADERS) $(SRCS)
+	cpplint --filter=-legal/copyright,-build/include_subdir $(HEADERS) $(SRCS)
 
 .PHONY: tidy
 tidy: ## Tidy webserver source files
-	clang-tidy $(HEADERS) $(SRCS) -fix
+	clang-tidy $(HEADERS) $(SRCS) -- $(CXXFLAGS) $(INCS)
 
 .PHONY: syntax
 syntax: ## Check syntax of source files
