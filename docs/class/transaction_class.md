@@ -27,6 +27,10 @@ classDiagram
         +Exec(Request, ServerLocation) Response
     }
 
+    class ResponseBuilder {
+        +Build()
+    }
+
 ```
 
 ```cpp
@@ -49,7 +53,7 @@ Transaction {
 GetFileExecutor {
   Response Exec(Request req, ServerLocation sl) {
     string data = read(path);
-    return ResponseBuilder(data);
+    return ResponseBuilder.Build(data);
   }
 };
 
@@ -58,14 +62,14 @@ CGIExecutor {
     // setenv
     // fork
     string data = read(pipe_fd);
-    return ResponseBuilder(data);
+    return ResponseBuilder.Build(data);
   }
 };
 
 ListingExecutor {
   Response Exec(Request req, ServerLocation sl) {
     files = getfiles();
-    return ResponseBuilder(files);
+    return ResponseBuilder.Build(files);
   }
 };
 ```
