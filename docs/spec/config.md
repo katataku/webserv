@@ -6,11 +6,11 @@
 
 ## 設定ファイルの構成
 
-設定ファイルは単一ディレクティブとブロックディレクティブから構成されます。
+設定ファイルは単一ディレクティブとブロックディレクティブから構成される。
 
-単一ディレクティブはパラメータ名と設定値が空白で分けられセミコロンで終わります。 ブロックディレクティブは波括弧の中に単一ディレクトリとブロックディレクティブを定義します。
+単一ディレクティブはパラメータ名と設定値が空白で分けられセミコロンで終わる。 ブロックディレクティブは波括弧の中に単一ディレクトリとブロックディレクティブを定義する。
 
-ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれます。 webservではhttp, server, locationの3つのコンテキストがあります。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはhttpコンテキストに属します。
+ブロックディレクティブが波括弧の中に他のディレクティブを持つことができる場合はコンテキストと呼ばれる。 webservではhttp, server, locationの3つのコンテキストがある。 locationの中にlocationを含めることはできません。コンテキストの外に置かれたディレクティブはhttpコンテキストに属する。
 
 複数サーバーが設定されている場合は一番始めに定義されたサーバーをデフォルトサーバーとする。
 
@@ -18,16 +18,27 @@
 
 設定値に正規表現を使用することはできず通常テキストで指定する必要がある。
 
+## nginxとの相違
+
+webservの設定ファイルはnginxのサブセットを目指しているが、以下の点が異なっている。
+
+- nginxではlilmit_exceptはブロックディレクトリだがシンプルディレクティブにしている
+- CGI周り
+
 ## 設定可能な項目一覧
 
 ### [server_name]
 
-virtual serverの名前を設定する。
+仮想サーバーの名前を設定する。
+
+同一のポートで複数の仮想サーバーがリクエストを待ち受けている場合、HTTPリクエストのHostヘッダを見てどの仮想サーバーの処理を振り分けるかを決定する。
+
+Hostヘッダがどのサーバー名ともマッチしない場合はデフォルトサーバーに処理が振り分けられる。
 
 Usage:
 
 ```
-Syntax:	server_name name ...;
+Syntax:	server_name name;
 Default: server_name "";
 Context: server
 ```
@@ -35,47 +46,36 @@ Context: server
 Example:
 
 ```
-server_name example.com www.example.com;
+server_name example.com;
 ```
-
-#### 確認
-
-これは何に使われる？リダイレクト？
-複数設定を許可するかどうかは用途を確認した後判断。
 
 ### [listen]
 
-サーバーがリクエストを受け付けるホスト名とポート番号を設定する。
+サーバーがリクエストを受け付けるポート番号を設定する。
+
+アドレスは固定でlocalhost(127.0.0.1)が用いられる。
 
 Usage:
 
 ```
-Syntax: listen host:port
-Default: listen 127.0.0.1:8000;
+Syntax: listen port
+Default: listen 80;
 Context: server
 ```
 
 Example:
 
 ```
-listen 127.0.0.1:8000;
-listen localhost:8000;
+listen 8080;
 ```
-
-#### 相談
-
-ホスト名やポートは省略可能にする？実装的には必須にするのが楽。
-
-#### 確認
-
-ホスト名がローカルホスト以外の場合の挙動
-1つのサーバーに複数渡せる？
 
 ### [error_page]
 
 特定のエラーに対して表示するページを設定することができる。
 
 設定されていない場合はデフォルトのエラーページが表示される。
+
+同一のコンテキスト内で特定のエラーコードに対するエラーページが複数設定されている場合は最初に定義された値が使用される。
 
 Usage:
 
@@ -114,11 +114,7 @@ Example:
 client_max_body_size 1024;
 ```
 
-#### 確認
-
-ブラウザ側の挙動も確認しておく？
-
-### \[alias\]
+### [alias]
 
 ロケーションで指定されたパスに対するエイリアスを設定できる。
 
@@ -140,7 +136,7 @@ location /kapouet {
 
 url  is /tmp/www/pouic/toto/pouet.
 
-### 備考
+#### 備考
 
 rootには対応しない。rootとaliasの違い。
 
@@ -161,10 +157,14 @@ location /kapouet {
 
 ### [limit_except]
 
+設定されたリクエストメソッド以外のリクエストを制限する。
+
+許可されていないメソッドでのリクエストに対しては403(Forbidden)を返す。
+
 Usage:
 
 ```
-Syntax:	limit_except method ... { deny all; }
+Syntax:	limit_except method ...;
 Default: —
 Context: location
 ```
@@ -172,14 +172,8 @@ Context: location
 Example:
 
 ```
-limit_except GET POST { deny all; }
+limit_except GET POST;
 ```
-
-#### 確認
-
-この設定で除外されたRequestMethodに対するエラーコード。
-認識があってるが実際に動かして試してみたい。
-`{ deny all; }`がないとnginx本家では構文エラーになる？ならなければ取り除く。
 
 ### [autoindex]
 
@@ -217,14 +211,16 @@ Example:
 index index.html;
 ```
 
-### [rewrite]
+### [return]
 
-If the specified regular expression matches a request URI, URI is changed as specified in the replacement string. The rewrite directives are executed sequentially in order of their appearance in the configuration file. It is possible to terminate further processing of the directives using flags. If a replacement string starts with “http://”, “https://”, or “$scheme”, the processing stops and the redirect is returned to a client.
+一時的なリダイレクト(302)を設定する。
+
+URLは"http://"もしくは"https://"で始まる必要がある。
 
 Usage:
 
 ```
-Syntax:	rewrite regex replacement [flag];
+Syntax: return URL;
 Default: —
 Context: server, location
 ```
@@ -232,18 +228,10 @@ Context: server, location
 Example:
 
 ```
+return https://www.google.com;
 ```
 
-#### 確認
-
-挙動の確認。
-
-- 内部的なリダイレクト。virtual hostにリダイレクト。
-- 302を返すリダイレクト。
-
 ### [server]
-
-Sets configuration for a virtual server. There is no clear separation between IP-based (based on the IP address) and name-based (based on the “Host” request header field) virtual servers. Instead, the listen directives describe all addresses and ports that should accept connections for the server, and the server_name directive lists all server names. Example configurations are provided in the “How nginx processes a request” document.
 
 Usage:
 
@@ -255,24 +243,19 @@ Context: http
 
 ### [location]
 
-Sets configuration depending on a request URI.
+リクエストのURIごとの設定を行う。
 
-複数マッチした場合は最長のものにする。
+複数マッチした場合は最長一致のものにする。
 
 Usage:
 
 ```
-Syntax:	location [ = | ~ | ~* | ^~ ] uri { ... }
-location @name { ... }
+Syntax:	location uri { ... }
 Default: —
 Context: server
 ```
 
-#### 確認
-
-- 相対パス表記できる？
-- A location can either be defined by a prefix string, or by a regular expression.
-
+[alias]: https://nginx.org/en/docs/http/ngx_http_core_module.html#alias
 [autoindex]: https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex
 [client_max_body_size]: https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
 [error_page]: https://nginx.org/en/docs/http/ngx_http_core_module.html#error_page
@@ -280,6 +263,6 @@ Context: server
 [limit_except]: https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
 [listen]: https://nginx.org/en/docs/http/ngx_http_core_module.html#listen
 [location]: https://nginx.org/en/docs/http/ngx_http_core_module.html#location
-[rewrite]: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite
+[return]: https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return
 [server]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server
 [server_name]: https://nginx.org/en/docs/http/ngx_http_core_module.html#server_name
