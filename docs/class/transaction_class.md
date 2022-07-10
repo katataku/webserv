@@ -10,59 +10,62 @@ classDiagram
     ListingExecutor --> ResponseBuilder : use
 
     class GetFileExecutor {
-        +Execute(Request, ServerLocation) Response
     }
 
     class CGIExecutor {
-        +Execute(Request, ServerLocation) Response
     }
 
     class ListingExecutor {
-        +Execute(Request, ServerLocation) Response
     }
 
     class IExecutor {
-        +Execute(Request, ServerLocation) Response
+        +Exec(Request, ServerLocation) Response
     }
 
 
     class Transaction {
-        +Execute(Request, ServerLocation) Response
+        +Exec(Request, ServerLocation) Response
     }
 
 ```
 
 ```cpp
- void Exec(socket) {
-        Request& request  = RequestFacade(socket_)
-        try {
-            string str = socket.read();
-            request.Parse(str);
 
-            if (request.IsReady())
-            {
-                ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
-
-                Result response = Transaction.Exec(request, sl);
-
-                Response.Write(socket_);
-                RequestFacade.Finish(socket_);
-                socket.should_close_socket = true;
-            }
+Transaction {
+    Response Exec(Request req, ServerLocation sl) {
+        if (sl.redirect()) {
+          return Result.Redirect(sl.redirect());
         }
-
-class Transaction {
-    Result Exec(request, sl) {
-        if (redirect) {
-            return Result.Redirect(request, sl);
-        }
-        if (hogehoge) {
-            return GetFileExecutor(request, sl);
-        } else if (
-            return CGIExecutor(request, sl);
-        ) else if {
-            return ListingExecutor(request, sl);
+        if (sl.autoindex) {
+          return ListingExecutor(req, sl);
+        } else if (req.GET) {
+          return GetFileExecutor(req, sl);
+        } else if (sl.cgi()) {
+          return CGIExecutor(req, sl);
         }
     }
-}
+};
+
+GetFileExecutor {
+  Response Exec(Request req, ServerLocation sl) {
+    string data = read(path);
+    return ResponseBuilder(data);
+  }
+};
+
+CGIExecutor {
+  Response Exec(Request req, ServerLocation sl) {
+    // setenv
+    // fork
+    string data = read(pipe_fd);
+    return ResponseBuilder(data);
+  }
+};
+
+ListingExecutor {
+  Response Exec(Request req, ServerLocation sl) {
+    files = getfiles();
+    return ResponseBuilder(files);
+  }
+};
 ```
