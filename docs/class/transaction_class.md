@@ -108,4 +108,26 @@ ListingExecutor {
     return ResponseBuilder.Build(files);
   }
 };
+
+ResponseBuilder {
+	Response Build(string body) {
+		return new Response();
+	}
+
+	Response BuildError(int status_code, ServerLocation sl) {
+		if (status_code in sl.error_pages) {
+			// 設定されているエラーページを返す
+			// TODO: 設定されているエラーページがない場合の挙動は要確認
+		} else {
+			// デフォルトのエラーページを返す
+		}
+		return new Response();
+	}
+
+	Response BuildRedirect(string redirect_uri) {
+		// locationにredirect_urlを設定
+		// status_codeは302
+		// TODO: これとerror_pageで302が設定されていた場合
+	}
+}
 ```

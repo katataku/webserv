@@ -68,9 +68,19 @@ classDiagram
 
     %% configを元に各locationごとの設定 %%
     class ServerLocation {
-        +int port
-        +string host
-        +string path
+        -int port
+        -string host
+        -string path
+        -map~int, string~ error_pages
+        -int client_max_body_size
+        -bool autoindex
+        -string index_page
+        -string redirect_uri
+        -vector~string~ allow_methods
+        -string path
+        -string alias
+        +IsRedirect() bool
+        +IsCGI() bool
         +ResolveAlias() string;
     }
 ```
