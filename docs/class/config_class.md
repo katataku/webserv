@@ -32,14 +32,16 @@ classDiagram
     }
 
     class LocationContext {
-        +map~int, string~ error_pages
-        +int client_max_body_size
-        +bool autoindex
-        +string index_page
-        +string redirect
-        +vector~string~ allow_methods
-        +string path
-        +string alias
+        -map~int, string~ error_pages
+        -int client_max_body_size
+        -bool autoindex
+        -string index_page
+        -string redirect_uri
+        -vector~string~ allow_methods
+        -string path
+        -string alias
+        +IsRedirect() bool
+        +IsCGI() bool
     }
 
     class Webserv {
@@ -69,6 +71,7 @@ classDiagram
         +int port
         +string host
         +string path
+        +ResolveAlias() string;
     }
 ```
 
