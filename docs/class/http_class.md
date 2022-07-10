@@ -6,7 +6,8 @@ classDiagram
         +Finish(Socket) void
     }
 
-   class Request{
+    %% TODO: CalcBodySize()の詳細を詰める && nginxのmax_body_sizeも確認 %%
+    class Request{
         string unparsed_string
         string method
         string URI
@@ -18,6 +19,7 @@ classDiagram
         
         +Parse(Socket) void
         +IsFinishToRead() bool
+        +CalcBodySize() int
     }
 
     class Response{
