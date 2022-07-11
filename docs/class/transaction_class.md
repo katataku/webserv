@@ -26,11 +26,10 @@ classDiagram
 
 	%% status_code, server_location &&
     class ResponseBuilder {
-        +Build()
-		+BuildError(int status_code, ServerLocation sl)
-		+BuildRedirect(string redirect_url);
+        +Build() Response*
+		+BuildError(int status_code, ServerLocation sl) Response*
+		+BuildRedirect(string redirect_url) Response*
     }
-
 ```
 
 ```cpp
