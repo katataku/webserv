@@ -2,6 +2,8 @@
 #define SRCS_WEBSERV_WORKER_HPP_
 
 #include "Logging.hpp"
+#include "RequestFacade.hpp"
+#include "ServerLocationFacade.hpp"
 #include "Socket.hpp"
 
 class Worker {
@@ -15,6 +17,8 @@ class Worker {
 
  private:
     Logging logging_;
+    RequestFacade *request_facade_;
+    ServerLocationFacade *server_location_facade_;
 };
 
 #endif  // SRCS_WEBSERV_WORKER_HPP_

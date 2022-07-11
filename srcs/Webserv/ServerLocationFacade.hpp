@@ -15,7 +15,9 @@ class ServerLocationFacade {
     ServerLocationFacade &operator=(ServerLocationFacade const &other);
     ~ServerLocationFacade();
 
-    std::vector<std::string> GetPorts();
+    ServerLocation *Choose(std::string port, std::string host,
+                           std::string path) const;
+    std::vector<std::string> GetPorts() const;
 
  private:
     std::vector<ServerLocation> *server_locations_;

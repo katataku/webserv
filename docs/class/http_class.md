@@ -17,7 +17,7 @@ classDiagram
         string request_body
         bool is_ready
         
-        +Parse(Socket) void
+        +Parse(string) void
         +IsReady() bool
         +CalcBodySize() int
     }
@@ -120,9 +120,9 @@ Worker {
 
             if (request.IsReady())
             {
-                ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
+                ServerLocation sl = server_location_facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
-                Result response = Transaction.Exec(request, sl);
+                Response response = Transaction.Exec(request, sl);
 
                 Response.Write(socket_);
                 RequestFacade.Finish(socket_);

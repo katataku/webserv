@@ -11,7 +11,7 @@ class Request {
     Request &operator=(Request const &other);
     ~Request();
 
-    void Parse(Socket socket);
+    void Parse(std::string str);
     bool IsReady();
     int CalcBodySize();
 

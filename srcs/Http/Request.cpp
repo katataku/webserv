@@ -13,7 +13,7 @@ Request &Request::operator=(Request const &other) {
 
 Request::~Request() {}
 
-void Request::Parse(Socket socket) { (void)socket; }
+void Request::Parse(std::string str) { (void)str; }
 
 int Request::CalcBodySize() { return 0; }
 

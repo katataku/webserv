@@ -13,4 +13,8 @@ Socket &Socket::operator=(Socket const &other) {
 
 Socket::~Socket() {}
 
+void Socket::Send() const {}
+
+std::string Socket::Recv() const { return "data"; }
+
 bool Socket::is_listening() const { return this->is_listening_; }

@@ -6,7 +6,7 @@ classDiagram
     -int socketfd
     -bool is_listening
     +Send()* void
-    +Recieve()* string
+    +Recv()* string
   }
 
   class IOMultiplexer {
@@ -34,7 +34,7 @@ class Socket {
       void Send(string)
 
       // ソケットを読み込み、何かしらのデータとして返す
-      string Recieve()
+      string Recv()
 
       // ソケットがリスニング状態か確認
       bool IsListening()

@@ -9,6 +9,9 @@ class Socket {
     Socket &operator=(Socket const &other);
     ~Socket();
 
+    void Send() const;
+    std::string Recv() const;
+
     bool is_listening() const;
 
  private:

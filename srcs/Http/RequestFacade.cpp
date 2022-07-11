@@ -1,5 +1,6 @@
 #include "RequestFacade.hpp"
 
+// TODO(ahayashi): singletonにする
 RequestFacade::RequestFacade() : logging_(Logging(__FUNCTION__)) {}
 
 RequestFacade::RequestFacade(RequestFacade const &other) { *this = other; }
