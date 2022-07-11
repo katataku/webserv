@@ -1,27 +1,18 @@
 ```mermaid
 classDiagram
-    GetFileExecutor <|-- IExecutor
     CGIExecutor <|-- IExecutor
-    ListingExecutor <|-- IExecutor
     FileReadExecutor <|-- IExecutor
 
     Transaction --> IExecutor : use
-    GetFileExecutor --> ResponseBuilder : use
     CGIExecutor --> ResponseBuilder : use
-    ListingExecutor --> ResponseBuilder : use
     FileReadExecutor --> ResponseBuilder : use
 
-
-    GetFileExecutor --> FileReadExecutor : use
-    ListingExecutor --> FileReadExecutor : use
-
-    class GetFileExecutor {
+    class FileReadExecutor {
+		-GetFileExec() Response
+		-ListDirExec() Response
     }
 
     class CGIExecutor {
-    }
-
-    class ListingExecutor {
     }
 
     class IExecutor {
@@ -80,7 +71,6 @@ class Transaction {
 
 class FileReadExecutor{
  Response Exec(Request req, ServerLocation sl){
-  // IDEA: 後続の処理はTransactionからGetFileExecutor, ListingExecutorに振り分けているがGetExecutorに統一してもいいかもしれない。
    if (req.url is not Exist) {
     throw IExecutor::NotFound();
    }
@@ -101,14 +91,18 @@ class FileReadExecutor{
     // TODO: autoindex offの場合を確認
     throw IExecutor::NotFound();
    }
-}
 
-GetFileExecutor {
-  Response Exec(Request req, ServerLocation sl) {
-    string data = read(path);
-    return ResponseBuilder.Build(data);
-  }
-};
+	private:
+		Response GetFileExec(Request req, ServerLocation sl) {
+			string data = read(path);
+			return ResponseBuilder.Build(data);
+		};
+
+		Response ListingExec(Request req, ServerLocation sl) {
+			files = getfiles();
+			return ResponseBuilder.Build(files);
+		};
+}
 
 CGIExecutor {
   Response Exec(Request req, ServerLocation sl) {
@@ -116,13 +110,6 @@ CGIExecutor {
     // fork
     string data = read(pipe_fd);
     return ResponseBuilder.Build(data);
-  }
-};
-
-ListingExecutor {
-  Response Exec(Request req, ServerLocation sl) {
-    files = getfiles();
-    return ResponseBuilder.Build(files);
   }
 };
 
