@@ -25,6 +25,7 @@ void Worker::Exec(Socket &socket) {
         if (request->IsReady()) {
             ServerLocation *sl =
                 this->server_location_facade_->Choose("port", "host", "path");
+            (void)sl;
             this->request_facade_->Finish(socket);
         }
     } catch (std::exception &e) {

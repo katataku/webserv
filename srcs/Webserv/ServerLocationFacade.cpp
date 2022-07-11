@@ -21,6 +21,9 @@ ServerLocationFacade::~ServerLocationFacade() {}
 
 ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
                                              std::string path) const {
+    (void)port;
+    (void)host;
+    (void)path;
     return NULL;
 }
 
