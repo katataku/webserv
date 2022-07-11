@@ -16,7 +16,5 @@ jobs:
         run: python -V
       - name: Install dependencies
         run: pip install mdformat mdformat-gfm
-      # - name: Get mdformat version
-      #   run: mdformat --version
       - name: Check format
         run: mdformat --check README.md docs/
