@@ -6,7 +6,8 @@ classDiagram
         +Finish(Socket) void
     }
 
-   class Request{
+    %% TODO: CalcBodySize()の詳細を詰める && nginxのmax_body_sizeも確認 %%
+    class Request{
         string unparsed_string
         string method
         string URI
@@ -18,6 +19,7 @@ classDiagram
         
         +Parse(Socket) void
         +IsFinishToRead() bool
+        +CalcBodySize() int
     }
 
     class Response{
@@ -120,12 +122,7 @@ Worker {
             {
                 ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
-                //案１
-                Response response = exec_request_and_ResponseBuilder.Exec(request_message, sl);
-
-                //案２
-                ExecConclustion conclusion = exec_requst.exec(request_message, sl);
-                Response response = ResponseBuilder.build(conclusion);
+                Result response = Transaction.Exec(request, sl);
 
                 Response.Write(socket_);
                 RequestFacade.Finish(socket_);
