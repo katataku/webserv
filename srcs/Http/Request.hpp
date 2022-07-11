@@ -2,6 +2,7 @@
 #define SRCS_HTTP_REQUEST_HPP_
 
 #include "Logging.hpp"
+#include "Socket.hpp"
 
 class Request {
  public:
@@ -9,6 +10,10 @@ class Request {
     Request(Request const &other);
     Request &operator=(Request const &other);
     ~Request();
+
+    void Parse(Socket socket);
+    bool IsReady();
+    int CalcBodySize();
 
  private:
     Logging logging_;

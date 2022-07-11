@@ -12,3 +12,9 @@ Request &Request::operator=(Request const &other) {
 }
 
 Request::~Request() {}
+
+void Request::Parse(Socket socket) { (void)socket; }
+
+int Request::CalcBodySize() { return 0; }
+
+bool Request::IsReady() { return true; }

@@ -12,3 +12,5 @@ Response &Response::operator=(Response const &other) {
 }
 
 Response::~Response() {}
+
+void Response::Write(Socket socket) { (void)socket; }

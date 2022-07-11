@@ -15,10 +15,10 @@ classDiagram
         string content-length
         string transfer-encoding
         string request_body
-        bool IsFinishToRead
+        bool is_ready
         
         +Parse(Socket) void
-        +IsFinishToRead() bool
+        +IsReady() bool
         +CalcBodySize() int
     }
 
