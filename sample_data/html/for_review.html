@@ -19,7 +19,7 @@
     <div class="display_image">
       <h2>画像表示テスト</h2>
       <p>Webservが画像データを処理できているかのテスト</p>
-      <p><img src="/images/photo.jpg" alt="parakeet"></p>
+      <p><img src="/images/photo.jpg"></p>
     </div>
 
     <div class="cgi_request_dumper">
@@ -31,5 +31,16 @@
         <input type="submit" value="送信">
       </form>
     </div>
+
+    <div class="ubuntu_cgi_tester">
+      <h2>CGI tester</h2>
+      <p>subjectにあるCGIのテスターを動かすテスト</p>
+      <p>クエリとしてCGIプログラムに渡したい文字列を入力してください</p>
+      <form action="../cgi-bin/ubuntu_cgi_tester" method="GET">
+        <input type="text" name="query" size="32"><br>
+        <input type="submit" value="送信">
+      </form>
+    </div>
+
   </body>
 </html>
