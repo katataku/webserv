@@ -13,10 +13,11 @@ RequestFacade &RequestFacade::operator=(RequestFacade const &other) {
 
 RequestFacade::~RequestFacade() {}
 
-Request &RequestFacade::SelectRequest(Socket socket) {
+Request *RequestFacade::SelectRequest(Socket socket) {
     // Requestを返す
     (void)socket;
     (void)this->list_;
+    return NULL;
 }
 
 void RequestFacade::Finish(Socket socket) {

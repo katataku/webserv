@@ -2,7 +2,7 @@
 classDiagram
    class RequestFacade{
         map~socket, Request~ list
-        +SelectRequest(Socket) Request
+        +SelectRequest(Socket) Request*
         +Finish(Socket) void
     }
 

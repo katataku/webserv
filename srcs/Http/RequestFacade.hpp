@@ -14,7 +14,7 @@ class RequestFacade {
     RequestFacade &operator=(RequestFacade const &other);
     ~RequestFacade();
 
-    Request &SelectRequest(Socket socket);
+    Request *SelectRequest(Socket socket);
     void Finish(Socket socket);
 
  private:
