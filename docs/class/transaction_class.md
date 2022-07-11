@@ -3,11 +3,17 @@ classDiagram
     GetFileExecutor <|-- IExecutor
     CGIExecutor <|-- IExecutor
     ListingExecutor <|-- IExecutor
+    FileReadExecutor <|-- IExecutor
 
     Transaction --> IExecutor : use
     GetFileExecutor --> ResponseBuilder : use
     CGIExecutor --> ResponseBuilder : use
     ListingExecutor --> ResponseBuilder : use
+    FileReadExecutor --> ResponseBuilder : use
+
+
+    GetFileExecutor --> FileReadExecutor : use
+    ListingExecutor --> FileReadExecutor : use
 
     class GetFileExecutor {
     }
@@ -37,54 +43,65 @@ classDiagram
 ```
 
 ```cpp
-Transaction {
+class Transaction {
     Response Exec(Request req, ServerLocation sl) {
-		try {
-			if (req.method not in sl.allowed_method) {
-				throw IExecutor::MethodNotAllowed();
-			}
-			if (req.CalcBodySize() > sl.client_max_body_size) {
-				throw IExecutor::PayloadTooLarge();
-			}
-			if (sl.IsRedirect()) {
-				return ResponseBuilder.BuildRedirect(sl.redirect_uri());
-			}
-			if (sl.IsCGI()) {
-				return CGIExecutor(req, sl);
-			}
-			string alias_resolved_uri = ServerLocation.ResolveAlias(req);
-			// TODO: CGIプログラム以外にPOST, DELETEが来た場合はどうなる？
-			if (req.method is POST or DELETE) {
-				throw IExecutor::SomeException();
-			}
-			// IDEA: 後続の処理はTransactionからGetFileExecutor, ListingExecutorに振り分けているがGetExecutorに統一してもいいかもしれない。
-			if (req.url is not Exist) {
-				throw IExecutor::NotFound();
-			}
-			if (req.uri is regular file) {
-				return GetFileExecutor(req, sl);
-			}
-			// TODO: autoindex, index周りの挙動を確認
-			if (sl.IsIndex() {
-				if ((req.url + sl.index() is not Exist)) {
-					throw IExecutor::NotFound();
-				} else {
-					return GetFileExecutor(req, req.url + sl.index());
-				}
-			}
-			if (sl.autoindex()) {
-				return ListingExecutor(req, sl);
-			} else {
-				// TODO: autoindex offの場合を確認
-				throw IExecutor::NotFound();
-			}
-		} catch (IExecutor::ExecutorException &e) {
-			return ResponseBuilder.BuildError(e->status_code, sl);
-		} catch (std::exception &e) {
-			return ResponseBuilder.BuildError(500, sl);
-		}
+        try {
+            if (req.method not in sl.allowed_method) {
+                throw IExecutor::MethodNotAllowed();
+            }
+            if (req.CalcBodySize() > sl.client_max_body_size) {
+                throw IExecutor::PayloadTooLarge();
+            }
+            if (sl.IsRedirect()) {
+                return ResponseBuilder.BuildRedirect(sl.redirect_uri());
+            }
+            if (sl.IsCGI()) {
+                return CGIExecutor(req, sl);
+            }
+            string alias_resolved_uri = ServerLocation.ResolveAlias(req);
+            if (sl.IsCGI()) {
+                return FileExecExecutor(req, sl);
+            }
+            if (req.method == "GET") {
+                return FileReadExecutor(req, sl);
+            }
+            // TODO: CGIプログラム以外にPOST, DELETEが来た場合はどうなる？
+            if (req.method is in[POST, DELETE]) {
+                throw IExecutor::SomeException();
+                //もしくは    return FileWriteExecutor(req, sl);
+            }
+        } catch (IExecutor::ExecutorException &e) {
+            return ResponseBuilder.BuildError(e->status_code, sl);
+        } catch (std::exception &e) {
+            return ResponseBuilder.BuildError(500, sl);
+        }
+    } 
+}
+
+class FileReadExecutor{
+ Response Exec(Request req, ServerLocation sl){
+  // IDEA: 後続の処理はTransactionからGetFileExecutor, ListingExecutorに振り分けているがGetExecutorに統一してもいいかもしれない。
+   if (req.url is not Exist) {
+    throw IExecutor::NotFound();
+   }
+   if (req.uri is regular file) {
+    return GetFileExecutor(req, sl);
+   }
+   // TODO: autoindex, index周りの挙動を確認
+   if (sl.IsIndex() {
+    if ((req.url + sl.index() is not Exist)) {
+     throw IExecutor::NotFound();
+    } else {
+     return GetFileExecutor(req, req.url + sl.index());
     }
-};
+   }
+   if (sl.autoindex()) {
+    return ListingExecutor(req, sl);
+   } else {
+    // TODO: autoindex offの場合を確認
+    throw IExecutor::NotFound();
+   }
+}
 
 GetFileExecutor {
   Response Exec(Request req, ServerLocation sl) {
