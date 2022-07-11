@@ -1,5 +1,8 @@
 #include "Worker.hpp"
 
+#include "Response.hpp"
+#include "Transaction.hpp"
+
 Worker::Worker()
     : logging_(Logging(__FUNCTION__)),
       request_facade_(new RequestFacade()),
@@ -25,7 +28,9 @@ void Worker::Exec(Socket &socket) {
         if (request->IsReady()) {
             ServerLocation *sl =
                 this->server_location_facade_->Choose("port", "host", "path");
-            (void)sl;
+            Transaction transaction;
+            Response *response = transaction.Exec(request, sl);
+            response->Write(socket);
             this->request_facade_->Finish(socket);
         }
     } catch (std::exception &e) {

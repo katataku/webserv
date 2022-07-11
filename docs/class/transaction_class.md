@@ -21,7 +21,7 @@ classDiagram
 
 
     class Transaction {
-        +Exec(Request, ServerLocation) Response
+        +Exec(Request *, ServerLocation *) Response*
     }
 
 	%% status_code, server_location &&
