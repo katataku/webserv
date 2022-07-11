@@ -1,5 +1,7 @@
 #include "Worker.hpp"
 
+#include <string>
+
 #include "Response.hpp"
 #include "Transaction.hpp"
 

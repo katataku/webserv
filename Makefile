@@ -57,7 +57,7 @@ itest: ## Exec unit tests for webserver
 
 .PHONY: lint
 lint: ## Lint webserver source files
-	cpplint --filter=-legal/copyright,-build/include_subdir $(HEADERS) $(SRCS)
+	cpplint --filter=-legal/copyright,-build/include_subdir,-runtime/references $(HEADERS) $(SRCS)
 
 .PHONY: tidy
 tidy: ## Tidy webserver source files

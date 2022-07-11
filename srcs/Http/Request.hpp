@@ -1,6 +1,8 @@
 #ifndef SRCS_HTTP_REQUEST_HPP_
 #define SRCS_HTTP_REQUEST_HPP_
 
+#include <string>
+
 #include "Logging.hpp"
 #include "Socket.hpp"
 
