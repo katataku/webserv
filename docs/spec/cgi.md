@@ -1,6 +1,6 @@
 # CGIの仕様
 
-## CGIとは
+## CGIとは？
 
 > Common Gateway Interface（CGI）\[22\]は、HTTP \[1\]、\[4\]サーバーとCGIスクリプトがクライアント要求に応答する責任を共有できます。
 
