@@ -8,7 +8,8 @@
 class IExecutor {
  public:
     virtual ~IExecutor() {}
-    virtual Response *Exec(Request &request, ServerLocation &sl) = 0;
+    virtual Response *Exec(Request const &request,
+                           ServerLocation const &sl) = 0;
 
  private:
 };

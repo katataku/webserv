@@ -15,7 +15,8 @@ FileReadExecutor &FileReadExecutor::operator=(FileReadExecutor const &other) {
 
 FileReadExecutor::~FileReadExecutor() {}
 
-Response *FileReadExecutor::Exec(Request &request, ServerLocation &sl) {
+Response *FileReadExecutor::Exec(Request const &request,
+                                 ServerLocation const &sl) {
     (void)request;
     (void)sl;
     return NULL;
