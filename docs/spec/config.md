@@ -257,6 +257,8 @@ Context: server
 
 ### cgi_extension
 
+cgi_extensionのディレクティブがある場合に、拡張子が値とマッチするファイルをCGIプログラムとしてを起動する。
+
 Usage:
 
 ```
