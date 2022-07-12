@@ -15,18 +15,18 @@ ResponseBuilder &ResponseBuilder::operator=(ResponseBuilder const &other) {
 
 ResponseBuilder::~ResponseBuilder() {}
 
-Response *ResponseBuilder::Build(std::string body) {
+HTTPResponse *ResponseBuilder::Build(std::string body) {
     (void)body;
-    return new Response();
+    return new HTTPResponse();
 }
 
-Response *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
+HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     (void)status_code;
     (void)sl;
-    return new Response();
+    return new HTTPResponse();
 }
 
-Response *ResponseBuilder::BuildRedirect(std::string redirect_url) {
+HTTPResponse *ResponseBuilder::BuildRedirect(std::string redirect_url) {
     (void)redirect_url;
-    return new Response();
+    return new HTTPResponse();
 }

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Response.hpp"
+#include "HTTPResponse.hpp"
 #include "Transaction.hpp"
 
 Worker::Worker()
@@ -23,7 +23,7 @@ Worker::~Worker() {}
 
 void Worker::Exec(Socket &socket) {
     logging_.Debug("start exec");
-    Request *request = request_facade_->SelectRequest(socket);
+    HTTPRequest *request = request_facade_->SelectRequest(socket);
     try {
         std::string str = socket.Recv();
         request->Parse(str);
@@ -31,7 +31,7 @@ void Worker::Exec(Socket &socket) {
             ServerLocation *sl =
                 this->server_location_facade_->Choose("port", "host", "path");
             Transaction transaction;
-            Response *response = transaction.Exec(request, sl);
+            HTTPResponse *response = transaction.Exec(request, sl);
             response->Write(socket);
             this->request_facade_->Finish(socket);
         }

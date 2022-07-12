@@ -8,33 +8,33 @@ classDiagram
     FileReadExecutor --> ResponseBuilder : use
 
     class FileReadExecutor {
-        -GetFileExec() Response
-        -ListDirExec() Response
+        -GetFileExec() HTTPResponse
+        -ListDirExec() HTTPResponse
     }
 
     class CGIExecutor {
     }
 
     class IExecutor {
-        +Exec(Request, ServerLocation) Response
+        +Exec(HTTPRequest, ServerLocation) HTTPResponse
     }
 
 
     class Transaction {
-        +Exec(Request *, ServerLocation *) Response*
+        +Exec(HTTPRequest *, ServerLocation *) HTTPResponse*
     }
 
     %% status_code, server_location &&
     class ResponseBuilder {
-        +Build() Response*
-        +BuildError(int status_code, ServerLocation sl) Response*
-        +BuildRedirect(string redirect_url) Response*
+        +Build() HTTPResponse*
+        +BuildError(int status_code, ServerLocation sl) HTTPResponse*
+        +BuildRedirect(string redirect_url) HTTPResponse*
     }
 ```
 
 ```cpp
 class Transaction {
-    Response Exec(Request req, ServerLocation sl) {
+    HTTPResponse Exec(HTTPRequest req, ServerLocation sl) {
         try {
             if (req.method not in sl.allowed_method) {
                 throw IExecutor::MethodNotAllowed();
@@ -69,7 +69,7 @@ class Transaction {
 }
 
 class FileReadExecutor{
- Response Exec(Request req, ServerLocation sl){
+ HTTPResponse Exec(HTTPRequest req, ServerLocation sl){
     if (req.url is not Exist) {
       throw IExecutor::NotFound();
     }
@@ -93,18 +93,18 @@ class FileReadExecutor{
     }
 
     private:
-        Response GetFileExec(Request req, ServerLocation sl) {
+        HTTPResponse GetFileExec(HTTPRequest req, ServerLocation sl) {
             string data = read(path);
             return ResponseBuilder.Build(data);
         };
-        Response ListingExec(Request req, ServerLocation sl) {
+        HTTPResponse ListingExec(HTTPRequest req, ServerLocation sl) {
             files = getfiles();
             return ResponseBuilder.Build(files);
         };
 }
 
 CGIExecutor {
-  Response Exec(Request req, ServerLocation sl) {
+  HTTPResponse Exec(HTTPRequest req, ServerLocation sl) {
     // setenv
     // fork
     string data = read(pipe_fd);
@@ -113,19 +113,19 @@ CGIExecutor {
 };
 
 ResponseBuilder {
-    Response Build(string body) {
-        return new Response();
+    HTTPResponse Build(string body) {
+        return new HTTPResponse();
     }
-    Response BuildError(int status_code, ServerLocation sl) {
+    HTTPResponse BuildError(int status_code, ServerLocation sl) {
         if (status_code in sl.error_pages) {
             // 設定されているエラーページを返す
             // TODO: 設定されているエラーページがない場合の挙動は要確認
         } else {
             // デフォルトのエラーページを返す
         }
-        return new Response();
+        return new HTTPResponse();
     }
-    Response BuildRedirect(string redirect_uri) {
+    HTTPResponse BuildRedirect(string redirect_uri) {
         // locationにredirect_urlを設定
         // status_codeは302
         // TODO: これとerror_pageで302が設定されていた場合

@@ -14,7 +14,7 @@ RequestFacade &RequestFacade::operator=(RequestFacade const &other) {
 
 RequestFacade::~RequestFacade() {}
 
-Request *RequestFacade::SelectRequest(Socket socket) {
+HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
     // Requestを返す
     (void)socket;
     (void)this->list_;
