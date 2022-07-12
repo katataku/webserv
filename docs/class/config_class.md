@@ -50,7 +50,7 @@ classDiagram
 
     %% IO多重化とソケットクラスを生成してWorkerに処理を依頼するまでを担当する%%
     class SuperVisor {
-        -ServerLocationFacade request_facade_
+        -ServerLocationFacade facade_
         +Watch() void
     }
 
