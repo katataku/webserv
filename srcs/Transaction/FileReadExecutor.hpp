@@ -11,7 +11,8 @@ class FileReadExecutor : public IExecutor {
     FileReadExecutor &operator=(FileReadExecutor const &other);
     virtual ~FileReadExecutor();
 
-    virtual Response *Exec(Request const &request, ServerLocation const &sl);
+    virtual HTTPResponse *Exec(HTTPRequest const &request,
+                               ServerLocation const &sl);
 
  private:
     Logging logging_;

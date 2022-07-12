@@ -130,10 +130,10 @@ class IOMultiplexer {
 
 class Woker {
     void Exec() {
-        Request request = Request.Parse(socket_)
+        HTTPRequest request = HTTPRequest.Parse(socket_)
         ServerLocation sl = facade_.Choose(port, host, path)
-        Response response = Someone.Exec(request, sl)
-        Response.Write(socket_)
+        HTTPResponse response = Someone.Exec(request, sl)
+        HTTPResponse.Write(socket_)
     }
 }
 

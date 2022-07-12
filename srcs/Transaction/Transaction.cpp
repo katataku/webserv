@@ -13,7 +13,7 @@ Transaction &Transaction::operator=(Transaction const &other) {
 
 Transaction::~Transaction() {}
 
-Response *Transaction::Exec(Request *request, ServerLocation *sl) {
+HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
     (void)request;
     (void)sl;
     return NULL;

@@ -1,9 +1,9 @@
 #ifndef SRCS_TRANSACTION_TRANSACTION_HPP_
 #define SRCS_TRANSACTION_TRANSACTION_HPP_
 
+#include "HTTPRequest.hpp"
+#include "HTTPResponse.hpp"
 #include "Logging.hpp"
-#include "Request.hpp"
-#include "Response.hpp"
 #include "ServerLocation.hpp"
 
 class Transaction {
@@ -13,7 +13,7 @@ class Transaction {
     Transaction &operator=(Transaction const &other);
     ~Transaction();
 
-    Response *Exec(Request *request, ServerLocation *sl);
+    HTTPResponse *Exec(HTTPRequest *request, ServerLocation *sl);
 
  private:
     Logging logging_;

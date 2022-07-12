@@ -3,8 +3,8 @@
 
 #include <string>
 
+#include "HTTPResponse.hpp"
 #include "Logging.hpp"
-#include "Response.hpp"
 #include "ServerLocation.hpp"
 
 class ResponseBuilder {
@@ -14,9 +14,9 @@ class ResponseBuilder {
     ResponseBuilder &operator=(ResponseBuilder const &other);
     ~ResponseBuilder();
 
-    Response *Build(std::string body);
-    Response *BuildError(int status_code, ServerLocation *sl);
-    Response *BuildRedirect(std::string redirect_url);
+    HTTPResponse *Build(std::string body);
+    HTTPResponse *BuildError(int status_code, ServerLocation *sl);
+    HTTPResponse *BuildRedirect(std::string redirect_url);
 
  private:
     Logging logging_;

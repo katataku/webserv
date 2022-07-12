@@ -1,13 +1,13 @@
 ```mermaid
 classDiagram
    class RequestFacade{
-        map~socket, Request~ list
-        +SelectRequest(Socket) Request*
+        map~socket, HTTPRequest~ list
+        +SelectRequest(Socket) HTTPRequest*
         +Finish(Socket) void
     }
 
     %% TODO: CalcBodySize()の詳細を詰める && nginxのmax_body_sizeも確認 %%
-    class Request{
+    class HTTPRequest{
         string unparsed_string
         string method
         string URI
@@ -22,26 +22,26 @@ classDiagram
         +CalcBodySize() int
     }
 
-    class Response{
+    class HTTPResponse{
         int status_code
         string connection
         string allow
         string location
         string response_body
 
-        +Response(int)
+        +HTTPResponse(int)
         +Write(Socket) void
     }
 
 
-Request <-- RequestFacade : generate
+HTTPRequest <-- RequestFacade : generate
 
 Worker <-- RequestFacade : generateしたもの or すでにあるものを返す
 Worker --> RequestFacade : Requestクラスのインスタンスを依頼
 
 
-Request  <--  Worker :call
-Response  <--  Worker :call
+HTTPRequest  <--  Worker :call
+HTTPResponse  <--  Worker :call
 ```
 
 ## 擬似コード
@@ -53,15 +53,15 @@ Requestの途中でrcve終了→再度epoll→途中から継続して読み込�
 */
 RequestFacade{
     private:
-        map<socket, Request> list
-    Request select_request(socket)
+        map<socket, HTTPRequest> list
+    HTTPRequest select_request(socket)
     {
         if (list not in socket)
-            list[socket] = new Request;
+            list[socket] = new HTTPRequest;
         return list[socket];
     };
 }
-Request{
+HTTPRequest{
     request(){
         unparsed_string = "";
         IsFinishToReadHeader = false;
@@ -113,7 +113,7 @@ Worker {
     }
 
     void Exec(socket) {
-        Request& request  = RequestFacade(socket_)
+        HTTPRequest& request  = RequestFacade(socket_)
         try {
             string str = socket.read();
             request.Parse(str);
@@ -122,24 +122,24 @@ Worker {
             {
                 ServerLocation sl = server_location_facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
-                Response response = Transaction.Exec(request, sl);
+                HTTPResponse response = Transaction.Exec(request, sl);
 
-                Response.Write(socket_);
+                HTTPResponse.Write(socket_);
                 RequestFacade.Finish(socket_);
                 socket.should_close_socket = true;
             }
         }
         catch(400 error的な)
         {
-            Response response = new response(400);
-            Response.Write(socket_), ;
+            HTTPResponse response = new response(400);
+            HTTPResponse.Write(socket_), ;
             RequestFacade.Finish(socket_);
             socket.should_close_socket = true;
         }
         catch(500 error的な)
         {
-            Response response = new response(500);
-            Response.Write(socket_), ;
+            HTTPResponse response = new response(500);
+            HTTPResponse.Write(socket_), ;
             RequestFacade.Finish(socket_);
             socket.should_close_socket = true;
         }

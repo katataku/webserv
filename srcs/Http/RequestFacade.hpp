@@ -3,8 +3,8 @@
 
 #include <map>
 
+#include "HTTPRequest.hpp"
 #include "Logging.hpp"
-#include "Request.hpp"
 #include "Socket.hpp"
 
 class RequestFacade {
@@ -14,12 +14,12 @@ class RequestFacade {
     RequestFacade &operator=(RequestFacade const &other);
     ~RequestFacade();
 
-    Request *SelectRequest(Socket socket);
+    HTTPRequest *SelectRequest(Socket socket);
     void Finish(Socket socket);
 
  private:
     Logging logging_;
-    std::map<int, Request> list_;
+    std::map<int, HTTPRequest> list_;
 };
 
 #endif  // SRCS_HTTP_REQUESTFACADE_HPP_
