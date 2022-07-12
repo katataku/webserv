@@ -2,7 +2,7 @@
 classDiagram
    class RequestFacade{
         map~socket, Request~ list
-        +SelectRequest(Socket) Request
+        +SelectRequest(Socket) Request*
         +Finish(Socket) void
     }
 
@@ -15,10 +15,10 @@ classDiagram
         string content-length
         string transfer-encoding
         string request_body
-        bool IsFinishToRead
+        bool is_ready
         
-        +Parse(Socket) void
-        +IsFinishToRead() bool
+        +Parse(string) void
+        +IsReady() bool
         +CalcBodySize() int
     }
 
@@ -120,9 +120,9 @@ Worker {
 
             if (request.IsReady())
             {
-                ServerLocation sl = facade_.Choose(request.get_port(), request.get_host(), request.get_path());
+                ServerLocation sl = server_location_facade_.Choose(request.get_port(), request.get_host(), request.get_path());
 
-                Result response = Transaction.Exec(request, sl);
+                Response response = Transaction.Exec(request, sl);
 
                 Response.Write(socket_);
                 RequestFacade.Finish(socket_);
