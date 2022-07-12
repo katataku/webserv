@@ -1,4 +1,4 @@
-``` mermaid
+```mermaid
 classDiagram
     CGIExecutor --> CGIResponse : call
     CGIExecutor --> CGIRequest : call
@@ -31,7 +31,7 @@ classDiagram
 
 - 擬似コード
 
-``` cpp
+```cpp
 
 class CGIRequest {
   public:
