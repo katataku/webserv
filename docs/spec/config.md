@@ -255,6 +255,22 @@ Default: —
 Context: server
 ```
 
+### cgi_extension
+
+Usage:
+
+```
+Syntax:	cgi_extension extension
+Default: —
+Context: location
+```
+
+Example:
+
+```
+cgi_extension py;
+```
+
 [alias]: https://nginx.org/en/docs/http/ngx_http_core_module.html#alias
 [autoindex]: https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex
 [client_max_body_size]: https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
