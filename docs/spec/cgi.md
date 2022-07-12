@@ -14,7 +14,7 @@ script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra
 
 ### pdf+testerに準拠した仕様まとめ
 
-| メタ変数名           | 説明                         | 期待される挙動                                                                             | 値(BNF表記)                            |
+| メタ変数名           | 説明                         | サーバー側で期待される挙動                                                                             | 値(BNF表記)                            |
 | --------------- | -------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------- |
 | CONTENT_LENGTH  | コンテンツのバイト長。POSTメソッドが来た時必要。 | HTTPリクエストにbodyがあればセットし、なかったらセットしない。                                                 | CONTENT_LENGTH = "" \| 1\*digit     |
 | CONTENT_TYPE    | コンテンツの種類。                  | HTTPリクエストにbodyがあればセットされる。なかったら空文字列をセット。<br>HTTPリクエストヘッダーにtypeが設定されていたら、このメタ変数を設定する。 | CONTENT_TYPE = "" \| media-type<br> |
@@ -30,7 +30,7 @@ script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra
 generic-response = 1*header-field NL [ response-body ]
 ```
 
-| フィールド値名      | 説明            | 期待される挙動                                                                                | 値(BNF表記)                                                                             |
+| フィールド値名      | 説明            | サーバー側で期待される挙動                                                                                | 値(BNF表記)                                                                             |
 | ------------ | ------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Status       | ステータスコード      | サーバーはきたものをそのまま返すだけ                                                                     | Status         = "Status:" status-code SP reason-phrase NL<br>status-code    = "200" |
 | Content-Type | bodyのコンテンツの種類 | bodyが返されるとき、必ずセットされている。<br>種類がtext/htmlかつセットされていなければISO-8859-1、それ以外のtextはUS-ASCIIとして処理 | Content-Type = "Content-Type:" media-type NL                                         |
