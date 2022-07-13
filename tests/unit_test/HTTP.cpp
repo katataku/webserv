@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include "HTTPRequest.hpp"
+#include "HTTPResponse.hpp"
+#include "ResponseBuilder.hpp"
 
 class HTTPTest : public ::testing::Test {
  protected:
@@ -21,4 +23,22 @@ TEST_F(HTTPTest, Parse) {
     ASSERT_EQ(req.transfer_encoding(), "");
     ASSERT_EQ(req.request_body(), "");
     ASSERT_EQ(req.is_ready(), true);
+}
+
+TEST_F(HTTPTest, ResponseBuilder_200) {
+    HTTPResponse *res = ResponseBuilder::Build("hoge");
+
+    ASSERT_EQ(res->status_code(), 200);
+    ASSERT_EQ(res->response_body(), "hoge");
+    ASSERT_EQ(res->content_length(), 4);
+    ASSERT_EQ(res->connection(), "close");
+}
+
+TEST_F(HTTPTest, ResponseBuilder_200_empty) {
+    HTTPResponse *res = ResponseBuilder::Build("");
+
+    ASSERT_EQ(res->status_code(), 200);
+    ASSERT_EQ(res->response_body(), "");
+    ASSERT_EQ(res->content_length(), 0);
+    ASSERT_EQ(res->connection(), "close");
 }
