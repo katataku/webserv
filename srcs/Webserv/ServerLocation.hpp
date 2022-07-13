@@ -9,7 +9,15 @@
 class ServerLocation {
  public:
     ServerLocation();
+
     ServerLocation(ServerLocation const &other);
+    ServerLocation(int port, const std::string &host, const std::string &path,
+                   const std::map<int, std::string> &error_pages,
+                   int client_max_body_size, bool auto_index,
+                   const std::string &index_page,
+                   const std::string &redirect_uri,
+                   const std::vector<std::string> &allow_methods,
+                   const std::string &alias, const std::string &cgi_extension);
     ServerLocation &operator=(ServerLocation const &other);
     ~ServerLocation();
 

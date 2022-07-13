@@ -16,7 +16,10 @@ ServerLocation::~ServerLocation() {}
 bool ServerLocation::IsRedirect() const { return !this->redirect_uri_.empty(); }
 
 // TODO(ahayashi): 実装する。utilsに移してもいいかもしれない。
-static std::string GetExtension(std::string path) { return "py"; }
+static std::string GetExtension(std::string path) {
+    (void)path;
+    return "py";
+}
 
 bool ServerLocation::IsCGI(std::string path_info) const {
     if (this->cgi_extension_.empty()) {
@@ -46,3 +49,23 @@ const std::string &ServerLocation::alias() const { return alias_; }
 const std::string &ServerLocation::cgi_extension() const {
     return cgi_extension_;
 }
+ServerLocation::ServerLocation(int port, const std::string &host,
+                               const std::string &path,
+                               const std::map<int, std::string> &error_pages,
+                               int client_max_body_size, bool auto_index,
+                               const std::string &index_page,
+                               const std::string &redirect_uri,
+                               const std::vector<std::string> &allow_methods,
+                               const std::string &alias,
+                               const std::string &cgi_extension)
+    : port_(port),
+      host_(host),
+      path_(path),
+      error_pages_(error_pages),
+      client_max_body_size_(client_max_body_size),
+      auto_index_(auto_index),
+      index_page_(index_page),
+      redirect_uri_(redirect_uri),
+      allow_methods_(allow_methods),
+      alias_(alias),
+      cgi_extension_(cgi_extension) {}
