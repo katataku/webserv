@@ -13,6 +13,18 @@ ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
 
 ServerLocation::~ServerLocation() {}
 
+bool ServerLocation::IsRedirect() const { return !this->redirect_uri_.empty(); }
+
+// TODO(ahayashi): 実装する。utilsに移してもいいかもしれない。
+static std::string GetExtension(std::string path) { return "py"; }
+
+bool ServerLocation::IsCGI(std::string path_info) const {
+    if (this->cgi_extension_.empty()) {
+        return false;
+    }
+    return GetExtension(path_info) == this->cgi_extension_;
+}
+
 int ServerLocation::port() const { return port_; }
 const std::string &ServerLocation::host() const { return host_; }
 const std::string &ServerLocation::path() const { return path_; }
@@ -31,3 +43,6 @@ const std::vector<std::string> &ServerLocation::allow_methods() const {
     return allow_methods_;
 }
 const std::string &ServerLocation::alias() const { return alias_; }
+const std::string &ServerLocation::cgi_extension() const {
+    return cgi_extension_;
+}

@@ -13,7 +13,6 @@ class ServerLocation {
     ServerLocation &operator=(ServerLocation const &other);
     ~ServerLocation();
 
- public:
     int port() const;
     const std::string &host() const;
     const std::string &path() const;
@@ -24,6 +23,10 @@ class ServerLocation {
     const std::string &redirect_uri() const;
     const std::vector<std::string> &allow_methods() const;
     const std::string &alias() const;
+    const std::string &cgi_extension() const;
+    bool IsRedirect() const;
+    bool IsCGI(std::string path_info) const;
+    std::string ResolveAlias(std::string path_info) const;
 
  private:
     int port_;
@@ -36,6 +39,7 @@ class ServerLocation {
     std::string redirect_uri_;
     std::vector<std::string> allow_methods_;
     std::string alias_;
+    std::string cgi_extension_;
 };
 
 #endif  // SRCS_WEBSERV_SERVERLOCATION_HPP_

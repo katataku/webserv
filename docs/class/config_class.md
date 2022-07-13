@@ -39,8 +39,7 @@ classDiagram
         -string redirect_uri
         -vector~string~ allow_methods
         -string alias
-        +IsRedirect() bool
-        +IsCGI() bool
+        -string cgi_extension
     }
 
     class Webserv {
@@ -78,9 +77,10 @@ classDiagram
         -vector~string~ allow_methods
         -string path
         -string alias
+        -string cgi_extension
         +IsRedirect() bool
-        +IsCGI() bool
-        +ResolveAlias() string;
+        +IsCGI(string path_info) bool
+        +ResolveAlias(string path_info) string;
     }
 ```
 
