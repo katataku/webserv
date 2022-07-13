@@ -12,3 +12,22 @@ ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
 }
 
 ServerLocation::~ServerLocation() {}
+
+int ServerLocation::port() const { return port_; }
+const std::string &ServerLocation::host() const { return host_; }
+const std::string &ServerLocation::path() const { return path_; }
+const std::map<int, std::string> &ServerLocation::error_pages() const {
+    return error_pages_;
+}
+int ServerLocation::client_max_body_size() const {
+    return client_max_body_size_;
+}
+bool ServerLocation::auto_index() const { return auto_index_; }
+const std::string &ServerLocation::index_page() const { return index_page_; }
+const std::string &ServerLocation::redirect_uri() const {
+    return redirect_uri_;
+}
+const std::vector<std::string> &ServerLocation::allow_methods() const {
+    return allow_methods_;
+}
+const std::string &ServerLocation::alias() const { return alias_; }

@@ -38,7 +38,6 @@ classDiagram
         -string index_page
         -string redirect_uri
         -vector~string~ allow_methods
-        -string path
         -string alias
         +IsRedirect() bool
         +IsCGI() bool
