@@ -2,22 +2,32 @@
 
 ```mermaid
 classDiagram
+  IOMultiplexer "1" *-- "0..n" Socket
+
   class Socket {
-    -int socketfd
+    -int sock_fd
     -bool is_listening
-    +Send()* void
+    +Send(string data)* void
     +Recv()* string
+    +Close()* void
+    +Accept()* Socket
+    +static OpenListeningSocket(string port)* Socket
   }
 
   class IOMultiplexer {
-    -Socket[] sockets
+    -logging Logging
+    -std::vector<Socket> sockets
+    -epollfd int
+    -epoll_event ev
+    -epoll_event events[kMaxNEvents]
+    -listen_sock int
     -CreateListenerSocket(string port)* void
-    +Init()* void
-    +Wait()* Socket[]
+    -Epoll epoll
+    +Init(std::vector<std::string> ports)* void
+    +Wait()* std::vector<Socket>
     +Accept(Socket)* void
   }
 
-  IOMultiplexer "1" *-- "0..n" Socket
 ```
 
 - 疑似コード
@@ -36,30 +46,36 @@ class Socket {
       // ソケットを読み込み、何かしらのデータとして返す
       string Recv()
 
-      // ソケットがリスニング状態か確認
-      bool IsListening()
+      // ソケットをクローズ
+      void Close()
+
+      // クライアントからの接続を受け付けて、新しくソケットを生成
+      Socket Accept()
+
+      // リッスン状態のソケットを生成
+      static Socket OpenListeningSocket(string port)
 }
 
-// I/O多重化の債務をやってくれるやつ
+// I/O多重化の処理をやってくれるやつ
 class IOMultiplexer {
     private:
         // ソケット群
-        Socket[] sockets
+        std::vector<Socket> sockets
 
-        // listen状態のソケット
+        // リッスン状態のソケットを生成
         CreateListenerSocket(string port)
 
     public:
         // socket群を初期化するやつ
-        void Init(string[] port_list) {
-            for port in port_list {
+        void Init(std::vector<std::string> ports) {
+            for port in ports {
                 CreateListenerSocket(port)
             }
             ... // epoll固有の実装なので省略
         }
 
         // ソケット群がready状態になるまで待機
-        Socket[] Wait() {
+        std::vector<Socket> Wait() {
           ... // epoll固有の実装なので省略
         }
 
@@ -67,7 +83,7 @@ class IOMultiplexer {
         void Accept(Socket listener) {
           Socket client = listener.Accept()
           ... // epoll固有の実装なので省略
-          sockets.Add(client)
+          sockets.push_back(client)
         }
 }
 
@@ -84,7 +100,7 @@ class SuperVisor {
             while (1) {
                 Socket[] sockets = iomul.Wait()
                 for socket in sockets {
-                    if socket.IsListening()
+                    if socket.is_listening()
                         iomul.Accept(socket)
                     else
                         Worker.Exec(socket)
