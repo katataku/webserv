@@ -126,3 +126,4 @@ SuperVisor {
 ## メモ
 
 - ServerLocationはServerとLocationに分けたほうがいい可能性もある。
+- is_defaultみたいなどれがデフォルトサーバーなのかを示すパラメータが必要そう
