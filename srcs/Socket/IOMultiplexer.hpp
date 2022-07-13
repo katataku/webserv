@@ -1,6 +1,8 @@
 #ifndef SRCS_SOCKET_IOMULTIPLEXER_HPP_
 #define SRCS_SOCKET_IOMULTIPLEXER_HPP_
 
+#include <sys/epoll.h>
+
 #include <string>
 #include <vector>
 
@@ -14,12 +16,26 @@ class IOMultiplexer {
     IOMultiplexer &operator=(IOMultiplexer const &other);
     ~IOMultiplexer();
 
-    void Init(std::vector<std::string>);
+    void Init(std::vector<std::string> ports);
     std::vector<Socket> Wait();
     void Accept(Socket &);
 
  private:
-    Logging logging_;
+    typedef std::string              port;
+    typedef std::vector<std::string> portlist;
+    typedef portlist::iterator       portlist_iterator;
+    typedef std::vector<Socket>      socketlist;
+
+    static const int kMaxNEvents = 10;
+
+    Logging     logging_;
+    socketlist  sockets_;
+    int         epollfd;
+    int         listen_sock;
+    epoll_event ev;
+    epoll_event events[kMaxNEvents];
+
+    void CreateListenerSocket(port port);
 };
 
 #endif  // SRCS_SOCKET_IOMULTIPLEXER_HPP_
