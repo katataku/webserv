@@ -1,7 +1,11 @@
 #include "HTTPResponse.hpp"
 
+#include <sstream>
+
 HTTPResponse::HTTPResponse()
-    : logging_(Logging(__FUNCTION__)), connection_("close") {}
+    : logging_(Logging(__FUNCTION__)),
+      new_line_string_("\r\n"),
+      connection_("close") {}
 
 HTTPResponse::HTTPResponse(HTTPResponse const &other) { *this = other; }
 
@@ -34,4 +38,78 @@ void HTTPResponse::response_body(std::string response_body) {
     response_body_ = response_body;
 }
 
-void HTTPResponse::Write(Socket socket) { (void)socket; }
+std::string HTTPResponse::GetReasonPhrase(int status_code) {
+    if (status_code == 200) return "OK";
+    if (status_code == 201) return "Created";
+    if (status_code == 302) return "Moved Temporarily";
+    if (status_code == 400) return "Bad Request";
+    if (status_code == 403) return "Forbidden";
+    if (status_code == 404) return "Not Found";
+    if (status_code == 413) return "Payload Too Large";
+    if (status_code == 414) return "URI Too Long";
+    if (status_code == 500) return "Internal Server Error";
+    if (status_code == 501) return "Not Implemented";
+    if (status_code == 505) return "HTTP Version Not Supported";
+    return "";
+}
+
+std::string HTTPResponse::GetStatusLineString() const {
+    std::string status_line = "";
+    std::ostringstream oss;
+
+    oss << this->status_code();
+    status_line += "HTTP/1.1";
+    status_line += " ";
+    status_line += oss.str();
+    status_line += " ";
+    status_line += GetReasonPhrase(this->status_code());
+    status_line += this->new_line_string_;
+
+    return status_line;
+}
+
+std::string HTTPResponse::GetHeadersString() const {
+    std::string headers_string = "";
+    std::ostringstream oss;
+
+    oss << this->content_length();
+
+    headers_string += "Connection: ";
+    headers_string += this->connection();
+    headers_string += this->new_line_string_;
+    headers_string += "Content-Length: ";
+    headers_string += oss.str();
+    headers_string += this->new_line_string_;
+    if (!this->allow().empty()) {
+        headers_string += "Allow: ";
+        headers_string += this->allow();
+        headers_string += this->new_line_string_;
+    }
+    if (!this->location().empty()) {
+        headers_string += "Location: ";
+        headers_string += this->location();
+        headers_string += this->new_line_string_;
+    }
+    return headers_string;
+}
+
+std::string HTTPResponse::GetBodyString() const {
+    return this->response_body();
+}
+
+std::string HTTPResponse::GetResponseString() const {
+    std::string response_string = "";
+
+    response_string += this->GetStatusLineString();
+    response_string += this->GetHeadersString();
+    if (this->content_length() > 0) {
+        response_string += this->new_line_string_;
+        response_string += this->GetBodyString();
+    }
+    return response_string;
+}
+
+void HTTPResponse::Write(Socket socket) {
+    std::string response_string = this->GetResponseString();
+    socket.Send(response_string);
+}

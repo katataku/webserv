@@ -42,3 +42,27 @@ TEST_F(HTTPTest, ResponseBuilder_200_empty) {
     ASSERT_EQ(res->content_length(), 0);
     ASSERT_EQ(res->connection(), "close");
 }
+
+TEST_F(HTTPTest, Response_string) {
+    std::string expected =
+        "HTTP/1.1 200 OK\r\n"
+        "Connection: close\r\n"
+        "Content-Length: 4\r\n"
+        "\r\n"
+        "hoge";
+
+    HTTPResponse *res = ResponseBuilder::Build("hoge");
+    std::string actual = res->GetResponseString();
+    ASSERT_EQ(actual, expected);
+}
+
+TEST_F(HTTPTest, Response_string_empty) {
+    std::string expected =
+        "HTTP/1.1 200 OK\r\n"
+        "Connection: close\r\n"
+        "Content-Length: 0\r\n";
+
+    HTTPResponse *res = ResponseBuilder::Build("");
+    std::string actual = res->GetResponseString();
+    ASSERT_EQ(actual, expected);
+}

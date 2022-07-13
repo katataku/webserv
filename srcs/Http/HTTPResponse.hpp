@@ -13,6 +13,11 @@ class HTTPResponse {
     HTTPResponse &operator=(HTTPResponse const &other);
     ~HTTPResponse();
 
+    // private が良いかもだけどテスト用にpublicに。
+    // 実際の細かい処理は他のprivate methodに移譲している。。
+    std::string GetResponseString() const;
+
+    // writeはsocketに依存しているのでテストコードなし。
     void Write(Socket socket);
 
     int status_code() const;
@@ -31,12 +36,18 @@ class HTTPResponse {
 
  private:
     Logging logging_;
+    std::string new_line_string_;
     int status_code_;
     std::string connection_;
     std::string allow_;
     std::string location_;
     int content_length_;
     std::string response_body_;
+
+    std::string GetStatusLineString() const;
+    std::string GetHeadersString() const;
+    std::string GetBodyString() const;
+    static std::string GetReasonPhrase(int);
 };
 
 #endif  // SRCS_HTTP_HTTPRESPONSE_HPP_

@@ -12,7 +12,7 @@ class Socket {
     Socket &operator=(Socket const &other);
     ~Socket();
 
-    void Send() const;
+    void Send(std::string data) const;
     std::string Recv() const;
 
     bool is_listening() const;
