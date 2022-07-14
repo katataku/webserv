@@ -1,8 +1,5 @@
-#include "Transaction.hpp"
-
-#include <vector>
-
 #include "ResponseBuilder.hpp"
+#include "Transaction.hpp"
 
 Transaction::Transaction() : logging_(Logging(__FUNCTION__)) {}
 
