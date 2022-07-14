@@ -65,6 +65,9 @@ std::string Socket::Recv() const {
     std::cout << "serv >> receive " << recvsize << " size" << std::endl;
     // Error occured
     if (recvsize == -1) {
+      if (errno == EAGAIN) {
+        break;
+      }
       perror("Failed to recv");
       break;
     }
