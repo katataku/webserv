@@ -19,6 +19,5 @@ Transaction::~Transaction() {}
 
 HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
     (void)sl;
-    ResponseBuilder builder;
-    return builder.Build(request->request_body());
+    return ResponseBuilder::Build(request->request_body());
 }
