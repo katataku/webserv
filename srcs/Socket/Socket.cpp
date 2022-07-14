@@ -62,7 +62,7 @@ std::string Socket::Recv() const {
 
   for (;;) {
     recvsize = recv(sock_fd_, buf, kBufferSize, 0);
-    std::cout << "serv >> receive " << recvsize << " size" << std::endl;
+    // std::cout << "serv >> receive " << recvsize << " size" << std::endl;
     // Error occured
     if (recvsize == -1) {
       if (errno == EAGAIN) {
