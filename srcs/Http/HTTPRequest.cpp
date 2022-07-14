@@ -26,28 +26,32 @@ std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs) {
 
 HTTPRequest::~HTTPRequest() {}
 
-std::string HTTPRequest::unparsed_string() const { return unparsed_string_; }
-
-std::string HTTPRequest::method() const { return method_; }
-std::string HTTPRequest::uri() const { return uri_; }
-std::string HTTPRequest::host() const { return host_; }
-std::string HTTPRequest::content_length() const { return content_length_; }
-std::string HTTPRequest::transfer_encoding() const {
-    return transfer_encoding_;
+std::string HTTPRequest::unparsed_string() const {
+    return this->unparsed_string_;
 }
-std::string HTTPRequest::request_body() const { return request_body_; }
-bool HTTPRequest::is_ready() const { return is_ready_; }
+
+std::string HTTPRequest::method() const { return this->method_; }
+std::string HTTPRequest::uri() const { return this->uri_; }
+std::string HTTPRequest::host() const { return this->host_; }
+std::string HTTPRequest::content_length() const {
+    return this->content_length_;
+}
+std::string HTTPRequest::transfer_encoding() const {
+    return this->transfer_encoding_;
+}
+std::string HTTPRequest::request_body() const { return this->request_body_; }
+bool HTTPRequest::is_ready() const { return this->is_ready_; }
 
 void HTTPRequest::Parse(std::string str) {
     (void)str;
-    unparsed_string_ = "";
-    method_ = "GET";
-    uri_ = "http://localhost:8181/index.html";
-    host_ = "localhost";
-    content_length_ = "0";
-    transfer_encoding_ = "";
-    request_body_ = "";
-    is_ready_ = true;
+    this->unparsed_string_ = "";
+    this->method_ = "GET";
+    this->uri_ = "http://localhost:8181/index.html";
+    this->host_ = "localhost";
+    this->content_length_ = "0";
+    this->transfer_encoding_ = "";
+    this->request_body_ = "";
+    this->is_ready_ = true;
 }
 
 int HTTPRequest::CalcBodySize() const { return 0; }

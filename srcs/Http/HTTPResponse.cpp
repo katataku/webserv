@@ -18,24 +18,28 @@ HTTPResponse &HTTPResponse::operator=(HTTPResponse const &other) {
 
 HTTPResponse::~HTTPResponse() {}
 
-int HTTPResponse::status_code() const { return status_code_; }
-std::string HTTPResponse::connection() const { return connection_; }
-std::string HTTPResponse::allow() const { return allow_; }
-std::string HTTPResponse::location() const { return location_; }
-int HTTPResponse::content_length() const { return content_length_; }
-std::string HTTPResponse::response_body() const { return response_body_; }
+int HTTPResponse::status_code() const { return this->status_code_; }
+std::string HTTPResponse::connection() const { return this->connection_; }
+std::string HTTPResponse::allow() const { return this->allow_; }
+std::string HTTPResponse::location() const { return this->location_; }
+int HTTPResponse::content_length() const { return this->content_length_; }
+std::string HTTPResponse::response_body() const { return this->response_body_; }
 
-void HTTPResponse::status_code(int status_code) { status_code_ = status_code; }
-void HTTPResponse::connection(std::string connection) {
-    connection_ = connection;
+void HTTPResponse::status_code(int status_code) {
+    this->status_code_ = status_code;
 }
-void HTTPResponse::allow(std::string allow) { allow_ = allow; }
-void HTTPResponse::location(std::string location) { location_ = location; }
+void HTTPResponse::connection(std::string connection) {
+    this->connection_ = connection;
+}
+void HTTPResponse::allow(std::string allow) { this->allow_ = allow; }
+void HTTPResponse::location(std::string location) {
+    this->location_ = location;
+}
 void HTTPResponse::content_length(int content_length) {
-    content_length_ = content_length;
+    this->content_length_ = content_length;
 }
 void HTTPResponse::response_body(std::string response_body) {
-    response_body_ = response_body;
+    this->response_body_ = response_body;
 }
 
 // TODO(takkatao) defaultでexceptionを投げても良いかも。
@@ -73,9 +77,9 @@ std::string HTTPResponse::GetStatusLineString() const {
 
     oss << "HTTP/1.1";
     oss << " ";
-    oss << status_code();
+    oss << this->status_code();
     oss << " ";
-    oss << GetReasonPhrase(status_code());
+    oss << GetReasonPhrase(this->status_code());
     oss << new_line_string_;
 
     return oss.str();
@@ -85,19 +89,19 @@ std::string HTTPResponse::GetHeadersString() const {
     std::ostringstream oss;
 
     oss << "Connection: ";
-    oss << connection();
+    oss << this->connection();
     oss << new_line_string_;
     oss << "Content-Length: ";
-    oss << content_length();
+    oss << this->content_length();
     oss << new_line_string_;
-    if (!allow().empty()) {
+    if (!this->allow().empty()) {
         oss << "Allow: ";
-        oss << allow();
+        oss << this->allow();
         oss << new_line_string_;
     }
-    if (!location().empty()) {
+    if (!this->location().empty()) {
         oss << "Location: ";
-        oss << location();
+        oss << this->location();
         oss << new_line_string_;
     }
     return oss.str();
@@ -108,16 +112,16 @@ std::string HTTPResponse::GetBodyString() const { return response_body(); }
 std::string HTTPResponse::GetResponseString() const {
     std::ostringstream oss;
 
-    oss << GetStatusLineString();
-    oss << GetHeadersString();
-    if (content_length() > 0) {
+    oss << this->GetStatusLineString();
+    oss << this->GetHeadersString();
+    if (this->content_length() > 0) {
         oss << new_line_string_;
-        oss << GetBodyString();
+        oss << this->GetBodyString();
     }
     return oss.str();
 }
 
 void HTTPResponse::Write(Socket socket) {
-    std::string response_string = GetResponseString();
+    std::string response_string = this->GetResponseString();
     socket.Send(response_string);
 }
