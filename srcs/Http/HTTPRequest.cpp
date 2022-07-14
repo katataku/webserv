@@ -11,16 +11,17 @@ HTTPRequest &HTTPRequest::operator=(HTTPRequest const &other) {
     return *this;
 }
 
-void HTTPRequest::PrintHTTPRequest() {
-    logging_.Debug("unparsed_string_ : " + unparsed_string_);
-    logging_.Debug("method_ : " + method_);
-    logging_.Debug("uri_ : " + uri_);
-    logging_.Debug("host_ : " + host_);
-    logging_.Debug("content_length_ : " + content_length_);
-    logging_.Debug("transfer_encoding_ : " + transfer_encoding_);
-    logging_.Debug("request_body_ : " + request_body_);
-    logging_.Debug("is_ready_ : " +
-                   std::string((is_ready_) ? "TRUE" : "FALSE"));
+std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs) {
+    ost << "unparsed_string_ : " << rhs.unparsed_string() << std::endl;
+    ost << "method_ : " << rhs.method() << std::endl;
+    ost << "uri_ : " << rhs.uri() << std::endl;
+    ost << "host_ : " << rhs.host() << std::endl;
+    ost << "content_length_ : " << rhs.content_length() << std::endl;
+    ost << "transfer_encoding_ : " << rhs.transfer_encoding() << std::endl;
+    ost << "request_body_ : " << rhs.request_body() << std::endl;
+    ost << "is_ready_ : " << std::string((rhs.is_ready()) ? "TRUE" : "FALSE")
+        << std::endl;
+    return ost;
 }
 
 HTTPRequest::~HTTPRequest() {}

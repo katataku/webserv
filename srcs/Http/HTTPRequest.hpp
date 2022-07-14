@@ -35,8 +35,8 @@ class HTTPRequest {
     std::string transfer_encoding_;
     std::string request_body_;
     bool is_ready_;
-
-    void PrintHTTPRequest();
 };
+
+std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs);
 
 #endif  // SRCS_HTTP_HTTPREQUEST_HPP_
