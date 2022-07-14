@@ -38,19 +38,34 @@ void HTTPResponse::response_body(std::string response_body) {
     response_body_ = response_body;
 }
 
+// TODO(takkatao) defaultでexeptionを投げても良いかも。
 std::string HTTPResponse::GetReasonPhrase(int status_code) {
-    if (status_code == 200) return "OK";
-    if (status_code == 201) return "Created";
-    if (status_code == 302) return "Moved Temporarily";
-    if (status_code == 400) return "Bad Request";
-    if (status_code == 403) return "Forbidden";
-    if (status_code == 404) return "Not Found";
-    if (status_code == 413) return "Payload Too Large";
-    if (status_code == 414) return "URI Too Long";
-    if (status_code == 500) return "Internal Server Error";
-    if (status_code == 501) return "Not Implemented";
-    if (status_code == 505) return "HTTP Version Not Supported";
-    return "";
+    switch (status_code) {
+        case 200:
+            return "OK";
+        case 201:
+            return "Created";
+        case 302:
+            return "Moved Temporarily";
+        case 400:
+            return "Bad Request";
+        case 403:
+            return "Forbidden";
+        case 404:
+            return "Not Found";
+        case 413:
+            return "Payload Too Large";
+        case 414:
+            return "URI Too Long";
+        case 500:
+            return "Internal Server Error";
+        case 501:
+            return "Not Implemented";
+        case 505:
+            return "HTTP Version Not Supported";
+        default:
+            return "";
+    }
 }
 
 std::string HTTPResponse::GetStatusLineString() const {
