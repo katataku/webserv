@@ -1,6 +1,6 @@
 #include "Socket.hpp"
 
-
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -43,7 +43,7 @@ void Socket::Send(std::string data) const {
       break;
     }
     // Send complete
-    if (sendbyte == remainbyte) {
+    if (static_cast<std::size_t>(sendbyte) == remainbyte) {
       break;
     }
     remainbyte -= sendbyte;
