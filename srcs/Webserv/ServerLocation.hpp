@@ -33,7 +33,7 @@ class ServerLocation {
     const std::string &alias() const;
     const std::string &cgi_extension() const;
     bool IsRedirect() const;
-    bool IsCGI(std::string path_info) const;
+    bool IsCGI(std::string path) const;
     std::string ResolveAlias(std::string path_info) const;
 
  private:

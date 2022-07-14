@@ -21,11 +21,11 @@ static std::string GetExtension(std::string path) {
     return "py";
 }
 
-bool ServerLocation::IsCGI(std::string path_info) const {
+bool ServerLocation::IsCGI(std::string path) const {
     if (this->cgi_extension_.empty()) {
         return false;
     }
-    return GetExtension(path_info) == this->cgi_extension_;
+    return GetExtension(path) == this->cgi_extension_;
 }
 
 int ServerLocation::port() const { return port_; }
