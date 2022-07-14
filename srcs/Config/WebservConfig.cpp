@@ -20,10 +20,10 @@ static ServerLocation CreateServerLocation() {
     error_pages[500] = "/50x.html";
     error_pages[501] = "/50x.html";
     error_pages[505] = "/50x.html";
-    std::vector<std::string> allow_methods;
-    allow_methods.push_back("GET");
-    allow_methods.push_back("POST");
-    allow_methods.push_back("DELETE");
+    std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
+    allow_methods.insert("POST");
+    allow_methods.insert("DELETE");
     return ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
                           "index.html", "", allow_methods, "/var/www", "");
 }

@@ -37,7 +37,7 @@ classDiagram
         -bool autoindex
         -string index_page
         -string redirect_uri
-        -vector~string~ allow_methods
+        -set~string~ allow_methods
         -string alias
         -string cgi_extension
     }
@@ -74,7 +74,7 @@ classDiagram
         -bool autoindex
         -string index_page
         -string redirect_uri
-        -vector~string~ allow_methods
+        -set~string~ allow_methods
         -string path
         -string alias
         -string cgi_extension

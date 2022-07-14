@@ -42,22 +42,19 @@ const std::string &ServerLocation::index_page() const { return index_page_; }
 const std::string &ServerLocation::redirect_uri() const {
     return redirect_uri_;
 }
-const std::vector<std::string> &ServerLocation::allow_methods() const {
+const std::set<std::string> &ServerLocation::allow_methods() const {
     return allow_methods_;
 }
 const std::string &ServerLocation::alias() const { return alias_; }
 const std::string &ServerLocation::cgi_extension() const {
     return cgi_extension_;
 }
-ServerLocation::ServerLocation(int port, const std::string &host,
-                               const std::string &path,
-                               const std::map<int, std::string> &error_pages,
-                               int client_max_body_size, bool auto_index,
-                               const std::string &index_page,
-                               const std::string &redirect_uri,
-                               const std::vector<std::string> &allow_methods,
-                               const std::string &alias,
-                               const std::string &cgi_extension)
+ServerLocation::ServerLocation(
+    int port, const std::string &host, const std::string &path,
+    const std::map<int, std::string> &error_pages, int client_max_body_size,
+    bool auto_index, const std::string &index_page,
+    const std::string &redirect_uri, const std::set<std::string> &allow_methods,
+    const std::string &alias, const std::string &cgi_extension)
     : port_(port),
       host_(host),
       path_(path),

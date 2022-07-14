@@ -2,8 +2,8 @@
 #define SRCS_WEBSERV_SERVERLOCATION_HPP_
 
 #include <map>
+#include <set>
 #include <string>
-#include <vector>
 
 #include "Logging.hpp"
 class ServerLocation {
@@ -16,7 +16,7 @@ class ServerLocation {
                    int client_max_body_size, bool auto_index,
                    const std::string &index_page,
                    const std::string &redirect_uri,
-                   const std::vector<std::string> &allow_methods,
+                   const std::set<std::string> &allow_methods,
                    const std::string &alias, const std::string &cgi_extension);
     ServerLocation &operator=(ServerLocation const &other);
     ~ServerLocation();
@@ -29,7 +29,7 @@ class ServerLocation {
     bool auto_index() const;
     const std::string &index_page() const;
     const std::string &redirect_uri() const;
-    const std::vector<std::string> &allow_methods() const;
+    const std::set<std::string> &allow_methods() const;
     const std::string &alias() const;
     const std::string &cgi_extension() const;
     bool IsRedirect() const;
@@ -45,7 +45,7 @@ class ServerLocation {
     bool auto_index_;
     std::string index_page_;
     std::string redirect_uri_;
-    std::vector<std::string> allow_methods_;
+    std::set<std::string> allow_methods_;
     std::string alias_;
     std::string cgi_extension_;
 };
