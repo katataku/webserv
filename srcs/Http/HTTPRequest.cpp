@@ -12,22 +12,20 @@ HTTPRequest &HTTPRequest::operator=(HTTPRequest const &other) {
 }
 
 void HTTPRequest::PrintHTTPRequest() {
-    this->logging_.Debug("unparsed_string_ : " + unparsed_string_);
-    this->logging_.Debug("method_ : " + method_);
-    this->logging_.Debug("uri_ : " + uri_);
-    this->logging_.Debug("host_ : " + host_);
-    this->logging_.Debug("content_length_ : " + content_length_);
-    this->logging_.Debug("transfer_encoding_ : " + transfer_encoding_);
-    this->logging_.Debug("request_body_ : " + request_body_);
-    this->logging_.Debug("is_ready_ : " +
-                         std::string((is_ready_) ? "TRUE" : "FALSE"));
+    logging_.Debug("unparsed_string_ : " + unparsed_string_);
+    logging_.Debug("method_ : " + method_);
+    logging_.Debug("uri_ : " + uri_);
+    logging_.Debug("host_ : " + host_);
+    logging_.Debug("content_length_ : " + content_length_);
+    logging_.Debug("transfer_encoding_ : " + transfer_encoding_);
+    logging_.Debug("request_body_ : " + request_body_);
+    logging_.Debug("is_ready_ : " +
+                   std::string((is_ready_) ? "TRUE" : "FALSE"));
 }
 
 HTTPRequest::~HTTPRequest() {}
 
-std::string HTTPRequest::unparsed_string() const {
-    return this->unparsed_string_;
-}
+std::string HTTPRequest::unparsed_string() const { return unparsed_string_; }
 
 std::string HTTPRequest::method() const { return method_; }
 std::string HTTPRequest::uri() const { return uri_; }
@@ -41,16 +39,16 @@ bool HTTPRequest::is_ready() const { return is_ready_; }
 
 void HTTPRequest::Parse(std::string str) {
     (void)str;
-    this->unparsed_string_ = "";
-    this->method_ = "GET";
-    this->uri_ = "http://localhost:8181/index.html";
-    this->host_ = "localhost";
-    this->content_length_ = "0";
-    this->transfer_encoding_ = "";
-    this->request_body_ = "";
-    this->is_ready_ = true;
+    unparsed_string_ = "";
+    method_ = "GET";
+    uri_ = "http://localhost:8181/index.html";
+    host_ = "localhost";
+    content_length_ = "0";
+    transfer_encoding_ = "";
+    request_body_ = "";
+    is_ready_ = true;
 }
 
 int HTTPRequest::CalcBodySize() const { return 0; }
 
-bool HTTPRequest::IsReady() const { return this->is_ready_; }
+bool HTTPRequest::IsReady() const { return is_ready_; }

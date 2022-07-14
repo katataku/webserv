@@ -17,7 +17,7 @@ RequestFacade::~RequestFacade() {}
 HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
     // Requestを返す
     (void)socket;
-    (void)this->list_;
+    (void)list_;
     return NULL;
 }
 

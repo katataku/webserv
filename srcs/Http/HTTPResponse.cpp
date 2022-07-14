@@ -57,13 +57,13 @@ std::string HTTPResponse::GetStatusLineString() const {
     std::string status_line = "";
     std::ostringstream oss;
 
-    oss << this->status_code();
+    oss << status_code();
     status_line += "HTTP/1.1";
     status_line += " ";
     status_line += oss.str();
     status_line += " ";
-    status_line += GetReasonPhrase(this->status_code());
-    status_line += this->new_line_string_;
+    status_line += GetReasonPhrase(status_code());
+    status_line += new_line_string_;
 
     return status_line;
 }
@@ -72,44 +72,42 @@ std::string HTTPResponse::GetHeadersString() const {
     std::string headers_string = "";
     std::ostringstream oss;
 
-    oss << this->content_length();
+    oss << content_length();
 
     headers_string += "Connection: ";
-    headers_string += this->connection();
-    headers_string += this->new_line_string_;
+    headers_string += connection();
+    headers_string += new_line_string_;
     headers_string += "Content-Length: ";
     headers_string += oss.str();
-    headers_string += this->new_line_string_;
-    if (!this->allow().empty()) {
+    headers_string += new_line_string_;
+    if (!allow().empty()) {
         headers_string += "Allow: ";
-        headers_string += this->allow();
-        headers_string += this->new_line_string_;
+        headers_string += allow();
+        headers_string += new_line_string_;
     }
-    if (!this->location().empty()) {
+    if (!location().empty()) {
         headers_string += "Location: ";
-        headers_string += this->location();
-        headers_string += this->new_line_string_;
+        headers_string += location();
+        headers_string += new_line_string_;
     }
     return headers_string;
 }
 
-std::string HTTPResponse::GetBodyString() const {
-    return this->response_body();
-}
+std::string HTTPResponse::GetBodyString() const { return response_body(); }
 
 std::string HTTPResponse::GetResponseString() const {
     std::string response_string = "";
 
-    response_string += this->GetStatusLineString();
-    response_string += this->GetHeadersString();
-    if (this->content_length() > 0) {
-        response_string += this->new_line_string_;
-        response_string += this->GetBodyString();
+    response_string += GetStatusLineString();
+    response_string += GetHeadersString();
+    if (content_length() > 0) {
+        response_string += new_line_string_;
+        response_string += GetBodyString();
     }
     return response_string;
 }
 
 void HTTPResponse::Write(Socket socket) {
-    std::string response_string = this->GetResponseString();
+    std::string response_string = GetResponseString();
     socket.Send(response_string);
 }
