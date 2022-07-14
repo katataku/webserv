@@ -38,12 +38,10 @@ void Socket::Send(std::string data) const {
   for (;;) {
     // Ignore SIGPIPE, See https://doi-t.hatenablog.com/entry/2014/06/10/033309
     sendbyte = send(sock_fd_, rawdata, remainbyte, MSG_NOSIGNAL);
-    // Error occured
-    if (sendbyte == -1) {
+    if (sendbyte == -1) {  // Error occured
       throw std::runtime_error("Error: send " + std::string(strerror(errno)));
     }
-    // Send complete
-    if (static_cast<std::size_t>(sendbyte) == remainbyte) {
+    if (static_cast<std::size_t>(sendbyte) == remainbyte) {  // Send complete
       break;
     }
     remainbyte -= sendbyte;
@@ -58,15 +56,13 @@ std::string Socket::Recv() const {
 
   for (;;) {
     recvsize = recv(sock_fd_, buf, kBufferSize, 0);
-    // Error occured
-    if (recvsize == -1) {
-      if (errno == EAGAIN) {
+    if (recvsize == -1) {  // Error occured
+      if (errno == EAGAIN) {  // No data in socket buffer
         break;
       }
       throw std::runtime_error("Error: recv " + std::string(strerror(errno)));
     }
-    // Client closes sockets
-    if (recvsize == 0) {
+    if (recvsize == 0) {  // Client closes sockets
       break;
     }
     buf[recvsize] = '\0';

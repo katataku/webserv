@@ -20,12 +20,11 @@ IOMultiplexer &IOMultiplexer::operator=(IOMultiplexer const &other) {
 IOMultiplexer::~IOMultiplexer() { close(epollfd); }
 
 void IOMultiplexer::Init(std::vector<std::string> ports) {
-  // listen状態のソケットを詰める
+  // Fill listen status sockets to socket list
   for (portlist_iterator itr = ports.begin(); itr != ports.end(); ++itr) {
     CreateListenerSocket(*itr);
   }
 
-  // listen状態のソケットをepollインスタンスを参照できるように初期化
   epollfd = epoll_create(1);
   if (epollfd == -1) {
     throw std::runtime_error("Error: epoll_create "
@@ -58,7 +57,7 @@ std::vector<Socket> IOMultiplexer::Wait() {
   for (int i = 0; i < nready; ++i) {
     std::set<int>::iterator itr = listenfds.find(events[i].data.fd);
 
-    if (itr != listenfds.end()) {  // listen状態のソケット
+    if (itr != listenfds.end()) {  // Find listen status socket
       sockets.push_back(Socket(events[i].data.fd, true));
     } else {
       sockets.push_back(Socket(events[i].data.fd, false));
