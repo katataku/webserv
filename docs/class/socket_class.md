@@ -15,14 +15,12 @@ classDiagram
   }
 
   class IOMultiplexer {
-    -logging Logging
     -std::vector<Socket> sockets
     -epollfd int
+    -listenfds std::set<int>
     -epoll_event ev
     -epoll_event events[kMaxNEvents]
-    -listen_sock int
     -CreateListenerSocket(string port)* void
-    -Epoll epoll
     +Init(std::vector<std::string> ports)* void
     +Wait()* std::vector<Socket>
     +Accept(Socket)* void
@@ -36,7 +34,7 @@ classDiagram
 
 class Socket {
   private:
-      int socketfd
+      int  sock_fd
       bool is_listening
 
   public:
@@ -62,8 +60,14 @@ class IOMultiplexer {
         // ソケット群
         std::vector<Socket> sockets
 
+        // listenソケット群
+        std::set<int> listenfds
+
         // リッスン状態のソケットを生成
         CreateListenerSocket(string port)
+
+        // epoll固有の変数は省略
+        ...
 
     public:
         // socket群を初期化するやつ
