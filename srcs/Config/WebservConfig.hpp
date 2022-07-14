@@ -2,6 +2,7 @@
 #define SRCS_CONFIG_WEBSERVCONFIG_HPP_
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
