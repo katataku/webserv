@@ -109,6 +109,7 @@ HTTP/1.1 200 OK
 | [Host](#host)                           | ◯(必須) | ✖︎    |
 | [Connection](#connection)               | ✖︎    | ◯(必須) |
 | [Content-Length](#content-length)       | ◯(任意) | ◯(必須) |
+| [Content-Type](#content-type)           | ◯(任意) | ✖︎    |
 | [Transfer-Encoding](#Transfer-Encoding) | ◯(任意) | ✖︎    |
 | [Allow](#allow)                         | ✖︎    | ◯(任意) |
 | [Location](#location)                   | ✖︎    | ◯(任意) |
@@ -156,6 +157,20 @@ Content-Length: 4891
 ```
 
 [RFC](https://triple-underscore.github.io/RFC7230-ja.html#section-3.3.2)
+
+### Content-Type
+
+コンテンツ（＝メッセージボディ）の種類を示します。
+HTTPリクエストにContent-Typeが設定されていて、かつCGIを起動する場合、CGIリクエストのCONTENT_TYPEに同じ値を設定する。
+HTTPレスポンスには、CGIレスポンスにContent-Typeが設定されていてもそれを破棄し、設定しない。
+
+Example:
+
+```http
+Content-Type: text/html
+```
+
+[RFC](https://triple-underscore.github.io/RFC7231-ja.html#section-3.1.1.5)
 
 ### Transfer-Encoding
 
