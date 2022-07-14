@@ -20,15 +20,15 @@ class Logging {
  public:
     Logging();
     explicit Logging(std::string);
-    void Fatal(std::string);
-    void Error(std::string);
-    void Warn(std::string);
-    void Info(std::string);
-    void Debug(std::string);
+    void Fatal(std::string) const;
+    void Error(std::string)const;
+    void Warn(std::string) const;
+    void Info(std::string) const;
+    void Debug(std::string) const;
 
  private:
     std::string caller_name;
-    void PrintLog(std::string, std::string);
+    void PrintLog(std::string, std::string) const;
 };
 
 #endif  // SRCS_LOGGING_LOGGING_HPP_
