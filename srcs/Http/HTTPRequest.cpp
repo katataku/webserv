@@ -19,10 +19,7 @@ void HTTPRequest::PrintHTTPRequest() {
     this->logging_.Debug("content_length_ : " + content_length_);
     this->logging_.Debug("transfer_encoding_ : " + transfer_encoding_);
     this->logging_.Debug("request_body_ : " + request_body_);
-    if (is_ready_)
-        this->logging_.Debug("is_ready_ : TRUE");
-    else
-        this->logging_.Debug("is_ready_ : FALSE");
+    this->logging_.Debug("is_ready_ : " + (is_ready_) ? "TRUE" : "FALSE");
 }
 
 HTTPRequest::~HTTPRequest() {}
