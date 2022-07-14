@@ -1,21 +1,22 @@
 #ifndef SRCS_HTTP_HTTPRESPONSE_HPP_
 #define SRCS_HTTP_HTTPRESPONSE_HPP_
 
+#include <gtest/gtest_prod.h>
+
 #include <string>
 
 #include "Logging.hpp"
 #include "Socket.hpp"
 
 class HTTPResponse {
+    FRIEND_TEST(HTTPTest, Response_string);
+    FRIEND_TEST(HTTPTest, Response_string_empty);
+
  public:
     HTTPResponse();
     HTTPResponse(HTTPResponse const &other);
     HTTPResponse &operator=(HTTPResponse const &other);
     ~HTTPResponse();
-
-    // private が良いかもだけどテスト用にpublicに。
-    // 実際の細かい処理は他のprivate methodに移譲している。。
-    std::string GetResponseString() const;
 
     // writeはsocketに依存しているのでテストコードなし。
     void Write(Socket socket);
@@ -47,6 +48,7 @@ class HTTPResponse {
     std::string GetStatusLineString() const;
     std::string GetHeadersString() const;
     std::string GetBodyString() const;
+    std::string GetResponseString() const;
     static std::string GetReasonPhrase(int);
 };
 
