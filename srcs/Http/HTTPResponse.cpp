@@ -38,7 +38,7 @@ void HTTPResponse::response_body(std::string response_body) {
     response_body_ = response_body;
 }
 
-// TODO(takkatao) defaultでexeptionを投げても良いかも。
+// TODO(takkatao) defaultでexceptionを投げても良いかも。
 std::string HTTPResponse::GetReasonPhrase(int status_code) {
     switch (status_code) {
         case 200:
@@ -69,57 +69,52 @@ std::string HTTPResponse::GetReasonPhrase(int status_code) {
 }
 
 std::string HTTPResponse::GetStatusLineString() const {
-    std::string status_line = "";
     std::ostringstream oss;
 
+    oss << "HTTP/1.1";
+    oss << " ";
     oss << status_code();
-    status_line += "HTTP/1.1";
-    status_line += " ";
-    status_line += oss.str();
-    status_line += " ";
-    status_line += GetReasonPhrase(status_code());
-    status_line += new_line_string_;
+    oss << " ";
+    oss << GetReasonPhrase(status_code());
+    oss << new_line_string_;
 
-    return status_line;
+    return oss.str();
 }
 
 std::string HTTPResponse::GetHeadersString() const {
-    std::string headers_string = "";
     std::ostringstream oss;
 
+    oss << "Connection: ";
+    oss << connection();
+    oss << new_line_string_;
+    oss << "Content-Length: ";
     oss << content_length();
-
-    headers_string += "Connection: ";
-    headers_string += connection();
-    headers_string += new_line_string_;
-    headers_string += "Content-Length: ";
-    headers_string += oss.str();
-    headers_string += new_line_string_;
+    oss << new_line_string_;
     if (!allow().empty()) {
-        headers_string += "Allow: ";
-        headers_string += allow();
-        headers_string += new_line_string_;
+        oss << "Allow: ";
+        oss << allow();
+        oss << new_line_string_;
     }
     if (!location().empty()) {
-        headers_string += "Location: ";
-        headers_string += location();
-        headers_string += new_line_string_;
+        oss << "Location: ";
+        oss << location();
+        oss << new_line_string_;
     }
-    return headers_string;
+    return oss.str();
 }
 
 std::string HTTPResponse::GetBodyString() const { return response_body(); }
 
 std::string HTTPResponse::GetResponseString() const {
-    std::string response_string = "";
+    std::ostringstream oss;
 
-    response_string += GetStatusLineString();
-    response_string += GetHeadersString();
+    oss << GetStatusLineString();
+    oss << GetHeadersString();
     if (content_length() > 0) {
-        response_string += new_line_string_;
-        response_string += GetBodyString();
+        oss << new_line_string_;
+        oss << GetBodyString();
     }
-    return response_string;
+    return oss.str();
 }
 
 void HTTPResponse::Write(Socket socket) {
