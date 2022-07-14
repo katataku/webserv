@@ -21,7 +21,8 @@ IOMultiplexer::~IOMultiplexer() { close(epollfd); }
 
 void IOMultiplexer::Init(std::vector<std::string> ports) {
   // Fill listen status sockets to socket list
-  for (portlist_iterator itr = ports.begin(); itr != ports.end(); ++itr) {
+  for (std::vector<std::string>::iterator itr = ports.begin();
+      itr != ports.end(); ++itr) {
     CreateListenerSocket(*itr);
   }
 
@@ -46,7 +47,7 @@ void IOMultiplexer::Init(std::vector<std::string> ports) {
 }
 
 std::vector<Socket> IOMultiplexer::Wait() {
-  socketlist sockets;
+  std::vector<Socket> sockets;
 
   int nready = epoll_wait(this->epollfd, this->events, kMaxNEvents, -1);
   if (nready == -1) {
@@ -88,7 +89,7 @@ void IOMultiplexer::Accept(Socket &socket) {
     this->logging_.Debug("Accept");
 }
 
-void IOMultiplexer::CreateListenerSocket(port port) {
+void IOMultiplexer::CreateListenerSocket(std::string port) {
   this->sockets_.push_back(Socket::OpenListeningSocket(port));
 }
 

@@ -22,21 +22,16 @@ class IOMultiplexer {
     void Accept(Socket &);
 
  private:
-    typedef std::string              port;
-    typedef std::vector<std::string> portlist;
-    typedef portlist::iterator       portlist_iterator;
-    typedef std::vector<Socket>      socketlist;
-
     static const int kMaxNEvents = 10;
 
-    Logging     logging_;
-    socketlist  sockets_;
-    int         epollfd;
-    std::set<int> listenfds;
-    epoll_event ev;
-    epoll_event events[kMaxNEvents];
+    Logging             logging_;
+    std::vector<Socket> sockets_;
+    int                 epollfd;
+    std::set<int>       listenfds;
+    epoll_event         ev;
+    epoll_event         events[kMaxNEvents];
 
-    void CreateListenerSocket(port port);
+    void CreateListenerSocket(std::string port);
 };
 
 #endif  // SRCS_SOCKET_IOMULTIPLEXER_HPP_
