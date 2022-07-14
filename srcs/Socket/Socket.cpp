@@ -9,17 +9,19 @@
 
 #include <iostream>
 
-Socket::Socket() : sock_fd_(-1), is_listening_(false) {}
+Socket::Socket()
+    : sock_fd_(-1), is_listening_(false), logging_(Logging(__FUNCTION__)) {}
 
 Socket::Socket(int sock_fd, bool is_listening)
-    : sock_fd_(sock_fd), is_listening_(is_listening) {}
+    : sock_fd_(sock_fd), is_listening_(is_listening),
+      logging_(Logging(__FUNCTION__)) {}
 
-Socket::Socket(Socket const &other) { *this = other; }
+Socket::Socket(Socket const &other)
+    : logging_(Logging(__FUNCTION__)) { *this = other; }
 
 Socket &Socket::operator=(Socket const &other) {
     if (this != &other) {
         this->sock_fd_ = dup(other.sock_fd_);
-        // this->sock_fd_ = other.sock_fd_;
         this->is_listening_ = other.is_listening_;
     }
     return *this;
@@ -27,20 +29,18 @@ Socket &Socket::operator=(Socket const &other) {
 
 Socket::~Socket() {}
 
-// TODO(iyamada) エラー処理
 void Socket::Send(std::string data) const {
   std::size_t data_size = data.size();
-  // Ignore SIGPIPE, See https://doi-t.hatenablog.com/entry/2014/06/10/033309
   ssize_t sendbyte = 0;
   std::size_t remainbyte = data_size;
   char *rawdata = const_cast<char *>(data.c_str());
 
   for (;;) {
+    // Ignore SIGPIPE, See https://doi-t.hatenablog.com/entry/2014/06/10/033309
     sendbyte = send(sock_fd_, rawdata, remainbyte, MSG_NOSIGNAL);
     // Error occured
     if (sendbyte == -1) {
-      perror("Failed to send");
-      break;
+      throw std::runtime_error("Error: send " + std::string(strerror(errno)));
     }
     // Send complete
     if (static_cast<std::size_t>(sendbyte) == remainbyte) {
@@ -51,10 +51,6 @@ void Socket::Send(std::string data) const {
   }
 }
 
-// TODO(iyamada) エラー処理
-// TODO(iyamada) クライアント側でクローズされるまで一気に読み込んでいる
-// TODO(iyamada) epollでIO多重化してる時、リクエストを読み終えるたびに
-// TODO(iyamada) recvの戻り値が-1になる
 std::string Socket::Recv() const {
   char buf[kBufferSize];
   ssize_t recvsize = 0;
@@ -62,14 +58,12 @@ std::string Socket::Recv() const {
 
   for (;;) {
     recvsize = recv(sock_fd_, buf, kBufferSize, 0);
-    // std::cout << "serv >> receive " << recvsize << " size" << std::endl;
     // Error occured
     if (recvsize == -1) {
       if (errno == EAGAIN) {
         break;
       }
-      perror("Failed to recv");
-      break;
+      throw std::runtime_error("Error: recv " + std::string(strerror(errno)));
     }
     // Client closes sockets
     if (recvsize == 0) {
@@ -77,34 +71,73 @@ std::string Socket::Recv() const {
     }
     buf[recvsize] = '\0';
     std::string bufstr = std::string(buf);
-    // if (bufstr == "quit\r\n") {
-    //   break;
-    // }
     data += bufstr;
   }
 
   return data;
 }
 
-// TODO(iyamada) エラー処理
 void Socket::Close() const {
-  close(sock_fd_);
+  if (close(sock_fd_) == -1) {
+    throw std::runtime_error("Error: close " + std::string(strerror(errno)));
+  }
 }
 
-// TODO(iyamada) エラー処理
 Socket Socket::Accept() const {
   sockaddr clientaddr;
   socklen_t addrlen = sizeof(sockaddr);
 
   int new_socket = accept(sock_fd_, &clientaddr, &addrlen);
   if (new_socket < 0) {
-    perror("Failed to accept");
-    throw std::runtime_error("Error");
+    throw std::runtime_error("Error: accept " + std::string(strerror(errno)));
   }
+
+  this->logging_.Debug("Accept");
+
   return Socket(new_socket, false);
 }
 
-bool Socket::is_listening() const { return is_listening_; }
+Socket Socket::OpenListeningSocket(const std::string& port) {
+    addrinfo hints, *listp = NULL;
+    bzero(&hints, sizeof(addrinfo));
+    hints.ai_socktype = SOCK_STREAM;              // Connections only
+    hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;  // Accept connections
+    hints.ai_flags |= AI_NUMERICSERV;             // Using port
+    int rc = 0;
+    if ((rc = getaddrinfo(NULL, port.c_str(), &hints, &listp)) != 0) {
+      std::cerr << gai_strerror(rc) << std::endl;
+      throw std::runtime_error("Failed to getaddrinfo");
+    }
+    int listenfd = 0;
+    for (addrinfo* p = listp; p != NULL; p = p->ai_next) {
+      listenfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+      if (listenfd < 0) {
+        continue;
+      }
+      // Avoid already address bind
+      int optval = 1;
+      setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
+          (const void*)&optval, sizeof(int));
+
+      if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) {
+        break;
+      }
+      close(listenfd);
+    }
+    freeaddrinfo(listp);
+
+    if (listen(listenfd, kQueueSize) < 0) {
+      close(listenfd);
+      throw std::runtime_error("Failed to listen");
+    }
+
+    return Socket(listenfd, true);  // return listen status socket
+}
+
+bool Socket::is_listening() const {
+  this->logging_.Debug("is_listening");
+  return is_listening_;
+}
 
 int Socket::sock_fd() const { return sock_fd_; }
 

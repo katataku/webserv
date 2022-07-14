@@ -3,6 +3,7 @@
 
 #include <sys/epoll.h>
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -31,7 +32,7 @@ class IOMultiplexer {
     Logging     logging_;
     socketlist  sockets_;
     int         epollfd;
-    int         listen_sock;
+    std::set<int> listenfds;
     epoll_event ev;
     epoll_event events[kMaxNEvents];
 
