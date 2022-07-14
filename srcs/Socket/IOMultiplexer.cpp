@@ -25,18 +25,18 @@ void IOMultiplexer::Init(std::vector<std::string> ports) {
     CreateListenerSocket(*itr);
   }
 
-  epollfd = epoll_create(1);
-  if (epollfd == -1) {
+  this->epollfd = epoll_create(1);
+  if (this->epollfd == -1) {
     throw std::runtime_error("Error: epoll_create "
         + std::string(strerror(errno)));
   }
 
-  for (std::size_t i = 0; i < sockets_.size(); ++i) {
-    listenfds.insert(sockets_.at(i).sock_fd());
-    ev.events = EPOLLIN;
-    ev.data.fd = sockets_.at(i).sock_fd();
-    if (epoll_ctl(epollfd, EPOLL_CTL_ADD,
-        sockets_.at(i).sock_fd(), &ev) == -1) {
+  for (std::size_t i = 0; i < this->sockets_.size(); ++i) {
+    listenfds.insert(this->sockets_.at(i).sock_fd());
+    this->ev.events = EPOLLIN;
+    this->ev.data.fd = this->sockets_.at(i).sock_fd();
+    if (epoll_ctl(this->epollfd, EPOLL_CTL_ADD,
+        this->sockets_.at(i).sock_fd(), &this->ev) == -1) {
       throw std::runtime_error("Error: epoll_ctl "
           + std::string(strerror(errno)));
     }
@@ -48,7 +48,7 @@ void IOMultiplexer::Init(std::vector<std::string> ports) {
 std::vector<Socket> IOMultiplexer::Wait() {
   socketlist sockets;
 
-  int nready = epoll_wait(epollfd, events, kMaxNEvents, -1);
+  int nready = epoll_wait(this->epollfd, this->events, kMaxNEvents, -1);
   if (nready == -1) {
     throw std::runtime_error("Error: epoll_wait "
         + std::string(strerror(errno)));
@@ -58,9 +58,9 @@ std::vector<Socket> IOMultiplexer::Wait() {
     std::set<int>::iterator itr = listenfds.find(events[i].data.fd);
 
     if (itr != listenfds.end()) {  // Find listen status socket
-      sockets.push_back(Socket(events[i].data.fd, true));
+      sockets.push_back(Socket(this->events[i].data.fd, true));
     } else {
-      sockets.push_back(Socket(events[i].data.fd, false));
+      sockets.push_back(Socket(this->events[i].data.fd, false));
     }
   }
 
@@ -78,9 +78,9 @@ void IOMultiplexer::Accept(Socket &socket) {
         throw std::runtime_error("Error: fcntl "
             + std::string(strerror(errno)));
     }
-    ev.events = EPOLLIN | EPOLLET;
-    ev.data.fd = conn_fd;
-    if (epoll_ctl(epollfd, EPOLL_CTL_ADD, conn_fd, &ev) == -1) {
+    this->ev.events = EPOLLIN | EPOLLET;
+    this->ev.data.fd = conn_fd;
+    if (epoll_ctl(this->epollfd, EPOLL_CTL_ADD, conn_fd, &this->ev) == -1) {
         throw std::runtime_error("Error: epoll_ctl "
             + std::string(strerror(errno)));
     }
@@ -89,6 +89,6 @@ void IOMultiplexer::Accept(Socket &socket) {
 }
 
 void IOMultiplexer::CreateListenerSocket(port port) {
-  sockets_.push_back(Socket::OpenListeningSocket(port));
+  this->sockets_.push_back(Socket::OpenListeningSocket(port));
 }
 

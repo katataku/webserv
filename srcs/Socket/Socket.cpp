@@ -37,7 +37,7 @@ void Socket::Send(std::string data) const {
 
   for (;;) {
     // Ignore SIGPIPE, See https://doi-t.hatenablog.com/entry/2014/06/10/033309
-    sendbyte = send(sock_fd_, rawdata, remainbyte, MSG_NOSIGNAL);
+    sendbyte = send(this->sock_fd_, rawdata, remainbyte, MSG_NOSIGNAL);
     if (sendbyte == -1) {  // Error occured
       throw std::runtime_error("Error: send " + std::string(strerror(errno)));
     }
@@ -55,7 +55,7 @@ std::string Socket::Recv() const {
   std::string data;
 
   for (;;) {
-    recvsize = recv(sock_fd_, buf, kBufferSize, 0);
+    recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
     if (recvsize == -1) {  // Error occured
       if (errno == EAGAIN) {  // No data in socket buffer
         break;
@@ -74,7 +74,7 @@ std::string Socket::Recv() const {
 }
 
 void Socket::Close() const {
-  if (close(sock_fd_) == -1) {
+  if (close(this->sock_fd_) == -1) {
     throw std::runtime_error("Error: close " + std::string(strerror(errno)));
   }
 }
@@ -83,7 +83,7 @@ Socket Socket::Accept() const {
   sockaddr clientaddr;
   socklen_t addrlen = sizeof(sockaddr);
 
-  int new_socket = accept(sock_fd_, &clientaddr, &addrlen);
+  int new_socket = accept(this->sock_fd_, &clientaddr, &addrlen);
   if (new_socket < 0) {
     throw std::runtime_error("Error: accept " + std::string(strerror(errno)));
   }
@@ -132,9 +132,9 @@ Socket Socket::OpenListeningSocket(const std::string& port) {
 
 bool Socket::is_listening() const {
   this->logging_.Debug("is_listening");
-  return is_listening_;
+  return this->is_listening_;
 }
 
-int Socket::sock_fd() const { return sock_fd_; }
+int Socket::sock_fd() const { return this->sock_fd_; }
 
-void Socket::set_is_listening(bool cond) { is_listening_ = cond; }
+void Socket::set_is_listening(bool cond) { this->is_listening_ = cond; }
