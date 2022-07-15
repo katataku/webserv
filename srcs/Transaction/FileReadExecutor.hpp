@@ -19,7 +19,7 @@ class FileReadExecutor : public IExecutor {
 
  private:
     Logging logging_;
-    HTTPResponse *FileGet(std::string file_path);
+    HTTPResponse *GetFileExec(std::string file_path);
 };
 
 #endif  // SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_

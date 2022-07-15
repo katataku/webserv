@@ -23,7 +23,7 @@ FileReadExecutor &FileReadExecutor::operator=(FileReadExecutor const &other) {
 
 FileReadExecutor::~FileReadExecutor() {}
 
-HTTPResponse *FileReadExecutor::FileGet(std::string file_path) {
+HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
     std::ifstream ifs(file_path);
     std::string str;
     std::ostringstream oss;
@@ -50,7 +50,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
 
     if (S_ISREG(stat_buf.st_mode)) {
         logging_.Debug("URI indicate regular file.");
-        return FileGet(file_path);
+        return GetFileExec(file_path);
         //        return GetFileExecutor(request, sl);
     }
     logging_.Info("Function ends abnormally");
