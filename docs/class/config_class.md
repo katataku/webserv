@@ -79,7 +79,7 @@ classDiagram
         -string alias
         -string cgi_extension
         +IsRedirect() bool
-        +IsCGI(string path_info) bool
+        +IsCGI(string path) bool
         +ResolveAlias(string path_info) string;
     }
 ```
