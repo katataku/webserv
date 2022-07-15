@@ -10,15 +10,16 @@ class Worker {
  public:
     Worker();
     Worker(Worker const &other);
-    explicit Worker(ServerLocationFacade facade) : server_location_facade_(facade) {}
+    explicit Worker(ServerLocationFacade facade);
     Worker &operator=(Worker const &other);
     ~Worker();
 
     void Exec(Socket &);
 
  private:
-    Logging logging_;
-    RequestFacade *request_facade_;
+    // RequestFacade *request_facade_;
+    Logging              logging_;
+    RequestFacade        request_facade_;
     ServerLocationFacade server_location_facade_;
 };
 

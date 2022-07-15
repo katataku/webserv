@@ -17,7 +17,7 @@ RequestFacade::~RequestFacade() {}
 HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
     // Requestを返す
     std::cout << "Before logging_.Debug" << std::endl;
-    // logging_.Debug("SelectRequest");
+    logging_.Debug("SelectRequest");
     std::cout << "Done logging_.Debug" << std::endl;
 
     int socketfd = socket.sock_fd();
