@@ -24,7 +24,7 @@ FileReadExecutor &FileReadExecutor::operator=(FileReadExecutor const &other) {
 FileReadExecutor::~FileReadExecutor() {}
 
 HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
-    std::ifstream ifs(file_path);
+    std::ifstream ifs(file_path.c_str());
     std::string str;
     std::ostringstream oss;
 
