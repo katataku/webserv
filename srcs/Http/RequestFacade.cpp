@@ -15,17 +15,14 @@ RequestFacade &RequestFacade::operator=(RequestFacade const &other) {
 RequestFacade::~RequestFacade() {}
 
 HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
-    // Requestを返す
-    std::cout << "Before logging_.Debug" << std::endl;
-    logging_.Debug("SelectRequest");
-    std::cout << "Done logging_.Debug" << std::endl;
+    this->logging_.Debug("SelectRequest");
 
     int socketfd = socket.sock_fd();
-    std::map<int, HTTPRequest*>::iterator itr = list_.find(socketfd);
-    if (itr == list_.end()) {
-      list_[socketfd] = new HTTPRequest();
+    std::map<int, HTTPRequest*>::iterator itr = this->list_.find(socketfd);
+    if (itr == this->list_.end()) {
+      this->list_[socketfd] = new HTTPRequest();
     }
-    return list_.at(socketfd);
+    return this->list_.at(socketfd);
 }
 
 void RequestFacade::Finish(Socket socket) {

@@ -19,8 +19,6 @@ class ServerLocationFacade {
                            std::string path) const;
     std::vector<std::string> GetPorts() const;
 
-    std::vector<ServerLocation> *get_server_locations_() const { return server_locations_; }
-
  private:
     std::vector<ServerLocation> *server_locations_;
 };

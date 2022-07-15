@@ -3,9 +3,7 @@
 ServerLocationFacade::ServerLocationFacade() { (void)server_locations_; }
 
 ServerLocationFacade::ServerLocationFacade(std::vector<ServerLocation> *vec)
-    : server_locations_(vec) {
-    std::cout << "server_locations_ : " << server_locations_ << std::endl;
-}
+    : server_locations_(vec) {}
 
 ServerLocationFacade::ServerLocationFacade(ServerLocationFacade const &other) {
     *this = other;
@@ -26,7 +24,6 @@ ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
     (void)port;
     (void)host;
     (void)path;
-    std::cout << "server_locations_ : " << server_locations_ << std::endl;
     return &(this->server_locations_->at(0));
 }
 

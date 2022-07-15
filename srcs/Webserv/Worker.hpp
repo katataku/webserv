@@ -17,7 +17,6 @@ class Worker {
     void Exec(Socket &);
 
  private:
-    // RequestFacade *request_facade_;
     Logging              logging_;
     RequestFacade        request_facade_;
     ServerLocationFacade server_location_facade_;

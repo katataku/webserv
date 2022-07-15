@@ -21,22 +21,21 @@ SuperVisor &SuperVisor::operator=(SuperVisor const &other) {
 SuperVisor::~SuperVisor() {}
 
 SuperVisor::SuperVisor(ServerLocationFacade facade)
-    : facade_(facade), logging_(Logging(__FUNCTION__)) {
-  std::cout << "SuperVisor server_locations_ : " << facade_.get_server_locations_() << std::endl;
-}
+    : facade_(facade), logging_(Logging(__FUNCTION__)) {}
 
 void SuperVisor::Watch() {
     IOMultiplexer iomul;
-    std::vector<std::string> ports = facade_.GetPorts();
+    std::vector<std::string> ports = this->facade_.GetPorts();
     iomul.Init(ports);
     this->logging_.Debug("start loop");
     while (true) {
         std::vector<Socket> sockets = iomul.Wait();
-        for (std::vector<Socket>::iterator itr = sockets.begin(); itr != sockets.end(); ++itr) {
+        for (std::vector<Socket>::iterator itr = sockets.begin();
+            itr != sockets.end(); ++itr) {
             if ((*itr).is_listening()) {
                 iomul.Accept(*itr);
             } else {
-                Worker worker(facade_);
+                Worker worker(this->facade_);
                 worker.Exec(*itr);
             }
         }
