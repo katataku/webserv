@@ -37,11 +37,9 @@ classDiagram
         -bool autoindex
         -string index_page
         -string redirect_uri
-        -vector~string~ allow_methods
-        -string path
+        -set~string~ allow_methods
         -string alias
-        +IsRedirect() bool
-        +IsCGI() bool
+        -string cgi_extension
     }
 
     class Webserv {
@@ -76,12 +74,13 @@ classDiagram
         -bool autoindex
         -string index_page
         -string redirect_uri
-        -vector~string~ allow_methods
+        -set~string~ allow_methods
         -string path
         -string alias
+        -string cgi_extension
         +IsRedirect() bool
-        +IsCGI() bool
-        +ResolveAlias() string;
+        +IsCGI(string path) bool
+        +ResolveAlias(string path_info) string;
     }
 ```
 
@@ -127,3 +126,4 @@ SuperVisor {
 ## メモ
 
 - ServerLocationはServerとLocationに分けたほうがいい可能性もある。
+- is_defaultみたいなどれがデフォルトサーバーなのかを示すパラメータが必要そう

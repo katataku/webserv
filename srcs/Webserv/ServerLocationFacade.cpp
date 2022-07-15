@@ -24,7 +24,7 @@ ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
     (void)port;
     (void)host;
     (void)path;
-    return NULL;
+    return &(this->server_locations_->at(0));
 }
 
 std::vector<std::string> ServerLocationFacade::GetPorts() const {

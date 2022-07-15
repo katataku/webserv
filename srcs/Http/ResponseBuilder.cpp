@@ -16,8 +16,12 @@ ResponseBuilder &ResponseBuilder::operator=(ResponseBuilder const &other) {
 ResponseBuilder::~ResponseBuilder() {}
 
 HTTPResponse *ResponseBuilder::Build(std::string body) {
-    (void)body;
-    return new HTTPResponse();
+    HTTPResponse *res = new HTTPResponse();
+
+    res->status_code(200);
+    res->content_length(body.size());
+    res->response_body(body);
+    return res;
 }
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {

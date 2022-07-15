@@ -89,7 +89,7 @@ Example:
 
 ```
 error_page 404 /404.html;
-error_page 500 502 503 504 /50x.html;
+error_page 500 501 505 /50x.html;
 ```
 
 ### [client_max_body_size]

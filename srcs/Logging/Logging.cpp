@@ -4,7 +4,7 @@ Logging::Logging() : caller_name("") {}
 
 Logging::Logging(std::string str) : caller_name(str) {}
 
-void Logging::PrintLog(std::string str, std::string error_level) {
+void Logging::PrintLog(std::string str, std::string error_level) const {
     struct timespec ts;
     struct tm t;
     char buf[32];
@@ -17,18 +17,18 @@ void Logging::PrintLog(std::string str, std::string error_level) {
               << this->caller_name << " " << str << std::endl;
 }
 
-void Logging::Fatal(std::string str) {
+void Logging::Fatal(std::string str) const {
     if (DEBUG_LEVEL >= E_FATAL) this->PrintLog(str, "FATAL");
 }
-void Logging::Error(std::string str) {
+void Logging::Error(std::string str) const {
     if (DEBUG_LEVEL >= E_ERROR) this->PrintLog(str, "ERROR");
 }
-void Logging::Warn(std::string str) {
+void Logging::Warn(std::string str) const {
     if (DEBUG_LEVEL >= E_WARN) this->PrintLog(str, "WARN");
 }
-void Logging::Info(std::string str) {
+void Logging::Info(std::string str) const {
     if (DEBUG_LEVEL >= E_INFO) this->PrintLog(str, "INFO");
 }
-void Logging::Debug(std::string str) {
+void Logging::Debug(std::string str) const {
     if (DEBUG_LEVEL >= E_DEBUG) this->PrintLog(str, "DEBUG");
 }
