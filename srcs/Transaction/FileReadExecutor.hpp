@@ -1,6 +1,9 @@
 #ifndef SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_
 #define SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_
 
+#include <string>
+
+#include "HTTPResponse.hpp"
 #include "IExecutor.hpp"
 #include "Logging.hpp"
 
@@ -16,6 +19,7 @@ class FileReadExecutor : public IExecutor {
 
  private:
     Logging logging_;
+    HTTPResponse *FileGet(std::string file_path);
 };
 
 #endif  // SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_

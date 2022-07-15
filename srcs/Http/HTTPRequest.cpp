@@ -42,6 +42,9 @@ std::string HTTPRequest::transfer_encoding() const {
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 bool HTTPRequest::is_ready() const { return this->is_ready_; }
 
+void HTTPRequest::method(std::string method) { this->method_ = method; }
+void HTTPRequest::uri(std::string uri) { this->uri_ = uri; }
+
 void HTTPRequest::Parse(std::string str) {
     (void)str;
     this->unparsed_string_ = "";
