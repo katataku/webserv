@@ -13,7 +13,7 @@ Socket &Socket::operator=(Socket const &other) {
 
 Socket::~Socket() {}
 
-void Socket::Send() const {}
+void Socket::Send(std::string data) const { (void)data; }
 
 std::string Socket::Recv() const { return "data"; }
 

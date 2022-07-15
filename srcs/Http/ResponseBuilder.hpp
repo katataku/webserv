@@ -14,9 +14,9 @@ class ResponseBuilder {
     ResponseBuilder &operator=(ResponseBuilder const &other);
     ~ResponseBuilder();
 
-    HTTPResponse *Build(std::string body);
-    HTTPResponse *BuildError(int status_code, ServerLocation *sl);
-    HTTPResponse *BuildRedirect(std::string redirect_url);
+    static HTTPResponse *Build(std::string body);
+    static HTTPResponse *BuildError(int status_code, ServerLocation *sl);
+    static HTTPResponse *BuildRedirect(std::string redirect_url);
 
  private:
     Logging logging_;
