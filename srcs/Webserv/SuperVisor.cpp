@@ -7,7 +7,7 @@
 #include "Socket.hpp"
 #include "Worker.hpp"
 
-SuperVisor::SuperVisor() { Logging logging_ = Logging(__FUNCTION__); }
+SuperVisor::SuperVisor() : logging_(Logging(__FUNCTION__)) {}
 
 SuperVisor::SuperVisor(SuperVisor const &other) { *this = other; }
 
@@ -20,25 +20,24 @@ SuperVisor &SuperVisor::operator=(SuperVisor const &other) {
 
 SuperVisor::~SuperVisor() {}
 
-SuperVisor::SuperVisor(ServerLocationFacade facade) : facade_(facade) {}
+SuperVisor::SuperVisor(ServerLocationFacade facade)
+    : facade_(facade), logging_(Logging(__FUNCTION__)) {}
 
 void SuperVisor::Watch() {
-    IOMultiplexer mux;
-    std::vector<std::string> ports = facade_.GetPorts();
-    mux.Init(ports);
+    IOMultiplexer iomul;
+    std::vector<std::string> ports = this->facade_.GetPorts();
+    iomul.Init(ports);
+    this->logging_.Debug("start loop");
     while (true) {
-        this->logging_.Debug("start loop");
-        std::vector<Socket> sockets = mux.Wait();
-        std::vector<Socket>::iterator it = sockets.begin();
-        for (; it != sockets.end(); it++) {
-            Socket &socket = *it;
-            if (it->is_listening()) {
-                mux.Accept(socket);
+        std::vector<Socket> sockets = iomul.Wait();
+        for (std::vector<Socket>::iterator itr = sockets.begin();
+            itr != sockets.end(); ++itr) {
+            if ((*itr).is_listening()) {
+                iomul.Accept(*itr);
             } else {
-                Worker worker;
-                worker.Exec(socket);
+                Worker worker(this->facade_);
+                worker.Exec(*itr);
             }
         }
-        break;
     }
 }
