@@ -17,6 +17,7 @@ add_library(webserv
 add_executable(main
         main.cpp
         utils.cpp
+        HTTP.cpp
 )
 
 target_link_libraries(main
