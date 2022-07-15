@@ -1,3 +1,4 @@
+#include "ResponseBuilder.hpp"
 #include "Transaction.hpp"
 
 Transaction::Transaction() : logging_(Logging(__FUNCTION__)) {}
@@ -14,7 +15,6 @@ Transaction &Transaction::operator=(Transaction const &other) {
 Transaction::~Transaction() {}
 
 HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
-    (void)request;
     (void)sl;
-    return NULL;
+    return ResponseBuilder::Build(request->request_body());
 }
