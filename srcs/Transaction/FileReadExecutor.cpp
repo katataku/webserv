@@ -45,6 +45,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     if (stat(file_path.c_str(), &stat_buf) == -1) {
         logging_.Fatal("stat failed");
         logging_.Fatal(strerror(errno));
+        return NULL;
     }
 
     if (S_ISREG(stat_buf.st_mode)) {
