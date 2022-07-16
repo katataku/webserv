@@ -20,8 +20,8 @@ TEST_F(TransactionTest, FileReadExecutor) {
     system("echo 'hello world' > /var/www/html/hello_world.html");
 
     HTTPRequest req = HTTPRequest();
-    req.method("GET");
-    req.uri("/html/hello_world.html");
+    req.set_method("GET");
+    req.set_uri("/html/hello_world.html");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
