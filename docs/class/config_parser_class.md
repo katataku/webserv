@@ -36,6 +36,9 @@ classDiagram
     class ConfigGenerator {
       +ConfigGenerator(Node node)
       +Generate()* WebservConfig
+      -GenerateWebservConfig()* WebservConfig
+      -GenerateServerContext()* ServerContext
+      -GenerateLocationContext()* LocationContext
       -Node* node
     }
 
@@ -54,14 +57,10 @@ classDiagram
 
     %% 構文解析後のノードを表すクラス %%
     class Node {
-      +HasNextContext() bool
-      +HasNextDirective() bool
-      +IsServerContext() bool
-      +IsListenDirective() bool
-      -Node* next_context
-      -Node* next_directive
-      -NodeKind context_kind
-      -NodeKind directive_kind
+      -list<Node>   child_contexts
+      -list<Node>   directives
+      -NodeKind     context_kind
+      -NodeKind     directive_kind
       -list<string> directive_val
     }
 ```
@@ -176,22 +175,71 @@ class ConfigGenerator {
     ConfigGenerator(Node node)
 
     // ノードを辿り、WebservConfigを作成する
-    WebservConfig Generate() {
-      WebservConfig conf
-
-      for (node is not end_node) {
-          if (next_context is server) {
-            ServerContext servcontext = MakeServerContext() // 再帰的にnodeを辿り、ディレクティブやlocationが見つかったら適切に処理してLocationContextを作成し、ServerContextに詰める
-            LetHaveServerContext(conf, servcontext)
-          }
-          // エラー
-          throw UnknownContext()
-      }
-
-      return conf
+    WebservConfig Generate(Node* node) {
+        return GenerateWebservConfig(node)
     }
   private:
     Node node
+
+    WebservConfig GenerateWebservConfig(Node* node) {
+        WebservConfig conf
+
+        for directive in node.directives {
+            if directive is error_page {
+                conf.SetErrorPage(directive.Value())
+            }
+            if directive is limit_except {
+                conf.SetLimitExcept(directive.Value())
+            }
+            ...
+        }
+        for child_context in node.child_contexts {
+            if child_context is server_context {
+                conf.AddServerContext(GenerateServerContext(node))
+                continue
+            }
+            throw UnknownContext()
+        }
+        return 
+    }
+
+    ServerContext GenerateServerContext(Node* node) {
+        ServerContext serv
+
+        for directive in node.directives {
+            if directive is server_name {
+                serv.SetServerName(directive.Value())
+            }
+            if directive is redirect_url {
+                serv.SetRedirectURL(directive.Value())
+            }
+            ...
+        }
+        for child_context in node.child_contexts {
+            if child_context is location_context {
+                serv.SetLocationContext(GenerateLocationContext(node))
+                continue
+            }
+            throw UnknownContext()
+        }
+
+        return serv
+    }
+
+    LocationContext GenerateLocationContext(Node* node) {
+        LocationContext location
+
+        for directive in node.directives {
+            if directive is alias {
+                location.SetAlias(directive.Value())
+            }
+            ...
+        }
+        if node.HasContext() {
+            throw UnknownContext()
+        }
+        return location
+    }
 }
 
 class ConfigProcesser {
