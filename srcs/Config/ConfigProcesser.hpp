@@ -55,6 +55,7 @@ public:
       return generator.Generate();
     } catch (std::exception& e) {
       std::cerr << e.what() << std::endl;
+      std::exit(1);
     }
 
     return WebservConfig();
