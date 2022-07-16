@@ -1,6 +1,16 @@
 #include "HTTPRequest.hpp"
 
-HTTPRequest::HTTPRequest() : logging_(Logging(__FUNCTION__)) {}
+HTTPRequest::HTTPRequest()
+    : logging_(Logging(__FUNCTION__)),
+      unparsed_string_(""),
+      method_(""),
+      uri_(""),
+      host_(""),
+      content_length_(""),
+      transfer_encoding_(""),
+      request_body_(""),
+      is_finish_to_read_header_(false),
+      is_finish_to_read_body_(false) {}
 
 HTTPRequest::HTTPRequest(HTTPRequest const &other) { *this = other; }
 
@@ -54,13 +64,10 @@ bool HTTPRequest::is_finish_to_read_body() const {
 
 void HTTPRequest::Parse(std::string str) {
     (void)str;
-    this->unparsed_string_ = "";
     this->method_ = "GET";
     this->uri_ = "http://localhost:8181/index.html";
     this->host_ = "localhost";
     this->content_length_ = "0";
-    this->transfer_encoding_ = "";
-    this->request_body_ = "";
 }
 
 int HTTPRequest::CalcBodySize() const { return 0; }

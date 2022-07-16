@@ -34,13 +34,11 @@ class HTTPRequest {
     std::string transfer_encoding_;
     std::string request_body_;
     bool is_finish_to_read_header_;
+    bool is_finish_to_read_body_;
 
  public:
     bool is_finish_to_read_header() const;
     bool is_finish_to_read_body() const;
-
- private:
-    bool is_finish_to_read_body_;
 };
 
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs);
