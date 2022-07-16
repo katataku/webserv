@@ -92,7 +92,7 @@ classDiagram
 config           ::= block_directive
 block_directive  ::= "server" [value] "{" single_directive "}"
 single_directive ::= "listen" value ";"
-value            ::= (英数字 | ".")*
+value            ::= (英数字 | ".")+
 ```
 
 ## 擬似コード
