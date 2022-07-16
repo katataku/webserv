@@ -95,6 +95,10 @@ single_directive ::= "listen" value ";"
 value            ::= (英数字 | ".")+
 ```
 
+- メタ構文の意味
+  - "[hoge]" : hogeは0か1個
+  - "hoge+" : hogeは1個以上
+
 ## 擬似コード
 
 ```cpp
