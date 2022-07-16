@@ -18,31 +18,35 @@ classDiagram
     %% configファイルの内容を字句解析するところまでを担当 %%
     class ConfigLexer {
       +ConfigLexer(string content)
-      +Tokenize()* Token
+      +Tokenize()* Token*
       -content string
     }
 
     %% 軸解析後のトークンを構文解析するところまでを担当 %%
     class ConfigParser {
       +ConfigParser(Token token)
-      +Parse()* void
-      -Token token
+      +Parse()* Node*
+      -config()* Node*
+      -config()* block_directive*
+      -config()* single_directive*
+      -Token* token
     }
 
     %% 構文解析後のノードを元にWebservConfigを作成するところまでを担当 %%
     class ConfigGenerator {
       +ConfigGenerator(Node node)
       +Generate()* WebservConfig
-      -Node node
+      -Node* node
     }
 
     %% 字句解析後のトークンを表すクラス %%
     class Token {
-        +Consume()
-        +PeekKind()
-        +Expect()
         +static NewToken(Token*, TokenKind, string)* Token*
-        +next()* Token*
+        +static Consume(Token**, string)* Token*
+        +static Consume(Token**, TokenKind)* Token*
+        +static PeekKind(Token**, TokenKind)* bool
+        +static Expect(Token**, string)* bool
+        +static Expect(Token**, TokenKind)* bool
         -TokenKind kind
         -string val
         -Token next
@@ -50,17 +54,50 @@ classDiagram
 
     %% 構文解析後のノードを表すクラス %%
     class Node {
-      -Node next_context
-      -Node next_directive
+      +HasNextContext() bool
+      +HasNextDirective() bool
+      +IsServerContext() bool
+      +IsListenDirective() bool
+      -Node* next_context
+      -Node* next_directive
       -NodeKind context_kind
       -NodeKind directive_kind
       -list<string> directive_val
     }
 ```
 
+## TokenKindについて
+
+| kind名                | 説明                   |
+| -------------------- | -------------------- |
+| BlockDirectiveToken  | "server"             |
+| SingleDirectiveToken | "listen"とか           |
+| OpenBracketToken     | "{"                  |
+| CloseBracketToken    | "}"                  |
+| SemicolonToken       | ";"                  |
+| ValueToken           | "80"とか"www.hoge.com" |
+
+## NodeKindの種類
+
+| kind名               | 説明              |
+| ------------------- | --------------- |
+| ServerContextNode   | "server"コンテキスト  |
+| ListenDirectiveNode | "listen"ディレクティブ |
+
+## Configファイルの文法
+
+- パーサーはこの文法に従い、構文解析していく
+
+```
+config           ::= block_directive
+block_directive  ::= "server" "{" single_directive "}"
+single_directive ::= "listen" value ";"
+value            ::= (英数字 | ".")*
+```
+
 ## 擬似コード
 
-``` cpp
+```cpp
 
 class ConfigLexer {
   public:
