@@ -23,7 +23,6 @@ class HTTPRequest {
     std::string content_length() const;
     std::string transfer_encoding() const;
     std::string request_body() const;
-    bool is_ready() const;
 
  private:
     Logging logging_;
@@ -34,7 +33,14 @@ class HTTPRequest {
     std::string content_length_;
     std::string transfer_encoding_;
     std::string request_body_;
-    bool is_ready_;
+    bool is_finish_to_read_header_;
+
+ public:
+    bool is_finish_to_read_header() const;
+    bool is_finish_to_read_body() const;
+
+ private:
+    bool is_finish_to_read_body_;
 };
 
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs);

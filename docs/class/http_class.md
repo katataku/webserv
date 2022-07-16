@@ -15,7 +15,8 @@ classDiagram
         string content-length
         string transfer-encoding
         string request_body
-        bool is_ready
+        bool is_finish_to_read_header
+        bool is_finish_to_read_body
         
         +Parse(string) void
         +IsReady() bool
