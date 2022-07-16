@@ -28,9 +28,8 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
     std::string str;
     std::ostringstream oss;
 
-    while (getline(ifs, str)) {
-        oss << str << std::endl;
-    }
+    oss << ifs.rdbuf();
+
     logging_.Debug("file read finished");
     logging_.Debug(oss.str());
     return ResponseBuilder::Build(oss.str());
