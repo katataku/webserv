@@ -55,11 +55,11 @@ private:
       // node = Node::NewNode(NULL, NULL, Node::ServerContextNode, Node::ListenDirectiveNode);
       node = Node::NewNode(Node::Unknown, Node::ListenDirectiveNode);
     }
-    if (Token::SameTokenKind(&token_, Token::ValueToken)) {
+    if (Token::SameTokenKind(&token_, Token::NumericValueToken)) {
       std::list<std::string> vals;
       vals.push_back(token_->val());
       node.set_directive_vals(vals);
-      Token::Consume(&token_, Token::ValueToken);
+      Token::Consume(&token_, Token::NumericValueToken);
     }
     Token::Consume(&token_, ";");
 
