@@ -1,9 +1,9 @@
 ```mermaid
 classDiagram
-    ConfigProcesser --> ConfigLexier : call
+    ConfigProcesser --> ConfigLexer : call
     ConfigProcesser --> ConfigParser : call
     ConfigProcesser --> ConfigGenerator : call
-    ConfigLexier --> Token : use
+    ConfigLexer --> Token : use
     ConfigParser --> Token : use
     ConfigParser --> Node : use
     ConfigGenerator --> Node : use
@@ -16,8 +16,8 @@ classDiagram
     }
 
     %% configファイルの内容を字句解析するところまでを担当 %%
-    class ConfigLexier {
-      +ConfigLexier(string content)
+    class ConfigLexer {
+      +ConfigLexer(string content)
       +Tokenize()* Token
       -content string
     }
@@ -39,7 +39,7 @@ classDiagram
     %% 字句解析後のトークンを表すクラス %%
     class Token {
         +Consume()
-        +Peek()
+        +PeekKind()
         +Expect()
         +static NewToken(Token*, TokenKind, string)* Token*
         +next()* Token*
@@ -62,10 +62,10 @@ classDiagram
 
 ``` cpp
 
-class ConfigLexier {
+class ConfigLexer {
   public:
     // 字句解析する対象のコンテンツを受け取る
-    ConfigLexier(string content)
+    ConfigLexer(string content)
 
     // 字句解析を行いトークンを得る
     Token Tokenize() {
@@ -161,8 +161,8 @@ class ConfigProcesser {
     // configファイルを解釈してWebservConfigを生成
     WebservConfig Exec() {
       content = ReadFile(path)
-      ConfigLexier lexier(content)
-      Token token = lexier.Tokenize()
+      ConfigLexer lexer(content)
+      Token token = lexer.Tokenize()
       ConfigParser parser(token)
       Node node = parser.Parse()
       ConfigGenerator generator(node)
