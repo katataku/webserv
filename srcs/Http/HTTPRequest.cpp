@@ -1,5 +1,7 @@
 #include "HTTPRequest.hpp"
 
+#include <vector>
+
 HTTPRequest::HTTPRequest()
     : logging_(Logging(__FUNCTION__)),
       unparsed_string_(""),
