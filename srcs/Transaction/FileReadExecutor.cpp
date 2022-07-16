@@ -39,7 +39,7 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
 
 HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
-    logging_.Debug("Function starts");
+    logging_.Debug("Exec starts");
     struct stat stat_buf;
     std::string alias_resolved_uri = sl.ResolveAlias(request.uri());
 
