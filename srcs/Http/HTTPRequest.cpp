@@ -62,18 +62,70 @@ bool HTTPRequest::is_finish_to_read_body() const {
     return is_finish_to_read_body_;
 }
 
-// TODO(ahayashi): chunkedにも対応させる
 void HTTPRequest::Parse(std::string str) {
-    this->unparsed_string() += str;
+    this->unparsed_string_ += str;
     if (!this->is_finish_to_read_header_) {
-        // "\r\n"があればheaderのパースができる
+        std::string::size_type pos = this->unparsed_string_.find("\r\n\r\n");
+        if (pos != std::string::npos) {
+            std::string header = this->unparsed_string_.substr(0, pos);
+            std::string body = this->unparsed_string().substr(
+                pos + std::string("\r\n\r\n").size());
+            this->ParseHeader(header);
+            this->unparsed_string() = body;
+            this->is_finish_to_read_header_ = true;
+        }
     }
     if (this->is_finish_to_read_header_) {
-        // bodyのparse
+        this->is_finish_to_read_body_ = true;
     }
-    this->method_ = "GET";
-    this->uri_ = "http://localhost:8181/index.html";
-    this->host_ = "localhost";
+}
+
+// utilにあってもいいかも
+static std::string ltrim(const std::string &s) {
+    size_t start = s.find_first_not_of(' ');
+    return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+static std::string rtrim(const std::string &s) {
+    size_t end = s.find_last_not_of(' ');
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+static std::string trim(const std::string &s) { return rtrim(ltrim(s)); }
+
+void HTTPRequest::ParseHeader(std::string str) {
+    std::cout << "str: " << str << std::endl;
+    std::vector<std::string> lines = Split(str, "\r\n");
+    std::cout << "size: " << lines.size() << std::endl;
+    for (size_t i = 0; i < lines.size(); ++i) {
+        std::cout << lines[i] << std::endl;
+        if (i == 0) {
+            std::vector<std::string> items = Split(lines[i], " ");
+            if (items.size() != 3 || items[2] != "HTTP/1.1") {
+                // TODO(hayashi-ay): 対応するエラーを定義する
+                throw std::runtime_error("invalid");
+            }
+            this->method_ = items[0];
+            this->uri_ = items[1];
+        } else {
+            std::vector<std::string> items = Split(lines[i], ":");
+            if (items.size() != 2) {
+                // TODO(hayashi-ay): 対応するエラーを定義する
+                throw std::runtime_error("invalid");
+            }
+            if (items[0] == "Host") {
+                this->host_ = trim(items[i]);
+            } else if (items[0] == "Content-Length") {
+                this->content_length_ = trim(items[i]);
+            } else if (items[0] == "Content-Type") {
+                this->content_length_ = trim(items[i]);
+            } else if (items[0] == "Transfer-Encoding") {
+                this->content_length_ = trim(items[i]);
+            } else {
+                // その他のヘッダについては無視して処理を継続する。
+            }
+        }
+    }
 }
 
 int HTTPRequest::CalcBodySize() const { return 0; }

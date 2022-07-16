@@ -5,6 +5,7 @@
 
 #include "Logging.hpp"
 #include "Socket.hpp"
+#include "utils.hpp"
 
 class HTTPRequest {
  public:
@@ -28,6 +29,8 @@ class HTTPRequest {
     bool is_finish_to_read_body() const;
 
  private:
+    void ParseHeader(std::string str);
+
     Logging logging_;
     std::string unparsed_string_;
     std::string method_;
