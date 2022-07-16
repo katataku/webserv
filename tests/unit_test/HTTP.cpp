@@ -26,6 +26,19 @@ TEST_F(HTTPTest, Parse) {
     ASSERT_EQ(req.request_body(), "");
 }
 
+TEST_F(HTTPTest, parse_mutiple) {
+    HTTPRequest req = HTTPRequest();
+    req.Parse("GET / HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("\r\n");
+    ASSERT_EQ(req.method(), "GET");
+    ASSERT_EQ(req.uri(), "/");
+    ASSERT_EQ(req.host(), "test");
+    ASSERT_EQ(req.content_length(), "0");
+    ASSERT_EQ(req.transfer_encoding(), "");
+    ASSERT_EQ(req.request_body(), "");
+}
+
 TEST_F(HTTPTest, ResponseBuilder_200) {
     HTTPResponse *res = ResponseBuilder::Build("hoge");
 

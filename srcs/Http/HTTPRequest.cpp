@@ -94,11 +94,8 @@ static std::string rtrim(const std::string &s) {
 static std::string trim(const std::string &s) { return rtrim(ltrim(s)); }
 
 void HTTPRequest::ParseHeader(std::string str) {
-    std::cout << "str: " << str << std::endl;
     std::vector<std::string> lines = Split(str, "\r\n");
-    std::cout << "size: " << lines.size() << std::endl;
     for (size_t i = 0; i < lines.size(); ++i) {
-        std::cout << lines[i] << std::endl;
         if (i == 0) {
             std::vector<std::string> items = Split(lines[i], " ");
             if (items.size() != 3 || items[2] != "HTTP/1.1") {
