@@ -17,14 +17,14 @@ public:
   ~Token() {}
 
   // single_directiveトークン、とかシンプルなトークン名にする
-  // ListenTokenとかを消す
+  // SingleDirectiveとかを消す
   enum TokenKind {
     Unknown,
-    ServerToken,
+    BlockDirective,
     OpenBracketToken,
     CloseBracketToken,
     ConnmaToken,
-    ListenToken,
+    SingleDirective,
     NumericValueToken,
     ValueToken
   };
@@ -44,11 +44,11 @@ public:
   std::string ToTokenKindStr(TokenKind kind) {
     const char* arr[] = {
         "Unknown",
-        "ServerToken",
+        "BlockDirective",
         "OpenBracketToken",
         "CloseBracketToken",
         "ConnmaToken",
-        "ListenToken",
+        "SingleDirective",
         "NumericValueToken",
         "ValueToken",
         };

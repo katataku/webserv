@@ -1,5 +1,5 @@
-#ifndef CONFIGLEXER_HPP
-#define CONFIGLEXER_HPP
+#ifndef SRCS_CONFIG_CONFIGLEXER_HPP_
+#define SRCS_CONFIG_CONFIGLEXER_HPP_
 
 #include <sstream>
 #include <string>
@@ -112,12 +112,12 @@ public:
         break;
       }
       if (StartsWith(content_, "server")) {
-        cur_tok = Token::NewToken(cur_tok, Token::ServerToken, "server");
+        cur_tok = Token::NewToken(cur_tok, Token::BlockDirective, "server");
         content_ = Consume(content_, "server");
         continue;
       }
       if (StartsWith(content_, "listen")) {
-        cur_tok = Token::NewToken(cur_tok, Token::ListenToken, "listen");
+        cur_tok = Token::NewToken(cur_tok, Token::SingleDirective, "listen");
         content_ = Consume(content_, "listen");
         continue;
       }
@@ -150,4 +150,4 @@ private:
   std::string content_;
 };
 
-#endif
+#endif  // SRCS_CONFIG_CONFIGLEXER_HPP_
