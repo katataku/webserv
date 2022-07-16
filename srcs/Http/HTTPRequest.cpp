@@ -62,8 +62,15 @@ bool HTTPRequest::is_finish_to_read_body() const {
     return is_finish_to_read_body_;
 }
 
+// TODO(ahayashi): chunkedにも対応させる
 void HTTPRequest::Parse(std::string str) {
-    (void)str;
+    this->unparsed_string() += str;
+    if (!this->is_finish_to_read_header_) {
+        // "\r\n"があればheaderのパースができる
+    }
+    if (this->is_finish_to_read_header_) {
+        // bodyのparse
+    }
     this->method_ = "GET";
     this->uri_ = "http://localhost:8181/index.html";
     this->host_ = "localhost";
