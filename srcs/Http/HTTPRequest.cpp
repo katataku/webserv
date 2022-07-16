@@ -6,7 +6,7 @@ HTTPRequest::HTTPRequest()
       method_(""),
       uri_(""),
       host_(""),
-      content_length_(""),
+      content_length_("0"),
       transfer_encoding_(""),
       request_body_(""),
       is_finish_to_read_header_(false),
@@ -67,7 +67,6 @@ void HTTPRequest::Parse(std::string str) {
     this->method_ = "GET";
     this->uri_ = "http://localhost:8181/index.html";
     this->host_ = "localhost";
-    this->content_length_ = "0";
 }
 
 int HTTPRequest::CalcBodySize() const { return 0; }

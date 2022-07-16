@@ -16,6 +16,7 @@ class HTTPRequest {
     void Parse(std::string str);
     bool IsReady() const;
     int CalcBodySize() const;
+
     std::string unparsed_string() const;
     std::string method() const;
     std::string uri() const;
@@ -23,6 +24,8 @@ class HTTPRequest {
     std::string content_length() const;
     std::string transfer_encoding() const;
     std::string request_body() const;
+    bool is_finish_to_read_header() const;
+    bool is_finish_to_read_body() const;
 
  private:
     Logging logging_;
@@ -35,10 +38,6 @@ class HTTPRequest {
     std::string request_body_;
     bool is_finish_to_read_header_;
     bool is_finish_to_read_body_;
-
- public:
-    bool is_finish_to_read_header() const;
-    bool is_finish_to_read_body() const;
 };
 
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs);
