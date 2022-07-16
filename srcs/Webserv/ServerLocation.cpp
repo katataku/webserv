@@ -66,3 +66,7 @@ ServerLocation::ServerLocation(
       allow_methods_(allow_methods),
       alias_(alias),
       cgi_extension_(cgi_extension) {}
+
+std::string ServerLocation::ResolveAlias(std::string path_info) const {
+    return this->alias() + path_info;
+}

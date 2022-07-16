@@ -48,7 +48,7 @@ class Transaction {
             if (sl.IsCGI()) {
                 return CGIExecutor(req, sl);
             }
-            string alias_resolved_uri = ServerLocation.ResolveAlias(req);
+            string alias_resolved_uri = ServerLocation.ResolveAlias(req.uri());
             if (sl.IsCGI()) {
                 return FileExecExecutor(req, sl);
             }

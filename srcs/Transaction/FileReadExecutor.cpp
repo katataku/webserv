@@ -8,6 +8,8 @@
 #include <string>
 
 #include "ResponseBuilder.hpp"
+#include "ServerLocation.hpp"
+
 FileReadExecutor::FileReadExecutor() : logging_(Logging(__FUNCTION__)) {}
 
 FileReadExecutor::FileReadExecutor(FileReadExecutor const &other) {
@@ -39,10 +41,11 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
     logging_.Debug("Function starts");
     struct stat stat_buf;
-    std::string file_path = sl.alias() + request.uri();
-    logging_.Debug("file_path = [" + file_path + "]");
+    std::string alias_resolved_uri = sl.ResolveAlias(request.uri());
 
-    if (stat(file_path.c_str(), &stat_buf) == -1) {
+    logging_.Debug("alias_resolved_uri = [" + alias_resolved_uri + "]");
+
+    if (stat(alias_resolved_uri.c_str(), &stat_buf) == -1) {
         logging_.Fatal("stat failed");
         logging_.Fatal(strerror(errno));
         return NULL;
@@ -50,7 +53,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
 
     if (S_ISREG(stat_buf.st_mode)) {
         logging_.Debug("URI indicate regular file.");
-        return GetFileExec(file_path);
+        return GetFileExec(alias_resolved_uri);
         //        return GetFileExecutor(request, sl);
     }
     logging_.Info("Function ends abnormally");
