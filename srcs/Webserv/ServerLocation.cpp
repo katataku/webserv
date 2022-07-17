@@ -67,7 +67,7 @@ ServerLocation::ServerLocation(
       alias_(alias),
       cgi_extension_(cgi_extension) {}
 
-std::string ServerLocation::ResolveAlias(std::string path_info) const {
+std::string ServerLocation::ResolveAlias(std::string request_uri) const {
     // 雑な仮実装
-    return this->alias() + path_info;
+    return this->alias() + request_uri;
 }
