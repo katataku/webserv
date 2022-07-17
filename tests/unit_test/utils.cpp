@@ -1,11 +1,25 @@
+#include "utils.hpp"
+
 #include <gtest/gtest.h>
 
-class UtilsTest : public ::testing::Test {
- protected:
-    static void SetUpTestCase() {}
-    static void TearDownTestCase() {}
-    virtual void SetUp() {}
-    virtual void TearDown() {}
-};
+TEST(Split, basic) {
+    std::string str = "first\r\nsecond\r\nthird\r\n";
+    std::string delim = "\r\n";
 
-TEST_F(UtilsTest, atod) { ASSERT_DOUBLE_EQ(1.5, 1.5); }
+    std::vector<std::string> strs = Split(str, delim);
+    ASSERT_EQ(3, strs.size());
+    ASSERT_EQ(std::string("first"), strs[0]);
+    ASSERT_EQ(std::string("second"), strs[1]);
+    ASSERT_EQ(std::string("third"), strs[2]);
+}
+
+TEST(Split, no_delim_in_the_end) {
+    std::string str = "first\r\nsecond\r\nthird";
+    std::string delim = "\r\n";
+
+    std::vector<std::string> strs = Split(str, delim);
+    ASSERT_EQ(3, strs.size());
+    ASSERT_EQ(std::string("first"), strs[0]);
+    ASSERT_EQ(std::string("second"), strs[1]);
+    ASSERT_EQ(std::string("third"), strs[2]);
+}

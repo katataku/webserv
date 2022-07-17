@@ -17,12 +17,12 @@ RequestFacade::~RequestFacade() {}
 HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
     this->logging_.Debug("SelectRequest");
 
-    int socketfd = socket.sock_fd();
-    std::map<int, HTTPRequest*>::iterator itr = this->list_.find(socketfd);
+    int socket_fd = socket.sock_fd();
+    std::map<int, HTTPRequest *>::iterator itr = this->list_.find(socket_fd);
     if (itr == this->list_.end()) {
-      this->list_[socketfd] = new HTTPRequest();
+        this->list_[socket_fd] = new HTTPRequest();
     }
-    return this->list_.at(socketfd);
+    return this->list_.at(socket_fd);
 }
 
 void RequestFacade::Finish(Socket socket) {
