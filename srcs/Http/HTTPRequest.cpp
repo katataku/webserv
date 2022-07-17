@@ -135,20 +135,30 @@ void HTTPRequest::ParseHeader(std::string str) {
             this->ParseRequestLine(lines[0]);
             continue;
         }
+
         std::vector<std::string> items = Split(lines[i], ":");
-        if (items.size() != 2) {
+
+        std::string::size_type found = lines[i].find(":");
+        if (found == std::string::npos) {
             // TODO(hayashi-ay): 対応するエラーを定義する
             throw std::runtime_error("header format invalid");
         }
-        if (items[0] == "Host") {
-            this->host_ = trim(items[1]);
-        } else if (items[0] == "Content-Length") {
-            this->content_length_ = std::atoi(trim(items[1]).c_str());
-        } else if (items[0] == "Content-Type") {
+        std::string header = lines[i].substr(0, found);
+        std::string value = trim(lines[i].substr(found + 1));
+        if (value.empty()) {
+            // TODO(hayashi-ay): 対応するエラーを定義する
+            throw std::runtime_error("header format invalid");
+        }
+
+        if (header == "Host") {
+            this->host_ = value;
+        } else if (header == "Content-Length") {
+            this->content_length_ = std::atoi(value.c_str());
+        } else if (header == "Content-Type") {
             // TODO(hayashi-ay): エラー処理も含める。たぶん自前で実装しそう。
-            this->content_type_ = trim(items[1]);
-        } else if (items[0] == "Transfer-Encoding") {
-            this->transfer_encoding_ = trim(items[1]);
+            this->content_type_ = value;
+        } else if (header == "Transfer-Encoding") {
+            this->transfer_encoding_ = value;
         } else {
             // その他のヘッダについては無視して処理を継続する。
         }
