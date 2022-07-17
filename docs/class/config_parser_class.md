@@ -51,16 +51,15 @@ classDiagram
         +static Expect(Token**, string)* bool
         +static Expect(Token**, TokenKind)* bool
         -TokenKind kind
-        -string val
-        -Token next
+        -string    val
+        -Token     next
     }
 
     %% 構文解析後のノードを表すクラス %%
     class Node {
       -list<Node>   child_contexts
       -list<Node>   directives
-      -NodeKind     context_kind
-      -NodeKind     directive_kind
+      -NodeKind     kind
       -list<string> directive_val
     }
 ```
@@ -88,10 +87,11 @@ classDiagram
 - パーサーはこの文法に従い、構文解析していく
 
 ```
-config           ::= block_directive
-block_directive  ::= "server" [value] "{" single_directive "}"
-single_directive ::= "listen" value ";"
-value            ::= (英数字 | ".")+
+config             ::= block_directive
+block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
+location_directive ::= "location" value "{" ( single_directive ) "}"
+single_directive   ::= "listen" value ";"
+value              ::= (英数字 | ".")+
 ```
 
 - メタ構文の意味
