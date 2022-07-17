@@ -83,13 +83,15 @@ void HTTPRequest::Parse(std::string str) {
 }
 
 // utilにあってもいいかも
+// OWSをtrimする
+// ref:
 static std::string ltrim(const std::string &s) {
-    size_t start = s.find_first_not_of(' ');
+    size_t start = s.find_first_not_of(" \t");
     return (start == std::string::npos) ? "" : s.substr(start);
 }
 
 static std::string rtrim(const std::string &s) {
-    size_t end = s.find_last_not_of(' ');
+    size_t end = s.find_last_not_of(" \t");
     return (end == std::string::npos) ? "" : s.substr(0, end + 1);
 }
 
