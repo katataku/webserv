@@ -8,7 +8,6 @@ TEST(Split, basic) {
 
     std::vector<std::string> strs = Split(str, delim);
     ASSERT_EQ(3, strs.size());
-    std::string h = strs[0];
     ASSERT_EQ(std::string("first"), strs[0]);
     ASSERT_EQ(std::string("second"), strs[1]);
     ASSERT_EQ(std::string("third"), strs[2]);

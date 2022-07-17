@@ -68,11 +68,11 @@ void HTTPRequest::Parse(std::string str) {
     this->unparsed_string_ += str;
     if (!this->is_finish_to_read_header_) {
         std::string::size_type pos =
-            this->unparsed_string_.find(this->CSRF + this->CSRF);
+            this->unparsed_string_.find(this->CRLF + this->CRLF);
         if (pos != std::string::npos) {
             std::string header = this->unparsed_string_.substr(0, pos);
             std::string body =
-                this->unparsed_string().substr(pos + this->CSRF.size() * 2);
+                this->unparsed_string().substr(pos + this->CRLF.size() * 2);
             this->ParseHeader(header);
             this->unparsed_string() = body;
             this->is_finish_to_read_header_ = true;
@@ -108,7 +108,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
-    std::vector<std::string> lines = Split(str, this->CSRF);
+    std::vector<std::string> lines = Split(str, this->CRLF);
 
     for (size_t i = 0; i < lines.size(); ++i) {
         if (i == 0) {
