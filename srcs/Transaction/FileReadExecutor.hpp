@@ -2,6 +2,7 @@
 #define SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_
 
 #include <string>
+#include <vector>
 
 #include "HTTPResponse.hpp"
 #include "IExecutor.hpp"
@@ -20,6 +21,10 @@ class FileReadExecutor : public IExecutor {
  private:
     Logging logging_;
     HTTPResponse *GetFileExec(std::string file_path);
+    HTTPResponse *ListDirectoryExec(std::string request_uri,
+                                    std::string alias_resolved_uri);
+    static std::string ListPageBuilder(std::string request_uri,
+                                       std::vector<std::string> files);
 };
 
 #endif  // SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_
