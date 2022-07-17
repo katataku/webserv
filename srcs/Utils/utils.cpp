@@ -10,11 +10,12 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
             strs.push_back(str.substr(pos, found - pos));
             pos = found + delim.size();
         } else {
-            if (pos < str.size()) {
-                strs.push_back(str.substr(pos));
-            }
             break;
         }
+    }
+    // 区切り文字のあとに文字が残っていればstrsにつめる
+    if (pos < str.size()) {
+        strs.push_back(str.substr(pos));
     }
     return strs;
 }
