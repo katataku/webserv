@@ -8,7 +8,7 @@ HTTPRequest::HTTPRequest()
       method_(""),
       uri_(""),
       host_(""),
-      content_length_("0"),
+      content_length_(-1),
       transfer_encoding_(""),
       request_body_(""),
       is_finish_to_read_header_(false),
@@ -49,9 +49,7 @@ std::string HTTPRequest::unparsed_string() const {
 std::string HTTPRequest::method() const { return this->method_; }
 std::string HTTPRequest::uri() const { return this->uri_; }
 std::string HTTPRequest::host() const { return this->host_; }
-std::string HTTPRequest::content_length() const {
-    return this->content_length_;
-}
+int HTTPRequest::content_length() const { return this->content_length_; }
 std::string HTTPRequest::transfer_encoding() const {
     return this->transfer_encoding_;
 }
@@ -63,6 +61,8 @@ bool HTTPRequest::is_finish_to_read_header() const {
 bool HTTPRequest::is_finish_to_read_body() const {
     return is_finish_to_read_body_;
 }
+
+const std::string &HTTPRequest::content_type() const { return content_type_; }
 
 void HTTPRequest::set_method(std::string method) { this->method_ = method; }
 void HTTPRequest::set_uri(std::string uri) { this->uri_ = uri; }
@@ -125,11 +125,11 @@ void HTTPRequest::ParseHeader(std::string str) {
         if (items[0] == "Host") {
             this->host_ = trim(items[i]);
         } else if (items[0] == "Content-Length") {
-            this->content_length_ = trim(items[i]);
+            this->content_length_ = -1;
         } else if (items[0] == "Content-Type") {
-            this->content_length_ = trim(items[i]);
+            this->content_type_ = trim(items[i]);
         } else if (items[0] == "Transfer-Encoding") {
-            this->content_length_ = trim(items[i]);
+            this->transfer_encoding_ = trim(items[i]);
         } else {
             // その他のヘッダについては無視して処理を継続する。
         }

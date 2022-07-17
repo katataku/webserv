@@ -12,7 +12,7 @@ classDiagram
         string method
         string URI
         string host
-        string content-length
+        int content-length
         string transfer-encoding
         string request_body
         bool is_finish_to_read_header
