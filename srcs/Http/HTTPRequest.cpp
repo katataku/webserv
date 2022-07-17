@@ -1,5 +1,6 @@
 #include "HTTPRequest.hpp"
 
+#include <cstdlib>
 #include <vector>
 
 HTTPRequest::HTTPRequest()
