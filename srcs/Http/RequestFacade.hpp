@@ -18,8 +18,8 @@ class RequestFacade {
     void Finish(Socket socket);
 
  private:
-    Logging logging_;
-    std::map<int, HTTPRequest> list_;
+    Logging                     logging_;
+    std::map<int, HTTPRequest*> list_;
 };
 
 #endif  // SRCS_HTTP_REQUESTFACADE_HPP_

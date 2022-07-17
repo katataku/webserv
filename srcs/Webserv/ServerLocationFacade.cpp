@@ -12,7 +12,7 @@ ServerLocationFacade::ServerLocationFacade(ServerLocationFacade const &other) {
 ServerLocationFacade &ServerLocationFacade::operator=(
     ServerLocationFacade const &other) {
     if (this != &other) {
-        (void)other;
+        this->server_locations_ = other.server_locations_;
     }
     return *this;
 }
@@ -28,5 +28,8 @@ ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
 }
 
 std::vector<std::string> ServerLocationFacade::GetPorts() const {
-    return std::vector<std::string>();
+    std::vector<std::string> ports;
+
+    ports.push_back("80");
+    return ports;
 }

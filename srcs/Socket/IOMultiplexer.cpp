@@ -73,7 +73,6 @@ std::vector<Socket> IOMultiplexer::Wait() {
 void IOMultiplexer::Accept(Socket &socket) {
     Socket conn_sock = socket.Accept();
     int conn_fd = conn_sock.sock_fd();
-    std::cout << "accept conn_fd " << conn_fd << std::endl;
 
     if (fcntl(conn_fd, F_SETFL, O_NONBLOCK) != 0) {
         throw std::runtime_error("Error: fcntl "
