@@ -64,6 +64,9 @@ bool HTTPRequest::is_finish_to_read_body() const {
     return is_finish_to_read_body_;
 }
 
+void HTTPRequest::set_method(std::string method) { this->method_ = method; }
+void HTTPRequest::set_uri(std::string uri) { this->uri_ = uri; }
+
 void HTTPRequest::Parse(std::string str) {
     this->unparsed_string_ += str;
     if (!this->is_finish_to_read_header_) {

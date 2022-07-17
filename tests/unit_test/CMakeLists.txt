@@ -18,6 +18,7 @@ add_executable(main
         main.cpp
         utils.cpp
         HTTP.cpp
+        Transaction.cpp
 )
 
 target_link_libraries(main

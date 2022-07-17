@@ -19,6 +19,8 @@ class HTTPRequest {
     void Parse(std::string str);
     bool IsReady() const;
     int CalcBodySize() const;
+    void set_method(std::string);
+    void set_uri(std::string);
 
     std::string unparsed_string() const;
     std::string method() const;

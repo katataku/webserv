@@ -1,5 +1,7 @@
-#include "ResponseBuilder.hpp"
 #include "Transaction.hpp"
+
+#include "FileReadExecutor.hpp"
+#include "ResponseBuilder.hpp"
 
 Transaction::Transaction() : logging_(Logging(__FUNCTION__)) {}
 
@@ -15,6 +17,10 @@ Transaction &Transaction::operator=(Transaction const &other) {
 Transaction::~Transaction() {}
 
 HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
-    (void)sl;
+    if (request->method() == "GET") {
+        FileReadExecutor fre;
+        return fre.Exec(*request, *sl);
+    }
+    logging_.Debug("*** TBD not implemented***");
     return ResponseBuilder::Build(request->request_body());
 }
