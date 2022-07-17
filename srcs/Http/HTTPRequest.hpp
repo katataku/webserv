@@ -35,6 +35,7 @@ class HTTPRequest {
 
  private:
     void ParseHeader(std::string str);
+    void ParseBodyByContentLength(std::string str);
     void ParseRequestLine(std::string line);
 
     Logging logging_;

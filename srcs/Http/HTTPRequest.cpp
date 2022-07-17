@@ -68,20 +68,33 @@ void HTTPRequest::set_method(std::string method) { this->method_ = method; }
 void HTTPRequest::set_uri(std::string uri) { this->uri_ = uri; }
 
 void HTTPRequest::Parse(std::string str) {
-    this->unparsed_string_ += str;
     if (!this->is_finish_to_read_header_) {
+        this->unparsed_string_ += str;
         std::string::size_type pos = this->unparsed_string_.find(CRLF + CRLF);
         if (pos != std::string::npos) {
             std::string header = this->unparsed_string_.substr(0, pos);
             std::string body =
                 this->unparsed_string().substr(pos + CRLF.size() * 2);
             this->ParseHeader(header);
-            this->unparsed_string() = body;
+            str = body;
+            this->unparsed_string_ = "";
             this->is_finish_to_read_header_ = true;
         }
     }
     if (this->is_finish_to_read_header_) {
-        this->is_finish_to_read_body_ = true;
+        // Content-LengthもTransfer-Encodingも指定されていない場合はbodyはない
+        if (this->content_length_ == -1 && this->transfer_encoding_.empty()) {
+            this->is_finish_to_read_body_ = true;
+            return;
+        }
+        if (this->content_length_ != -1 && !this->transfer_encoding_.empty()) {
+            // TODO(hayashi-ay):
+            // Content-LengthとTransfer-Encodingが指定されている場合はエラーとみなす
+            throw std::runtime_error("error");
+        }
+        if (this->content_length_ != -1) {
+            this->ParseBodyByContentLength(str);
+        }
     }
 }
 
@@ -123,16 +136,28 @@ void HTTPRequest::ParseHeader(std::string str) {
             throw std::runtime_error("invalid");
         }
         if (items[0] == "Host") {
-            this->host_ = trim(items[i]);
+            this->host_ = trim(items[1]);
         } else if (items[0] == "Content-Length") {
-            this->content_length_ = -1;
+            this->content_length_ = std::atoi(trim(items[1]).c_str());
         } else if (items[0] == "Content-Type") {
-            this->content_type_ = trim(items[i]);
+            // TODO(hayashi-ay): エラー処理も含める。たぶん自前で実装しそう。
+            this->content_type_ = trim(items[1]);
         } else if (items[0] == "Transfer-Encoding") {
-            this->transfer_encoding_ = trim(items[i]);
+            this->transfer_encoding_ = trim(items[1]);
         } else {
             // その他のヘッダについては無視して処理を継続する。
         }
+    }
+}
+
+void HTTPRequest::ParseBodyByContentLength(std::string str) {
+    int rest = this->content_length_ - this->unparsed_string_.length();
+    if (str.length() < rest) {
+        this->unparsed_string_ += str;
+    } else {
+        this->request_body_ = this->unparsed_string_ + str.substr(0, rest);
+        this->unparsed_string_ = "";
+        this->is_finish_to_read_body_ = true;
     }
 }
 

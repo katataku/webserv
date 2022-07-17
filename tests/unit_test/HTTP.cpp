@@ -49,7 +49,7 @@ TEST_F(HTTPTest, parse_body_by_content_length) {
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.uri(), "/");
     ASSERT_EQ(req.host(), "test");
-    ASSERT_EQ(req.content_length(), -1);
+    ASSERT_EQ(req.content_length(), 8);
     ASSERT_EQ(req.transfer_encoding(), "");
     ASSERT_EQ(req.request_body(), "12345678");
 }
