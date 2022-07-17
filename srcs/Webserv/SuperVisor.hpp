@@ -16,6 +16,6 @@ class SuperVisor {
 
  private:
     ServerLocationFacade facade_;
-    Logging              logging_;
+    Logging logging_;
 };
 #endif  // SRCS_WEBSERV_SUPERVISOR_HPP_

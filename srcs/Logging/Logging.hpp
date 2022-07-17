@@ -21,7 +21,7 @@ class Logging {
     Logging();
     explicit Logging(std::string);
     void Fatal(std::string) const;
-    void Error(std::string)const;
+    void Error(std::string) const;
     void Warn(std::string) const;
     void Info(std::string) const;
     void Debug(std::string) const;
