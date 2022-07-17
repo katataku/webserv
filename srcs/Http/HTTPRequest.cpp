@@ -69,6 +69,8 @@ void HTTPRequest::set_method(std::string method) { this->method_ = method; }
 void HTTPRequest::set_uri(std::string uri) { this->uri_ = uri; }
 
 void HTTPRequest::Parse(std::string str) {
+    this->logging_.Debug("Parse");
+    this->logging_.Info(str);
     if (!this->is_finish_to_read_header_) {
         this->unparsed_string_ += str;
         std::string::size_type pos = this->unparsed_string_.find(CRLF + CRLF);
@@ -114,16 +116,18 @@ static std::string rtrim(const std::string &s) {
 static std::string trim(const std::string &s) { return rtrim(ltrim(s)); }
 
 void HTTPRequest::ParseRequestLine(std::string line) {
+    this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
     if (items.size() != 3 || items[2] != "HTTP/1.1") {
         // TODO(hayashi-ay): 対応するエラーを定義する
-        throw std::runtime_error("invalid");
+        throw std::runtime_error("request line invalid");
     }
     this->method_ = items[0];
     this->uri_ = items[1];
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
+    this->logging_.Debug("ParseHeader");
     std::vector<std::string> lines = Split(str, CRLF);
 
     for (size_t i = 0; i < lines.size(); ++i) {
@@ -134,7 +138,7 @@ void HTTPRequest::ParseHeader(std::string str) {
         std::vector<std::string> items = Split(lines[i], ":");
         if (items.size() != 2) {
             // TODO(hayashi-ay): 対応するエラーを定義する
-            throw std::runtime_error("invalid");
+            throw std::runtime_error("header format invalid");
         }
         if (items[0] == "Host") {
             this->host_ = trim(items[1]);
@@ -152,6 +156,7 @@ void HTTPRequest::ParseHeader(std::string str) {
 }
 
 void HTTPRequest::ParseBodyByContentLength(std::string str) {
+    this->logging_.Debug("ParseBodyByContentLength");
     unsigned int rest = this->content_length_ - this->unparsed_string_.length();
     if (str.length() < rest) {
         this->unparsed_string_ += str;
