@@ -14,6 +14,8 @@ class HTTPRequest {
     HTTPRequest &operator=(HTTPRequest const &other);
     ~HTTPRequest();
 
+    const std::string CSRF = "\r\n";
+
     void Parse(std::string str);
     bool IsReady() const;
     int CalcBodySize() const;

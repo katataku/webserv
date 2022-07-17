@@ -67,11 +67,12 @@ bool HTTPRequest::is_finish_to_read_body() const {
 void HTTPRequest::Parse(std::string str) {
     this->unparsed_string_ += str;
     if (!this->is_finish_to_read_header_) {
-        std::string::size_type pos = this->unparsed_string_.find("\r\n\r\n");
+        std::string::size_type pos =
+            this->unparsed_string_.find(this->CSRF + this->CSRF);
         if (pos != std::string::npos) {
             std::string header = this->unparsed_string_.substr(0, pos);
-            std::string body = this->unparsed_string().substr(
-                pos + std::string("\r\n\r\n").size());
+            std::string body =
+                this->unparsed_string().substr(pos + this->CSRF.size() * 2);
             this->ParseHeader(header);
             this->unparsed_string() = body;
             this->is_finish_to_read_header_ = true;
@@ -84,7 +85,6 @@ void HTTPRequest::Parse(std::string str) {
 
 // utilにあってもいいかも
 // OWSをtrimする
-// ref:
 static std::string ltrim(const std::string &s) {
     size_t start = s.find_first_not_of(" \t");
     return (start == std::string::npos) ? "" : s.substr(start);
@@ -108,7 +108,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
-    std::vector<std::string> lines = Split(str, "\r\n");
+    std::vector<std::string> lines = Split(str, this->CSRF);
 
     for (size_t i = 0; i < lines.size(); ++i) {
         if (i == 0) {
