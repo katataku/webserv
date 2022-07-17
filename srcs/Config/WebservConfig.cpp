@@ -1,5 +1,10 @@
 #include "WebservConfig.hpp"
 
+#include <set>
+#include <vector>
+
+#include "ConfigProcesser.hpp"
+
 WebservConfig::WebservConfig() {}
 
 WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
@@ -12,7 +17,20 @@ WebservConfig &WebservConfig::operator=(WebservConfig const &other) {
 }
 
 WebservConfig::~WebservConfig() {}
-WebservConfig *WebservConfig::Parse() { return new WebservConfig(); }
+
+std::vector<ServerContext> WebservConfig::contexts() const {
+    return this->contexts_;
+}
+
+void WebservConfig::PushServerContext(ServerContext context) {
+    this->contexts_.push_back(context);
+}
+
+WebservConfig WebservConfig::Parse() {
+    ConfigProcesser confproc("../../default.conf");
+
+    return confproc.Exec();
+}
 
 static ServerLocation CreateServerLocation() {
     std::map<int, std::string> error_pages;

@@ -1,8 +1,8 @@
-#ifndef CONFIGPARSER_HPP
-#define CONFIGPARSER_HPP
+#ifndef SRCS_CONFIG_CONFIGPARSER_HPP_
+#define SRCS_CONFIG_CONFIGPARSER_HPP_
 
-#include "Token.hpp"
 #include "Node.hpp"
+#include "Token.hpp"
 
 // ```
 // config           ::= block_directive
@@ -12,60 +12,21 @@
 // ```
 
 class ConfigParser {
-public:
-  ConfigParser() {}
-  ConfigParser(Token* token) : token_(token) {}
-  ConfigParser(const ConfigParser& other) { *this = other; }
-  ConfigParser& operator=(const ConfigParser& other) {
-    if (this != &other) {
+ public:
+    ConfigParser();
+    explicit ConfigParser(Token* token);
+    ConfigParser(const ConfigParser& other);
+    ConfigParser& operator=(const ConfigParser& other);
+    ~ConfigParser();
 
-    }
-    return *this;
-  }
-  ~ConfigParser() {}
+    Node Parse();
 
-  Node Parse() {
-    return config();
-  }
-private:
-  Token* token_;
+ private:
+    Token* token_;
 
-  Node config() {
-    Node head(Node::HttpContextNode);
-
-    head.PushChildContext(block_directive());
-
-    return head;
-  }
-
-  Node block_directive() {
-    Node node;
-    Token::Consume(&token_, "server");
-    Token::Consume(&token_, "{");
-    node.set_context_kind(Node::ServerContextNode);
-    node.PushDirective(single_directive());
-    Token::Consume(&token_, "}");
-
-    return node;
-  }
-
-  Node single_directive() {
-    Node node;
-    if (Token::Expect(&token_, "listen")) {
-      // node = Node::NewNode(NULL, NULL, Node::ServerContextNode, Node::ListenDirectiveNode);
-      node = Node::NewNode(Node::Unknown, Node::ListenDirectiveNode);
-    }
-    if (Token::SameTokenKind(&token_, Token::NumericValueToken)) {
-      std::list<std::string> vals;
-      vals.push_back(token_->val());
-      node.set_directive_vals(vals);
-      Token::Consume(&token_, Token::NumericValueToken);
-    }
-    Token::Consume(&token_, ";");
-
-    return node;
-  }
-
+    Node config();
+    Node block_directive();
+    Node single_directive();
 };
 
-#endif
+#endif  // SRCS_CONFIG_CONFIGPARSER_HPP_
