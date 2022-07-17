@@ -152,7 +152,7 @@ void HTTPRequest::ParseHeader(std::string str) {
 }
 
 void HTTPRequest::ParseBodyByContentLength(std::string str) {
-    int rest = this->content_length_ - this->unparsed_string_.length();
+    unsigned int rest = this->content_length_ - this->unparsed_string_.length();
     if (str.length() < rest) {
         this->unparsed_string_ += str;
     } else {
