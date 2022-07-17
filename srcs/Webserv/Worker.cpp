@@ -23,7 +23,9 @@ Worker::~Worker() {}
 void Worker::Exec(Socket &socket) {
     this->logging_.Debug("start exec");
 
-    HTTPRequest *request = this->request_facade_.SelectRequest(socket);
+    this->request_facade_ = RequestFacade::GetInstance();
+    this->request_facade_ = RequestFacade::GetInstance();
+    HTTPRequest *request = this->request_facade_->SelectRequest(socket);
     try {
         std::string str = socket.Recv();
         request->Parse(str);
@@ -33,7 +35,7 @@ void Worker::Exec(Socket &socket) {
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, sl);
             response->Write(socket);
-            this->request_facade_.Finish(socket);
+            this->request_facade_->Finish(socket);
         }
     } catch (std::exception &e) {
         this->logging_.Debug(e.what());

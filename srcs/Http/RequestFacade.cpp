@@ -1,6 +1,9 @@
 #include "RequestFacade.hpp"
 
-// TODO(ahayashi): singletonにする
+#include <sstream>
+
+RequestFacade *RequestFacade::instance = NULL;
+
 RequestFacade::RequestFacade() : logging_(Logging(__FUNCTION__)) {}
 
 RequestFacade::RequestFacade(RequestFacade const &other) { *this = other; }
@@ -14,12 +17,26 @@ RequestFacade &RequestFacade::operator=(RequestFacade const &other) {
 
 RequestFacade::~RequestFacade() {}
 
+RequestFacade *RequestFacade::GetInstance() {
+    if (RequestFacade::instance == NULL) {
+        // Logging classはstatic関数から呼べない
+        std::cout << "create new RequestFacade" << std::endl;
+        RequestFacade::instance = new RequestFacade();
+    }
+    return RequestFacade::instance;
+}
+
 HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
     this->logging_.Debug("SelectRequest");
 
     int socket_fd = socket.sock_fd();
+    std::stringstream ss;
+    ss << "socket_fd: ";
+    ss << socket_fd;
+    this->logging_.Info(ss.str());
     std::map<int, HTTPRequest *>::iterator itr = this->list_.find(socket_fd);
     if (itr == this->list_.end()) {
+        this->logging_.Info("create new HTTPRequest");
         this->list_[socket_fd] = new HTTPRequest();
     }
     return this->list_.at(socket_fd);

@@ -18,7 +18,7 @@ class Worker {
 
  private:
     Logging logging_;
-    RequestFacade request_facade_;
+    RequestFacade *request_facade_;
     ServerLocationFacade server_location_facade_;
 };
 
