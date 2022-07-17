@@ -18,8 +18,8 @@ Transaction::~Transaction() {}
 
 HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
     if (request->method() == "GET") {
-        FileReadExecutor FRE;
-        return FRE.Exec(*request, *sl);
+        FileReadExecutor fre;
+        return fre.Exec(*request, *sl);
     }
     logging_.Debug("*** TBD not implemented***");
     return ResponseBuilder::Build(request->request_body());
