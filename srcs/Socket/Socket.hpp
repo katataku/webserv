@@ -23,18 +23,18 @@ class Socket {
     std::string Recv() const;
     void Close() const;
     Socket Accept() const;
-    static Socket OpenListeningSocket(const std::string& port);
+    static Socket OpenListeningSocket(const std::string &port);
 
     bool is_listening() const;
-    int  sock_fd() const;
+    int sock_fd() const;
     void set_is_listening(bool cond);
 
  private:
     static const int kBufferSize = 4096;
     static const int kQueueSize = 1024;
-    int  sock_fd_;
+    int sock_fd_;
     bool is_listening_;
 
-    Logging     logging_;
+    Logging logging_;
 };
 #endif  // SRCS_SOCKET_SOCKET_HPP_

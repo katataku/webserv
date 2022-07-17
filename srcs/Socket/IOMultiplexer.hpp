@@ -24,12 +24,12 @@ class IOMultiplexer {
  private:
     static const int kMaxNEvents = 10;
 
-    Logging             logging_;
+    Logging logging_;
     std::vector<Socket> sockets_;
-    int                 epollfd;
-    std::set<int>       listenfds;
-    epoll_event         ev;
-    epoll_event         events[kMaxNEvents];
+    int epollfd;
+    std::set<int> listenfds;
+    epoll_event ev;
+    epoll_event events[kMaxNEvents];
 
     void CreateListenerSocket(std::string port);
 };
