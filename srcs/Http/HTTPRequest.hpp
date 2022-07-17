@@ -7,7 +7,7 @@
 #include "Socket.hpp"
 #include "utils.hpp"
 
-const std::string CRLF = "\r\n";
+const std::string CRLF = "\r\n";  // NOLINT
 
 class HTTPRequest {
  public:
