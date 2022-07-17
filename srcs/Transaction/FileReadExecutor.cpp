@@ -31,6 +31,7 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
     std::ostringstream oss;
 
     if (!ifs) {
+        // TODO(takkatao):
         // ファイルが存在するが、権限がなくオープンできないときはここに入る。403を返す。
         return NULL;
     }
@@ -51,7 +52,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     logging_.Debug("alias_resolved_uri = [" + alias_resolved_uri + "]");
 
     if (stat(alias_resolved_uri.c_str(), &stat_buf) == -1) {
-        // ファイルが存在しないときはここに入る。404を返す。
+        // TODO(takkatao): ファイルが存在しないときはここに入る。404を返す。
         logging_.Fatal("stat failed");
         logging_.Fatal(strerror(errno));
         return NULL;
