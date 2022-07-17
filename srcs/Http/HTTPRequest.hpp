@@ -30,6 +30,7 @@ class HTTPRequest {
 
  private:
     void ParseHeader(std::string str);
+    void ParseRequestLine(std::string line);
 
     Logging logging_;
     std::string unparsed_string_;

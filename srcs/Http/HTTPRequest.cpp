@@ -95,34 +95,39 @@ static std::string rtrim(const std::string &s) {
 
 static std::string trim(const std::string &s) { return rtrim(ltrim(s)); }
 
+void HTTPRequest::ParseRequestLine(std::string line) {
+    std::vector<std::string> items = Split(line, " ");
+    if (items.size() != 3 || items[2] != "HTTP/1.1") {
+        // TODO(hayashi-ay): 対応するエラーを定義する
+        throw std::runtime_error("invalid");
+    }
+    this->method_ = items[0];
+    this->uri_ = items[1];
+}
+
 void HTTPRequest::ParseHeader(std::string str) {
     std::vector<std::string> lines = Split(str, "\r\n");
+
     for (size_t i = 0; i < lines.size(); ++i) {
         if (i == 0) {
-            std::vector<std::string> items = Split(lines[i], " ");
-            if (items.size() != 3 || items[2] != "HTTP/1.1") {
-                // TODO(hayashi-ay): 対応するエラーを定義する
-                throw std::runtime_error("invalid");
-            }
-            this->method_ = items[0];
-            this->uri_ = items[1];
+            this->ParseRequestLine(lines[0]);
+            continue;
+        }
+        std::vector<std::string> items = Split(lines[i], ":");
+        if (items.size() != 2) {
+            // TODO(hayashi-ay): 対応するエラーを定義する
+            throw std::runtime_error("invalid");
+        }
+        if (items[0] == "Host") {
+            this->host_ = trim(items[i]);
+        } else if (items[0] == "Content-Length") {
+            this->content_length_ = trim(items[i]);
+        } else if (items[0] == "Content-Type") {
+            this->content_length_ = trim(items[i]);
+        } else if (items[0] == "Transfer-Encoding") {
+            this->content_length_ = trim(items[i]);
         } else {
-            std::vector<std::string> items = Split(lines[i], ":");
-            if (items.size() != 2) {
-                // TODO(hayashi-ay): 対応するエラーを定義する
-                throw std::runtime_error("invalid");
-            }
-            if (items[0] == "Host") {
-                this->host_ = trim(items[i]);
-            } else if (items[0] == "Content-Length") {
-                this->content_length_ = trim(items[i]);
-            } else if (items[0] == "Content-Type") {
-                this->content_length_ = trim(items[i]);
-            } else if (items[0] == "Transfer-Encoding") {
-                this->content_length_ = trim(items[i]);
-            } else {
-                // その他のヘッダについては無視して処理を継続する。
-            }
+            // その他のヘッダについては無視して処理を継続する。
         }
     }
 }
