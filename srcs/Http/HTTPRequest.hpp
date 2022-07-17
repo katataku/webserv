@@ -7,14 +7,14 @@
 #include "Socket.hpp"
 #include "utils.hpp"
 
+const std::string CRLF = "\r\n";
+
 class HTTPRequest {
  public:
     HTTPRequest();
     HTTPRequest(HTTPRequest const &other);
     HTTPRequest &operator=(HTTPRequest const &other);
     ~HTTPRequest();
-
-    const std::string CRLF = "\r\n";
 
     void Parse(std::string str);
     bool IsReady() const;
