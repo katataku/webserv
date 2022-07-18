@@ -150,12 +150,12 @@ Token* ConfigLexer::Tokenize() {
             Tokenize *** e.g.  "{", "}" and ";"
         */
         if (StartsWith(this->content_, "{")) {
-            cur_tok = Token::NewToken(cur_tok, Token::OpenBracketToken, "{");
+            cur_tok = Token::NewToken(cur_tok, Token::OpenBraceToken, "{");
             this->content_ = Consume(this->content_, "{");
             continue;
         }
         if (StartsWith(this->content_, "}")) {
-            cur_tok = Token::NewToken(cur_tok, Token::CloseBracketToken, "}");
+            cur_tok = Token::NewToken(cur_tok, Token::CloseBraceToken, "}");
             this->content_ = Consume(this->content_, "}");
             continue;
         }

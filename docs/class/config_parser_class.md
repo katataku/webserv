@@ -70,8 +70,8 @@ classDiagram
 | -------------------- | -------------------- |
 | BlockDirectiveToken  | "server"             |
 | SingleDirectiveToken | "listen"とか           |
-| OpenBracketToken     | "{"                  |
-| CloseBracketToken    | "}"                  |
+| OpenBraceToken     | "{"                  |
+| CloseBraceToken    | "}"                  |
 | SemicolonToken       | ";"                  |
 | ValueToken           | "80"とか"www.hoge.com" |
 
@@ -117,12 +117,12 @@ class ConfigLexer {
           continue
         }
         if keyword is "{" {
-          MakeOpenBracketToken()
+          MakeOpenBraceToken()
           UpdateToken()
           continue
         }
         if keyword is "}" {
-          MakeCloseBracketToken()
+          MakeCloseBraceToken()
           UpdateToken()
           continue
         }
@@ -153,11 +153,11 @@ class ConfigParser {
         MakeServerNode()
         UpdateServerNode()
         if (token.Expect("{")) {
-          throw NeedOpenBracket()
+          throw NeedOpenBrace()
         }
         node = single_directive()
         if (token.Expect("}")) {
-          throw NeedOpenBracket()
+          throw NeedOpenBrace()
         }
         return node
       }

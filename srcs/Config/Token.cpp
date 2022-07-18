@@ -26,8 +26,8 @@ Token* Token::next_token() const { return next_token_; }
 
 std::string Token::GetTokenKindStr() {
     const char* arr[] = {
-        "Unknown",           "BlockDirective", "OpenBracketToken",
-        "CloseBracketToken", "ConnmaToken",    "SingleDirective",
+        "Unknown",           "BlockDirective", "OpenBraceToken",
+        "CloseBraceToken",   "ConnmaToken",    "SingleDirective",
         "NumericValueToken", "ValueToken",
     };
     return arr[kind_];

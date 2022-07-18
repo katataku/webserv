@@ -15,8 +15,8 @@ class Token {
     enum TokenKind {
         Unknown,
         BlockDirective,
-        OpenBracketToken,
-        CloseBracketToken,
+        OpenBraceToken,
+        CloseBraceToken,
         ConnmaToken,
         SingleDirective,
         NumericValueToken,
