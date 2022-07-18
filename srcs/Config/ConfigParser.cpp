@@ -48,7 +48,7 @@ Node ConfigParser::block_directive() {
         node.set_kind(Node::ServerContextNode);
     } else if (Token::Expect(&this->token_, "location")) {
         node.set_kind(Node::LocationContextNode);
-        value(node);
+        value(&node);
         Token::Consume(&this->token_, "{");
     }
 
@@ -70,7 +70,7 @@ Node ConfigParser::location_directive() {
 
     Token::Consume(&this->token_, "location");
     node.set_kind(Node::LocationContextNode);
-    value(node);
+    value(&node);
     Token::Consume(&this->token_, "{");
     node.PushDirective(single_directive());
     Token::Consume(&this->token_, "}");
@@ -91,13 +91,13 @@ Node ConfigParser::single_directive() {
         node = Node::NewNode(Node::AliasDirectiveNode);
     }
 
-    value(node);
+    value(&node);
     Token::Consume(&this->token_, ";");
 
     return node;
 }
 
-void ConfigParser::value(Node& node) {
+void ConfigParser::value(Node* node) {
     std::list<std::string> vals;
 
     if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
@@ -106,6 +106,6 @@ void ConfigParser::value(Node& node) {
 
     // TODO(iyamada) トークンのvalueは一個としている
     vals.push_back(this->token_->val());
-    node.set_directive_vals(vals);
+    node->set_directive_vals(vals);
     Token::Consume(&this->token_, Token::ValueToken);
 }

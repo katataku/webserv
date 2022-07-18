@@ -11,7 +11,13 @@ WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
 
 WebservConfig &WebservConfig::operator=(WebservConfig const &other) {
     if (this != &other) {
-        (void)other;
+        this->contexts_ = other.contexts_;
+        this->error_pages_ = other.error_pages_;
+        this->client_max_body_size_ = other.client_max_body_size_;
+        this->auto_index_ = other.auto_index_;
+        this->index_page_ = other.index_page_;
+        this->contexts_ = other.contexts_;
+        this->contexts_ = other.contexts_;
     }
     return *this;
 }

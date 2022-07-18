@@ -6,9 +6,17 @@ LocationContext::LocationContext(const LocationContext& other) {
     *this = other;
 }
 
+// TODO(iyamada) コピーの処理、いらないかも。とりあえずかいた
 LocationContext& LocationContext::operator=(const LocationContext& other) {
     if (this != &other) {
-        (void)other;
+        this->error_pages_ = other.error_pages_;
+        this->client_max_body_size_ = other.client_max_body_size_;
+        this->auto_index_ = other.auto_index_;
+        this->index_page_ = other.index_page_;
+        this->redirect_uri_ = other.redirect_uri_;
+        this->allow_methods_ = other.allow_methods_;
+        this->alias_ = other.alias_;
+        this->cgi_extension_ = other.cgi_extension_;
     }
     return *this;
 }
@@ -16,7 +24,7 @@ LocationContext& LocationContext::operator=(const LocationContext& other) {
 LocationContext::~LocationContext() {}
 
 std::map<int, std::string> LocationContext::error_pages() const {
-    return error_pages_;
+    return this->error_pages_;
 }
 int LocationContext::client_max_body_size() const {
     return this->client_max_body_size_;

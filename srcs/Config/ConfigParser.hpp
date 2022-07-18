@@ -21,7 +21,7 @@ class ConfigParser {
     Node block_directive();
     Node location_directive();
     Node single_directive();
-    void value(Node& node);
+    void value(Node* node);
 };
 
 #endif  // SRCS_CONFIG_CONFIGPARSER_HPP_

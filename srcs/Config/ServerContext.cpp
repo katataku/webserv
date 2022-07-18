@@ -16,6 +16,13 @@ ServerContext::ServerContext(const ServerContext& other) { *this = other; }
 
 ServerContext& ServerContext::operator=(const ServerContext& other) {
     if (this != &other) {
+        this->contexts_ = other.contexts_;
+        this->error_pages_ = other.error_pages_;
+        this->client_max_body_size_ = other.client_max_body_size_;
+        this->auto_index_ = other.auto_index_;
+        this->index_page_ = other.index_page_;
+        this->redirect_url_ = other.redirect_url_;
+        this->server_name_ = other.server_name_;
         this->port_ = other.port_;
     }
     return *this;
