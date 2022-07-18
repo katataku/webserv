@@ -31,17 +31,39 @@
 Usage:
 
 ```http
-Syntax: メソッド パス名 プロトコルバージョン
+Syntax: メソッド リクエストターゲット プロトコルバージョン
 ```
 
 - [利用可能なメソッド一覧](#%E8%A8%AD%E5%AE%9A%E5%8F%AF%E8%83%BD%E3%81%AA%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%E4%B8%80%E8%A6%A7)に記載のメソッド。
-- パス名は/aaa/bbb/ccc.htmlのような、スラッシュで始まるパス名や、http:// などで始まるURLを指定。
+- リクエストターゲットは[origin-form](#origin-form)形式。
 - プロトコルバージョンは`HTTP/1.1`で固定。
 
 Example:
 
 ```http
 GET / HTTP/1.1
+```
+
+### origin-form
+
+request-targetは[origin-form](#origin-form)形式のみを許容する。
+
+Usage:
+
+```http
+Syntax: origin-form = absolute-path [ "?" query ]
+```
+
+- absolute-pathには`/aaa/bbb/ccc.html`のような、スラッシュで始まるパス名を指定。absolute-pathが空の場合でも`"/"`という値が必ず送信される。
+- queryは、「?」+「変数名」+「=」+「変数の値」というのが、基本構造になっている。パラメーターが複数ある場合は「&」でつないでいく。
+
+Example:
+
+`http://www.example.org/where?q=now`というURLへのアクセスの例
+
+```http
+GET /where?q=now HTTP/1.1
+Host: www.example.org
 ```
 
 ## status-line
