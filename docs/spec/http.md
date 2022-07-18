@@ -46,12 +46,12 @@ GET / HTTP/1.1
 
 ### origin-form
 
-request-targetは[origin-form](#origin-form)形式のみを許容する。
+リクエストターゲットは[origin-form](#origin-form)形式のみを許容する。
 
 Usage:
 
 ```http
-Syntax: origin-form = absolute-path [ "?" query ]
+Syntax: absolute-path [ "?" query ]
 ```
 
 - absolute-pathには`/aaa/bbb/ccc.html`のような、スラッシュで始まるパス名を指定。absolute-pathが空の場合でも`"/"`という値が必ず送信される。
