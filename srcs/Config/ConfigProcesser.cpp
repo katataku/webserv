@@ -34,17 +34,23 @@ WebservConfig ConfigProcesser::Exec() {
     try {
         std::string content = ReadFile(this->path_);
 
+#ifdef DEBUG
         std::cout << "[" << content << "]" << std::endl;
+#endif
 
         ConfigLexer lexer(content);
         Token* token = lexer.Tokenize();
 
+#ifdef DEBUG
         std::cerr << *token << std::endl;
+#endif
 
         ConfigParser parser(token);
         Node node = parser.Parse();
 
+#ifdef DEBUG
         std::cerr << node << std::endl;
+#endif
 
         ConfigGenerator generator(node);
         return generator.Generate();
