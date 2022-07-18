@@ -19,7 +19,6 @@ class Token {
         CloseBraceToken,
         SemicolonToken,
         SingleDirective,
-        NumericValueToken,
         ValueToken
     };
 

@@ -165,17 +165,6 @@ Token* ConfigLexer::Tokenize() {
             continue;
         }
         // TODO(iyamada)
-        // valueは全部ValueTokenとして処理する方が楽な気がしてきました
-        /*
-            Tokenize numeric value word e.g. "80"
-        */
-        // if (StartsWithDigits(this->content_)) {
-        //     cur_tok = Token::NewToken(cur_tok, Token::NumericValueToken,
-        //                               GetDigits(this->content_));
-        //     this->content_ = ConsumeDigits(this->content_);
-        //     continue;
-        // }
-        // TODO(iyamada)
         // パスとして解釈すべき文字によっては、トーカナイズの優先順位が変わってくる
         /*
             Tokenize value word e.g. "/somepath"
