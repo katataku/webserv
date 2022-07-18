@@ -55,6 +55,10 @@ itest: ## Exec unit tests for webserver
 
 # -------------------- Rules For Static Analyser --------------------------
 
+.PHONY: format
+format: ## Lint webserver source files
+	clang-format $(HEADERS) $(SRCS) --dry-run  2>&1 | wc | grep "0       0       0"
+
 .PHONY: lint
 lint: ## Lint webserver source files
 	cpplint --filter=-legal/copyright,-build/include_subdir $(HEADERS) $(SRCS)
