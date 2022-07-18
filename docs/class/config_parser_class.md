@@ -27,8 +27,10 @@ classDiagram
       +ConfigParser(Token token)
       +Parse()* Node*
       -config()* Node*
-      -config()* block_directive*
-      -config()* single_directive*
+      -block_directive()* Node*
+      -single_directive()* Node*
+      -location_directive()* Node*
+      -value(Node *)* void*
       -Token* token
     }
 
@@ -48,6 +50,8 @@ classDiagram
         +static Consume(Token**, string)* Token*
         +static Consume(Token**, TokenKind)* Token*
         +static PeekKind(Token**, TokenKind)* bool
+        +static SameTokenKind(Token**, TokenKind)* bool
+        +static SameToken(Token**, string)* bool
         +static Expect(Token**, string)* bool
         +static Expect(Token**, TokenKind)* bool
         -TokenKind kind
@@ -57,10 +61,10 @@ classDiagram
 
     %% 構文解析後のノードを表すクラス %%
     class Node {
-      -list<Node>   child_contexts
-      -list<Node>   directives
       -NodeKind     kind
       -list<string> directive_val
+      -list<Node>   child_contexts
+      -list<Node>   directives
     }
 ```
 
@@ -79,13 +83,17 @@ classDiagram
 
 | kind名               | 説明              |
 | ------------------- | --------------- |
+| HttpContextNode   | "http"コンテキスト  |
 | ServerContextNode   | "server"コンテキスト  |
+| LocationContextNode   | "location"コンテキスト  |
 | ListenDirectiveNode | "listen"ディレクティブ |
+| AliasDirectiveNode | "alias"ディレクティブ |
 
 ## Configファイルの文法
 
 - パーサーはこの文法に従い、構文解析していく
 
+<!-- TOOD(iyamada) block_directive, single_directive, location_directiveは一つしかパースできない -->
 ```
 config             ::= block_directive
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
