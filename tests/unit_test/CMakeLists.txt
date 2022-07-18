@@ -19,6 +19,7 @@ add_executable(main
         utils.cpp
         HTTP.cpp
         ConfigParser.cpp
+        Transaction.cpp
 )
 
 target_link_libraries(main

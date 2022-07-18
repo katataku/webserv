@@ -31,7 +31,7 @@ void SuperVisor::Watch() {
     while (true) {
         std::vector<Socket> sockets = iomul.Wait();
         for (std::vector<Socket>::iterator itr = sockets.begin();
-            itr != sockets.end(); ++itr) {
+             itr != sockets.end(); ++itr) {
             if ((*itr).is_listening()) {
                 iomul.Accept(*itr);
             } else {

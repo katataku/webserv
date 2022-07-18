@@ -14,15 +14,29 @@ class HTTPTest : public ::testing::Test {
 
 TEST_F(HTTPTest, Parse) {
     HTTPRequest req = HTTPRequest();
-    req.Parse("");
-    ASSERT_EQ(req.unparsed_string(), "");
+    req.Parse(
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n");
     ASSERT_EQ(req.method(), "GET");
-    ASSERT_EQ(req.uri(), "http://localhost:8181/index.html");
-    ASSERT_EQ(req.host(), "localhost");
+    ASSERT_EQ(req.uri(), "/");
+    ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), "0");
     ASSERT_EQ(req.transfer_encoding(), "");
     ASSERT_EQ(req.request_body(), "");
-    ASSERT_EQ(req.is_ready(), true);
+}
+
+TEST_F(HTTPTest, parse_mutiple) {
+    HTTPRequest req = HTTPRequest();
+    req.Parse("GET / HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("\r\n");
+    ASSERT_EQ(req.method(), "GET");
+    ASSERT_EQ(req.uri(), "/");
+    ASSERT_EQ(req.host(), "test");
+    ASSERT_EQ(req.content_length(), "0");
+    ASSERT_EQ(req.transfer_encoding(), "");
+    ASSERT_EQ(req.request_body(), "");
 }
 
 TEST_F(HTTPTest, ResponseBuilder_200) {

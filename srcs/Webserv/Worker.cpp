@@ -5,8 +5,7 @@
 #include "HTTPResponse.hpp"
 #include "Transaction.hpp"
 
-Worker::Worker()
-    : logging_(Logging(__FUNCTION__)) {}
+Worker::Worker() : logging_(Logging(__FUNCTION__)) {}
 
 Worker::Worker(Worker const &other) { *this = other; }
 

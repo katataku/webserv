@@ -34,7 +34,7 @@ class ServerLocation {
     const std::string &cgi_extension() const;
     bool IsRedirect() const;
     bool IsCGI(std::string path) const;
-    std::string ResolveAlias(std::string path_info) const;
+    std::string ResolveAlias(std::string request_uri) const;
 
  private:
     int port_;
