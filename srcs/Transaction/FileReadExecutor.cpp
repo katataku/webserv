@@ -44,7 +44,7 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
     return ResponseBuilder::Build(oss.str());
 }
 
-std::string FileReadExecutor::ListPageBuilder(
+std::string FileReadExecutor::BuildListPage(
     std::string uri, std::vector<std::string> filenames) {
     std::ostringstream oss;
     std::vector<std::string>::iterator iter;
@@ -89,7 +89,7 @@ HTTPResponse *FileReadExecutor::ListDirectoryExec(
     closedir(dir);
 
     return ResponseBuilder::Build(
-        FileReadExecutor::ListPageBuilder(request_uri, filenames));
+        FileReadExecutor::BuildListPage(request_uri, filenames));
 }
 
 HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,

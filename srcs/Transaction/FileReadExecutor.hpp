@@ -23,8 +23,8 @@ class FileReadExecutor : public IExecutor {
     HTTPResponse *GetFileExec(std::string file_path);
     HTTPResponse *ListDirectoryExec(std::string request_uri,
                                     std::string alias_resolved_uri);
-    static std::string ListPageBuilder(std::string request_uri,
-                                       std::vector<std::string> files);
+    static std::string BuildListPage(std::string request_uri,
+                                     std::vector<std::string> files);
 };
 
 #endif  // SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_
