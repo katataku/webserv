@@ -1,6 +1,8 @@
 #include "LocationContext.hpp"
 
-LocationContext::LocationContext() {}
+// TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
+LocationContext::LocationContext()
+    : client_max_body_size_(-1), auto_index_(false) {}
 
 LocationContext::LocationContext(const LocationContext& other) {
     *this = other;
