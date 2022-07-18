@@ -24,6 +24,9 @@ ServerContext& ServerContext::operator=(const ServerContext& other) {
 ServerContext::~ServerContext() {}
 
 int ServerContext::port() const { return this->port_; }
+std::vector<LocationContext> ServerContext::contexts() const {
+    return this->contexts_;
+}
 
 void ServerContext::set_port(const std::string& port) {
     port_ = strtonum<int>(port);

@@ -13,42 +13,43 @@ class Node {
         HttpContextNode,
         ServerContextNode,
         LocationContextNode,
-        ListenDirectiveNode
+        ListenDirectiveNode,
+        AliasDirectiveNode
     };
 
     Node();
-    Node(NodeKind context_kind, NodeKind directive_kind);
     explicit Node(NodeKind context_kind);
     Node(const Node& other);
     Node& operator=(const Node& other);
     ~Node();
 
-    static Node NewNode(NodeKind context_kind, NodeKind directive_kind);
+    static Node NewNode(NodeKind kind);
 
     std::list<std::string> directive_vals() const;
     std::list<Node> directives() const;
     std::list<Node> child_contexts() const;
-    NodeKind context_kind() const;
-    NodeKind directive_kind() const;
+    NodeKind kind() const;
 
-    std::string ToContextNodeKindStr() const;
-    std::string ToDirectiveNodeKindStr() const;
-
+    // TODO(iyamada) セッターだけど意味的にはAddみたいな名前にしたい
     void set_directive_vals(std::list<std::string> val);
-    void set_context_kind(NodeKind kind);
+    void set_kind(NodeKind kind);
 
-    std::string ToNodeKindStr(NodeKind kind);
+    std::string GetNodeKindStr() const;
     bool IsHttpContext();
     bool IsServerContext();
     bool IsLocationContext();
     bool IsListenDirective();
+    bool IsAliasDirective();
 
+    // TODO(iyamada)
+    // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
     void PushDirective(Node node);
     void PushChildContext(Node node);
 
  private:
-    NodeKind context_kind_;
-    NodeKind directive_kind_;
+    NodeKind kind_;
+    // TODO(iyamada)
+    // locationコンテキストの値をdirective_vals_に持たせている。適切な命名か微妙
     std::list<std::string> directive_vals_;
     std::list<Node> child_contexts_;
     std::list<Node> directives_;

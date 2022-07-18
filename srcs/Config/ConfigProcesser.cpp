@@ -33,6 +33,9 @@ ConfigProcesser::~ConfigProcesser() {}
 WebservConfig ConfigProcesser::Exec() {
     try {
         std::string content = ReadFile(this->path_);
+
+        std::cout << "[" << content << "]" << std::endl;
+
         ConfigLexer lexer(content);
         Token* token = lexer.Tokenize();
 

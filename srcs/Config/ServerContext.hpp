@@ -15,6 +15,7 @@ class ServerContext {
     ~ServerContext();
 
     int port() const;
+    std::vector<LocationContext> contexts() const;
 
     void set_port(const std::string& port);
 

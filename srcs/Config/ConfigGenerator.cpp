@@ -70,7 +70,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             if (direciteve_vals.size() != 1) {
                 // TODO(iyamada) エラー処理
                 throw std::runtime_error(
-                    "listen directive accepts just 1 value");
+                    "Syntax Error: listen directive can only take one value");
             }
             serv.set_port(direciteve_vals.back());
             continue;
@@ -101,9 +101,32 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         throw std::runtime_error("Should be location context");
     }
 
+    // locationはvalueを一つだけ持つ
+    std::list<std::string> vals = node.directive_vals();
+    if (vals.size() != 1) {
+        // TODO(iyamada)
+        // 文法エラーかはわからない。でもどういうエラーが起きたかを出力したい
+        throw std::runtime_error(
+            "Syntax Error: location directive can only take one value");
+    }
+    // TODO(iyamada) URIのバリデーションする？
+    locate.set_redirect_uri(vals.back());
+
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
+        if (itr->IsAliasDirective()) {
+            std::list<std::string> direciteve_vals = itr->directive_vals();
+            if (direciteve_vals.size() != 1) {
+                // TODO(iyamada) エラー処理
+                throw std::runtime_error(
+                    "Syntax Error: alias directive can only take one value");
+            }
+            // TODO(iyamada) aliasのバリデーションする？
+            locate.set_alias(direciteve_vals.back());
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
         throw std::runtime_error("Unknown directive");
     }
@@ -111,7 +134,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
     std::list<Node> child_context = node.child_contexts();
     if (!child_context.empty()) {
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown directive");
+        throw std::runtime_error("Unknown contexts");
     }
 
     return locate;

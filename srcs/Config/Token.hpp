@@ -28,7 +28,7 @@ class Token {
     std::string val() const;
     Token* next_token() const;
 
-    std::string ToTokenKindStr(TokenKind kind);
+    std::string GetTokenKindStr();
 
     void set_kind(TokenKind kind);
     void set_val(std::string val);
@@ -43,6 +43,7 @@ class Token {
     static bool PeekKind(Token** tok, TokenKind kind);
 
     static bool SameTokenKind(Token** tok, TokenKind kind);
+    static bool SameToken(Token** tok, const std::string& val);
 
     // 次のトークンが期待されるトークンかを判定する
     // 期待されるトークンだと次に進む

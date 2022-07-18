@@ -24,13 +24,13 @@ Token::TokenKind Token::kind() const { return kind_; }
 std::string Token::val() const { return val_; }
 Token* Token::next_token() const { return next_token_; }
 
-std::string Token::ToTokenKindStr(TokenKind kind) {
+std::string Token::GetTokenKindStr() {
     const char* arr[] = {
         "Unknown",           "BlockDirective", "OpenBracketToken",
         "CloseBracketToken", "ConnmaToken",    "SingleDirective",
         "NumericValueToken", "ValueToken",
     };
-    return arr[kind];
+    return arr[kind_];
 }
 
 void Token::set_kind(TokenKind kind) { kind_ = kind; }
@@ -44,7 +44,8 @@ void Token::Consume(Token** tok, const std::string& expect_val) {
         return;
     }
     throw std::runtime_error("Consume Token failed: expected: " + expect_val +
-                             " but got " + (*tok)->val());
+                             " but got " + (*tok)->val() + " at " +
+                             (*tok)->GetTokenKindStr());
 }
 // 次のトークンに進む。
 void Token::Consume(Token** tok, TokenKind kind) {
@@ -65,6 +66,11 @@ bool Token::PeekKind(Token** tok, TokenKind kind) {
 bool Token::SameTokenKind(Token** tok, TokenKind kind) {
     if ((*tok) == NULL) return false;
     return (*tok)->kind() == kind;
+}
+
+bool Token::SameToken(Token** tok, const std::string& val) {
+    if ((*tok) == NULL) return false;
+    return (*tok)->val() == val;
 }
 
 // 次のトークンが期待されるトークンかを判定する
@@ -90,9 +96,9 @@ std::ostream& operator<<(std::ostream& out, const Token& rhs) {
     out << "-- Dump Token --\n";
     while (head != NULL) {
         out << "|";
-        out << " kind:[" << head->ToTokenKindStr(head->kind()) << "]";
+        out << " kind:[" << head->GetTokenKindStr() << "]";
         out << " val :[" << head->val() << "]";
-        out << "|";
+        out << " |";
         head = head->next_token();
         if (head == NULL) break;
         out << "\n-> ";

@@ -4,13 +4,6 @@
 #include "Node.hpp"
 #include "Token.hpp"
 
-// ```
-// config           ::= block_directive
-// block_directive  ::= "server" "{" single_directive "}"
-// single_directive ::= "listen" value ";"
-// value            ::= (英数字 | ".")*
-// ```
-
 class ConfigParser {
  public:
     ConfigParser();
@@ -26,7 +19,9 @@ class ConfigParser {
 
     Node config();
     Node block_directive();
+    Node location_directive();
     Node single_directive();
+    void value(Node& node);
 };
 
 #endif  // SRCS_CONFIG_CONFIGPARSER_HPP_
