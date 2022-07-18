@@ -14,12 +14,25 @@ class ServerContext {
     ServerContext& operator=(const ServerContext& other);
     ~ServerContext();
 
-    int port() const;
     std::vector<LocationContext> contexts() const;
+    std::map<int, std::string> error_pages() const;
+    int client_max_body_size() const;
+    bool auto_index() const;
+    std::string index_page() const;
+    std::string redirect_url() const;
+    std::string server_name() const;
+    int port() const;
 
+    void set_client_max_body_size(int client_max_body_size);
+    void set_auto_index(bool auto_index);
+    void set_index_page(const std::string& index_page);
+    void set_redirect_url(const std::string& redirect_url);
+    void set_server_name(const std::string& server_name);
     void set_port(const std::string& port);
+    void set_port(int port);
 
     void PushLocationContext(LocationContext context);
+    void PushErrorPage(int status_code, const std::string& error_page);
 
  private:
     std::vector<LocationContext> contexts_;

@@ -17,8 +17,17 @@ class WebservConfig {
     ~WebservConfig();
 
     std::vector<ServerContext> contexts() const;
+    std::map<int, std::string> error_pages() const;
+    int client_max_body_size() const;
+    bool auto_index() const;
+    std::string index_page() const;
+
+    void set_client_max_body_size(int client_max_body_size);
+    void set_auto_index(bool auto_index);
+    void set_index_page(std::string index_page);
 
     void PushServerContext(ServerContext context);
+    void PushErrorPage(int status_code, const std::string& error_page);
 
     static WebservConfig Parse();
     std::vector<ServerLocation>* CreateServerLocations();

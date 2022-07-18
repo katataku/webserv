@@ -21,9 +21,31 @@ WebservConfig::~WebservConfig() {}
 std::vector<ServerContext> WebservConfig::contexts() const {
     return this->contexts_;
 }
+std::map<int, std::string> WebservConfig::error_pages() const {
+    return this->error_pages_;
+}
+int WebservConfig::client_max_body_size() const {
+    return this->client_max_body_size_;
+}
+bool WebservConfig::auto_index() const { return this->auto_index_; }
+std::string WebservConfig::index_page() const { return this->index_page_; }
+
+void WebservConfig::set_client_max_body_size(int client_max_body_size) {
+    this->client_max_body_size_ = client_max_body_size;
+}
+void WebservConfig::set_auto_index(bool auto_index) {
+    this->auto_index_ = auto_index;
+}
+void WebservConfig::set_index_page(std::string index_page) {
+    this->index_page_ = index_page;
+}
 
 void WebservConfig::PushServerContext(ServerContext context) {
     this->contexts_.push_back(context);
+}
+void WebservConfig::PushErrorPage(int status_code,
+                                  const std::string &error_page) {
+    this->error_pages_[status_code] = error_page;
 }
 
 WebservConfig WebservConfig::Parse() {
