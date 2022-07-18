@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-static inline std::string ReadFile(const std::string& path) {
+static std::string ReadFile(const std::string& path) {
     std::ifstream ifs(path.c_str());
     std::stringstream ss;
 

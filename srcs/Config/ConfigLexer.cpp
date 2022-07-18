@@ -6,7 +6,7 @@
 #define RESET "\033[0m"
 
 // TODO(iyamada) もっと良い感じのエラーメッセージ出せたら嬉しい
-static inline std::string MakeErrorMsg(const std::string& line) {
+static std::string MakeErrorMsg(const std::string& line) {
     std::stringstream ss;
 
     ss << RED << "Error" << RESET << ": Failed to tokenize\n";
@@ -15,23 +15,19 @@ static inline std::string MakeErrorMsg(const std::string& line) {
     return ss.str();
 }
 
-static inline bool IsDigit(const char c) { return '0' <= c && c <= '9'; }
-static inline bool IsLowerAlpha(const char c) { return 'a' <= c && c <= 'z'; }
-static inline bool IsUpperAlpha(const char c) { return 'A' <= c && c <= 'Z'; }
-static inline bool IsAlpha(const char c) {
-    return IsLowerAlpha(c) || IsUpperAlpha(c);
-}
+static bool IsDigit(const char c) { return '0' <= c && c <= '9'; }
+static bool IsLowerAlpha(const char c) { return 'a' <= c && c <= 'z'; }
+static bool IsUpperAlpha(const char c) { return 'A' <= c && c <= 'Z'; }
+static bool IsAlpha(const char c) { return IsLowerAlpha(c) || IsUpperAlpha(c); }
 // TODO(iyamada) ファイルパスとして扱うべき文字を追加
 // 以下の文字以外は扱うべき。ただURLエンコーディングによりそれがURIでどういう表現になるか調査する必要がある。
 // https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
-static inline bool IsPathChar(const char c) {
+static bool IsPathChar(const char c) {
     return c == '/' || c == '_' || c == '.' || IsAlpha(c);
 }
-static inline bool IsValueChar(const char c) {
-    return IsPathChar(c) || IsDigit(c);
-}
+static bool IsValueChar(const char c) { return IsPathChar(c) || IsDigit(c); }
 
-static inline bool StartsWith(const std::string& s, const std::string& prefix) {
+static bool StartsWith(const std::string& s, const std::string& prefix) {
     for (std::string::size_type i = 0; i < prefix.size(); ++i) {
         if (s[i] != prefix[i]) {
             return false;
@@ -40,15 +36,13 @@ static inline bool StartsWith(const std::string& s, const std::string& prefix) {
     return true;
 }
 
-static inline bool StartsWithDigits(const std::string& s) {
-    return IsDigit(s[0]);
-}
+static bool StartsWithDigits(const std::string& s) { return IsDigit(s[0]); }
 
-static inline bool StartsWithValueCharacters(const std::string& s) {
+static bool StartsWithValueCharacters(const std::string& s) {
     return IsValueChar(s[0]);
 }
 
-static inline std::string GetDigits(const std::string& s) {
+static std::string GetDigits(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
         if (!IsDigit(s[i])) {
             return s.substr(0, i);
@@ -57,7 +51,7 @@ static inline std::string GetDigits(const std::string& s) {
     throw std::runtime_error("Failed to GetDigits");
 }
 
-static inline std::string GetValueCharacters(const std::string& s) {
+static std::string GetValueCharacters(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
         if (!IsValueChar(s[i])) {
             return s.substr(0, i);
@@ -67,29 +61,26 @@ static inline std::string GetValueCharacters(const std::string& s) {
 }
 
 // keywordだけsを進める
-static inline std::string ConsumeDigits(const std::string& s) {
+static std::string ConsumeDigits(const std::string& s) {
     return s.substr(GetDigits(s).size());
 }
 
-static inline std::string ConsumeValueCharacters(const std::string& s) {
+static std::string ConsumeValueCharacters(const std::string& s) {
     return s.substr(GetValueCharacters(s).size());
 }
 
 // keywordだけsを進める
-static inline std::string Consume(const std::string& s,
-                                  const std::string& keyword) {
+static std::string Consume(const std::string& s, const std::string& keyword) {
     if (StartsWith(s, keyword)) {
         return s.substr(keyword.size());
     }
     throw std::runtime_error("Failed to Consume " + s + " " + keyword);
 }
 
-static inline bool IsSpace(const char c) {
-    return c == ' ' || c == '\t' || c == '\n';
-}
+static bool IsSpace(const char c) { return c == ' ' || c == '\t' || c == '\n'; }
 
 // SP, TA, NLまでの次のキーワードを取得
-static inline std::string Peek(const std::string& s) {
+static std::string Peek(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
         if (IsSpace(s[i])) {
             return s.substr(0, i);
@@ -98,7 +89,7 @@ static inline std::string Peek(const std::string& s) {
     throw std::runtime_error("Failed to Peek " + s);
 }
 
-static inline std::string SkipSpace(const std::string& s) {
+static std::string SkipSpace(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
         if (!IsSpace(s[i])) {
             return s.substr(i);

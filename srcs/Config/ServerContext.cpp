@@ -3,7 +3,7 @@
 #include <sstream>
 
 template <typename T>
-static inline T strtonum(const std::string& s) {
+static T strtonum(const std::string& s) {
     std::stringstream ss(s);
     T num;
     ss >> num;
