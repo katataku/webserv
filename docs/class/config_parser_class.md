@@ -74,26 +74,27 @@ classDiagram
 | -------------------- | -------------------- |
 | BlockDirectiveToken  | "server"             |
 | SingleDirectiveToken | "listen"とか           |
-| OpenBraceToken     | "{"                  |
-| CloseBraceToken    | "}"                  |
+| OpenBraceToken       | "{"                  |
+| CloseBraceToken      | "}"                  |
 | SemicolonToken       | ";"                  |
 | ValueToken           | "80"とか"www.hoge.com" |
 
 ## NodeKindの種類
 
-| kind名               | 説明              |
-| ------------------- | --------------- |
-| HttpContextNode   | "http"コンテキスト  |
-| ServerContextNode   | "server"コンテキスト  |
-| LocationContextNode   | "location"コンテキスト  |
-| ListenDirectiveNode | "listen"ディレクティブ |
-| AliasDirectiveNode | "alias"ディレクティブ |
+| kind名               | 説明               |
+| ------------------- | ---------------- |
+| HttpContextNode     | "http"コンテキスト     |
+| ServerContextNode   | "server"コンテキスト   |
+| LocationContextNode | "location"コンテキスト |
+| ListenDirectiveNode | "listen"ディレクティブ  |
+| AliasDirectiveNode  | "alias"ディレクティブ   |
 
 ## Configファイルの文法
 
 - パーサーはこの文法に従い、構文解析していく
 
 <!-- TOOD(iyamada) block_directive, single_directive, location_directiveは一つしかパースできない -->
+
 ```
 config             ::= block_directive
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
