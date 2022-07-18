@@ -22,10 +22,10 @@ jobs:
         run: make dc-up
       - name: clang-format
         shell: bash
-        run: make format
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make format
       - name: make
         shell: bash
-        run: make
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make
       - name: cpplint
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make lint
