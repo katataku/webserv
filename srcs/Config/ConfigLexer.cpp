@@ -1,5 +1,6 @@
 #include "ConfigLexer.hpp"
 
+#include <cctype>
 #include <iostream>
 
 #define RED "\033[31m"
@@ -15,10 +16,8 @@ static std::string MakeErrorMsg(const std::string& line) {
     return ss.str();
 }
 
-static bool IsDigit(const char c) { return '0' <= c && c <= '9'; }
-static bool IsLowerAlpha(const char c) { return 'a' <= c && c <= 'z'; }
-static bool IsUpperAlpha(const char c) { return 'A' <= c && c <= 'Z'; }
-static bool IsAlpha(const char c) { return IsLowerAlpha(c) || IsUpperAlpha(c); }
+static bool IsDigit(const char c) { return std::isdigit(c); }
+static bool IsAlpha(const char c) { return std::isalpha(c); }
 // TODO(iyamada) ファイルパスとして扱うべき文字を追加
 // 以下の文字以外は扱うべき。ただURLエンコーディングによりそれがURIでどういう表現になるか調査する必要がある。
 // https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
@@ -28,12 +27,7 @@ static bool IsPathChar(const char c) {
 static bool IsValueChar(const char c) { return IsPathChar(c) || IsDigit(c); }
 
 static bool StartsWith(const std::string& s, const std::string& prefix) {
-    for (std::string::size_type i = 0; i < prefix.size(); ++i) {
-        if (s[i] != prefix[i]) {
-            return false;
-        }
-    }
-    return true;
+    return s.find(prefix, 0) == 0;
 }
 
 static bool StartsWithDigits(const std::string& s) { return IsDigit(s[0]); }
@@ -77,7 +71,7 @@ static std::string Consume(const std::string& s, const std::string& keyword) {
     throw std::runtime_error("Failed to Consume " + s + " " + keyword);
 }
 
-static bool IsSpace(const char c) { return c == ' ' || c == '\t' || c == '\n'; }
+static bool IsSpace(const char c) { return std::isspace(c); }
 
 // SP, TA, NLまでの次のキーワードを取得
 static std::string Peek(const std::string& s) {
