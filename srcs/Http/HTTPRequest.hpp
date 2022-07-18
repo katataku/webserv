@@ -20,11 +20,11 @@ class HTTPRequest {
     bool IsReady() const;
     int CalcBodySize() const;
     void set_method(std::string);
-    void set_uri(std::string);
+    void set_request_target(std::string);
 
     std::string unparsed_string() const;
     std::string method() const;
-    std::string uri() const;
+    std::string request_target() const;
     std::string host() const;
     std::string content_length() const;
     std::string transfer_encoding() const;
@@ -39,7 +39,7 @@ class HTTPRequest {
     Logging logging_;
     std::string unparsed_string_;
     std::string method_;
-    std::string uri_;
+    std::string request_target_;
     std::string host_;
     std::string content_length_;
     std::string transfer_encoding_;

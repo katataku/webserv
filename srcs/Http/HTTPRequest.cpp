@@ -6,7 +6,7 @@ HTTPRequest::HTTPRequest()
     : logging_(Logging(__FUNCTION__)),
       unparsed_string_(""),
       method_(""),
-      uri_(""),
+      request_target_(""),
       host_(""),
       content_length_("0"),
       transfer_encoding_(""),
@@ -26,7 +26,7 @@ HTTPRequest &HTTPRequest::operator=(HTTPRequest const &other) {
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs) {
     ost << "unparsed_string_ : " << rhs.unparsed_string() << std::endl;
     ost << "method_ : " << rhs.method() << std::endl;
-    ost << "uri_ : " << rhs.uri() << std::endl;
+    ost << "request_target_ : " << rhs.request_target() << std::endl;
     ost << "host_ : " << rhs.host() << std::endl;
     ost << "content_length_ : " << rhs.content_length() << std::endl;
     ost << "transfer_encoding_ : " << rhs.transfer_encoding() << std::endl;
@@ -47,7 +47,9 @@ std::string HTTPRequest::unparsed_string() const {
 }
 
 std::string HTTPRequest::method() const { return this->method_; }
-std::string HTTPRequest::uri() const { return this->uri_; }
+std::string HTTPRequest::request_target() const {
+    return this->request_target_;
+}
 std::string HTTPRequest::host() const { return this->host_; }
 std::string HTTPRequest::content_length() const {
     return this->content_length_;
@@ -65,7 +67,9 @@ bool HTTPRequest::is_finish_to_read_body() const {
 }
 
 void HTTPRequest::set_method(std::string method) { this->method_ = method; }
-void HTTPRequest::set_uri(std::string uri) { this->uri_ = uri; }
+void HTTPRequest::set_request_target(std::string request_target) {
+    this->request_target_ = request_target;
+}
 
 void HTTPRequest::Parse(std::string str) {
     this->unparsed_string_ += str;
@@ -106,7 +110,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
         throw std::runtime_error("invalid");
     }
     this->method_ = items[0];
-    this->uri_ = items[1];
+    this->request_target_ = items[1];
 }
 
 void HTTPRequest::ParseHeader(std::string str) {

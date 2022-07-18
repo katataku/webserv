@@ -96,7 +96,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
     logging_.Debug("Exec starts");
     struct stat stat_buf;
-    std::string alias_resolved_uri = sl.ResolveAlias(request.uri());
+    std::string alias_resolved_uri = sl.ResolveAlias(request.request_target());
 
     logging_.Debug("alias_resolved_uri = [" + alias_resolved_uri + "]");
 
@@ -114,7 +114,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     }
     if (S_ISDIR(stat_buf.st_mode)) {
         logging_.Debug("URI indicate Directory.");
-        return ListDirectoryExec(request.uri(), alias_resolved_uri);
+        return ListDirectoryExec(request.request_target(), alias_resolved_uri);
     }
     logging_.Info("Function ends abnormally");
     return NULL;

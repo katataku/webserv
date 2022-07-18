@@ -21,7 +21,7 @@ TEST_F(TransactionTest, FileReadExecutor) {
 
     HTTPRequest req = HTTPRequest();
     req.set_method("GET");
-    req.set_uri("/html/hello_world.html");
+    req.set_request_target("/html/hello_world.html");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
@@ -41,7 +41,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
 
     HTTPRequest req = HTTPRequest();
     req.set_method("GET");
-    req.set_uri("/html");
+    req.set_request_target("/html");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
