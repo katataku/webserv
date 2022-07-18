@@ -23,7 +23,7 @@ classDiagram
         +CalcBodySize() int
         +RequestTarget() string
         +AbsolutePath() string
-        +Queries() map~string,string~
+        +Queries() map~StringString~
     }
 
     class HTTPResponse{
