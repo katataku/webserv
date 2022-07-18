@@ -17,7 +17,7 @@ class Token {
         BlockDirective,
         OpenBraceToken,
         CloseBraceToken,
-        CommaToken,
+        SemicolonToken,
         SingleDirective,
         NumericValueToken,
         ValueToken

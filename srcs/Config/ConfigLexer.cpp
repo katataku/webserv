@@ -160,7 +160,7 @@ Token* ConfigLexer::Tokenize() {
             continue;
         }
         if (StartsWith(this->content_, ";")) {
-            cur_tok = Token::NewToken(cur_tok, Token::CommaToken, ";");
+            cur_tok = Token::NewToken(cur_tok, Token::SemicolonToken, ";");
             this->content_ = Consume(this->content_, ";");
             continue;
         }
