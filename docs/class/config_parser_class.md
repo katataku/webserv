@@ -18,19 +18,19 @@ classDiagram
     %% configファイルの内容を字句解析するところまでを担当 %%
     class ConfigLexer {
       +ConfigLexer(string content)
-      +Tokenize()* Token*
+      +Tokenize()* Token
       -content string
     }
 
     %% 軸解析後のトークンを構文解析するところまでを担当 %%
     class ConfigParser {
       +ConfigParser(Token token)
-      +Parse()* Node*
-      -config()* Node*
-      -block_directive()* Node*
-      -single_directive()* Node*
-      -location_directive()* Node*
-      -value(Node *)* void*
+      +Parse()* Node
+      -config()* Node
+      -block_directive()* Node
+      -single_directive()* Node
+      -location_directive()* Node
+      -value(Node *)* void
       -Token* token
     }
 
@@ -46,14 +46,14 @@ classDiagram
 
     %% 字句解析後のトークンを表すクラス %%
     class Token {
-        +static NewToken(Token*, TokenKind, string)* Token*
-        +static Consume(Token**, string)* Token*
-        +static Consume(Token**, TokenKind)* Token*
-        +static PeekKind(Token**, TokenKind)* bool
-        +static SameTokenKind(Token**, TokenKind)* bool
-        +static SameToken(Token**, string)* bool
-        +static Expect(Token**, string)* bool
-        +static Expect(Token**, TokenKind)* bool
+        +NewToken(Token*, TokenKind, string)$ Token
+        +Consume(Token**, string)$ Token
+        +Consume(Token**, TokenKind)$ Token
+        +PeekKind(Token**, TokenKind)$ bool
+        +SameTokenKind(Token**, TokenKind)$ bool
+        +SameToken(Token**, string)$ bool
+        +Expect(Token**, string)$ bool
+        +Expect(Token**, TokenKind)$ bool
         -TokenKind kind
         -string    val
         -Token     next
