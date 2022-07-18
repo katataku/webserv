@@ -1,6 +1,7 @@
 #ifndef SRCS_HTTP_HTTPREQUEST_HPP_
 #define SRCS_HTTP_HTTPREQUEST_HPP_
 
+#include <map>
 #include <string>
 
 #include "Logging.hpp"
@@ -29,6 +30,8 @@ class HTTPRequest {
     std::string content_length() const;
     std::string transfer_encoding() const;
     std::string request_body() const;
+    std::string absolute_path() const;
+    std::map<std::string, std::string> queries() const;
     bool is_finish_to_read_header() const;
     bool is_finish_to_read_body() const;
 

@@ -41,7 +41,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
 
     HTTPRequest req = HTTPRequest();
     req.set_method("GET");
-    req.set_request_target("/html");
+    req.set_request_target("/html?query=value");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;

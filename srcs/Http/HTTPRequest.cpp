@@ -59,6 +59,19 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
+std::string HTTPRequest::absolute_path() const {
+    std::string::size_type pos = this->request_target_.find("?");
+    if (pos == std::string::npos) {
+        return this->request_target_;
+    }
+    return this->request_target_.substr(0, pos);
+}
+
+std::map<std::string, std::string> HTTPRequest::queries() const {
+    // TODO(takkatao): queryを返すように実装する。
+    return std::map<std::string, std::string>();
+}
+
 bool HTTPRequest::is_finish_to_read_header() const {
     return is_finish_to_read_header_;
 }

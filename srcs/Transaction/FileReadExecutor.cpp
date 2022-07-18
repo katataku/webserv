@@ -45,10 +45,10 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
 }
 
 std::string FileReadExecutor::BuildListPage(
-    std::string uri, std::vector<std::string> filenames) {
+    std::string absolute_path, std::vector<std::string> filenames) {
     std::ostringstream oss;
     std::vector<std::string>::iterator iter;
-    std::string title = "Index of " + uri;
+    std::string title = "Index of " + absolute_path;
 
     oss << "<html>" << std::endl
         << "<head><title>" << title << "</title></head>" << std::endl
@@ -67,12 +67,12 @@ std::string FileReadExecutor::BuildListPage(
 }
 
 HTTPResponse *FileReadExecutor::ListDirectoryExec(
-    std::string request_uri, std::string alias_resolved_uri) {
+    std::string absolute_path, std::string alias_resolved_path) {
     dirent *directory_read = NULL;
     std::vector<std::string> filenames;
 
     logging_.Debug("ListDirectoryExec starts");
-    DIR *dir = opendir(alias_resolved_uri.c_str());
+    DIR *dir = opendir(alias_resolved_path.c_str());
     if (dir == NULL) {
         // TODO(takkatao):
         // ディレクトリが存在するが、権限がなく内容を確認できないときはここに入る。403を返す。
@@ -89,18 +89,18 @@ HTTPResponse *FileReadExecutor::ListDirectoryExec(
     closedir(dir);
 
     return ResponseBuilder::Build(
-        FileReadExecutor::BuildListPage(request_uri, filenames));
+        FileReadExecutor::BuildListPage(absolute_path, filenames));
 }
 
 HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
     logging_.Debug("Exec starts");
     struct stat stat_buf;
-    std::string alias_resolved_uri = sl.ResolveAlias(request.request_target());
+    std::string alias_resolved_path = sl.ResolveAlias(request.absolute_path());
 
-    logging_.Debug("alias_resolved_uri = [" + alias_resolved_uri + "]");
+    logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");
 
-    if (stat(alias_resolved_uri.c_str(), &stat_buf) == -1) {
+    if (stat(alias_resolved_path.c_str(), &stat_buf) == -1) {
         // TODO(takkatao): ファイルが存在しないときはここに入る。404を返す。
         logging_.Fatal("stat failed");
         logging_.Fatal(strerror(errno));
@@ -109,12 +109,12 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
 
     if (S_ISREG(stat_buf.st_mode)) {
         logging_.Debug("URI indicate regular file.");
-        return GetFileExec(alias_resolved_uri);
+        return GetFileExec(alias_resolved_path);
         //        return GetFileExecutor(request, sl);
     }
     if (S_ISDIR(stat_buf.st_mode)) {
         logging_.Debug("URI indicate Directory.");
-        return ListDirectoryExec(request.request_target(), alias_resolved_uri);
+        return ListDirectoryExec(request.absolute_path(), alias_resolved_path);
     }
     logging_.Info("Function ends abnormally");
     return NULL;
