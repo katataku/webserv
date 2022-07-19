@@ -98,7 +98,7 @@ HTTP/1.1 200 OK
 | 404      | Not Found                  | リクエスト内容は正常だが、リソースが見つからない場合に使用する。                                                                                                                                                                  |
 | 413      | Payload Too Large          | 要求されたpayloadのサイズがconfigで設定したサイズを超える場合に使用する。                                                                                                                                                       |
 | 414      | URI Too Long               | URI文字長が1024文字以上の場合に使用する。 1024という値は決め。                                                                                                                                                             |
-| 500      | Internal Server Error      | CGIプログラムが異常終了した際に使用する。                                                                                                                                                                            |
+| 500      | Internal Server Error      | CGIプログラムが異常終了した際に使用する。また、サーバ処理にてシステムコールのエラーが発生した際に使用する。                                                                                                                                           |
 | 501      | Not Implemented            | [Transfer-Encoding](#Transfer-Encoding)において、未対応の値が含まれている場合に使用する。                                                                                                                                  |
 | 505      | HTTP Version Not Supported | このHTTPバージョンが1.1以外の場合に使用する。                                                                                                                                                                        |
 
