@@ -57,7 +57,7 @@ itest: ## Exec unit tests for webserver
 
 .PHONY: format
 format: ## Lint webserver source files
-	clang-format $(HEADERS) $(SRCS) --dry-run  2>&1 | wc | grep "0       0       0"
+	clang-format $(HEADERS) $(SRCS) --dry-run -Werror
 
 .PHONY: lint
 lint: ## Lint webserver source files
