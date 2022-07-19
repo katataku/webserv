@@ -99,7 +99,7 @@ classDiagram
 config             ::= block_directive
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
 location_directive ::= "location" value "{" ( single_directive ) "}"
-single_directive   ::= "listen" value ";"
+single_directive   ::= ( "listen" | "alias" ) value ";"
 value              ::= (英数字 | ".")+
 ```
 
