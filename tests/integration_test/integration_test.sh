@@ -11,14 +11,16 @@ MAGENTA="\033[35m"
 
 ACTUAL_PATH=./test_data/actual/
 EXPECTED_PATH=./test_data/expected/
-CONFIG_PATH=./test_data/config/nginx/
+CONFIG_PATH=./test_data/config/webserv/
 REQUEST_PATH=./test_data/request/
 
 OK_SUM=0
 NG_SUM=0
 
 CONFIG_ARRAY=(`ls ${CONFIG_PATH} | tr -d 'localhost'`)
-REQUEST_ARRAY=(`ls ./test_data/request | tr -d '.sh'`)
+REQUEST_ARRAY=(`ls ${REQUEST_PATH} | tr -d '.sh'`)
+
+COMMAND_MAKE_DC_RE="make dc-re"
 
 function do_single_command_check(){
     #引数で与えられたコマンドを実行し、OK/NGを判定。
@@ -87,7 +89,7 @@ function do_test() {
 function start_server_container() {
     echo "--- starting server container. config:[${CONFIG_NO}] ---"
     cp ${CONFIG_PATH}${CONFIG_NO} ${CONFIG_PATH}localhost
-    make dc-nginx-re > /dev/null 2>&1
+    ${COMMAND_MAKE_DC_RE} > /dev/null 2>&1
     sleep 1 #コンテナ起動待ち
 }
 
