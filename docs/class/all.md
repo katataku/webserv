@@ -2,14 +2,33 @@ worker以降はなくて良い
 
 ```mermaid
 classDiagram
-    Webserv *-- WebservConfig
+    Webserv --> WebservConfig: use
     WebservConfig "1" *-- "1..*" ServerContext
     ServerContext "1" *-- "1..*" LocationContext
 
-    Webserv *-- SuperVisor
+    Webserv --> SuperVisor: use
 
-    IOMultiplexer "1" *-- "0..n" Socket
+    IOMultiplexer "1" *-- "1..n" Socket
     SuperVisor --> IOMultiplexer: use
+    SuperVisor --> Worker: use
+
+    Worker --> RequestFacade: request
+    RequestFacade --> HTTPRequest: generate
+    Worker --> HTTPRequest: use
+    Worker --> HTTPResponse: call
+    Worker --> ServerLocationFacade: request
+    Worker --> ServerLocation: use
+    ServerLocationFacade --> ServerLocation: generate
+
+    Transaction --> HTTPRequest: use
+    Transaction --> HTTPResponse: use
+    Transaction --> IExecutor: use
+    IExecutor --|> FileReadExecutor: use
+    IExecutor --|> CGIExecutor: use
+    FileReadExecutor --> ResponseBuilder: use
+    CGIExecutor --> ResponseBuilder: use
+
+    %% ResponseBuilder --> HTTPResponse: use %%
 
     class WebservConfig {
         +CreateServerLocations()
@@ -44,97 +63,59 @@ classDiagram
     +Accept(Socket)* void
   }
 
-```
+  class Worker {
+    +Exec(Socket)* void
+  }
 
-## 擬似コード
+  class ServerLocationFacade {
+    +Choose(port, host, path)* ServerLocation
+    +GetPorts()* vector<string>
+  }
 
-```cpp
+  class ServerLocation {
+    +IsRedirect()* bool
+    +IsCGI(path)* bool
+    +ResolveAlias(path)* string
+  }
 
-class Webserv {
-    // IDEA: 別途Lexer&Parserの責務を持ったクラスを定義しても良いかもしれない。
-    void Run() {
-        WebservConfig config = WebservConfig.Parse()
-        vector<ServerLocation> locations = config.CreateServerLocations()
-        ServerLocationFacade facade(locations)
-        SuperVisor sv(facade)
-        sv.Watch()
-    }
-}
+  class RequestFacade {
+    +SelectRequest(Socket)* HTTPRequest
+    +Finish(Socket)* void
+  }
 
-class SuperVisor {
-    ServerLocationFacade facade
+  class HTTPRequest {
+    +Parse(string): void
+    +IsReady(): bool
+    +CalcBodySize(): int
+    +RequestTarget(): string
+    +AbsolutePath(): string
+    +Queries(): map<string, string>
+  }
 
-    void Watch() {
-        IOMultiplexer iomul
-        string[] port_list = ServerLocationFacade.Getpostlist()
-        iomul.Init(port_list)
-        while (1) {
-            Socket[] sockets = iomul.Wait()
-            for socket in sockets {
-                if socket.IsListening()
-                    iomul.Accept(socket)
-                else
-                    Worker.Exec(socket)
-            }
-        }
-    }
-}
+  class HTTPResponse {
+    +HTTPResponse(int)
+    +Write(Socket)* void
+  }
 
+  class Transaction {
+    +Exec(HTTPRequest, ServerLocation)* HTTPResponse
+  }
 
-class Socket {
-  private:
-      int socketfd
-      bool is_listening
+  class IExecutor {
+    <<abstract>>
+    +Exec(HTTPRequest, ServerLocation)* HTTPResponse
+  }
 
-  public:
-      // Responseを受け取りソケットに書き込む
-      void Send(string)
+  class FileReadExecutor {
+    
+  }
+  class CGIExecutor {
 
-      // ソケットを読み込み、何かしらのデータとして返す
-      string Recieve()
-
-      // ソケットがリスニング状態か確認
-      bool IsListening()
-}
-
-// I/O多重化の債務をやってくれるやつ
-class IOMultiplexer {
-    private:
-        // ソケット群
-        Socket[] sockets
-
-        // listen状態のソケット
-        CreateListenerSocket(string port)
-
-    public:
-        // socket群を初期化するやつ
-        void Init(string[] port_list) {
-            for port in port_list {
-                CreateListenerSocket(port)
-            }
-            ... // epoll固有の実装なので省略
-        }
-
-        // ソケット群がready状態になるまで待機
-        Socket[] Wait() {
-          ... // epoll固有の実装なので省略
-        }
-
-        // listen状態のソケットを受け取り、acceptして新しいクライアントとのソケットをソケット群に追加
-        void Accept(Socket listener) {
-          Socket client = listener.Accept()
-          ... // epoll固有の実装なので省略
-          sockets.Add(client)
-        }
-}
-
-class Woker {
-    void Exec() {
-        HTTPRequest request = HTTPRequest.Parse(socket_)
-        ServerLocation sl = facade_.Choose(port, host, path)
-        HTTPResponse response = Someone.Exec(request, sl)
-        HTTPResponse.Write(socket_)
-    }
-}
+  }
+  class ResponseBuilder {
+    +Build()* HTTPResponse
+    +BuildError(int status_code, ServerLocation sl)* HTTPResponse
+    +BuildRedirect(string redirect_url)* HTTPResponse
+  }
 
 ```
