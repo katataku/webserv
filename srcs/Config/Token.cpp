@@ -25,12 +25,16 @@ std::string Token::val() const { return val_; }
 Token* Token::next_token() const { return next_token_; }
 
 std::string Token::GetTokenKindStr() {
+    return Token::GetTokenKindStr(this->kind_);
+}
+
+std::string Token::GetTokenKindStr(Token::TokenKind kind) {
     const char* arr[] = {
         "Unknown",         "BlockDirective", "OpenBraceToken",
         "CloseBraceToken", "SemicolonToken", "SingleDirective",
         "ValueToken",
     };
-    return arr[kind_];
+    return arr[kind];
 }
 
 void Token::set_kind(TokenKind kind) { kind_ = kind; }
@@ -39,6 +43,10 @@ void Token::set_next_token(Token* next_token) { next_token_ = next_token; }
 
 // 次のトークンに進む。
 void Token::Consume(Token** tok, const std::string& expect_val) {
+    if (*tok == NULL) {
+        throw std::runtime_error("Consume Token failed: expected: " +
+                                 expect_val + " but got Nothing");
+    }
     if ((*tok)->val() == expect_val) {
         *tok = (*tok)->next_token();
         return;
@@ -49,6 +57,11 @@ void Token::Consume(Token** tok, const std::string& expect_val) {
 }
 // 次のトークンに進む。
 void Token::Consume(Token** tok, TokenKind kind) {
+    if (*tok == NULL) {
+        throw std::runtime_error(
+            "Consume Token failed: expected: " + Token::GetTokenKindStr(kind) +
+            " but got Nothing");
+    }
     if ((*tok)->kind() == kind) {
         *tok = (*tok)->next_token();
         return;
@@ -58,6 +71,11 @@ void Token::Consume(Token** tok, TokenKind kind) {
 
 // 次のトークンのkindが一致するかどうか
 bool Token::PeekKind(Token** tok, TokenKind kind) {
+    if (*tok == NULL) {
+        throw std::runtime_error(
+            "Peek Token failed: expected: " + Token::GetTokenKindStr(kind) +
+            " but got Nothing");
+    }
     Token* next_tok = (*tok)->next_token();
     if (next_tok == NULL) return false;
     return next_tok->kind() == kind;
@@ -76,6 +94,10 @@ bool Token::SameToken(Token** tok, const std::string& val) {
 // 次のトークンが期待されるトークンかを判定する
 // 期待されるトークンだと次に進む
 bool Token::Expect(Token** tok, const std::string& expect_val) {
+    if (*tok == NULL) {
+        throw std::runtime_error("Expect Token failed: expected: " +
+                                 expect_val + " but got Nothing");
+    }
     if ((*tok)->val() == expect_val) {
         *tok = (*tok)->next_token();
         return true;
@@ -83,6 +105,11 @@ bool Token::Expect(Token** tok, const std::string& expect_val) {
     return false;
 }
 bool Token::Expect(Token** tok, TokenKind kind) {
+    if (*tok == NULL) {
+        throw std::runtime_error(
+            "Expect Token failed: expected: " + Token::GetTokenKindStr(kind) +
+            " but got Nothing");
+    }
     if ((*tok)->kind() == kind) {
         *tok = (*tok)->next_token();
         return true;

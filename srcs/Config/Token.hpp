@@ -28,6 +28,7 @@ class Token {
     Token* next_token() const;
 
     std::string GetTokenKindStr();
+    static std::string GetTokenKindStr(TokenKind kind);
 
     void set_kind(TokenKind kind);
     void set_val(std::string val);
