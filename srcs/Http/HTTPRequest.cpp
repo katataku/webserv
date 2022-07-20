@@ -59,6 +59,7 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
+// TODO(takkatao): pathに含まれるドットセグメント削除を実装する。
 std::string HTTPRequest::absolute_path() const {
     std::string::size_type pos = this->request_target_.find("?");
     if (pos == std::string::npos) {
