@@ -110,7 +110,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
             "Syntax Error: location directive can only take one value");
     }
     // TODO(iyamada) URIのバリデーションする？
-    locate.set_redirect_uri(vals.back());
+    locate.set_path(vals.back());
 
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();

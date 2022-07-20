@@ -15,6 +15,7 @@ LocationContext& LocationContext::operator=(const LocationContext& other) {
         this->client_max_body_size_ = other.client_max_body_size_;
         this->auto_index_ = other.auto_index_;
         this->index_page_ = other.index_page_;
+        this->path_ = other.path_;
         this->redirect_uri_ = other.redirect_uri_;
         this->allow_methods_ = other.allow_methods_;
         this->alias_ = other.alias_;
@@ -33,6 +34,7 @@ int LocationContext::client_max_body_size() const {
 }
 bool LocationContext::auto_index() const { return this->auto_index_; }
 std::string LocationContext::index_page() const { return this->index_page_; }
+std::string LocationContext::path() const { return this->path_; }
 std::string LocationContext::redirect_uri() const {
     return this->redirect_uri_;
 }
@@ -53,6 +55,7 @@ void LocationContext::set_auto_index(bool auto_index) {
 void LocationContext::set_index_page(const std::string& index_page) {
     this->index_page_ = index_page;
 }
+void LocationContext::set_path(const std::string& path) { this->path_ = path; }
 void LocationContext::set_redirect_uri(const std::string& redirect_uri) {
     this->redirect_uri_ = redirect_uri;
 }
