@@ -47,7 +47,7 @@ TEST_F(HTTPTest, parse_body_by_content_length) {
     req.Parse("\r\n");
     req.Parse("12345678");
     ASSERT_EQ(req.method(), "GET");
-    ASSERT_EQ(req.uri(), "/");
+    ASSERT_EQ(req.absolute_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), 8);
     ASSERT_EQ(req.transfer_encoding(), "");
