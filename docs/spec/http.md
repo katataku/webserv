@@ -46,7 +46,7 @@ GET / HTTP/1.1
 
 ### origin-form
 
-リクエストターゲットは[origin-form](#origin-form)形式のみを許容する。
+リクエストターゲットは[origin-form](https://triple-underscore.github.io/RFC7230-ja.html#section-5.3.1)形式のみを許容する。
 
 Usage:
 
@@ -56,7 +56,8 @@ Syntax: absolute-path [ "?" query ]
 
 - absolute-pathには`/aaa/bbb/ccc.html`のような、スラッシュで始まるパス名を指定する。
 
-  - absolute-pathが空の場合でも`"/"`という値が必ず送信される。
+  - absolute-pathが空の場合、今回のサーバはリクエスト不正として400エラーレスポンスを返すものとする。
+    - RFCでは、クライアントは「pathが空の場合`"/"`を送信しなければならない（MUST）」と規定されている。
   - absolute-pathはドットセグメント( "." と ".." )を許容する
     - `"/aaa/./bbb"`は`"/aaa/bbb"`とする。
     - `"/aaa/ccc/../bbb"`は`"/aaa/bbb"`とする。
