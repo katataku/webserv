@@ -25,6 +25,7 @@ static bool IsPathChar(const char c) {
     return c == '/' || c == '_' || c == '.' || IsAlpha(c);
 }
 static bool IsValueChar(const char c) { return IsPathChar(c) || IsDigit(c); }
+static bool IsSpace(const char c) { return std::isspace(c); }
 
 static bool StartsWith(const std::string& s, const std::string& prefix) {
     return s.find(prefix, 0) == 0;
@@ -55,7 +56,17 @@ static std::string Consume(const std::string& s, const std::string& keyword) {
     throw std::runtime_error("Failed to Consume " + s + " " + keyword);
 }
 
-static bool IsSpace(const char c) { return std::isspace(c); }
+static std::string ConsumeSpace(const std::string& s) {
+    if (IsSpace(s[0])) {
+        return s.substr(1);
+    }
+    throw std::runtime_error("Failed to Consume. Expected space, but got " + s);
+}
+
+static std::string ConsumeWithSpace(const std::string& s,
+                                    const std::string& keyword) {
+    return ConsumeSpace(Consume(s, keyword));
+}
 
 static std::string SkipSpace(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
@@ -94,29 +105,29 @@ Token* ConfigLexer::Tokenize() {
         /*
             Tokenize Block directives e.g. "server", "location"
         */
-        if (StartsWith(this->content_, "server ")) {
+        if (StartsWith(this->content_, "server")) {
             cur_tok = Token::NewToken(cur_tok, Token::BlockDirective, "server");
-            this->content_ = Consume(this->content_, "server ");
+            this->content_ = ConsumeWithSpace(this->content_, "server");
             continue;
         }
-        if (StartsWith(this->content_, "location ")) {
+        if (StartsWith(this->content_, "location")) {
             cur_tok =
                 Token::NewToken(cur_tok, Token::BlockDirective, "location");
-            this->content_ = Consume(this->content_, "location ");
+            this->content_ = ConsumeWithSpace(this->content_, "location");
             continue;
         }
         /*
             Tokenize Single directives e.g. "listen", "alias"
         */
-        if (StartsWith(this->content_, "listen ")) {
+        if (StartsWith(this->content_, "listen")) {
             cur_tok =
                 Token::NewToken(cur_tok, Token::SingleDirective, "listen");
-            this->content_ = Consume(this->content_, "listen ");
+            this->content_ = ConsumeWithSpace(this->content_, "listen");
             continue;
         }
-        if (StartsWith(this->content_, "alias ")) {
+        if (StartsWith(this->content_, "alias")) {
             cur_tok = Token::NewToken(cur_tok, Token::SingleDirective, "alias");
-            this->content_ = Consume(this->content_, "alias ");
+            this->content_ = ConsumeWithSpace(this->content_, "alias");
             continue;
         }
         // TODO(iyamada) "{" "}" ";"を一言で表す言葉をコメントとして入れたい
