@@ -79,7 +79,15 @@ static std::string SkipSpace(const std::string& s) {
 
 ConfigLexer::ConfigLexer() {}
 
-ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {}
+ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
+    this->keywords_["server"] = Token::BlockDirective;
+    this->keywords_["location"] = Token::BlockDirective;
+    this->keywords_["listen"] = Token::SingleDirective;
+    this->keywords_["alias"] = Token::SingleDirective;
+    this->keywords_["{"] = Token::OpenBraceToken;
+    this->keywords_["}"] = Token::CloseBraceToken;
+    this->keywords_[";"] = Token::SemicolonToken;
+}
 
 ConfigLexer::ConfigLexer(const ConfigLexer& other) { *this = other; }
 
@@ -92,6 +100,38 @@ ConfigLexer& ConfigLexer::operator=(const ConfigLexer& other) {
 
 ConfigLexer::~ConfigLexer() {}
 
+std::string ConfigLexer::ReadKeyword() {
+    std::string::size_type keyword_len =
+        this->content_.find_first_of(" \f\n\r\t\v");
+    if (keyword_len == std::string::npos) {
+        return "";
+    }
+    std::map<std::string, Token::TokenKind>::iterator itr =
+        keywords_.find(this->content_.substr(0, keyword_len));
+    if (itr == keywords_.end()) {
+        return "";
+    }
+    return itr->first;
+}
+
+bool ConfigLexer::IsBlockDirectiveKeyword(std::string keyword) {
+    std::map<std::string, Token::TokenKind>::iterator itr =
+        keywords_.find(keyword);
+    if (itr == keywords_.end()) {
+        return false;
+    }
+    return itr->second == Token::BlockDirective;
+}
+
+bool ConfigLexer::IsSingleDirectiveKeyword(std::string keyword) {
+    std::map<std::string, Token::TokenKind>::iterator itr =
+        keywords_.find(keyword);
+    if (itr == keywords_.end()) {
+        return false;
+    }
+    return itr->second == Token::SingleDirective;
+}
+
 // TODO(iyamada) content_をメンバで持つ必要なさそう
 Token* ConfigLexer::Tokenize() {
     Token head;
@@ -102,51 +142,46 @@ Token* ConfigLexer::Tokenize() {
         if (this->content_.empty()) {
             break;
         }
+
+        /*
+            Read keyword e.g. "server",  "location", "listen", "alias"
+        */
+        std::string keyword = ReadKeyword();
+
         /*
             Tokenize Block directives e.g. "server", "location"
         */
-        if (StartsWith(this->content_, "server")) {
-            cur_tok = Token::NewToken(cur_tok, Token::BlockDirective, "server");
-            this->content_ = ConsumeWithSpace(this->content_, "server");
-            continue;
-        }
-        if (StartsWith(this->content_, "location")) {
-            cur_tok =
-                Token::NewToken(cur_tok, Token::BlockDirective, "location");
-            this->content_ = ConsumeWithSpace(this->content_, "location");
+        if (IsBlockDirectiveKeyword(keyword)) {
+            cur_tok = Token::NewToken(cur_tok, Token::BlockDirective, keyword);
+            this->content_ = ConsumeWithSpace(this->content_, keyword);
             continue;
         }
         /*
             Tokenize Single directives e.g. "listen", "alias"
         */
-        if (StartsWith(this->content_, "listen")) {
-            cur_tok =
-                Token::NewToken(cur_tok, Token::SingleDirective, "listen");
-            this->content_ = ConsumeWithSpace(this->content_, "listen");
+        if (IsSingleDirectiveKeyword(keyword)) {
+            cur_tok = Token::NewToken(cur_tok, Token::SingleDirective, keyword);
+            this->content_ = ConsumeWithSpace(this->content_, keyword);
             continue;
         }
-        if (StartsWith(this->content_, "alias")) {
-            cur_tok = Token::NewToken(cur_tok, Token::SingleDirective, "alias");
-            this->content_ = ConsumeWithSpace(this->content_, "alias");
-            continue;
-        }
+
         // TODO(iyamada) "{" "}" ";"を一言で表す言葉をコメントとして入れたい
         /*
             Tokenize *** e.g.  "{", "}" and ";"
         */
-        if (StartsWith(this->content_, "{")) {
-            cur_tok = Token::NewToken(cur_tok, Token::OpenBraceToken, "{");
-            this->content_ = Consume(this->content_, "{");
+        if (keyword == "{") {
+            cur_tok = Token::NewToken(cur_tok, Token::OpenBraceToken, keyword);
+            this->content_ = Consume(this->content_, keyword);
             continue;
         }
-        if (StartsWith(this->content_, "}")) {
-            cur_tok = Token::NewToken(cur_tok, Token::CloseBraceToken, "}");
-            this->content_ = Consume(this->content_, "}");
+        if (keyword == "}") {
+            cur_tok = Token::NewToken(cur_tok, Token::CloseBraceToken, keyword);
+            this->content_ = Consume(this->content_, keyword);
             continue;
         }
-        if (StartsWith(this->content_, ";")) {
-            cur_tok = Token::NewToken(cur_tok, Token::SemicolonToken, ";");
-            this->content_ = Consume(this->content_, ";");
+        if (keyword == ";") {
+            cur_tok = Token::NewToken(cur_tok, Token::SemicolonToken, keyword);
+            this->content_ = Consume(this->content_, keyword);
             continue;
         }
         // TODO(iyamada)
