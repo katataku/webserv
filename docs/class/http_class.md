@@ -11,7 +11,7 @@ classDiagram
     class HTTPRequest{
         string unparsed_string
         string method
-        string URI
+        string Request_target
         string host
         int content-length
         string transfer-encoding
@@ -22,6 +22,9 @@ classDiagram
         +Parse(string) void
         +IsReady() bool
         +CalcBodySize() int
+        +RequestTarget() string
+        +AbsolutePath() string
+        +Queries() map~StringString~
     }
 
     class HTTPResponse{

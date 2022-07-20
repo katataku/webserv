@@ -7,7 +7,7 @@ HTTPRequest::HTTPRequest()
     : logging_(Logging(__FUNCTION__)),
       unparsed_string_(""),
       method_(""),
-      uri_(""),
+      request_target_(""),
       host_(""),
       content_length_(-1),
       transfer_encoding_(""),
@@ -27,7 +27,7 @@ HTTPRequest &HTTPRequest::operator=(HTTPRequest const &other) {
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs) {
     ost << "unparsed_string_ : " << rhs.unparsed_string() << std::endl;
     ost << "method_ : " << rhs.method() << std::endl;
-    ost << "uri_ : " << rhs.uri() << std::endl;
+    ost << "request_target_ : " << rhs.request_target() << std::endl;
     ost << "host_ : " << rhs.host() << std::endl;
     ost << "content_length_ : " << rhs.content_length() << std::endl;
     ost << "transfer_encoding_ : " << rhs.transfer_encoding() << std::endl;
@@ -48,13 +48,29 @@ std::string HTTPRequest::unparsed_string() const {
 }
 
 std::string HTTPRequest::method() const { return this->method_; }
-std::string HTTPRequest::uri() const { return this->uri_; }
+std::string HTTPRequest::request_target() const {
+    return this->request_target_;
+}
 std::string HTTPRequest::host() const { return this->host_; }
 int HTTPRequest::content_length() const { return this->content_length_; }
 std::string HTTPRequest::transfer_encoding() const {
     return this->transfer_encoding_;
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
+
+// TODO(takkatao): pathに含まれるドットセグメント削除を実装する。
+std::string HTTPRequest::absolute_path() const {
+    std::string::size_type pos = this->request_target_.find("?");
+    if (pos == std::string::npos) {
+        return this->request_target_;
+    }
+    return this->request_target_.substr(0, pos);
+}
+
+std::map<std::string, std::string> HTTPRequest::queries() const {
+    // TODO(takkatao): queryを返すように実装する。
+    return std::map<std::string, std::string>();
+}
 
 bool HTTPRequest::is_finish_to_read_header() const {
     return is_finish_to_read_header_;
@@ -66,7 +82,9 @@ bool HTTPRequest::is_finish_to_read_body() const {
 const std::string &HTTPRequest::content_type() const { return content_type_; }
 
 void HTTPRequest::set_method(std::string method) { this->method_ = method; }
-void HTTPRequest::set_uri(std::string uri) { this->uri_ = uri; }
+void HTTPRequest::set_request_target(std::string request_target) {
+    this->request_target_ = request_target;
+}
 
 void HTTPRequest::Parse(std::string str) {
     this->logging_.Debug("Parse");
@@ -123,7 +141,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
         throw std::runtime_error("request line invalid");
     }
     this->method_ = items[0];
-    this->uri_ = items[1];
+    this->request_target_ = items[1];
 }
 
 void HTTPRequest::ParseHeader(std::string str) {

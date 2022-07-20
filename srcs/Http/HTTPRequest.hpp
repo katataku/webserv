@@ -1,6 +1,7 @@
 #ifndef SRCS_HTTP_HTTPREQUEST_HPP_
 #define SRCS_HTTP_HTTPREQUEST_HPP_
 
+#include <map>
 #include <string>
 
 #include "Logging.hpp"
@@ -20,16 +21,18 @@ class HTTPRequest {
     bool IsReady() const;
     int CalcBodySize() const;
     void set_method(std::string);
-    void set_uri(std::string);
+    void set_request_target(std::string);
 
     std::string unparsed_string() const;
     std::string method() const;
-    std::string uri() const;
+    std::string request_target() const;
     std::string host() const;
     int content_length() const;
     const std::string &content_type() const;
     std::string transfer_encoding() const;
     std::string request_body() const;
+    std::string absolute_path() const;
+    std::map<std::string, std::string> queries() const;
     bool is_finish_to_read_header() const;
     bool is_finish_to_read_body() const;
 
@@ -41,7 +44,7 @@ class HTTPRequest {
     Logging logging_;
     std::string unparsed_string_;
     std::string method_;
-    std::string uri_;
+    std::string request_target_;
     std::string host_;
     int content_length_;
     std::string content_type_;

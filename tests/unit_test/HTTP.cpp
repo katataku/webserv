@@ -19,7 +19,7 @@ TEST_F(HTTPTest, Parse) {
         "Host: test\r\n"
         "\r\n");
     ASSERT_EQ(req.method(), "GET");
-    ASSERT_EQ(req.uri(), "/");
+    ASSERT_EQ(req.request_target(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
@@ -32,7 +32,7 @@ TEST_F(HTTPTest, parse_mutiple) {
     req.Parse("Host: test\r\n");
     req.Parse("\r\n");
     ASSERT_EQ(req.method(), "GET");
-    ASSERT_EQ(req.uri(), "/");
+    ASSERT_EQ(req.request_target(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
