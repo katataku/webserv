@@ -57,7 +57,7 @@ void WebservConfig::PushErrorPage(int status_code,
 }
 
 WebservConfig WebservConfig::Parse() {
-    ConfigProcesser conf_proc("../../test_data/config/webserv/default.conf");
+    ConfigProcesser conf_proc("test_data/config/webserv/default.conf");
 
     return conf_proc.Exec();
 }
