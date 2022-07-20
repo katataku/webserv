@@ -94,29 +94,29 @@ Token* ConfigLexer::Tokenize() {
         /*
             Tokenize Block directives e.g. "server", "location"
         */
-        if (StartsWith(this->content_, "server")) {
+        if (StartsWith(this->content_, "server ")) {
             cur_tok = Token::NewToken(cur_tok, Token::BlockDirective, "server");
-            this->content_ = Consume(this->content_, "server");
+            this->content_ = Consume(this->content_, "server ");
             continue;
         }
-        if (StartsWith(this->content_, "location")) {
+        if (StartsWith(this->content_, "location ")) {
             cur_tok =
                 Token::NewToken(cur_tok, Token::BlockDirective, "location");
-            this->content_ = Consume(this->content_, "location");
+            this->content_ = Consume(this->content_, "location ");
             continue;
         }
         /*
             Tokenize Single directives e.g. "listen", "alias"
         */
-        if (StartsWith(this->content_, "listen")) {
+        if (StartsWith(this->content_, "listen ")) {
             cur_tok =
                 Token::NewToken(cur_tok, Token::SingleDirective, "listen");
-            this->content_ = Consume(this->content_, "listen");
+            this->content_ = Consume(this->content_, "listen ");
             continue;
         }
-        if (StartsWith(this->content_, "alias")) {
+        if (StartsWith(this->content_, "alias ")) {
             cur_tok = Token::NewToken(cur_tok, Token::SingleDirective, "alias");
-            this->content_ = Consume(this->content_, "alias");
+            this->content_ = Consume(this->content_, "alias ");
             continue;
         }
         // TODO(iyamada) "{" "}" ";"を一言で表す言葉をコメントとして入れたい
