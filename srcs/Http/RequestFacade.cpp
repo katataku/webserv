@@ -26,14 +26,10 @@ RequestFacade *RequestFacade::GetInstance() {
     return RequestFacade::instance;
 }
 
-HTTPRequest *RequestFacade::SelectRequest(Socket &socket) {
+HTTPRequest *RequestFacade::SelectRequest(Socket const &socket) {
     this->logging_.Debug("SelectRequest");
 
     int socket_fd = socket.sock_fd();
-    std::stringstream ss;
-    ss << "socket_fd: ";
-    ss << socket_fd;
-    this->logging_.Info(ss.str());
     std::map<int, HTTPRequest *>::iterator itr = this->list_.find(socket_fd);
     if (itr == this->list_.end()) {
         this->logging_.Info("create new HTTPRequest");

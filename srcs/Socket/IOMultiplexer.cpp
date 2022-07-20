@@ -70,7 +70,7 @@ std::vector<Socket *> IOMultiplexer::Wait() {
     return sockets;
 }
 
-void IOMultiplexer::Accept(Socket &socket) {
+void IOMultiplexer::Accept(Socket const &socket) {
     Socket conn_sock = socket.Accept();
     int conn_fd = conn_sock.sock_fd();
 

@@ -10,7 +10,7 @@
 class RequestFacade {
  public:
     static RequestFacade *GetInstance();
-    HTTPRequest *SelectRequest(Socket &socket);
+    HTTPRequest *SelectRequest(Socket const &socket);
     void Finish(Socket socket);
 
  private:

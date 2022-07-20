@@ -20,7 +20,7 @@ Worker &Worker::operator=(Worker const &other) {
 
 Worker::~Worker() {}
 
-void Worker::Exec(Socket &socket) {
+void Worker::Exec(Socket const &socket) {
     this->logging_.Debug("start exec");
 
     this->request_facade_ = RequestFacade::GetInstance();
