@@ -3,32 +3,62 @@ worker以降はなくて良い
 ```mermaid
 classDiagram
     Webserv --> WebservConfig: use
-    WebservConfig "1" *-- "1..*" ServerContext
-    ServerContext "1" *-- "1..*" LocationContext
-
     Webserv --> SuperVisor: use
 
-    IOMultiplexer "1" *-- "1..n" Socket
+    WebservConfig "1" *-- "1..*" ServerContext
+    WebservConfig --> ConfigProcesser: use
+
+    ServerContext "1" *-- "1..*" LocationContext
+
+    ConfigProcesser --> ConfigLexer: use
+    ConfigProcesser --> ConfigParser: use
+    ConfigProcesser --> ConfigGenerator: use
+    ConfigLexer --> Token: use
+    ConfigParser --> Token: use
+    ConfigParser --> Node: use
+    ConfigGenerator --> Node: use
+
+
     SuperVisor --> IOMultiplexer: use
     SuperVisor --> Worker: use
 
+    IOMultiplexer "1" *-- "1..n" Socket
+
     Worker --> RequestFacade: request
-    RequestFacade --> HTTPRequest: generate
-    Worker --> HTTPRequest: use
-    Worker --> HTTPResponse: call
+    Worker --> HTTPResponse: use
     Worker --> ServerLocationFacade: request
-    Worker --> ServerLocation: use
+
+    RequestFacade --> HTTPRequest: generate
+
     ServerLocationFacade --> ServerLocation: generate
 
     Transaction --> HTTPRequest: use
-    Transaction --> HTTPResponse: use
+    Transaction --> ServerLocation: use
     Transaction --> IExecutor: use
+  
     IExecutor --|> FileReadExecutor: use
     IExecutor --|> CGIExecutor: use
+  
     FileReadExecutor --> ResponseBuilder: use
+  
     CGIExecutor --> ResponseBuilder: use
+    CGIExecutor --> CGIRequest: use
+    CGIExecutor --> CGIResponse: use
 
-    %% ResponseBuilder --> HTTPResponse: use %%
+    ResponseBuilder --> HTTPResponse: use
+
+    class ConfigProcesser {
+    }
+    class ConfigLexer {
+    }
+    class ConfigParser {
+    }
+    class ConfigGenerator {
+    }
+    class Token {
+    }
+    class Node {
+    }
 
     class WebservConfig {
         +CreateServerLocations()
@@ -107,10 +137,12 @@ classDiagram
   }
 
   class FileReadExecutor {
-    
   }
   class CGIExecutor {
-
+  }
+  class CGIResponse {
+  }
+  class CGIRequest {
   }
   class ResponseBuilder {
     +Build()* HTTPResponse
