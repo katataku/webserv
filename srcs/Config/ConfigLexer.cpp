@@ -30,19 +30,8 @@ static bool StartsWith(const std::string& s, const std::string& prefix) {
     return s.find(prefix, 0) == 0;
 }
 
-static bool StartsWithDigits(const std::string& s) { return IsDigit(s[0]); }
-
 static bool StartsWithValueCharacters(const std::string& s) {
     return IsValueChar(s[0]);
-}
-
-static std::string GetDigits(const std::string& s) {
-    for (std::string::size_type i = 0; i < s.size(); ++i) {
-        if (!IsDigit(s[i])) {
-            return s.substr(0, i);
-        }
-    }
-    throw std::runtime_error("Failed to GetDigits");
 }
 
 static std::string GetValueCharacters(const std::string& s) {
@@ -52,11 +41,6 @@ static std::string GetValueCharacters(const std::string& s) {
         }
     }
     throw std::runtime_error("Failed to GetValueCharacters");
-}
-
-// keywordだけsを進める
-static std::string ConsumeDigits(const std::string& s) {
-    return s.substr(GetDigits(s).size());
 }
 
 static std::string ConsumeValueCharacters(const std::string& s) {
@@ -72,16 +56,6 @@ static std::string Consume(const std::string& s, const std::string& keyword) {
 }
 
 static bool IsSpace(const char c) { return std::isspace(c); }
-
-// SP, TA, NLまでの次のキーワードを取得
-static std::string Peek(const std::string& s) {
-    for (std::string::size_type i = 0; i < s.size(); ++i) {
-        if (IsSpace(s[i])) {
-            return s.substr(0, i);
-        }
-    }
-    throw std::runtime_error("Failed to Peek " + s);
-}
 
 static std::string SkipSpace(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
