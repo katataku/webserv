@@ -22,8 +22,8 @@ classDiagram
     -epoll_event events[kMaxNEvents]
     -CreateListenerSocket(string port)* void
     +Init(std::vector<std::string> ports)* void
-    +Wait()* std::vector<Socket>
-    +Accept(Socket)* void
+    +Wait() std::vector<Socket*>
+    +Accept(Socket&) void
   }
 
 ```
