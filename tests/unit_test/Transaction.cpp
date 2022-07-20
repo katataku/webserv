@@ -25,6 +25,8 @@ TEST_F(TransactionTest, FileReadExecutor) {
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
+
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
                        "index.html", "", allow_methods, "/var/www", "");
@@ -45,6 +47,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
                        "index.html", "", allow_methods, "/var/www", "");
@@ -58,4 +61,19 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     ASSERT_NE(res->response_body().find(" ./</a>"), std::string::npos);
     ASSERT_NE(res->response_body().find(" ../</a>"), std::string::npos);
     unlink("/var/www/html/hello_world.html");
+}
+
+TEST_F(TransactionTest, Allowed_methods) {
+    HTTPRequest req = HTTPRequest();
+    req.set_method("HOGE");
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    ServerLocation sl =
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+                       "index.html", "", allow_methods, "/var/www", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+    ASSERT_EQ(res->status_code(), 403);
 }

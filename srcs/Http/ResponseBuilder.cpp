@@ -25,9 +25,11 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
 }
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
-    (void)status_code;
     (void)sl;
-    return new HTTPResponse();
+    HTTPResponse *res = new HTTPResponse();
+
+    res->status_code(status_code);
+    return res;
 }
 
 HTTPResponse *ResponseBuilder::BuildRedirect(std::string redirect_url) {
