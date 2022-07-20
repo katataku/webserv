@@ -2,6 +2,7 @@
 classDiagram
    class RequestFacade{
         map~socket, HTTPRequest~ list
+        +static GetInstance() RequestFacade *
         +SelectRequest(Socket) HTTPRequest*
         +Finish(Socket) void
     }

@@ -26,7 +26,7 @@ RequestFacade *RequestFacade::GetInstance() {
     return RequestFacade::instance;
 }
 
-HTTPRequest *RequestFacade::SelectRequest(Socket socket) {
+HTTPRequest *RequestFacade::SelectRequest(Socket &socket) {
     this->logging_.Debug("SelectRequest");
 
     int socket_fd = socket.sock_fd();

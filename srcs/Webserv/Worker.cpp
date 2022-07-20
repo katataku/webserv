@@ -24,7 +24,6 @@ void Worker::Exec(Socket &socket) {
     this->logging_.Debug("start exec");
 
     this->request_facade_ = RequestFacade::GetInstance();
-    this->request_facade_ = RequestFacade::GetInstance();
     HTTPRequest *request = this->request_facade_->SelectRequest(socket);
     try {
         std::string str = socket.Recv();
