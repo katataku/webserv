@@ -1,6 +1,6 @@
 #include "ServerLocationFacade.hpp"
 
-ServerLocationFacade::ServerLocationFacade() { (void)server_locations_; }
+ServerLocationFacade::ServerLocationFacade() {}
 
 ServerLocationFacade::ServerLocationFacade(std::vector<ServerLocation> *vec)
     : server_locations_(vec) {}
