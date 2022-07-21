@@ -45,11 +45,13 @@ Node ConfigParser::block_directive() {
         Token::Consume(&this->token_, "{");
     }
 
-    if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
-        node.PushDirective(single_directive());
-    }
-    if (Token::SameToken(&this->token_, "location")) {
-        node.PushChildContext(location_directive());
+    while (!Token::SameToken(&this->token_, "}")) {
+        if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
+            node.PushDirective(single_directive());
+        }
+        if (Token::SameToken(&this->token_, "location")) {
+            node.PushChildContext(location_directive());
+        }
     }
 
     // TODO(iyamada) locationが来たときはlocation_directiveを呼ぶ
