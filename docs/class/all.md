@@ -1,6 +1,6 @@
 # 全体クラス図
 
-public メソッドのみ記載。
+private method, コンストラクタ、デストラクタ、setter, getter は省略。
 
 ```mermaid
 classDiagram
@@ -20,14 +20,14 @@ classDiagram
     ConfigParser --> Node: use
     ConfigGenerator --> Node: use
 
-
     SuperVisor --> IOMultiplexer: use
     SuperVisor --> Worker: use
 
     IOMultiplexer "1" *-- "1..n" Socket
 
-    Worker --> RequestFacade: request
     Worker --> HTTPResponse: use
+    Worker --> RequestFacade: request
+    Worker --> Transaction: use
     Worker --> ServerLocationFacade: request
 
     RequestFacade --> HTTPRequest: generate
@@ -35,11 +35,11 @@ classDiagram
     ServerLocationFacade --> ServerLocation: generate
 
     Transaction --> HTTPRequest: use
-    Transaction --> ServerLocation: use
     Transaction --> IExecutor: use
+    Transaction --> ServerLocation: use
   
-    IExecutor --|> FileReadExecutor: use
-    IExecutor --|> CGIExecutor: use
+    IExecutor --|> FileReadExecutor
+    IExecutor --|> CGIExecutor
   
     FileReadExecutor --> ResponseBuilder: use
   
@@ -49,21 +49,41 @@ classDiagram
 
     ResponseBuilder --> HTTPResponse: use
 
+    HTTPResponse --> Socket :use
+
     class ConfigProcesser {
+      +Exec() WebservConfig
     }
     class ConfigLexer {
+      +Tokenize() Token
     }
     class ConfigParser {
+      +Parse() Node
     }
     class ConfigGenerator {
+      +Generate() WebservConfig
     }
+
     class Token {
+          +Consume(Token, const string& expect_val) void
+          +Consume(Token, TokenKind kind) void
+          +PeekKind(Token, TokenKind kind) bool
+          +SameTokenKind(Token, TokenKind kind) bool
+          +SameToken(Token, const string& val) bool
+          +Expect(Token, const string& expect_val) bool
+          +Expect(Token, TokenKind kind) bool
     }
     class Node {
+        +GetNodeKindStr() string
+        +IsHttpContext() bool
+        +IsServerContext() bool
+        +IsLocationContext() bool
+        +IsListenDirective() bool
+        +IsAliasDirective() bool
     }
 
     class WebservConfig {
-        +CreateServerLocations()
+        +CreateServerLocations() vector~ServerLocation~
         +Parse(string)
     }
 
@@ -83,7 +103,7 @@ classDiagram
 
   class Socket {
     +Send()* void
-    +Recieve()* string
+    +Receive()* string
   }
 
   class IOMultiplexer {
@@ -98,7 +118,7 @@ classDiagram
 
   class ServerLocationFacade {
     +Choose(port, host, path)* ServerLocation
-    +GetPorts()* vector<string>
+    +GetPorts() vector~string~
   }
 
   class ServerLocation {
@@ -113,12 +133,12 @@ classDiagram
   }
 
   class HTTPRequest {
-    +Parse(string): void
-    +IsReady(): bool
-    +CalcBodySize(): int
-    +RequestTarget(): string
-    +AbsolutePath(): string
-    +Queries(): map<string, string>
+    +Parse(string) void
+    +IsReady() bool
+    +CalcBodySize() int
+    +RequestTarget() string
+    +AbsolutePath() string
+    +Queries() map~stringString~
   }
 
   class HTTPResponse {
@@ -131,7 +151,6 @@ classDiagram
   }
 
   class IExecutor {
-    <<abstract>>
     +Exec(HTTPRequest, ServerLocation)* HTTPResponse
   }
 
@@ -144,9 +163,9 @@ classDiagram
   class CGIRequest {
   }
   class ResponseBuilder {
-    +Build()* HTTPResponse
-    +BuildError(int status_code, ServerLocation sl)* HTTPResponse
-    +BuildRedirect(string redirect_url)* HTTPResponse
+    +Build() HTTPResponse
+    +BuildError(int status_code, ServerLocation sl)HTTPResponse
+    +BuildRedirect(string redirect_url) HTTPResponse
   }
 
 ```
