@@ -81,14 +81,14 @@ classDiagram
 
 ## NodeKindの種類
 
-| kind名               | 説明               |
-| ------------------- | ---------------- |
-| HttpContextNode     | "http"コンテキスト     |
-| ServerContextNode   | "server"コンテキスト   |
-| LocationContextNode | "location"コンテキスト |
-| ListenDirectiveNode | "listen"ディレクティブ  |
-| AliasDirectiveNode  | "alias"ディレクティブ   |
-| AutoindexDirectiveNode  | "autoindex"ディレクティブ   |
+| kind名                  | 説明                 |
+| ---------------------- | ------------------ |
+| HttpContextNode        | "http"コンテキスト       |
+| ServerContextNode      | "server"コンテキスト     |
+| LocationContextNode    | "location"コンテキスト   |
+| ListenDirectiveNode    | "listen"ディレクティブ    |
+| AliasDirectiveNode     | "alias"ディレクティブ     |
+| AutoindexDirectiveNode | "autoindex"ディレクティブ |
 
 ## Configファイルの文法
 
