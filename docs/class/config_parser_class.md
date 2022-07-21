@@ -72,7 +72,7 @@ classDiagram
 
 | kind名                | 説明                   |
 | -------------------- | -------------------- |
-| BlockDirectiveToken  | "server"             |
+| BlockDirectiveToken  | "server"と"location"  |
 | SingleDirectiveToken | "listen"とか           |
 | OpenBraceToken       | "{"                  |
 | CloseBraceToken      | "}"                  |
@@ -96,10 +96,10 @@ classDiagram
 
 <!-- TOOD(iyamada) block_directive, single_directive, location_directiveは一つしかパースできない -->
 
-```
-config             ::= block_directive
-block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
-location_directive ::= "location" value "{" ( single_directive )+ "}"
+```bnf
+config             ::= ( block_directive | single_directive )*
+block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive )* "}"
+location_directive ::= "location" value "{" ( single_directive )* "}"
 single_directive   ::= ( "listen" | "alias" | "autoindex" ) value ";"
 value              ::= (英数字 | ".")+
 ```
@@ -107,6 +107,7 @@ value              ::= (英数字 | ".")+
 - メタ構文の意味
   - "\[hoge\]" : hogeは0か1個
   - "hoge+" : hogeは1個以上
+  - "hoge\*" : hogeは0個以上
 
 ## 擬似コード
 
