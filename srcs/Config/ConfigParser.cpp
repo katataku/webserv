@@ -25,7 +25,15 @@ Node ConfigParser::Parse() { return config(); }
 Node ConfigParser::config() {
     Node head(Node::HttpContextNode);
 
-    head.PushChildContext(block_directive());
+    while (true) {
+        if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
+            head.PushDirective(single_directive());
+        } else if (Token::SameTokenKind(&this->token_, Token::BlockDirective)) {
+            head.PushChildContext(block_directive());
+        } else {
+            break;
+        }
+    }
 
     return head;
 }
