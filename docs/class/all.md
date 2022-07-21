@@ -1,4 +1,6 @@
-worker以降はなくて良い
+# 全体クラス図
+
+public メソッドのみ記載。
 
 ```mermaid
 classDiagram
@@ -65,8 +67,6 @@ classDiagram
         +Parse(string)
     }
 
-    %% TODO: listenディレクトリは複数指定できるかを確認 %%
-    %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
     }
 
@@ -77,7 +77,6 @@ classDiagram
         +Run()
     }
 
-    %% IO多重化とソケットクラスを生成してWorkerに処理を依頼するまでを担当する%%
     class SuperVisor {
         +Watch() void
     }
