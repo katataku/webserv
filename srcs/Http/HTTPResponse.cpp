@@ -25,20 +25,20 @@ std::string HTTPResponse::location() const { return this->location_; }
 int HTTPResponse::content_length() const { return this->content_length_; }
 std::string HTTPResponse::response_body() const { return this->response_body_; }
 
-void HTTPResponse::status_code(int status_code) {
+void HTTPResponse::set_status_code(int status_code) {
     this->status_code_ = status_code;
 }
-void HTTPResponse::connection(std::string connection) {
+void HTTPResponse::set_connection(std::string connection) {
     this->connection_ = connection;
 }
-void HTTPResponse::allow(std::string allow) { this->allow_ = allow; }
-void HTTPResponse::location(std::string location) {
+void HTTPResponse::set_allow(std::string allow) { this->allow_ = allow; }
+void HTTPResponse::set_location(std::string location) {
     this->location_ = location;
 }
-void HTTPResponse::content_length(int content_length) {
+void HTTPResponse::set_content_length(int content_length) {
     this->content_length_ = content_length;
 }
-void HTTPResponse::response_body(std::string response_body) {
+void HTTPResponse::set_response_body(std::string response_body) {
     this->response_body_ = response_body;
 }
 
