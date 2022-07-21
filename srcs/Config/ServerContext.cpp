@@ -2,6 +2,9 @@
 
 #include <sstream>
 
+#include "InitialValues.hpp"
+#include "WebservConfig.hpp"
+
 template <typename T>
 static T strtonum(const std::string& s) {
     std::stringstream ss(s);
@@ -12,7 +15,9 @@ static T strtonum(const std::string& s) {
 
 // TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 ServerContext::ServerContext()
-    : client_max_body_size_(-1), auto_index_(false), port_(-1) {}
+    : client_max_body_size_(InitialValues::kClientMaxBodySize),
+      auto_index_(InitialValues::kAutoIndex),
+      port_(InitialValues::kPort) {}
 
 ServerContext::ServerContext(const ServerContext& other) { *this = other; }
 
