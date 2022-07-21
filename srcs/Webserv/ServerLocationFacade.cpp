@@ -1,5 +1,7 @@
 #include "ServerLocationFacade.hpp"
 
+#include <map>
+
 #include "ServerLocationKey.hpp"
 
 ServerLocationFacade::ServerLocationFacade() { (void)server_locations_; }
