@@ -70,6 +70,7 @@ static ServerLocation CreateServerLocation() {
     error_pages[505] = "/50x.html";
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
+    allow_methods.insert("HEAD");
     allow_methods.insert("POST");
     allow_methods.insert("DELETE");
     return ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
