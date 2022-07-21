@@ -73,20 +73,6 @@ WebservConfig WebservConfig::Parse() {
     return conf_proc.Exec();
 }
 
-static ServerLocation CreateServerLocation() {
-    std::map<int, std::string> error_pages;
-    error_pages[404] = "/404.html";
-    error_pages[500] = "/50x.html";
-    error_pages[501] = "/50x.html";
-    error_pages[505] = "/50x.html";
-    std::set<std::string> allow_methods;
-    allow_methods.insert("GET");
-    allow_methods.insert("POST");
-    allow_methods.insert("DELETE");
-    return ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
-                          "index.html", "", allow_methods, "/var/www", "");
-}
-
 static std::map<ServerLocationKey, ServerLocation> JoinMap(
     std::map<ServerLocationKey, ServerLocation> map1,
     std::map<ServerLocationKey, ServerLocation> map2) {
@@ -102,9 +88,6 @@ static std::map<ServerLocationKey, ServerLocation> JoinMap(
          itr != map2.end(); ++itr) {
         ret[itr->first] = itr->second;
     }
-
-    // std::copy(map1.begin(), map1.end(), std::back_inserter(ret));
-    // std::copy(map2.begin(), map2.end(), std::back_inserter(ret));
 
     return ret;
 }
