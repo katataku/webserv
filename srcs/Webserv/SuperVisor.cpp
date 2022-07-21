@@ -36,7 +36,7 @@ void SuperVisor::Watch() {
                 iomul.Accept(*(*itr));
             } else {
                 Worker worker(this->facade_);
-                worker.Exec(*(*itr));
+                worker.Exec(*itr);
             }
         }
     }

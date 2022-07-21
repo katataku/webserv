@@ -14,7 +14,7 @@ class Worker {
     Worker &operator=(Worker const &other);
     ~Worker();
 
-    void Exec(Socket const &socket);
+    void Exec(Socket *socket);
 
  private:
     Logging logging_;

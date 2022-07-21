@@ -5,9 +5,8 @@
 
 #include "ConfigProcesser.hpp"
 
-// TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 WebservConfig::WebservConfig()
-    : client_max_body_size_(-1), auto_index_(false) {}
+    : client_max_body_size_(1024), auto_index_(false) {}
 
 WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
 
@@ -70,9 +69,10 @@ static ServerLocation CreateServerLocation() {
     error_pages[505] = "/50x.html";
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
+    allow_methods.insert("HEAD");
     allow_methods.insert("POST");
     allow_methods.insert("DELETE");
-    return ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+    return ServerLocation(8081, "webserv1", "/html", error_pages, 1024, false,
                           "index.html", "", allow_methods, "/var/www", "");
 }
 
