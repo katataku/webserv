@@ -54,8 +54,7 @@ Node ConfigParser::block_directive() {
     }
 
     while (true) {
-        if (Token::SameToken(&this->token_, "}")) {
-            Token::Consume(&this->token_, "}");
+        if (Token::Expect(&this->token_, "}")) {
             break;
         }
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
