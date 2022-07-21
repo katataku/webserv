@@ -10,9 +10,8 @@ static T strtonum(const std::string& s) {
     return num;
 }
 
-// TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 ServerContext::ServerContext()
-    : client_max_body_size_(-1), auto_index_(false), port_(-1) {}
+    : client_max_body_size_(1024), auto_index_(false), port_(80) {}
 
 ServerContext::ServerContext(const ServerContext& other) { *this = other; }
 
