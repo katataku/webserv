@@ -20,7 +20,7 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
 
     ASSERT_EQ(conf.contexts().size(), 1);
     ASSERT_EQ(conf.error_pages().empty(), true);
-    ASSERT_EQ(conf.client_max_body_size(), -1);
+    ASSERT_EQ(conf.client_max_body_size(), 1024);
     ASSERT_EQ(conf.auto_index(), false);
     ASSERT_EQ(conf.index_page(), "");
 
@@ -32,7 +32,7 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
 
     ASSERT_EQ(serv_context.contexts().size(), 1);
     ASSERT_EQ(serv_context.error_pages().empty(), true);
-    ASSERT_EQ(serv_context.client_max_body_size(), -1);
+    ASSERT_EQ(serv_context.client_max_body_size(), 1024);
     ASSERT_EQ(serv_context.auto_index(), false);
     ASSERT_EQ(serv_context.index_page(), "");
     ASSERT_EQ(serv_context.redirect_url(), "");
@@ -45,7 +45,7 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
     LocationContext locate_context = locate_contexts.at(0);
 
     ASSERT_EQ(locate_context.error_pages().empty(), true);
-    ASSERT_EQ(locate_context.client_max_body_size(), -1);
+    ASSERT_EQ(locate_context.client_max_body_size(), 1024);
     ASSERT_EQ(locate_context.auto_index(), false);
     ASSERT_EQ(locate_context.index_page(), "");
     ASSERT_EQ(locate_context.allow_methods().empty(), true);
