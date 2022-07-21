@@ -97,3 +97,26 @@ TEST_F(TransactionTest, client_max_body_size) {
     HTTPResponse *res = tr.Exec(&req, &sl);
     ASSERT_EQ(res->status_code(), 413);
 }
+
+TEST_F(TransactionTest, redirect) {
+    std::string location_string = "redirect_url";
+
+    HTTPRequest req = HTTPRequest();
+    req.Parse("GET / HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("Content-Length: 8\r\n");
+    req.Parse("\r\n");
+    req.Parse("12345678");
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
+    ServerLocation sl = ServerLocation(
+        8081, "webserv1", "/html", error_pages, 4086, false, "index.html",
+        location_string, allow_methods, "/var/www", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+    ASSERT_EQ(res->status_code(), 302);
+    ASSERT_EQ(res->location(), location_string);
+}

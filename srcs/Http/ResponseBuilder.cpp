@@ -33,6 +33,9 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
 }
 
 HTTPResponse *ResponseBuilder::BuildRedirect(std::string redirect_url) {
-    (void)redirect_url;
-    return new HTTPResponse();
+    HTTPResponse *res = new HTTPResponse();
+
+    res->status_code(302);
+    res->location(redirect_url);
+    return res;
 }
