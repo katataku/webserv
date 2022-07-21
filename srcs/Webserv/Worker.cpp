@@ -29,8 +29,9 @@ void Worker::Exec(Socket const &socket) {
         std::string str = socket.Recv();
         request->Parse(str);
         if (request->IsReady()) {
-            ServerLocation *sl =
-                this->server_location_facade_.Choose("port", "host", "path");
+            // TODO(ahayashi): port番号をソケットから取れるように
+            ServerLocation *sl = this->server_location_facade_.Choose(
+                "port", request->host(), request->absolute_path());
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, sl);
             response->Write(socket);
