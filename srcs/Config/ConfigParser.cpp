@@ -53,7 +53,11 @@ Node ConfigParser::block_directive() {
         Token::Consume(&this->token_, "{");
     }
 
-    while (!Token::SameToken(&this->token_, "}")) {
+    while (true) {
+        if (Token::SameToken(&this->token_, "}")) {
+            Token::Consume(&this->token_, "}");
+            break;
+        }
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
             node.PushDirective(single_directive());
         }
@@ -61,8 +65,6 @@ Node ConfigParser::block_directive() {
             node.PushChildContext(location_directive());
         }
     }
-
-    Token::Consume(&this->token_, "}");
 
     return node;
 }
