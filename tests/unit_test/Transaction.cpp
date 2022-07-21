@@ -80,12 +80,11 @@ TEST_F(TransactionTest, Allowed_methods) {
 
 TEST_F(TransactionTest, client_max_body_size) {
     HTTPRequest req = HTTPRequest();
-    std::string expected =
-        "HTTP/1.1 200 OK\r\n"
-        "Connection: close\r\n"
-        "Content-Length: 4\r\n"
-        "\r\n"
-        "hoge";
+    req.Parse("GET / HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("Content-Length: 8\r\n");
+    req.Parse("\r\n");
+    req.Parse("12345678");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
@@ -96,5 +95,5 @@ TEST_F(TransactionTest, client_max_body_size) {
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
-    ASSERT_EQ(res->status_code(), 403);
+    ASSERT_EQ(res->status_code(), 413);
 }
