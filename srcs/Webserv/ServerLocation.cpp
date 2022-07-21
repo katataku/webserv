@@ -6,7 +6,17 @@ ServerLocation::ServerLocation(ServerLocation const &other) { *this = other; }
 
 ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
     if (this != &other) {
-        (void)other;
+        this->port_ = other.port_;
+        this->host_ = other.host_;
+        this->path_ = other.path_;
+        this->error_pages_ = other.error_pages_;
+        this->client_max_body_size_ = other.client_max_body_size_;
+        this->auto_index_ = other.auto_index_;
+        this->index_page_ = other.index_page_;
+        this->redirect_url_ = other.redirect_url_;
+        this->allow_methods_ = other.allow_methods_;
+        this->alias_ = other.alias_;
+        this->cgi_extension_ = other.cgi_extension_;
     }
     return *this;
 }
@@ -82,8 +92,12 @@ void ServerLocation::set_cgi_extension(const std::string &cgi_extension) {
 
 void ServerLocation::InsertErrorPages(
     const std::map<int, std::string> &error_pages) {
-    std::copy(error_pages.begin(), error_pages.end(),
-              std::back_inserter(this->error_pages_));
+    // std::copy(error_pages.begin(), error_pages.end(),
+    //           std::back_inserter(this->error_pages_));
+    for (std::map<int, std::string>::const_iterator itr = error_pages.begin();
+         itr != error_pages.end(); ++itr) {
+        this->error_pages_[itr->first] = itr->second;
+    }
 }
 
 // TODO(iyamada) HEADも追加するかも

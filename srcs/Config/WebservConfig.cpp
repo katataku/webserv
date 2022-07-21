@@ -9,6 +9,13 @@
 #include "ServerLocation.hpp"
 #include "ServerLocationKey.hpp"
 
+template <typename T>
+static std::string numtostr(T num) {
+    std::stringstream ss;
+    ss << num;
+    return ss.str();
+}
+
 // TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 WebservConfig::WebservConfig()
     : client_max_body_size_(-1), auto_index_(false) {}
@@ -85,8 +92,19 @@ static std::map<ServerLocationKey, ServerLocation> JoinMap(
     std::map<ServerLocationKey, ServerLocation> map2) {
     std::map<ServerLocationKey, ServerLocation> ret;
 
-    std::copy(map1.begin(), map1.end(), std::back_inserter(ret));
-    std::copy(map2.begin(), map2.end(), std::back_inserter(ret));
+    for (std::map<ServerLocationKey, ServerLocation>::iterator itr =
+             map1.begin();
+         itr != map1.end(); ++itr) {
+        ret[itr->first] = itr->second;
+    }
+    for (std::map<ServerLocationKey, ServerLocation>::iterator itr =
+             map2.begin();
+         itr != map2.end(); ++itr) {
+        ret[itr->first] = itr->second;
+    }
+
+    // std::copy(map1.begin(), map1.end(), std::back_inserter(ret));
+    // std::copy(map2.begin(), map2.end(), std::back_inserter(ret));
 
     return ret;
 }
@@ -158,7 +176,7 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithLocationContext(
     // pathは必ず設定されている
     locate_sv.set_path(locate.path());
 
-    ServerLocationKey svkey(locate_sv.port(), locate_sv.host(),
+    ServerLocationKey svkey(numtostr<int>(locate_sv.port()), locate_sv.host(),
                             locate_sv.path());
     ret[svkey] = locate_sv;
 
@@ -239,7 +257,8 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithServerContext(
     }
 
     // serverコンテキストのデフォルトServerLocationを登録
-    ServerLocationKey svkey(serv_sv.port(), serv_sv.host(), serv_sv.path());
+    ServerLocationKey svkey(numtostr<int>(serv_sv.port()), serv_sv.host(),
+                            serv_sv.path());
     ret[svkey] = serv_sv;
 
     return ret;
@@ -260,7 +279,7 @@ WebservConfig::CreateServerLocations() {
     // serverコンテキストがある場合
     for (std::vector<ServerContext>::iterator itr = servs.begin();
          itr != servs.end(); ++itr) {
-        ret = JoinMap(ret, CreateWithServerContext(*itr, http_sv))
+        ret = JoinMap(ret, CreateWithServerContext(*itr, http_sv));
     }
 
     return ret;
