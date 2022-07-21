@@ -54,7 +54,6 @@ Node ConfigParser::block_directive() {
         }
     }
 
-    // TODO(iyamada) locationが来たときはlocation_directiveを呼ぶ
     Token::Consume(&this->token_, "}");
 
     return node;
