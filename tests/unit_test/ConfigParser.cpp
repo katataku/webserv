@@ -51,5 +51,5 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
     ASSERT_EQ(locate_context.allow_methods().empty(), true);
     ASSERT_EQ(locate_context.alias(), "/var/www/html");
     ASSERT_EQ(locate_context.path(), "/");
-    ASSERT_EQ(locate_context.redirect_uri(), "");
+    ASSERT_EQ(locate_context.redirect_url(), "");
 }
