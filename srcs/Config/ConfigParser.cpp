@@ -5,13 +5,6 @@
 #include <stdexcept>
 #include <string>
 
-/*
-    config           ::= block_directive
-    block_directive  ::= "server" [value] "{" single_directive "}"
-    single_directive ::= "listen" value ";"
-    value            ::= (英数字 | ".")+
-*/
-
 ConfigParser::ConfigParser() {}
 
 ConfigParser::ConfigParser(Token* token) : token_(token) {}
