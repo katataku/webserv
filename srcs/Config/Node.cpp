@@ -57,6 +57,9 @@ bool Node::IsServerContext() { return kind_ == Node::ServerContextNode; }
 bool Node::IsLocationContext() { return kind_ == Node::LocationContextNode; }
 bool Node::IsListenDirective() { return kind_ == Node::ListenDirectiveNode; }
 bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
+bool Node::IsAutoindexDirective() {
+    return kind_ == Node::AutoindexDirectiveNode;
+}
 
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }

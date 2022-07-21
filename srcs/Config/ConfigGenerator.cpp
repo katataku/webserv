@@ -127,6 +127,27 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
             continue;
         }
 
+        if (itr->IsAutoindexDirective()) {
+            std::list<std::string> direciteve_vals = itr->directive_vals();
+            if (direciteve_vals.size() != 1) {
+                // TODO(takkatao) エラー処理
+                throw std::runtime_error(
+                    "Syntax Error: autoindex directive can only take one "
+                    "value");
+            }
+            std::string directive_val = direciteve_vals.back();
+            if (directive_val == "on") {
+                locate.set_auto_index(true);
+            } else if (directive_val == "off") {
+                locate.set_auto_index(false);
+            } else {
+                // TODO(takkatao) エラー処理
+                throw std::runtime_error(
+                    "Syntax Error: autoindex directive can only take on/off");
+            }
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
         throw std::runtime_error("Unknown directive");
     }

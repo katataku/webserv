@@ -14,7 +14,8 @@ class Node {
         ServerContextNode,
         LocationContextNode,
         ListenDirectiveNode,
-        AliasDirectiveNode
+        AliasDirectiveNode,
+        AutoindexDirectiveNode
     };
 
     Node();
@@ -40,6 +41,7 @@ class Node {
     bool IsLocationContext();
     bool IsListenDirective();
     bool IsAliasDirective();
+    bool IsAutoindexDirective();
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない

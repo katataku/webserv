@@ -88,6 +88,7 @@ classDiagram
 | LocationContextNode | "location"コンテキスト |
 | ListenDirectiveNode | "listen"ディレクティブ  |
 | AliasDirectiveNode  | "alias"ディレクティブ   |
+| AutoindexDirectiveNode  | "autoindex"ディレクティブ   |
 
 ## Configファイルの文法
 
@@ -98,8 +99,8 @@ classDiagram
 ```
 config             ::= block_directive
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
-location_directive ::= "location" value "{" ( single_directive ) "}"
-single_directive   ::= ( "listen" | "alias" ) value ";"
+location_directive ::= "location" value "{" ( single_directive )+ "}"
+single_directive   ::= ( "listen" | "alias" | "autoindex" ) value ";"
 value              ::= (英数字 | ".")+
 ```
 

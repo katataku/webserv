@@ -72,7 +72,11 @@ Node ConfigParser::location_directive() {
     node.set_kind(Node::LocationContextNode);
     value(&node);
     Token::Consume(&this->token_, "{");
-    node.PushDirective(single_directive());
+
+    while (!Token::SameToken(&this->token_, "}")) {
+        node.PushDirective(single_directive());
+    }
+
     Token::Consume(&this->token_, "}");
 
     return node;
@@ -89,6 +93,8 @@ Node ConfigParser::single_directive() {
         node = Node::NewNode(Node::ListenDirectiveNode);
     } else if (Token::Expect(&this->token_, "alias")) {
         node = Node::NewNode(Node::AliasDirectiveNode);
+    } else if (Token::Expect(&this->token_, "autoindex")) {
+        node = Node::NewNode(Node::AutoindexDirectiveNode);
     }
 
     value(&node);
