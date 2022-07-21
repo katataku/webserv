@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "ConfigProcesser.hpp"
+#include "DefaultValues.hpp"
+#include "InitialValues.hpp"
 #include "ServerLocation.hpp"
 #include "ServerLocationKey.hpp"
 
@@ -94,26 +96,67 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithLocationContext(
     std::map<ServerLocationKey, ServerLocation> ret;
     ServerLocation locate_sv;
 
-    // ここはserverコンテキストの値が入るはず
-    locate_sv.set_port(serv_sv.port());         // LocationContextにない
-    locate_sv.set_host(serv_sv.server_name());  // LocationContextにない
+    /*
+        locationコンテキストに設定できない値は、serverコンテキストの値が入る
+    */
+    locate_sv.set_port(serv_sv.port());
+    locate_sv.set_host(serv_sv.host());
 
-    // 値がセットされていなかったらserverコンテキストのServerLocationをセットする？
-    if (locate.path() does set) {
-        locate_sv.set_path(locate.path());
+    /*
+        locationコンテキストに設定できる値
+    */
+    // error_pagesは浅いコンテキストのものを先に挿入し、現在のコンテキストを後にするとよい
+    locate_sv.InsertErrorPages(serv_sv.error_pages());
+    locate_sv.InsertErrorPages(locate.error_pages());
+
+    if (locate.client_max_body_size() == InitialValues::kClientMaxBodySize) {
+        locate_sv.set_client_max_body_size(serv_sv.client_max_body_size());
     } else {
-        locate_sv.set_path(serv_sv.path());
+        locate_sv.set_client_max_body_size(locate.client_max_body_size());
     }
 
+    if (locate.alias() == InitialValues::kAlias) {
+        locate_sv.set_alias(serv_sv.alias());
+    } else {
+        locate_sv.set_alias(locate.alias());
+    }
+
+    // allow_methodsが登録されていなかったらtrueになる
+    if (locate.allow_methods().empty()) {
+        locate_sv.SetDefaultAllowMethods();
+    } else {
+        locate_sv.set_allow_methods(locate.allow_methods());
+    }
+
+    if (locate.auto_index() == InitialValues::kAutoIndex) {
+        locate_sv.set_auto_index(serv_sv.auto_index());
+    } else {
+        locate_sv.set_auto_index(locate.auto_index());
+    }
+
+    if (locate.index_page() == InitialValues::kIndexPage) {
+        locate_sv.set_index_page(serv_sv.index_page());
+    } else {
+        locate_sv.set_index_page(locate.index_page());
+    }
+
+    if (locate.redirect_url() == InitialValues::kRedirectUrl) {
+        locate_sv.set_redirect_url(serv_sv.redirect_url());
+    } else {
+        locate_sv.set_redirect_url(locate.redirect_url());
+    }
+
+    /*
+        locationコンテキストでしか設定できない値
+    */
+    if (locate.cgi_extension() == InitialValues::kCgiExtension) {
+        locate_sv.set_cgi_extension(DefaultValues::kCgiExtension);
+    } else {
+        locate_sv.set_cgi_extension(locate.cgi_extension());
+    }
+
+    // pathは必ず設定されている
     locate_sv.set_path(locate.path());
-    locate_sv.set_error_pages(locate.error_pages());
-    locate_sv.set_client_max_body_size(locate.client_max_body_size());
-    locate_sv.set_auto_index(locate.auto_index());
-    locate_sv.set_index_page(locate.index_page());
-    locate_sv.set_redirect_uri(locate.redirect_uri());
-    locate_sv.set_allow_methods(locate.allow_methods());
-    locate_sv.set_alias(locate.alias());
-    locate_sv.set_cgi_extension(locate.cgi_extension());
 
     ServerLocationKey svkey(locate_sv.port(), locate_sv.host(),
                             locate_sv.path());
@@ -125,35 +168,77 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithLocationContext(
 static std::map<ServerLocationKey, ServerLocation> CreateWithServerContext(
     ServerContext serv, ServerLocation http_sv) {
     std::map<ServerLocationKey, ServerLocation> ret;
-    std::vector<LocationContext> locates = this->contexts_;
 
-    // serverコンテキストのデフォルトのServerLocationをセット
     ServerLocation serv_sv;
 
-    // 値がセットされていなかったらhttpコンテキストのServerLocationをセットする？
-    if (serv.port() does set) {
-        serv_sv.set_port(serv.port());
+    /*
+        serverコンテキストで設定できない値
+    */
+    // allow_methodsのデフォルト値は'GET', 'POST', 'DELETE'。
+    // TODO(iyamada) POSTはどうする？
+    serv_sv.SetDefaultAllowMethods();
+
+    // aliasはServerContextにない
+    serv_sv.set_alias(DefaultValues::kAlias);
+
+    serv_sv.set_cgi_extension(DefaultValues::kCgiExtension);
+
+    // TODO(iyamada) デフォルトのServerLocationのpathはどうするか
+    serv_sv.set_path(DefaultValues::kPath);
+
+    /*
+        serverコンテキストで設定できる値
+    */
+    // 上3つはhttpコンテキストでは設定できないので、必要ならデフォルト値をセット
+    if (serv.port() == InitialValues::kPort) {
+        serv_sv.set_port(DefaultValues::kPort);
     } else {
-        serv_sv.set_port(http_sv.port());
+        serv_sv.set_port(serv.port());
     }
 
-    serv_sv.set_host(serv.server_name());
-    serv_sv.set_path("None");
-    serv_sv.set_error_pages(serv.error_pages());
-    serv_sv.set_client_max_body_size(serv.cliset_client_max_body_size());
-    serv_sv.set_auto_index(serv.auto_index());
-    serv_sv.set_index_page(serv.index_page());
-    serv_sv.set_redirect_uri(serv.redirect_uri());
-    serv_sv.set_allow_methods(serv.allow_methods());
-    serv_sv.set_alias(serv.alias());
-    serv_sv.set_cgi_extension(serv.cgi_extension());
-
-    // serverコンテキストがある場合
-    for (std::vector<LocationContext>::iterator itr = servs.begin();
-         itr != servs.end(); ++itr) {
-        ret = JoinMap(ret, CreateWithLocationContext(*itr, serv_sv))
+    if (serv.server_name() == InitialValues::kServerName) {
+        serv_sv.set_host(DefaultValues::kServerName);
+    } else {
+        serv_sv.set_host(serv.server_name());
     }
 
+    if (serv.redirect_url() == InitialValues::kRedirectUrl) {
+        serv_sv.set_redirect_url(DefaultValues::kRedirectUrl);
+    } else {
+        serv_sv.set_redirect_url(serv.redirect_url());
+    }
+
+    // 以下はhttpコンテキストで設定できるので、必要ならその値をセット
+    // error_pagesは浅いコンテキストのものを先に挿入し、現在のコンテキストを後にするとよい
+    serv_sv.InsertErrorPages(http_sv.error_pages());
+    serv_sv.InsertErrorPages(serv.error_pages());
+
+    if (serv.client_max_body_size() == InitialValues::kClientMaxBodySize) {
+        serv_sv.set_client_max_body_size(http_sv.client_max_body_size());
+    } else {
+        serv_sv.set_client_max_body_size(serv.client_max_body_size());
+    }
+
+    if (serv.auto_index() == InitialValues::kAutoIndex) {
+        serv_sv.set_auto_index(http_sv.auto_index());
+    } else {
+        serv_sv.set_auto_index(serv.auto_index());
+    }
+
+    if (serv.index_page() == InitialValues::kIndexPage) {
+        serv_sv.set_index_page(http_sv.index_page());
+    } else {
+        serv_sv.set_index_page(serv.index_page());
+    }
+
+    // 次はlocationコンテキストを見る
+    std::vector<LocationContext> locates = serv.contexts();
+    for (std::vector<LocationContext>::iterator itr = locates.begin();
+         itr != locates.end(); ++itr) {
+        ret = JoinMap(ret, CreateWithLocationContext(*itr, serv_sv));
+    }
+
+    // serverコンテキストのデフォルトServerLocationを登録
     ServerLocationKey svkey(serv_sv.port(), serv_sv.host(), serv_sv.path());
     ret[svkey] = serv_sv;
 
@@ -165,28 +250,18 @@ WebservConfig::CreateServerLocations() {
     std::map<ServerLocationKey, ServerLocation> ret;
     std::vector<ServerContext> servs = this->contexts_;
 
-    // デフォルト値とWebservConfigにセットされている値をセット
+    // httpコンテキストに値が設定されていたら、ネストされたコンテキストの値を上書きする場合があるので、後で使うために用意
     ServerLocation http_sv;
-    http_sv.set_port(80);
-    http_sv.set_host("localhost");
-    http_sv.set_path(...);
     http_sv.set_error_pages(this->error_pages());
-    http_sv.set_client_max_body_size(this->cliset_client_max_body_size());
+    http_sv.set_client_max_body_size(this->client_max_body_size());
     http_sv.set_auto_index(this->auto_index());
     http_sv.set_index_page(this->index_page());
-    http_sv.set_redirect_uri(...);
-    http_sv.set_allow_methods(...);
-    http_sv.set_alias(...);
-    http_sv.set_cgi_extension(...);
 
     // serverコンテキストがある場合
     for (std::vector<ServerContext>::iterator itr = servs.begin();
          itr != servs.end(); ++itr) {
         ret = JoinMap(ret, CreateWithServerContext(*itr, http_sv))
     }
-
-    ServerLocationKey svkey(http_sv.port(), http_sv.host(), http_sv.path());
-    ret[svkey] = http_sv;
 
     return ret;
 }
