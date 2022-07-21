@@ -63,12 +63,13 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     unlink("/var/www/html/hello_world.html");
 }
 
-TEST_F(TransactionTest, Allowed_methods) {
+TEST_F(TransactionTest, Allowed_methods_single) {
     HTTPRequest req = HTTPRequest();
-    req.set_method("HOGE");
+    req.set_method("POST");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
                        "index.html", "", allow_methods, "/var/www", "");
@@ -76,6 +77,26 @@ TEST_F(TransactionTest, Allowed_methods) {
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
     ASSERT_EQ(res->status_code(), 403);
+    ASSERT_EQ(res->allow(), "GET");
+}
+
+TEST_F(TransactionTest, Allowed_methods) {
+    HTTPRequest req = HTTPRequest();
+    req.set_method("HOGE");
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
+    allow_methods.insert("POST");
+    allow_methods.insert("DELETE");
+    ServerLocation sl =
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+                       "index.html", "", allow_methods, "/var/www", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+    ASSERT_EQ(res->status_code(), 403);
+    ASSERT_EQ(res->allow(), "DELETE, GET, POST");
 }
 
 TEST_F(TransactionTest, client_max_body_size) {

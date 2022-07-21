@@ -1,5 +1,7 @@
 #include "ResponseBuilder.hpp"
 
+#include <set>
+#include <sstream>
 ResponseBuilder::ResponseBuilder() : logging_(Logging(__FUNCTION__)) {}
 
 ResponseBuilder::ResponseBuilder(ResponseBuilder const &other) {
@@ -24,12 +26,23 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     return res;
 }
 
-// TODO(takkatao): エラーに応じたヘッダの設定が必要。
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     (void)sl;
     HTTPResponse *res = new HTTPResponse();
 
     res->status_code(status_code);
+    if (status_code == 403) {
+        std::ostringstream oss;
+        std::set<std::string>::iterator iter;
+
+        iter = sl->allow_methods().begin();
+        while (iter != sl->allow_methods().end()) {
+            oss << *iter;
+            iter++;
+            if (iter != sl->allow_methods().end()) oss << ", ";
+        }
+        res->allow(oss.str());
+    }
     return res;
 }
 
