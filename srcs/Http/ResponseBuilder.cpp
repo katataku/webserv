@@ -24,6 +24,7 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     return res;
 }
 
+// TODO(takkatao): エラーに応じたヘッダの設定が必要。
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     (void)sl;
     HTTPResponse *res = new HTTPResponse();
