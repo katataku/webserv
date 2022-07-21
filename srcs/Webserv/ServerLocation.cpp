@@ -49,6 +49,37 @@ const std::string &ServerLocation::alias() const { return alias_; }
 const std::string &ServerLocation::cgi_extension() const {
     return cgi_extension_;
 }
+
+void ServerLocation::set_port(int port) { this->port_ = port; }
+void ServerLocation::set_host(const std::string &host) { this->host_ = host; }
+void ServerLocation::set_path(const std::string &path) { this->path_ = path; }
+void ServerLocation::set_error_pages(
+    const std::map<int, std::string> &error_pages) {
+    this->error_pages_ = error_pages;
+}
+void ServerLocation::set_client_max_body_size(int client_max_body_size) {
+    this->client_max_body_size_ = client_max_body_size;
+}
+void ServerLocation::set_auto_index(bool auto_index) {
+    this->auto_index_ = auto_index;
+}
+void ServerLocation::set_index_page(const std::string &index_page) {
+    this->index_page_ = index_page;
+}
+void ServerLocation::set_redirect_uri(const std::string &redirect_uri) {
+    this->redirect_uri_ = redirect_uri;
+}
+void ServerLocation::set_allow_methods(
+    const std::set<std::string> &allow_methods) {
+    this->allow_methods_ = allow_methods;
+}
+void ServerLocation::set_alias(const std::string &alias) {
+    this->alias_ = alias;
+}
+void ServerLocation::set_cgi_extension(const std::string &cgi_extension) {
+    this->cgi_extension_ = cgi_extension;
+}
+
 ServerLocation::ServerLocation(
     int port, const std::string &host, const std::string &path,
     const std::map<int, std::string> &error_pages, int client_max_body_size,
