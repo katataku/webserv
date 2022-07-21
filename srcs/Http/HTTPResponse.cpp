@@ -5,7 +5,8 @@
 HTTPResponse::HTTPResponse()
     : logging_(Logging(__FUNCTION__)),
       new_line_string_("\r\n"),
-      connection_("close") {}
+      connection_("close"),
+      content_length_(0) {}
 
 HTTPResponse::HTTPResponse(HTTPResponse const &other) { *this = other; }
 
@@ -114,6 +115,7 @@ std::string HTTPResponse::GetResponseString() const {
 
     oss << this->GetStatusLineString();
     oss << this->GetHeadersString();
+    // TODO(ahayashi): HEADリクエストの場合はbodyを付与しない
     if (this->content_length() > 0) {
         oss << new_line_string_;
         oss << this->GetBodyString();
