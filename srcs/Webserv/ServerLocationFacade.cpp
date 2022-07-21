@@ -1,9 +1,12 @@
 #include "ServerLocationFacade.hpp"
 
+#include "ServerLocationKey.hpp"
+
 ServerLocationFacade::ServerLocationFacade() { (void)server_locations_; }
 
-ServerLocationFacade::ServerLocationFacade(std::vector<ServerLocation> *vec)
-    : server_locations_(vec) {}
+ServerLocationFacade::ServerLocationFacade(
+    std::map<ServerLocationKey, ServerLocation> server_locations)
+    : server_locations_(server_locations) {}
 
 ServerLocationFacade::ServerLocationFacade(ServerLocationFacade const &other) {
     *this = other;
@@ -24,7 +27,9 @@ ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
     (void)port;
     (void)host;
     (void)path;
-    return &(this->server_locations_->at(0));
+    std::map<ServerLocationKey, ServerLocation>::const_iterator itr =
+        this->server_locations_.begin();
+    return const_cast<ServerLocation *>(&(itr->second));
 }
 
 std::vector<std::string> ServerLocationFacade::GetPorts() const {

@@ -6,12 +6,14 @@
 
 #include "Logging.hpp"
 #include "ServerLocation.hpp"
+#include "ServerLocationKey.hpp"
 
 class ServerLocationFacade {
  public:
     ServerLocationFacade();
     ServerLocationFacade(ServerLocationFacade const &other);
-    explicit ServerLocationFacade(std::vector<ServerLocation> *);
+    explicit ServerLocationFacade(
+        std::map<ServerLocationKey, ServerLocation> server_locations);
     ServerLocationFacade &operator=(ServerLocationFacade const &other);
     ~ServerLocationFacade();
 
@@ -20,7 +22,7 @@ class ServerLocationFacade {
     std::vector<std::string> GetPorts() const;
 
  private:
-    std::vector<ServerLocation> *server_locations_;
+    std::map<ServerLocationKey, ServerLocation> server_locations_;
 };
 
 #endif  // SRCS_WEBSERV_SERVERLOCATIONFACADE_HPP_
