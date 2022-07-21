@@ -32,6 +32,8 @@ class ServerLocation {
     const std::set<std::string> &allow_methods() const;
     const std::string &alias() const;
     const std::string &cgi_extension() const;
+    bool IsAllowedMethod(std::string) const;
+    bool IsValidBodySize(int) const;
     bool IsRedirect() const;
     bool IsCGI(std::string path) const;
     std::string ResolveAlias(std::string request_uri) const;

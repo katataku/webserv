@@ -13,6 +13,15 @@ ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
 
 ServerLocation::~ServerLocation() {}
 
+bool ServerLocation::IsAllowedMethod(std::string method) const {
+    return this->allow_methods().count(method) != 0;
+}
+
+bool ServerLocation::IsValidBodySize(int body_size) const {
+    if (body_size > this->client_max_body_size()) return false;
+    return true;
+}
+
 bool ServerLocation::IsRedirect() const { return !this->redirect_uri_.empty(); }
 
 // TODO(ahayashi): 実装する。utilsに移してもいいかもしれない。
