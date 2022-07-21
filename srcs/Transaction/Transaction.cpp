@@ -19,10 +19,10 @@ Transaction::~Transaction() {}
 
 HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
     try {
-        if (sl->allow_methods().count(request->method()) == 0) {
+        if (!sl->IsAllowedMethod(request->method())) {
             throw HTTPException(403);  // ステータスコードを設定。
         }
-        if (request->CalcBodySize() > sl->client_max_body_size()) {
+        if (!sl->IsValidBodySize(request->CalcBodySize())) {
             throw HTTPException(413);
         }
         if (sl->IsRedirect()) {
