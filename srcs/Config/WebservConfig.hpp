@@ -30,6 +30,7 @@ class WebservConfig {
     void PushErrorPage(int status_code, const std::string& error_page);
 
     static WebservConfig Parse();
+    static WebservConfig Parse(std::string);
     std::vector<ServerLocation>* CreateServerLocations();
 
  private:
