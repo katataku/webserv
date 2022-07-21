@@ -2,7 +2,8 @@
 classDiagram
    class RequestFacade{
         map~socket, HTTPRequest~ list
-        +SelectRequest(Socket) HTTPRequest*
+        +GetInstance() RequestFacade
+        +SelectRequest(Socket&) HTTPRequest
         +Finish(Socket) void
     }
 
@@ -10,10 +11,11 @@ classDiagram
     class HTTPRequest{
         string unparsed_string
         string method
-        string Request_target
+        string request_target
         string host
-        string content-length
-        string transfer-encoding
+        int content_length
+        string content_type
+        string transfer_encoding
         string request_body
         bool is_finish_to_read_header
         bool is_finish_to_read_body

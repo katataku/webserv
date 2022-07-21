@@ -46,8 +46,8 @@ void IOMultiplexer::Init(std::vector<std::string> ports) {
     this->logging_.Debug("Init");
 }
 
-std::vector<Socket> IOMultiplexer::Wait() {
-    std::vector<Socket> sockets;
+std::vector<Socket *> IOMultiplexer::Wait() {
+    std::vector<Socket *> sockets;
 
     int nready = epoll_wait(this->epollfd, this->events, kMaxNEvents, -1);
     if (nready == -1) {
@@ -59,9 +59,9 @@ std::vector<Socket> IOMultiplexer::Wait() {
         std::set<int>::iterator itr = listenfds.find(events[i].data.fd);
 
         if (itr != listenfds.end()) {  // Find listen status socket
-            sockets.push_back(Socket(this->events[i].data.fd, true));
+            sockets.push_back(new Socket(this->events[i].data.fd, true));
         } else {
-            sockets.push_back(Socket(this->events[i].data.fd, false));
+            sockets.push_back(new Socket(this->events[i].data.fd, false));
         }
     }
 
@@ -70,7 +70,7 @@ std::vector<Socket> IOMultiplexer::Wait() {
     return sockets;
 }
 
-void IOMultiplexer::Accept(Socket &socket) {
+void IOMultiplexer::Accept(Socket const &socket) {
     Socket conn_sock = socket.Accept();
     int conn_fd = conn_sock.sock_fd();
 

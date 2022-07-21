@@ -28,12 +28,12 @@ class HTTPResponse {
     int content_length() const;
     std::string response_body() const;
 
-    void status_code(int);
-    void connection(std::string);
-    void allow(std::string);
-    void location(std::string);
-    void content_length(int);
-    void response_body(std::string);
+    void set_status_code(int);
+    void set_connection(std::string);
+    void set_allow(std::string);
+    void set_location(std::string);
+    void set_content_length(int);
+    void set_response_body(std::string);
 
  private:
     Logging logging_;

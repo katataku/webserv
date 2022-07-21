@@ -27,7 +27,8 @@ class HTTPRequest {
     std::string method() const;
     std::string request_target() const;
     std::string host() const;
-    std::string content_length() const;
+    int content_length() const;
+    const std::string &content_type() const;
     std::string transfer_encoding() const;
     std::string request_body() const;
     std::string absolute_path() const;
@@ -37,6 +38,7 @@ class HTTPRequest {
 
  private:
     void ParseHeader(std::string str);
+    void ParseBodyByContentLength(std::string str);
     void ParseRequestLine(std::string line);
 
     Logging logging_;
@@ -44,7 +46,8 @@ class HTTPRequest {
     std::string method_;
     std::string request_target_;
     std::string host_;
-    std::string content_length_;
+    int content_length_;
+    std::string content_type_;
     std::string transfer_encoding_;
     std::string request_body_;
     bool is_finish_to_read_header_;

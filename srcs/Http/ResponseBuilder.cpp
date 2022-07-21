@@ -1,5 +1,7 @@
 #include "ResponseBuilder.hpp"
 
+#include <set>
+#include <sstream>
 ResponseBuilder::ResponseBuilder() : logging_(Logging(__FUNCTION__)) {}
 
 ResponseBuilder::ResponseBuilder(ResponseBuilder const &other) {
@@ -18,19 +20,35 @@ ResponseBuilder::~ResponseBuilder() {}
 HTTPResponse *ResponseBuilder::Build(std::string body) {
     HTTPResponse *res = new HTTPResponse();
 
-    res->status_code(200);
-    res->content_length(body.size());
-    res->response_body(body);
+    res->set_status_code(200);
+    res->set_content_length(body.size());
+    res->set_response_body(body);
     return res;
 }
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
-    (void)status_code;
-    (void)sl;
-    return new HTTPResponse();
+    HTTPResponse *res = new HTTPResponse();
+
+    res->set_status_code(status_code);
+    if (status_code == 403) {
+        std::ostringstream oss;
+        std::set<std::string>::iterator iter;
+
+        iter = sl->allow_methods().begin();
+        while (iter != sl->allow_methods().end()) {
+            oss << *iter;
+            iter++;
+            if (iter != sl->allow_methods().end()) oss << ", ";
+        }
+        res->set_allow(oss.str());
+    }
+    return res;
 }
 
 HTTPResponse *ResponseBuilder::BuildRedirect(std::string redirect_url) {
-    (void)redirect_url;
-    return new HTTPResponse();
+    HTTPResponse *res = new HTTPResponse();
+
+    res->set_status_code(302);
+    res->set_location(redirect_url);
+    return res;
 }

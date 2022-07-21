@@ -6,12 +6,30 @@ ServerLocation::ServerLocation(ServerLocation const &other) { *this = other; }
 
 ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
     if (this != &other) {
-        (void)other;
+        this->port_ = other.port_;
+        this->path_ = other.path_;
+        this->error_pages_ = other.error_pages_;
+        this->client_max_body_size_ = other.client_max_body_size_;
+        this->auto_index_ = other.auto_index_;
+        this->index_page_ = other.index_page_;
+        this->redirect_uri_ = other.redirect_uri_;
+        this->allow_methods_ = other.allow_methods_;
+        this->alias_ = other.alias_;
+        this->cgi_extension_ = other.cgi_extension_;
     }
     return *this;
 }
 
 ServerLocation::~ServerLocation() {}
+
+bool ServerLocation::IsAllowedMethod(std::string method) const {
+    return this->allow_methods().count(method) != 0;
+}
+
+bool ServerLocation::IsValidBodySize(int body_size) const {
+    if (body_size > this->client_max_body_size()) return false;
+    return true;
+}
 
 bool ServerLocation::IsRedirect() const { return !this->redirect_uri_.empty(); }
 
