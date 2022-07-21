@@ -77,3 +77,24 @@ TEST_F(TransactionTest, Allowed_methods) {
     HTTPResponse *res = tr.Exec(&req, &sl);
     ASSERT_EQ(res->status_code(), 403);
 }
+
+TEST_F(TransactionTest, client_max_body_size) {
+    HTTPRequest req = HTTPRequest();
+    std::string expected =
+        "HTTP/1.1 200 OK\r\n"
+        "Connection: close\r\n"
+        "Content-Length: 4\r\n"
+        "\r\n"
+        "hoge";
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    allow_methods.insert("GET");
+    ServerLocation sl =
+        ServerLocation(8081, "webserv1", "/html", error_pages, 1, false,
+                       "index.html", "", allow_methods, "/var/www", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+    ASSERT_EQ(res->status_code(), 403);
+}

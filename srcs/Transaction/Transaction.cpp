@@ -22,12 +22,31 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
         if (sl->allow_methods().count(request->method()) == 0) {
             throw HTTPException(403);  // ステータスコードを設定。
         }
+        if (request->CalcBodySize() > sl->client_max_body_size()) {
+            throw HTTPException(413);
+        }
+        if (sl->IsRedirect()) {
+            return ResponseBuilder::BuildRedirect(sl->redirect_uri());
+        }
+        // TODO(takkatao): CGIの処理を実装。
+        /*
+        string alias_resolved_uri = ServerLocation.ResolveAlias(request->uri());
+        if (sl->IsCGI()) {
+            return FileExecExecutor(req, sl);
+        }
+        */
         if (request->method() == "GET") {
             FileReadExecutor fre;
             return fre.Exec(*request, *sl);
         }
-        logging_.Debug("*** TBD not implemented***");
-        return ResponseBuilder::Build(request->request_body());
+        // TODO(takkatao): CGIプログラム以外にPOST, DELETEが来た場合はどうなる？
+        /*
+        if (request->method() == "POST" || request->method() == "DELETE") {
+            throw HTTPException(XXX);
+            //もしくは    return FileWriteExecutor(req, sl);
+        }
+        */
+        return ResponseBuilder::BuildError(400, sl);
     } catch (HTTPException &e) {
         return ResponseBuilder::BuildError(e.status_code(), sl);
     } catch (...) {
