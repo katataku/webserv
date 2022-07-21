@@ -37,9 +37,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateDirectiveValue();
-            std::string directive_val = itr->directive_vals().back();
-            conf.set_auto_index(directive_val == "on");
+            conf.set_auto_index(itr->GetAutoindexValueWithValidate() == "on");
             continue;
         }
         // TODO(iyamada) エラー処理
@@ -83,9 +81,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             continue;
         }
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateDirectiveValue();
-            std::string directive_val = itr->directive_vals().back();
-            serv.set_auto_index(directive_val == "on");
+            serv.set_auto_index(itr->GetAutoindexValueWithValidate() == "on");
             continue;
         }
         // TODO(iyamada) エラー処理
@@ -142,9 +138,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateDirectiveValue();
-            std::string directive_val = itr->directive_vals().back();
-            locate.set_auto_index(directive_val == "on");
+            locate.set_auto_index(itr->GetAutoindexValueWithValidate() == "on");
             continue;
         }
 

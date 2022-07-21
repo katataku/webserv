@@ -64,7 +64,7 @@ bool Node::IsAutoindexDirective() {
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 
-void Node::ValidateDirectiveValue() {
+void Node::ValidateAutoindexValue() {
     if (this->IsAutoindexDirective()) {
         std::list<std::string> direciteve_vals = this->directive_vals();
         if (direciteve_vals.size() != 1) {
@@ -80,6 +80,12 @@ void Node::ValidateDirectiveValue() {
                 "Syntax Error: autoindex directive can only take on/off");
         }
     }
+}
+
+std::string Node::GetAutoindexValueWithValidate() {
+    this->ValidateAutoindexValue();
+    std::string directive_val = this->directive_vals().back();
+    return directive_val;
 }
 
 static void WriteDirevtiveVals(std::ostream& out, std::list<std::string> vals) {

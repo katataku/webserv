@@ -48,7 +48,8 @@ class Node {
     void PushDirective(Node node);
     void PushChildContext(Node node);
 
-    void ValidateDirectiveValue();
+    void ValidateAutoindexValue();
+    std::string GetAutoindexValueWithValidate();
 
  private:
     NodeKind kind_;
