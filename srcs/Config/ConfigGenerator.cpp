@@ -75,6 +75,12 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             serv.set_port(direciteve_vals.back());
             continue;
         }
+        if (itr->IsAutoindexDirective()) {
+            itr->ValidateDirectiveValue();
+            std::string directive_val = itr->directive_vals().back();
+            serv.set_auto_index(directive_val == "on");
+            continue;
+        }
         // TODO(iyamada) エラー処理
         throw std::runtime_error("Unknown directive");
     }
