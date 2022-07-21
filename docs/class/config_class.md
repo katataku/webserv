@@ -36,6 +36,7 @@ classDiagram
         -int client_max_body_size
         -bool autoindex
         -string index_page
+        -string path
         -string redirect_uri
         -set~string~ allow_methods
         -string alias
