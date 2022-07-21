@@ -38,7 +38,7 @@ HTTPRequest *RequestFacade::SelectRequest(Socket const &socket) {
     return this->list_.at(socket_fd);
 }
 
-void RequestFacade::Finish(Socket socket) {
-    // socketをcloseする
-    (void)socket;
+void RequestFacade::Finish(Socket *socket) {
+    this->list_.erase(socket->sock_fd());
+    delete socket;
 }
