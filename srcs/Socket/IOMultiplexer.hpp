@@ -18,8 +18,8 @@ class IOMultiplexer {
     ~IOMultiplexer();
 
     void Init(std::vector<std::string> ports);
-    std::vector<Socket> Wait();
-    void Accept(Socket &);
+    std::vector<Socket *> Wait();
+    void Accept(Socket const &socket);
 
  private:
     static const int kMaxNEvents = 10;

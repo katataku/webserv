@@ -9,16 +9,18 @@
 
 class RequestFacade {
  public:
+    static RequestFacade *GetInstance();
+    HTTPRequest *SelectRequest(Socket const &socket);
+    void Finish(Socket socket);
+
+ private:
     RequestFacade();
     RequestFacade(RequestFacade const &other);
     RequestFacade &operator=(RequestFacade const &other);
     ~RequestFacade();
 
-    HTTPRequest *SelectRequest(Socket socket);
-    void Finish(Socket socket);
-
- private:
     Logging logging_;
+    static RequestFacade *instance;
     std::map<int, HTTPRequest *> list_;
 };
 
