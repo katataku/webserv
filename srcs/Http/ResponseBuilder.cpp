@@ -27,7 +27,6 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
 }
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
-    (void)sl;
     HTTPResponse *res = new HTTPResponse();
 
     res->status_code(status_code);
