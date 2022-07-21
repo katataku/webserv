@@ -64,6 +64,24 @@ bool Node::IsAutoindexDirective() {
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 
+void Node::ValidateDirectiveValue() {
+    if (this->IsAutoindexDirective()) {
+        std::list<std::string> direciteve_vals = this->directive_vals();
+        if (direciteve_vals.size() != 1) {
+            // TODO(takkatao) エラー処理
+            throw std::runtime_error(
+                "Syntax Error: autoindex directive can only take one "
+                "value");
+        }
+        std::string directive_val = direciteve_vals.back();
+        if (directive_val != "on" && directive_val != "off") {
+            // TODO(takkatao) エラー処理
+            throw std::runtime_error(
+                "Syntax Error: autoindex directive can only take on/off");
+        }
+    }
+}
+
 static void WriteDirevtiveVals(std::ostream& out, std::list<std::string> vals) {
     for (std::list<std::string>::iterator v_itr = vals.begin();
          v_itr != vals.end(); ++v_itr) {

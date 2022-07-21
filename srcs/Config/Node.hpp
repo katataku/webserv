@@ -48,6 +48,8 @@ class Node {
     void PushDirective(Node node);
     void PushChildContext(Node node);
 
+    void ValidateDirectiveValue();
+
  private:
     NodeKind kind_;
     // TODO(iyamada)
