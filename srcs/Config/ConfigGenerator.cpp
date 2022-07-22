@@ -36,8 +36,12 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
+        if (itr->IsAutoindexDirective()) {
+            conf.set_auto_index(itr->GetAutoindexValueWithValidate() == "on");
+            continue;
+        }
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown directive");
+        throw std::runtime_error("[GenerateWebservConfig]Unknown directive");
     }
 
     std::list<Node> child_context = node.child_contexts();
@@ -48,7 +52,8 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             continue;
         }
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown directive");
+        throw std::runtime_error(
+            "[GenerateWebservConfig]Unknown child_context");
     }
 
     return conf;
@@ -75,8 +80,12 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             serv.set_port(direciteve_vals.back());
             continue;
         }
+        if (itr->IsAutoindexDirective()) {
+            serv.set_auto_index(itr->GetAutoindexValueWithValidate() == "on");
+            continue;
+        }
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown directive");
+        throw std::runtime_error("[GenerateServerContext]Unknown directive");
     }
 
     std::list<Node> child_context = node.child_contexts();
@@ -87,7 +96,8 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             continue;
         }
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown directive");
+        throw std::runtime_error(
+            "[GenerateServerContext]Unknown child_context");
     }
 
     return serv;
@@ -127,14 +137,20 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
             continue;
         }
 
+        if (itr->IsAutoindexDirective()) {
+            locate.set_auto_index(itr->GetAutoindexValueWithValidate() == "on");
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown directive");
+        throw std::runtime_error("[GenerateLocationContext]Unknown directive");
     }
 
     std::list<Node> child_context = node.child_contexts();
     if (!child_context.empty()) {
         // TODO(iyamada) エラー処理
-        throw std::runtime_error("Unknown contexts");
+        throw std::runtime_error(
+            "[GenerateLocationContext]Unknown child_context");
     }
 
     return locate;

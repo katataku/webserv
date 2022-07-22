@@ -17,7 +17,7 @@ class LocationContext {
     bool auto_index() const;
     std::string index_page() const;
     std::string path() const;
-    std::string redirect_uri() const;
+    std::string redirect_url() const;
     std::set<std::string> allow_methods() const;
     std::string alias() const;
     std::string cgi_extension() const;
@@ -26,7 +26,7 @@ class LocationContext {
     void set_auto_index(bool auto_index);
     void set_index_page(const std::string& index_page);
     void set_path(const std::string& path);
-    void set_redirect_uri(const std::string& redirect_uri);
+    void set_redirect_url(const std::string& redirect_url);
     void set_alias(const std::string& alias);
     void set_cgi_extension(const std::string& cgi_extension);
 
@@ -39,7 +39,7 @@ class LocationContext {
     bool auto_index_;
     std::string index_page_;
     std::string path_;
-    std::string redirect_uri_;
+    std::string redirect_url_;
     std::set<std::string> allow_methods_;
     std::string alias_;
     std::string cgi_extension_;

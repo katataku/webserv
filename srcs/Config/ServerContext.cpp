@@ -2,6 +2,9 @@
 
 #include <sstream>
 
+#include "InitialValues.hpp"
+#include "WebservConfig.hpp"
+
 template <typename T>
 static T strtonum(const std::string& s) {
     std::stringstream ss(s);
@@ -11,7 +14,9 @@ static T strtonum(const std::string& s) {
 }
 
 ServerContext::ServerContext()
-    : client_max_body_size_(1024), auto_index_(false), port_(80) {}
+    : client_max_body_size_(InitialValues::kClientMaxBodySize),
+      auto_index_(InitialValues::kAutoIndex),
+      port_(InitialValues::kPort) {}
 
 ServerContext::ServerContext(const ServerContext& other) { *this = other; }
 

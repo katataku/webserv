@@ -19,10 +19,6 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
     WebservConfig conf = confproc.Exec();
 
     ASSERT_EQ(conf.contexts().size(), 1);
-    ASSERT_EQ(conf.error_pages().empty(), true);
-    ASSERT_EQ(conf.client_max_body_size(), 1024);
-    ASSERT_EQ(conf.auto_index(), false);
-    ASSERT_EQ(conf.index_page(), "");
 
     std::vector<ServerContext> serv_contexts = conf.contexts();
 
@@ -31,25 +27,73 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
     ServerContext serv_context = serv_contexts.at(0);
 
     ASSERT_EQ(serv_context.contexts().size(), 1);
-    ASSERT_EQ(serv_context.error_pages().empty(), true);
-    ASSERT_EQ(serv_context.client_max_body_size(), 1024);
-    ASSERT_EQ(serv_context.auto_index(), false);
-    ASSERT_EQ(serv_context.index_page(), "");
-    ASSERT_EQ(serv_context.redirect_url(), "");
-    ASSERT_EQ(serv_context.server_name(), "");
     ASSERT_EQ(serv_context.port(), 80);
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     ASSERT_EQ(locate_contexts.size(), 1);
 
     LocationContext locate_context = locate_contexts.at(0);
-
-    ASSERT_EQ(locate_context.error_pages().empty(), true);
-    ASSERT_EQ(locate_context.client_max_body_size(), 1024);
-    ASSERT_EQ(locate_context.auto_index(), false);
-    ASSERT_EQ(locate_context.index_page(), "");
-    ASSERT_EQ(locate_context.allow_methods().empty(), true);
     ASSERT_EQ(locate_context.alias(), "/var/www/html");
-    ASSERT_EQ(locate_context.path(), "/");
-    ASSERT_EQ(locate_context.redirect_uri(), "");
+}
+
+TEST_F(ConfigParserTest, autoindex_on_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/autoindex_on_location.conf");
+    WebservConfig conf = confproc.Exec();
+
+    ASSERT_EQ(conf.auto_index(), false);
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.auto_index(), false);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.auto_index(), true);
+}
+
+TEST_F(ConfigParserTest, autoindex_on_server) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/autoindex_on_server.conf");
+    WebservConfig conf = confproc.Exec();
+
+    ASSERT_EQ(conf.auto_index(), false);
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.auto_index(), true);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.auto_index(), false);
+}
+
+TEST_F(ConfigParserTest, autoindex_on_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/autoindex_on_http.conf");
+    WebservConfig conf = confproc.Exec();
+
+    ASSERT_EQ(conf.auto_index(), true);
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.auto_index(), false);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.auto_index(), false);
+}
+
+TEST_F(ConfigParserTest, multi_directive) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/multi_directive.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+
+    ASSERT_EQ(serv_contexts.size(), 2);
+
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    ASSERT_EQ(locate_contexts.size(), 3);
 }

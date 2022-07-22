@@ -57,9 +57,36 @@ bool Node::IsServerContext() { return kind_ == Node::ServerContextNode; }
 bool Node::IsLocationContext() { return kind_ == Node::LocationContextNode; }
 bool Node::IsListenDirective() { return kind_ == Node::ListenDirectiveNode; }
 bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
+bool Node::IsAutoindexDirective() {
+    return kind_ == Node::AutoindexDirectiveNode;
+}
 
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
+
+void Node::ValidateAutoindexValue() {
+    if (this->IsAutoindexDirective()) {
+        std::list<std::string> direciteve_vals = this->directive_vals();
+        if (direciteve_vals.size() != 1) {
+            // TODO(takkatao) エラー処理
+            throw std::runtime_error(
+                "Syntax Error: autoindex directive can only take one "
+                "value");
+        }
+        std::string directive_val = direciteve_vals.back();
+        if (directive_val != "on" && directive_val != "off") {
+            // TODO(takkatao) エラー処理
+            throw std::runtime_error(
+                "Syntax Error: autoindex directive can only take on/off");
+        }
+    }
+}
+
+std::string Node::GetAutoindexValueWithValidate() {
+    this->ValidateAutoindexValue();
+    std::string directive_val = this->directive_vals().back();
+    return directive_val;
+}
 
 static void WriteDirevtiveVals(std::ostream& out, std::list<std::string> vals) {
     for (std::list<std::string>::iterator v_itr = vals.begin();

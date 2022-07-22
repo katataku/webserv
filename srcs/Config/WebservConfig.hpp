@@ -8,6 +8,7 @@
 #include "Logging.hpp"
 #include "ServerContext.hpp"
 #include "ServerLocation.hpp"
+#include "ServerLocationKey.hpp"
 
 class WebservConfig {
  public:
@@ -30,7 +31,9 @@ class WebservConfig {
     void PushErrorPage(int status_code, const std::string& error_page);
 
     static WebservConfig Parse();
-    std::vector<ServerLocation>* CreateServerLocations();
+
+    std::map<ServerLocationKey, ServerLocation> CreateServerLocations();
+    static WebservConfig Parse(std::string);
 
  private:
     std::vector<ServerContext> contexts_;
