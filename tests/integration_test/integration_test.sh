@@ -11,13 +11,13 @@ MAGENTA="\033[35m"
 
 ACTUAL_PATH=./test_data/actual/
 EXPECTED_PATH=./test_data/expected/
-CONFIG_PATH=./test_data/config/webserv/
+CONFIG_PATH=./test_data/config/webserv/ok/
 REQUEST_PATH=./test_data/request/
 
 OK_SUM=0
 NG_SUM=0
 
-CONFIG_ARRAY=(`ls ${CONFIG_PATH} | tr -d 'localhost'`)
+CONFIG_ARRAY=(`ls ${CONFIG_PATH}`)
 REQUEST_ARRAY=(`ls ${REQUEST_PATH} | tr -d '.sh'`)
 
 COMMAND_MAKE_DC_RE="make dc-re"
@@ -35,7 +35,7 @@ function do_single_command_check(){
 }
 
 function do_test() {
-	echo "[${CONFIG_NO}-${REQUEST_NO}]start test"
+	echo "[${CONFIG_NO}][${REQUEST_NO}]start test"
 
     IS_OK=1
     ACTUAL_FILE_NAME=${ACTUAL_PATH}${CONFIG_NO}-${REQUEST_NO}
@@ -90,32 +90,32 @@ function start_server_container() {
     echo "--- starting server container. config:[${CONFIG_NO}] ---"
     cp ${CONFIG_PATH}${CONFIG_NO} ${CONFIG_PATH}localhost
     ${COMMAND_MAKE_DC_RE} > /dev/null 2>&1
-    sleep 1 #コンテナ起動待ち
+    sleep 10 #コンテナ起動待ち
 }
 
 
-echo "test case means : [config-request]"
+echo "test case means : [config][request]"
 echo ""
 
-#全てのCONFIG/REQUESTのパターンを網羅的に実行する。
-    for CONFIG_NO in "${CONFIG_ARRAY[@]}"
-    do
-        # configファイルを変更するごとにコンテナを再作成する。
-        start_server_container
-
-        for REQUEST_NO in "${REQUEST_ARRAY[@]}"
-        do 
-            do_test
-        done
-    done
+##全てのCONFIG/REQUESTのパターンを網羅的に実行する。
+#    for CONFIG_NO in "${CONFIG_ARRAY[@]}"
+#    do
+#        # configファイルを変更するごとにコンテナを再作成する。
+#        start_server_container
+#
+#        for REQUEST_NO in "${REQUEST_ARRAY[@]}"
+#        do 
+#            do_test
+#        done
+#    done
 
 #ひとつひとつのテストを個別に実行することもできる。
 #CONFIGを変更した後はstart_server_containerを実行すること。
-    CONFIG_NO=0001
+    CONFIG_NO=default.conf
     start_server_container
 
     #0001-0001
-    REQUEST_NO=0001
+    REQUEST_NO=GET_simple
     do_test
 
 echo    "----------------------------"
