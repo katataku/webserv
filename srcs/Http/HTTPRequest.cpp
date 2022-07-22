@@ -1,6 +1,7 @@
 #include "HTTPRequest.hpp"
 
 #include <cstdlib>
+#include <sstream>
 #include <vector>
 
 HTTPRequest::HTTPRequest()
@@ -10,6 +11,7 @@ HTTPRequest::HTTPRequest()
       request_target_(""),
       host_(""),
       content_length_(-1),
+      chunked_rest_(0),
       transfer_encoding_(""),
       request_body_(""),
       is_finish_to_read_header_(false),
@@ -116,6 +118,9 @@ void HTTPRequest::Parse(std::string str) {
         if (this->content_length_ != -1) {
             this->ParseBodyByContentLength(str);
         }
+        if (this->transfer_encoding_ == "chunked") {
+            this->ParseBodyByChunked(str);
+        }
     }
 }
 
@@ -192,6 +197,53 @@ void HTTPRequest::ParseBodyByContentLength(std::string str) {
         this->request_body_ = this->unparsed_string_ + str.substr(0, rest);
         this->unparsed_string_ = "";
         this->is_finish_to_read_body_ = true;
+    }
+}
+
+// TODO(ahayashi) 雑に持ってきたのでutilに移動？16進数に対応させる
+static int strtonum(const std::string &s) {
+    std::stringstream ss(s);
+    int num;
+    ss >> num;
+    return num;
+}
+
+void HTTPRequest::ParseBodyByChunked(std::string str) {
+    this->unparsed_string_ += str;
+
+    for (; !this->unparsed_string_.empty();) {
+        if (this->chunked_rest_ == 0) {
+            // 数値の部分を取得
+            std::string::size_type pos = this->unparsed_string_.find(CRLF);
+            if (pos != std::string::npos) {
+                std::string len_str_base_16 =
+                    this->unparsed_string_.substr(0, pos);
+                this->unparsed_string_ =
+                    this->unparsed_string_.substr(pos + CRLF.size());
+                this->chunked_rest_ = strtonum(len_str_base_16);
+                // TODO(ahayashi): 数値のバリデーション
+            }
+        }
+        if (this->chunked_rest_ == 0) {
+            this->is_finish_to_read_body_ = true;
+            return;
+        }
+        if (this->unparsed_string_.size() < this->chunked_rest_) {
+            this->request_body_ += this->unparsed_string_;
+            this->chunked_rest_ -= this->unparsed_string_.size();
+            this->unparsed_string_ = "";
+        } else {
+            this->request_body_ +=
+                this->unparsed_string_.substr(0, this->chunked_rest_);
+            this->unparsed_string_ =
+                this->unparsed_string_.substr(this->chunked_rest_);
+            this->chunked_rest_ = 0;
+            if (this->unparsed_string_.find(CRLF, 0) != 0) {
+                // /r/nが来ていない場合はエラー
+                throw std::runtime_error("bad request");
+            }
+            this->unparsed_string_ = this->unparsed_string_.substr(CRLF.size());
+        }
     }
 }
 
