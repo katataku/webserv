@@ -54,6 +54,24 @@ TEST_F(HTTPTest, parse_body_by_content_length) {
     ASSERT_EQ(req.request_body(), "12345678");
 }
 
+TEST_F(HTTPTest, parse_body_by_chuncked_onetime) {
+    HTTPRequest req = HTTPRequest();
+    req.Parse(
+        "POST /cgi-bin/file_manager.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Transfer-Encoding: chunked\r\n"
+        "\r\n"
+        "6\r\nhello,\r\n"
+        "6\r\nworld!\r\n"
+        "0\r\n\r\n");
+    ASSERT_EQ(req.method(), "POST");
+    ASSERT_EQ(req.absolute_path(), "/cgi-bin/file_manager.py");
+    ASSERT_EQ(req.host(), "test");
+    ASSERT_EQ(req.content_length(), -1);
+    ASSERT_EQ(req.transfer_encoding(), "chunked");
+    ASSERT_EQ(req.request_body(), "hello,world!");
+}
+
 TEST_F(HTTPTest, parse_body_by_chuncked) {
     HTTPRequest req = HTTPRequest();
     req.Parse("POST /cgi-bin/file_manager.py HTTP/1.1\r\n");
