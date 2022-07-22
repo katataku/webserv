@@ -1,7 +1,7 @@
 #include "Webserv.hpp"
 
+#include <map>
 #include <string>
-#include <vector>
 
 #include "ServerLocation.hpp"
 #include "ServerLocationFacade.hpp"
@@ -22,6 +22,7 @@ Webserv &Webserv::operator=(Webserv const &other) {
 Webserv::~Webserv() {}
 
 void Webserv::Run(int argc, char **argv) {
+    this->logging_.Debug(argv[0]);
     WebservConfig config;
     // TODO(takkatao): 引数の数が多い時のエラー処理を追加。
     if (argc == 2) {
@@ -31,7 +32,8 @@ void Webserv::Run(int argc, char **argv) {
         this->logging_.Debug("config : default");
         config = WebservConfig::Parse();
     }
-    std::vector<ServerLocation> *locations = config.CreateServerLocations();
+    std::map<ServerLocationKey, ServerLocation> locations =
+        config.CreateServerLocations();
     ServerLocationFacade facade(locations);
     SuperVisor sv(facade);
     sv.Watch();

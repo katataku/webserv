@@ -26,7 +26,7 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
             throw HTTPException(413);
         }
         if (sl->IsRedirect()) {
-            return ResponseBuilder::BuildRedirect(sl->redirect_uri());
+            return ResponseBuilder::BuildRedirect(sl->redirect_url());
         }
         // TODO(takkatao): CGIの処理を実装。
         /*

@@ -58,7 +58,7 @@ class Transaction {
                 throw HTTPException(413); // ステータスコードを設定。
             }
             if (sl.IsRedirect()) {
-                return ResponseBuilder.BuildRedirect(sl.redirect_uri());
+                return ResponseBuilder.BuildRedirect(sl.redirect_url());
             }
             if (sl.IsCGI()) {
                 return CGIExecutor(req, sl);
@@ -140,7 +140,7 @@ ResponseBuilder {
         }
         return new HTTPResponse();
     }
-    HTTPResponse BuildRedirect(string redirect_uri) {
+    HTTPResponse BuildRedirect(string redirect_url) {
         // locationにredirect_urlを設定
         // status_codeは302
         // TODO: これとerror_pageで302が設定されていた場合
