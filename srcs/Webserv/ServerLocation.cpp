@@ -14,6 +14,9 @@ ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
         this->auto_index_ = other.auto_index_;
         this->index_page_ = other.index_page_;
         this->redirect_url_ = other.redirect_url_;
+        this->allow_methods_ = other.allow_methods_;
+        this->alias_ = other.alias_;
+        this->cgi_extension_ = other.cgi_extension_;
     }
     return *this;
 }
