@@ -14,16 +14,22 @@ ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
         this->auto_index_ = other.auto_index_;
         this->index_page_ = other.index_page_;
         this->redirect_url_ = other.redirect_url_;
-        this->allow_methods_ = other.allow_methods_;
-        this->alias_ = other.alias_;
-        this->cgi_extension_ = other.cgi_extension_;
     }
     return *this;
 }
 
 ServerLocation::~ServerLocation() {}
 
-bool ServerLocation::IsRedirect() const { return !this->redirect_url_.empty(); }
+bool ServerLocation::IsAllowedMethod(std::string method) const {
+    return this->allow_methods().count(method) != 0;
+}
+
+bool ServerLocation::IsValidBodySize(int body_size) const {
+    if (body_size > this->client_max_body_size()) return false;
+    return true;
+}
+
+bool ServerLocation::IsRedirect() const { return !this->redirect_uri_.empty(); }
 
 // TODO(ahayashi): 実装する。utilsに移してもいいかもしれない。
 static std::string GetExtension(std::string path) {

@@ -48,6 +48,8 @@ class ServerLocation {
     void InsertErrorPages(const std::map<int, std::string> &error_pages);
     void SetDefaultAllowMethods();
 
+    bool IsAllowedMethod(std::string) const;
+    bool IsValidBodySize(int) const;
     bool IsRedirect() const;
     bool IsCGI(std::string path) const;
     std::string ResolveAlias(std::string request_uri) const;

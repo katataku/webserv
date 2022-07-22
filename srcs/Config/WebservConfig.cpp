@@ -16,9 +16,8 @@ static std::string numtostr(T num) {
     return ss.str();
 }
 
-// TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 WebservConfig::WebservConfig()
-    : client_max_body_size_(-1), auto_index_(false) {}
+    : client_max_body_size_(1024), auto_index_(false) {}
 
 WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
 

@@ -13,7 +13,6 @@ static T strtonum(const std::string& s) {
     return num;
 }
 
-// TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 ServerContext::ServerContext()
     : client_max_body_size_(InitialValues::kClientMaxBodySize),
       auto_index_(InitialValues::kAutoIndex),

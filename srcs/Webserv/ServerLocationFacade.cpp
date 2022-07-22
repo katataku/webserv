@@ -4,7 +4,7 @@
 
 #include "ServerLocationKey.hpp"
 
-ServerLocationFacade::ServerLocationFacade() { (void)server_locations_; }
+ServerLocationFacade::ServerLocationFacade() {}
 
 ServerLocationFacade::ServerLocationFacade(
     std::map<ServerLocationKey, ServerLocation> server_locations)

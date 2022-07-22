@@ -1,14 +1,12 @@
 #include "LocationContext.hpp"
 
-// TODO(iyamada) 初期値、どんな値を入れたら良いかわからないので適当に入れている
 LocationContext::LocationContext()
-    : client_max_body_size_(-1), auto_index_(false) {}
+    : client_max_body_size_(1024), auto_index_(false) {}
 
 LocationContext::LocationContext(const LocationContext& other) {
     *this = other;
 }
 
-// TODO(iyamada) コピーの処理、いらないかも。とりあえずかいた
 LocationContext& LocationContext::operator=(const LocationContext& other) {
     if (this != &other) {
         this->error_pages_ = other.error_pages_;
