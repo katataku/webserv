@@ -1,23 +1,96 @@
-worker以降はなくて良い
+# 全体クラス図
+
+private method, コンストラクタ、デストラクタ、setter, getter は省略。
 
 ```mermaid
 classDiagram
-    Webserv *-- WebservConfig
+    Webserv --> WebservConfig: use
+    Webserv --> SuperVisor: use
+
+    WebservConfig --> DefaultValues: use
+    WebservConfig --> InitialValues: use
     WebservConfig "1" *-- "1..*" ServerContext
+    WebservConfig --> ConfigProcesser: use
+
     ServerContext "1" *-- "1..*" LocationContext
 
-    Webserv *-- SuperVisor
+    ConfigProcesser --> ConfigLexer: use
+    ConfigProcesser --> ConfigParser: use
+    ConfigProcesser --> ConfigGenerator: use
+    ConfigLexer --> Token: use
+    ConfigParser --> Token: use
+    ConfigParser --> Node: use
+    ConfigGenerator --> Node: use
 
-    IOMultiplexer "1" *-- "0..n" Socket
     SuperVisor --> IOMultiplexer: use
+    SuperVisor --> Worker: use
+
+    IOMultiplexer "1" *-- "1..n" Socket
+
+    Worker --> Socket: use
+    Worker --> HTTPResponse: use
+    Worker --> RequestFacade: request
+    Worker --> Transaction: use
+    Worker --> ServerLocationFacade: request
+
+    RequestFacade --> HTTPRequest: generate
+
+    ServerLocationFacade --> ServerLocation: generate
+
+    Transaction --> HTTPRequest: use
+    Transaction --> IExecutor: use
+    Transaction --> ServerLocation: use
+  
+    IExecutor --|> FileReadExecutor
+    IExecutor --|> CGIExecutor
+  
+    FileReadExecutor --> ResponseBuilder: use
+  
+    CGIExecutor --> ResponseBuilder: use
+    CGIExecutor --> CGIRequest: use
+    CGIExecutor --> CGIResponse: use
+
+    ResponseBuilder --> HTTPResponse: use
+
+    HTTPResponse --> Socket :use
+
+    class ConfigProcesser {
+      +Exec() WebservConfig
+    }
+    class ConfigLexer {
+      +Tokenize() Token
+    }
+    class ConfigParser {
+      +Parse() Node
+    }
+    class ConfigGenerator {
+      +Generate() WebservConfig
+    }
+
+    class Token {
+          +Consume(Token, const string& expect_val) void
+          +Consume(Token, TokenKind kind) void
+          +PeekKind(Token, TokenKind kind) bool
+          +SameTokenKind(Token, TokenKind kind) bool
+          +SameToken(Token, const string& val) bool
+          +Expect(Token, const string& expect_val) bool
+          +Expect(Token, TokenKind kind) bool
+    }
+
+    class Node {
+        +GetNodeKindStr() string
+        +IsHttpContext() bool
+        +IsServerContext() bool
+        +IsLocationContext() bool
+        +IsListenDirective() bool
+        +IsAliasDirective() bool
+    }
 
     class WebservConfig {
-        +CreateServerLocations()
+        +CreateServerLocations() map~ServerLocationKeyServerLocation~
         +Parse(string)
     }
 
-    %% TODO: listenディレクトリは複数指定できるかを確認 %%
-    %% TODO: redirectの持ち方を検討 %%
     class ServerContext {
     }
 
@@ -28,14 +101,13 @@ classDiagram
         +Run()
     }
 
-    %% IO多重化とソケットクラスを生成してWorkerに処理を依頼するまでを担当する%%
     class SuperVisor {
         +Watch() void
     }
 
   class Socket {
     +Send()* void
-    +Recieve()* string
+    +Receive()* string
   }
 
   class IOMultiplexer {
@@ -44,97 +116,69 @@ classDiagram
     +Accept(Socket)* void
   }
 
-```
+  class Worker {
+    +Exec(Socket)* void
+  }
 
-## 擬似コード
+  class ServerLocationFacade {
+    +Choose(port, host, path)* ServerLocation
+    +GetPorts() vector~string~
+    +InsertErrorPages(const std::map<int, std::string> &error_pages) void
+    +SetDefaultAllowMethods() void
+  }
 
-```cpp
+  class ServerLocation {
+    +IsRedirect()* bool
+    +IsCGI(path)* bool
+    +ResolveAlias(path)* string
+  }
 
-class Webserv {
-    // IDEA: 別途Lexer&Parserの責務を持ったクラスを定義しても良いかもしれない。
-    void Run() {
-        WebservConfig config = WebservConfig.Parse()
-        vector<ServerLocation> locations = config.CreateServerLocations()
-        ServerLocationFacade facade(locations)
-        SuperVisor sv(facade)
-        sv.Watch()
-    }
-}
+  class RequestFacade {
+    +SelectRequest(Socket)* HTTPRequest
+    +Finish(Socket)* void
+  }
 
-class SuperVisor {
-    ServerLocationFacade facade
+  class HTTPRequest {
+    +Parse(string) void
+    +IsReady() bool
+    +CalcBodySize() int
+    +RequestTarget() string
+    +AbsolutePath() string
+    +Queries() map~stringString~
+  }
 
-    void Watch() {
-        IOMultiplexer iomul
-        string[] port_list = ServerLocationFacade.Getpostlist()
-        iomul.Init(port_list)
-        while (1) {
-            Socket[] sockets = iomul.Wait()
-            for socket in sockets {
-                if socket.IsListening()
-                    iomul.Accept(socket)
-                else
-                    Worker.Exec(socket)
-            }
-        }
-    }
-}
+  class HTTPResponse {
+    +HTTPResponse(int)
+    +Write(Socket)* void
+  }
 
+  class Transaction {
+    +Exec(HTTPRequest, ServerLocation)* HTTPResponse
+  }
 
-class Socket {
-  private:
-      int socketfd
-      bool is_listening
+  class IExecutor {
+    +Exec(HTTPRequest, ServerLocation)* HTTPResponse
+  }
 
-  public:
-      // Responseを受け取りソケットに書き込む
-      void Send(string)
+  class FileReadExecutor {
+  }
+  class CGIExecutor {
+  }
+  class CGIResponse {
+  }
+  class CGIRequest {
+  }
+  class ResponseBuilder {
+    +Build() HTTPResponse
+    +BuildError(int status_code, ServerLocation sl)HTTPResponse
+    +BuildRedirect(string redirect_url) HTTPResponse
+  }
 
-      // ソケットを読み込み、何かしらのデータとして返す
-      string Recieve()
+  class DefaultValues {
 
-      // ソケットがリスニング状態か確認
-      bool IsListening()
-}
+  }
+  class InitialValues {
 
-// I/O多重化の債務をやってくれるやつ
-class IOMultiplexer {
-    private:
-        // ソケット群
-        Socket[] sockets
-
-        // listen状態のソケット
-        CreateListenerSocket(string port)
-
-    public:
-        // socket群を初期化するやつ
-        void Init(string[] port_list) {
-            for port in port_list {
-                CreateListenerSocket(port)
-            }
-            ... // epoll固有の実装なので省略
-        }
-
-        // ソケット群がready状態になるまで待機
-        Socket[] Wait() {
-          ... // epoll固有の実装なので省略
-        }
-
-        // listen状態のソケットを受け取り、acceptして新しいクライアントとのソケットをソケット群に追加
-        void Accept(Socket listener) {
-          Socket client = listener.Accept()
-          ... // epoll固有の実装なので省略
-          sockets.Add(client)
-        }
-}
-
-class Woker {
-    void Exec() {
-        HTTPRequest request = HTTPRequest.Parse(socket_)
-        ServerLocation sl = facade_.Choose(port, host, path)
-        HTTPResponse response = Someone.Exec(request, sl)
-        HTTPResponse.Write(socket_)
-    }
-}
+  }
 
 ```
