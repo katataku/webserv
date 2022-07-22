@@ -75,20 +75,21 @@ WebservConfig WebservConfig::Parse() {
 static std::map<ServerLocationKey, ServerLocation> JoinMap(
     std::map<ServerLocationKey, ServerLocation> map1,
     std::map<ServerLocationKey, ServerLocation> map2) {
-    std::map<ServerLocationKey, ServerLocation> ret;
-
-    for (std::map<ServerLocationKey, ServerLocation>::iterator itr =
-             map1.begin();
-         itr != map1.end(); ++itr) {
-        ret[itr->first] = itr->second;
-    }
     for (std::map<ServerLocationKey, ServerLocation>::iterator itr =
              map2.begin();
          itr != map2.end(); ++itr) {
-        ret[itr->first] = itr->second;
+        map1[itr->first] = itr->second;
     }
+    return map1;
+}
 
-    return ret;
+static std::map<ServerLocationKey, ServerLocation> JoinMaps(
+    std::map<ServerLocationKey, ServerLocation> map1,
+    std::map<ServerLocationKey, ServerLocation> map2) {
+    std::map<ServerLocationKey, ServerLocation> ret;
+
+    ret = JoinMap(ret, map1);
+    return JoinMap(ret, map2);
 }
 
 static std::map<ServerLocationKey, ServerLocation> CreateWithLocationContext(
@@ -235,7 +236,7 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithServerContext(
     std::vector<LocationContext> locates = serv.contexts();
     for (std::vector<LocationContext>::iterator itr = locates.begin();
          itr != locates.end(); ++itr) {
-        ret = JoinMap(ret, CreateWithLocationContext(*itr, serv_sv));
+        ret = JoinMaps(ret, CreateWithLocationContext(*itr, serv_sv));
     }
 
     // serverコンテキストのデフォルトServerLocationを登録
@@ -261,7 +262,7 @@ WebservConfig::CreateServerLocations() {
     // serverコンテキストがある場合
     for (std::vector<ServerContext>::iterator itr = servs.begin();
          itr != servs.end(); ++itr) {
-        ret = JoinMap(ret, CreateWithServerContext(*itr, http_sv));
+        ret = JoinMaps(ret, CreateWithServerContext(*itr, http_sv));
     }
 
     return ret;
