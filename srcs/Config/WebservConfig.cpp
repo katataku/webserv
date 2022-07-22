@@ -8,13 +8,7 @@
 #include "InitialValues.hpp"
 #include "ServerLocation.hpp"
 #include "ServerLocationKey.hpp"
-
-template <typename T>
-static std::string numtostr(T num) {
-    std::stringstream ss;
-    ss << num;
-    return ss.str();
-}
+#include "utils.hpp"
 
 WebservConfig::WebservConfig()
     : client_max_body_size_(1024), auto_index_(false) {}
