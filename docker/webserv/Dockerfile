@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
 	googletest \
 	g++ \
 	python3-pip \
+	curl \
 	valgrind \
 	clang-format \
 	clang-tidy
