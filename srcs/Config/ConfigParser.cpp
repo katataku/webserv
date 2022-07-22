@@ -5,13 +5,6 @@
 #include <stdexcept>
 #include <string>
 
-/*
-    config           ::= block_directive
-    block_directive  ::= "server" [value] "{" single_directive "}"
-    single_directive ::= "listen" value ";"
-    value            ::= (英数字 | ".")+
-*/
-
 ConfigParser::ConfigParser() {}
 
 ConfigParser::ConfigParser(Token* token) : token_(token) {}
@@ -32,7 +25,15 @@ Node ConfigParser::Parse() { return config(); }
 Node ConfigParser::config() {
     Node head(Node::HttpContextNode);
 
-    head.PushChildContext(block_directive());
+    while (true) {
+        if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
+            head.PushDirective(single_directive());
+        } else if (Token::SameTokenKind(&this->token_, Token::BlockDirective)) {
+            head.PushChildContext(block_directive());
+        } else {
+            break;
+        }
+    }
 
     return head;
 }
@@ -52,15 +53,17 @@ Node ConfigParser::block_directive() {
         Token::Consume(&this->token_, "{");
     }
 
-    if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
-        node.PushDirective(single_directive());
+    while (true) {
+        if (Token::Expect(&this->token_, "}")) {
+            break;
+        }
+        if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
+            node.PushDirective(single_directive());
+        }
+        if (Token::SameToken(&this->token_, "location")) {
+            node.PushChildContext(location_directive());
+        }
     }
-    if (Token::SameToken(&this->token_, "location")) {
-        node.PushChildContext(location_directive());
-    }
-
-    // TODO(iyamada) locationが来たときはlocation_directiveを呼ぶ
-    Token::Consume(&this->token_, "}");
 
     return node;
 }
@@ -72,7 +75,11 @@ Node ConfigParser::location_directive() {
     node.set_kind(Node::LocationContextNode);
     value(&node);
     Token::Consume(&this->token_, "{");
-    node.PushDirective(single_directive());
+
+    while (!Token::SameToken(&this->token_, "}")) {
+        node.PushDirective(single_directive());
+    }
+
     Token::Consume(&this->token_, "}");
 
     return node;
@@ -89,6 +96,8 @@ Node ConfigParser::single_directive() {
         node = Node::NewNode(Node::ListenDirectiveNode);
     } else if (Token::Expect(&this->token_, "alias")) {
         node = Node::NewNode(Node::AliasDirectiveNode);
+    } else if (Token::Expect(&this->token_, "autoindex")) {
+        node = Node::NewNode(Node::AutoindexDirectiveNode);
     }
 
     value(&node);

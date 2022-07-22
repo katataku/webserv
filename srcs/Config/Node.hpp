@@ -14,7 +14,8 @@ class Node {
         ServerContextNode,
         LocationContextNode,
         ListenDirectiveNode,
-        AliasDirectiveNode
+        AliasDirectiveNode,
+        AutoindexDirectiveNode
     };
 
     Node();
@@ -40,11 +41,15 @@ class Node {
     bool IsLocationContext();
     bool IsListenDirective();
     bool IsAliasDirective();
+    bool IsAutoindexDirective();
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
     void PushDirective(Node node);
     void PushChildContext(Node node);
+
+    void ValidateAutoindexValue();
+    std::string GetAutoindexValueWithValidate();
 
  private:
     NodeKind kind_;

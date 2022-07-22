@@ -72,7 +72,7 @@ classDiagram
 
 | kind名                | 説明                   |
 | -------------------- | -------------------- |
-| BlockDirectiveToken  | "server"             |
+| BlockDirectiveToken  | "server"と"location"  |
 | SingleDirectiveToken | "listen"とか           |
 | OpenBraceToken       | "{"                  |
 | CloseBraceToken      | "}"                  |
@@ -81,13 +81,14 @@ classDiagram
 
 ## NodeKindの種類
 
-| kind名               | 説明               |
-| ------------------- | ---------------- |
-| HttpContextNode     | "http"コンテキスト     |
-| ServerContextNode   | "server"コンテキスト   |
-| LocationContextNode | "location"コンテキスト |
-| ListenDirectiveNode | "listen"ディレクティブ  |
-| AliasDirectiveNode  | "alias"ディレクティブ   |
+| kind名                  | 説明                 |
+| ---------------------- | ------------------ |
+| HttpContextNode        | "http"コンテキスト       |
+| ServerContextNode      | "server"コンテキスト     |
+| LocationContextNode    | "location"コンテキスト   |
+| ListenDirectiveNode    | "listen"ディレクティブ    |
+| AliasDirectiveNode     | "alias"ディレクティブ     |
+| AutoindexDirectiveNode | "autoindex"ディレクティブ |
 
 ## Configファイルの文法
 
@@ -95,17 +96,18 @@ classDiagram
 
 <!-- TOOD(iyamada) block_directive, single_directive, location_directiveは一つしかパースできない -->
 
-```
-config             ::= block_directive
-block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive ) "}"
-location_directive ::= "location" value "{" ( single_directive ) "}"
-single_directive   ::= ( "listen" | "alias" ) value ";"
+```bnf
+config             ::= ( block_directive | single_directive )*
+block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive )* "}"
+location_directive ::= "location" value "{" ( single_directive )* "}"
+single_directive   ::= ( "listen" | "alias" | "autoindex" ) value ";"
 value              ::= (英数字 | ".")+
 ```
 
 - メタ構文の意味
   - "\[hoge\]" : hogeは0か1個
   - "hoge+" : hogeは1個以上
+  - "hoge\*" : hogeは0個以上
 
 ## 擬似コード
 
