@@ -33,7 +33,7 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
     ASSERT_EQ(locate_contexts.size(), 1);
 
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/var/www/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
 }
 
 TEST_F(ConfigParserTest, autoindex_on_location) {
@@ -96,4 +96,15 @@ TEST_F(ConfigParserTest, multi_directive) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     ASSERT_EQ(locate_contexts.size(), 3);
+}
+
+TEST_F(ConfigParserTest, alias) {
+    ConfigProcesser confproc("../../../test_data/config/webserv/ok/alias.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
 }
