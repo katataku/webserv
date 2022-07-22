@@ -18,7 +18,7 @@ OK_SUM=0
 NG_SUM=0
 
 CONFIG_ARRAY=(`ls ${CONFIG_PATH} | tr -d 'localhost'`)
-REQUEST_ARRAY=(`ls ./test_data/request | tr -d '.sh'`)
+REQUEST_ARRAY=(`ls ./test_data/request/*.sh | tr -d '.sh'`)
 
 function do_single_command_check(){
     #引数で与えられたコマンドを実行し、OK/NGを判定。
