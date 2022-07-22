@@ -21,7 +21,7 @@ Worker &Worker::operator=(Worker const &other) {
 Worker::~Worker() {}
 
 void Worker::Exec(Socket *socket) {
-    this->logging_.Debug("start exec");
+    this->logging_.Debug("start Exec");
 
     this->request_facade_ = RequestFacade::GetInstance();
     HTTPRequest *request = this->request_facade_->SelectRequest(*socket);

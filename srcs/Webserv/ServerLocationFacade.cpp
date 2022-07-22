@@ -3,8 +3,10 @@
 #include <map>
 
 #include "ServerLocationKey.hpp"
+#include "utils.hpp"
 
-ServerLocationFacade::ServerLocationFacade() {}
+ServerLocationFacade::ServerLocationFacade()
+    : logging_(Logging(__FUNCTION__)) {}
 
 ServerLocationFacade::ServerLocationFacade(
     std::map<ServerLocationKey, ServerLocation> server_locations)

@@ -1,6 +1,6 @@
 #include "ServerLocation.hpp"
 
-ServerLocation::ServerLocation() {}
+ServerLocation::ServerLocation() : logging_(Logging(__FUNCTION__)) {}
 
 ServerLocation::ServerLocation(ServerLocation const &other) { *this = other; }
 
@@ -136,5 +136,6 @@ ServerLocation::ServerLocation(
 
 std::string ServerLocation::ResolveAlias(std::string request_uri) const {
     // 雑な仮実装
+    logging_.Debug("alias() = [" + this->alias() + "]");
     return this->alias() + request_uri;
 }
