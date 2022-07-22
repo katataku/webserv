@@ -25,13 +25,13 @@ ServerLocationFacade &ServerLocationFacade::operator=(
 ServerLocationFacade::~ServerLocationFacade() {}
 
 ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
-                                             std::string path) const {
+                                             std::string path) {
     (void)port;
     (void)host;
     (void)path;
-    std::map<ServerLocationKey, ServerLocation>::const_iterator itr =
+    std::map<ServerLocationKey, ServerLocation>::iterator itr =
         this->server_locations_.begin();
-    return const_cast<ServerLocation *>(&(itr->second));
+    return &(itr->second);
 }
 
 std::vector<std::string> ServerLocationFacade::GetPorts() const {

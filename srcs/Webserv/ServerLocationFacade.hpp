@@ -19,7 +19,7 @@ class ServerLocationFacade {
     ~ServerLocationFacade();
 
     ServerLocation *Choose(std::string port, std::string host,
-                           std::string path) const;
+                           std::string path);
     std::vector<std::string> GetPorts() const;
 
  private:

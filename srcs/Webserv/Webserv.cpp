@@ -22,7 +22,6 @@ Webserv &Webserv::operator=(Webserv const &other) {
 Webserv::~Webserv() {}
 
 void Webserv::Run(int argc, char **argv) {
-    (void)argc;
     this->logging_.Debug(argv[0]);
     WebservConfig config;
     // TODO(takkatao): 引数の数が多い時のエラー処理を追加。
