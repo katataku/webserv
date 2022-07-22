@@ -60,8 +60,8 @@ TEST_F(HTTPTest, parse_body_by_chuncked) {
     req.Parse("Host: test\r\n");
     req.Parse("Transfer-Encoding: chunked\r\n");
     req.Parse("\r\n");
-    req.Parse("6\r\nhello,");
-    req.Parse("6\r\nworld!");
+    req.Parse("6\r\nhello,\r\n");
+    req.Parse("6\r\nworld!\r\n");
     req.Parse("0\r\n\r\n");
     ASSERT_EQ(req.method(), "POST");
     ASSERT_EQ(req.absolute_path(), "/cgi-bin/file_manager.py");
