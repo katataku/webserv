@@ -48,7 +48,7 @@ class HTTPRequest {
     std::string request_target_;
     std::string host_;
     int content_length_;
-    int chunked_rest_;
+    unsigned int chunked_rest_;
     std::string content_type_;
     std::string transfer_encoding_;
     std::string request_body_;
