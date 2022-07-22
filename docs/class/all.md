@@ -7,6 +7,8 @@ classDiagram
     Webserv --> WebservConfig: use
     Webserv --> SuperVisor: use
 
+    WebservConfig --> DefaultValues: use
+    WebservConfig --> InitialValues: use
     WebservConfig "1" *-- "1..*" ServerContext
     WebservConfig --> ConfigProcesser: use
 
@@ -25,6 +27,7 @@ classDiagram
 
     IOMultiplexer "1" *-- "1..n" Socket
 
+    Worker --> Socket: use
     Worker --> HTTPResponse: use
     Worker --> RequestFacade: request
     Worker --> Transaction: use
@@ -73,6 +76,7 @@ classDiagram
           +Expect(Token, const string& expect_val) bool
           +Expect(Token, TokenKind kind) bool
     }
+
     class Node {
         +GetNodeKindStr() string
         +IsHttpContext() bool
@@ -83,7 +87,7 @@ classDiagram
     }
 
     class WebservConfig {
-        +CreateServerLocations() vector~ServerLocation~
+        +CreateServerLocations() map~ServerLocationKeyServerLocation~
         +Parse(string)
     }
 
@@ -119,6 +123,8 @@ classDiagram
   class ServerLocationFacade {
     +Choose(port, host, path)* ServerLocation
     +GetPorts() vector~string~
+    +InsertErrorPages(const std::map<int, std::string> &error_pages) void
+    +SetDefaultAllowMethods() void
   }
 
   class ServerLocation {
@@ -166,6 +172,13 @@ classDiagram
     +Build() HTTPResponse
     +BuildError(int status_code, ServerLocation sl)HTTPResponse
     +BuildRedirect(string redirect_url) HTTPResponse
+  }
+
+  class DefaultValues {
+
+  }
+  class InitialValues {
+
   }
 
 ```
