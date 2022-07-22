@@ -18,6 +18,8 @@ add_executable(main
         main.cpp
         utils.cpp
         HTTP.cpp
+        ConfigParser.cpp
+        CreateServerLocation.cpp
         Transaction.cpp
 )
 

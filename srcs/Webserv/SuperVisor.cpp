@@ -29,11 +29,11 @@ void SuperVisor::Watch() {
     iomul.Init(ports);
     this->logging_.Debug("start loop");
     while (true) {
-        std::vector<Socket> sockets = iomul.Wait();
-        for (std::vector<Socket>::iterator itr = sockets.begin();
+        std::vector<Socket *> sockets = iomul.Wait();
+        for (std::vector<Socket *>::iterator itr = sockets.begin();
              itr != sockets.end(); ++itr) {
-            if ((*itr).is_listening()) {
-                iomul.Accept(*itr);
+            if ((*itr)->is_listening()) {
+                iomul.Accept(*(*itr));
             } else {
                 Worker worker(this->facade_);
                 worker.Exec(*itr);

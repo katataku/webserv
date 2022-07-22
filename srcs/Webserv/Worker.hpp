@@ -14,11 +14,11 @@ class Worker {
     Worker &operator=(Worker const &other);
     ~Worker();
 
-    void Exec(Socket &);
+    void Exec(Socket *socket);
 
  private:
     Logging logging_;
-    RequestFacade request_facade_;
+    RequestFacade *request_facade_;
     ServerLocationFacade server_location_facade_;
 };
 

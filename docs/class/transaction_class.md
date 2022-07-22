@@ -1,3 +1,5 @@
+# Transaction
+
 ```mermaid
 classDiagram
     CGIExecutor <|-- IExecutor
@@ -6,6 +8,8 @@ classDiagram
     Transaction --> IExecutor : use
     CGIExecutor --> ResponseBuilder : use
     FileReadExecutor --> ResponseBuilder : use
+
+    HTTPException <|-- exception
 
     class FileReadExecutor {
         -GetFileExec() HTTPResponse
@@ -30,6 +34,17 @@ classDiagram
         +BuildError(int status_code, ServerLocation sl) HTTPResponse*
         +BuildRedirect(string redirect_url) HTTPResponse*
     }
+
+    class exception{
+        +what() const char
+    }
+
+    class HTTPException{
+        int status_code_
+        -HTTPException()
+        +HTTPException(int status_code)
+    }
+
 ```
 
 ```cpp
@@ -37,13 +52,13 @@ class Transaction {
     HTTPResponse Exec(HTTPRequest req, ServerLocation sl) {
         try {
             if (req.method not in sl.allowed_method) {
-                throw IExecutor::MethodNotAllowed();
+                throw HTTPException(403); // ステータスコードを設定。
             }
             if (req.CalcBodySize() > sl.client_max_body_size) {
-                throw IExecutor::PayloadTooLarge();
+                throw HTTPException(413); // ステータスコードを設定。
             }
             if (sl.IsRedirect()) {
-                return ResponseBuilder.BuildRedirect(sl.redirect_uri());
+                return ResponseBuilder.BuildRedirect(sl.redirect_url());
             }
             if (sl.IsCGI()) {
                 return CGIExecutor(req, sl);
@@ -57,13 +72,13 @@ class Transaction {
             }
             // TODO: CGIプログラム以外にPOST, DELETEが来た場合はどうなる？
             if (req.method is in[POST, DELETE]) {
-                throw IExecutor::SomeException();
+                throw HTTPException(XXX);
                 //もしくは    return FileWriteExecutor(req, sl);
             }
-        } catch (IExecutor::ExecutorException &e) {
-            return ResponseBuilder.BuildError(e->status_code, sl);
-        } catch (std::exception &e) {
-            return ResponseBuilder.BuildError(500, sl);
+        } catch (HTTPException &e) {
+            return ResponseBuilder.BuildError(e->status_code(), sl);
+        } catch (...) {
+            return ResponseBuilder.BuildError(500, sl); // その他エラーは500にする。
         }
     } 
 }
@@ -71,7 +86,7 @@ class Transaction {
 class FileReadExecutor{
  HTTPResponse Exec(HTTPRequest req, ServerLocation sl){
     if (req.url is not Exist) {
-      throw IExecutor::NotFound();
+      throw HTTPException(404);
     }
  }
     if (req.uri is regular file) {
@@ -80,7 +95,7 @@ class FileReadExecutor{
    // TODO: autoindex, index周りの挙動を確認
     if (sl.IsIndex() {
       if ((req.url + sl.index() is not Exist)) {
-        throw IExecutor::NotFound();
+        throw HTTPException(404);
       } else {
         return GetFileExecutor(req, req.url + sl.index());
       }
@@ -89,7 +104,7 @@ class FileReadExecutor{
       return ListingExecutor(req, sl);
     } else {
       // TODO: autoindex offの場合を確認
-      throw IExecutor::NotFound();
+      throw HTTPException(404);
     }
 
     private:
@@ -125,10 +140,24 @@ ResponseBuilder {
         }
         return new HTTPResponse();
     }
-    HTTPResponse BuildRedirect(string redirect_uri) {
+    HTTPResponse BuildRedirect(string redirect_url) {
         // locationにredirect_urlを設定
         // status_codeは302
         // TODO: これとerror_pageで302が設定されていた場合
     }
+}
+
+// HTTPのRFCで規定されている例外を管理するので、HTTPException
+class HTTPException : public std::exception {
+    public:
+     HTTPException() throw();
+     HTTPException(int status_code) throw(){
+        status_code_ = status_code;
+        };
+     virtual const char* what() const throw();
+     int status_code();
+
+    private:
+     int status_code_;
 }
 ```

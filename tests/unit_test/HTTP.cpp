@@ -21,7 +21,7 @@ TEST_F(HTTPTest, Parse) {
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
     ASSERT_EQ(req.host(), "test");
-    ASSERT_EQ(req.content_length(), "0");
+    ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
     ASSERT_EQ(req.request_body(), "");
 }
@@ -34,9 +34,24 @@ TEST_F(HTTPTest, parse_mutiple) {
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
     ASSERT_EQ(req.host(), "test");
-    ASSERT_EQ(req.content_length(), "0");
+    ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
     ASSERT_EQ(req.request_body(), "");
+}
+
+TEST_F(HTTPTest, parse_body_by_content_length) {
+    HTTPRequest req = HTTPRequest();
+    req.Parse("GET / HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("Content-Length: 8\r\n");
+    req.Parse("\r\n");
+    req.Parse("12345678");
+    ASSERT_EQ(req.method(), "GET");
+    ASSERT_EQ(req.absolute_path(), "/");
+    ASSERT_EQ(req.host(), "test");
+    ASSERT_EQ(req.content_length(), 8);
+    ASSERT_EQ(req.transfer_encoding(), "");
+    ASSERT_EQ(req.request_body(), "12345678");
 }
 
 TEST_F(HTTPTest, ResponseBuilder_200) {

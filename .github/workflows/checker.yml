@@ -5,12 +5,12 @@ on:
       - main
   pull_request:
     paths-ignore:
-      - 'docs/**'
-      - 'sample_data'
-      - 'README.md'
+      - "docs/**"
+      - "sample_data"
+      - "README.md"
 
 jobs:
-  googletest:
+  program_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,6 +20,12 @@ jobs:
       - name: compose up
         shell: bash
         run: make dc-up
+      - name: clang-format
+        shell: bash
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make format
+      - name: make
+        shell: bash
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make
       - name: cpplint
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make lint
