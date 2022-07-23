@@ -91,7 +91,7 @@ function start_server_container() {
     cp ${CONFIG_PATH}${CONFIG_NO} ${CONFIG_PATH}localhost
     ${COMMAND_MAKE_DC_RE} > /dev/null 2>&1
     docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv bash /usr/local/bin/start.sh &
-    sleep 10 #コンテナ起動待ち
+    sleep 10 #コンテナでのwebserv起動待ち。
 }
 
 
