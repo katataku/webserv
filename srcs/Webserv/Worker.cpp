@@ -35,6 +35,7 @@ void Worker::Exec(Socket *socket) {
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, sl);
             response->Write(*socket);
+            socket->Close();
             this->request_facade_->Finish(socket);
         }
     } catch (std::exception &e) {

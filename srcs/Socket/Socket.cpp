@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include "utils.hpp"
+
 Socket::Socket()
     : sock_fd_(-1), is_listening_(false), logging_(Logging(__FUNCTION__)) {}
 
@@ -80,10 +82,16 @@ std::string Socket::Recv() const {
 }
 
 void Socket::Close() const {
+    if (shutdown(this->sock_fd_, SHUT_RDWR) == -1) {
+        throw std::runtime_error("Error: shutdown " +
+                                 std::string(strerror(errno)));
+    }
     if (close(this->sock_fd_) == -1) {
         throw std::runtime_error("Error: close " +
                                  std::string(strerror(errno)));
     }
+    logging_.Debug("socket close.");
+    logging_.Debug("close sock_fd : [" + numtostr(this->sock_fd_) + "]");
 }
 
 Socket Socket::Accept() const {
