@@ -9,17 +9,13 @@
 #include "Socket.hpp"
 
 class HTTPResponse {
-    FRIEND_TEST(HTTPTest, Response_string);
-    FRIEND_TEST(HTTPTest, Response_string_empty);
-
  public:
     HTTPResponse();
     HTTPResponse(HTTPResponse const &other);
     HTTPResponse &operator=(HTTPResponse const &other);
     ~HTTPResponse();
 
-    // writeはsocketに依存しているのでテストコードなし。
-    void Write(Socket socket);
+    std::string GetResponseString() const;
 
     int status_code() const;
     std::string connection() const;
@@ -48,7 +44,6 @@ class HTTPResponse {
     std::string GetStatusLineString() const;
     std::string GetHeadersString() const;
     std::string GetBodyString() const;
-    std::string GetResponseString() const;
     static std::string GetReasonPhrase(int);
 };
 
