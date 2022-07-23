@@ -12,7 +12,7 @@ MAGENTA="\033[35m"
 ACTUAL_PATH=./test_data/actual/
 EXPECTED_PATH=./test_data/expected/
 CONFIG_PATH=./test_data/config/webserv/ok/
-REQUEST_PATH=./test_data/request/
+REQUEST_PATH=./test_data/request/ok
 
 OK_SUM=0
 NG_SUM=0
@@ -40,10 +40,10 @@ function do_test() {
     IS_OK=1
     ACTUAL_FILE_NAME=${ACTUAL_PATH}${CONFIG_NO}-${REQUEST_NO}
     EXPECTED_FILE_NAME=${EXPECTED_PATH}${CONFIG_NO}-${REQUEST_NO}
-    REQUEST_FILE_NAME=${REQUEST_PATH}${REQUEST_NO}.sh
+    REQUEST_FILE_NAME=${REQUEST_PATH}${REQUEST_NO}.txt
     
     #---テストのためのリクエスト実行---
-    bash ${REQUEST_FILE_NAME} > ${ACTUAL_FILE_NAME} 2>&1
+    nc localhost 8080 < ${REQUEST_FILE_NAME} > ${ACTUAL_FILE_NAME} 2>&1
 
     #---個別チェックの実行---
     # 1行目のstatus-lineの完全一致判定
