@@ -17,14 +17,14 @@ class ServerContext {
     std::vector<LocationContext> contexts() const;
     std::map<int, std::string> error_pages() const;
     int client_max_body_size() const;
-    bool auto_index() const;
+    std::string auto_index() const;
     std::string index_page() const;
     std::string redirect_url() const;
     std::string server_name() const;
     int port() const;
 
     void set_client_max_body_size(int client_max_body_size);
-    void set_auto_index(bool auto_index);
+    void set_auto_index(std::string auto_index);
     void set_index_page(const std::string& index_page);
     void set_redirect_url(const std::string& redirect_url);
     void set_server_name(const std::string& server_name);
@@ -38,7 +38,7 @@ class ServerContext {
     std::vector<LocationContext> contexts_;
     std::map<int, std::string> error_pages_;
     int client_max_body_size_;
-    bool auto_index_;
+    std::string auto_index_;
     std::string index_page_;
     std::string redirect_url_;
     std::string server_name_;

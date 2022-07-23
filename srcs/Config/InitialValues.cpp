@@ -10,4 +10,4 @@ const std::string InitialValues::kAlias = "";         // NOLINT
 const std::string InitialValues::kCgiExtension = "";  // NOLINT
 const int InitialValues::kPort = -1;
 const int InitialValues::kClientMaxBodySize = -1;
-const bool InitialValues::kAutoIndex = false;
+const std::string InitialValues::kAutoIndex = "";  // NOLINT
