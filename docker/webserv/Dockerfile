@@ -23,4 +23,4 @@ RUN pip install cpplint
 
 COPY ./tools/start.sh /usr/local/bin
 # prevent container from terminating
-CMD ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
