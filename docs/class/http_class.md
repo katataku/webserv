@@ -36,7 +36,7 @@ classDiagram
         string response_body
 
         +HTTPResponse(int)
-        +Write(Socket) void
+        +GetResponseString() String
     }
 
 
@@ -130,7 +130,7 @@ Worker {
 
                 HTTPResponse response = Transaction.Exec(request, sl);
 
-                HTTPResponse.Write(socket_);
+                Socket.send(HTTPResponse.GetResponseString());
                 RequestFacade.Finish(socket_);
                 socket.should_close_socket = true;
             }
