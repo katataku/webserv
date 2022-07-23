@@ -12,7 +12,7 @@ MAGENTA="\033[35m"
 ACTUAL_PATH=./test_data/actual/
 EXPECTED_PATH=./test_data/expected/
 CONFIG_PATH=./test_data/config/webserv/ok/
-REQUEST_PATH=./test_data/request/ok
+REQUEST_PATH=./test_data/request/ok/
 
 OK_SUM=0
 NG_SUM=0
