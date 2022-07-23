@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
 	googletest \
 	g++ \
 	python3-pip \
-	netcat \
 	curl \
 	valgrind \
 	clang-format \
