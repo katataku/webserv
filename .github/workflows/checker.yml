@@ -25,7 +25,7 @@ jobs:
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make format
       - name: make
         shell: bash
-        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make re
       - name: cpplint
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make lint
