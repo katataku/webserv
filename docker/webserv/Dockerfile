@@ -22,5 +22,5 @@ RUN (cd /usr/src/googletest && cmake . && cmake --build . --target install)
 RUN pip install cpplint
 
 COPY ./tools/start.sh /usr/local/bin
-CMD bash /usr/local/bin/start.sh;
-
+# prevent container from terminating
+ENTRYPOINT ["tail", "-f", "/dev/null"]
