@@ -29,7 +29,6 @@ void Worker::Exec(Socket *socket) {
         std::string str = socket->Recv();
         request->Parse(str);
         if (request->IsReady()) {
-            // TODO(ahayashi): port番号をソケットから取れるように
             ServerLocation *sl = this->server_location_facade_.Choose(
                 socket->port(), request->host(), request->absolute_path());
             Transaction transaction;
