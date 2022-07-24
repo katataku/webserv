@@ -119,6 +119,15 @@ echo ""
     REQUEST_NO=GET_simple
     do_test
 
+    REQUEST_NO=GET_directory
+    do_test
+
+    CONFIG_NO=autoindex_on.conf
+    start_server_container
+
+    REQUEST_NO=GET_directory
+    do_test
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then
