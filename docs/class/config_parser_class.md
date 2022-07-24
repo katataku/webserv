@@ -89,18 +89,17 @@ classDiagram
 | ListenDirectiveNode    | "listen"ディレクティブ    |
 | AliasDirectiveNode     | "alias"ディレクティブ     |
 | AutoindexDirectiveNode | "autoindex"ディレクティブ |
+| CgiExtDirectiveNode | "cgi_extension"ディレクティブ |
 
 ## Configファイルの文法
 
 - パーサーはこの文法に従い、構文解析していく
 
-<!-- TOOD(iyamada) block_directive, single_directive, location_directiveは一つしかパースできない -->
-
 ```bnf
 config             ::= ( block_directive | single_directive )*
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive )* "}"
 location_directive ::= "location" value "{" ( single_directive )* "}"
-single_directive   ::= ( "listen" | "alias" | "autoindex" ) value ";"
+single_directive   ::= ( "listen" | "alias" | "autoindex" | "cgi_extension" ) value ";"
 value              ::= (英数字 | ".")+
 ```
 
