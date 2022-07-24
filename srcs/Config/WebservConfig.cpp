@@ -16,8 +16,7 @@ static std::string numtostr(T num) {
     return ss.str();
 }
 
-WebservConfig::WebservConfig()
-    : client_max_body_size_(1024), auto_index_(false) {}
+WebservConfig::WebservConfig() : client_max_body_size_(1024) {}
 
 WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
 
@@ -45,13 +44,13 @@ std::map<int, std::string> WebservConfig::error_pages() const {
 int WebservConfig::client_max_body_size() const {
     return this->client_max_body_size_;
 }
-bool WebservConfig::auto_index() const { return this->auto_index_; }
+std::string WebservConfig::auto_index() const { return this->auto_index_; }
 std::string WebservConfig::index_page() const { return this->index_page_; }
 
 void WebservConfig::set_client_max_body_size(int client_max_body_size) {
     this->client_max_body_size_ = client_max_body_size;
 }
-void WebservConfig::set_auto_index(bool auto_index) {
+void WebservConfig::set_auto_index(std::string auto_index) {
     this->auto_index_ = auto_index;
 }
 void WebservConfig::set_index_page(std::string index_page) {

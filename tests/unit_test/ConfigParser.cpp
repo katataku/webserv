@@ -41,15 +41,15 @@ TEST_F(ConfigParserTest, autoindex_on_location) {
         "../../../test_data/config/webserv/ok/autoindex_on_location.conf");
     WebservConfig conf = confproc.Exec();
 
-    ASSERT_EQ(conf.auto_index(), false);
+    ASSERT_EQ(conf.auto_index(), "");
 
     std::vector<ServerContext> serv_contexts = conf.contexts();
     ServerContext serv_context = serv_contexts.at(0);
-    ASSERT_EQ(serv_context.auto_index(), false);
+    ASSERT_EQ(serv_context.auto_index(), "");
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.auto_index(), true);
+    ASSERT_EQ(locate_context.auto_index(), "on");
 }
 
 TEST_F(ConfigParserTest, autoindex_on_server) {
@@ -57,15 +57,15 @@ TEST_F(ConfigParserTest, autoindex_on_server) {
         "../../../test_data/config/webserv/ok/autoindex_on_server.conf");
     WebservConfig conf = confproc.Exec();
 
-    ASSERT_EQ(conf.auto_index(), false);
+    ASSERT_EQ(conf.auto_index(), "");
 
     std::vector<ServerContext> serv_contexts = conf.contexts();
     ServerContext serv_context = serv_contexts.at(0);
-    ASSERT_EQ(serv_context.auto_index(), true);
+    ASSERT_EQ(serv_context.auto_index(), "on");
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.auto_index(), false);
+    ASSERT_EQ(locate_context.auto_index(), "");
 }
 
 TEST_F(ConfigParserTest, autoindex_on_http) {
@@ -73,15 +73,15 @@ TEST_F(ConfigParserTest, autoindex_on_http) {
         "../../../test_data/config/webserv/ok/autoindex_on_http.conf");
     WebservConfig conf = confproc.Exec();
 
-    ASSERT_EQ(conf.auto_index(), true);
+    ASSERT_EQ(conf.auto_index(), "on");
 
     std::vector<ServerContext> serv_contexts = conf.contexts();
     ServerContext serv_context = serv_contexts.at(0);
-    ASSERT_EQ(serv_context.auto_index(), false);
+    ASSERT_EQ(serv_context.auto_index(), "");
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.auto_index(), false);
+    ASSERT_EQ(locate_context.auto_index(), "");
 }
 
 TEST_F(ConfigParserTest, multi_directive) {
