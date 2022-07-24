@@ -1,7 +1,6 @@
 #include "LocationContext.hpp"
 
-LocationContext::LocationContext()
-    : client_max_body_size_(1024), auto_index_(false) {}
+LocationContext::LocationContext() : client_max_body_size_(1024) {}
 
 LocationContext::LocationContext(const LocationContext& other) {
     *this = other;
@@ -30,7 +29,7 @@ std::map<int, std::string> LocationContext::error_pages() const {
 int LocationContext::client_max_body_size() const {
     return this->client_max_body_size_;
 }
-bool LocationContext::auto_index() const { return this->auto_index_; }
+std::string LocationContext::auto_index() const { return this->auto_index_; }
 std::string LocationContext::index_page() const { return this->index_page_; }
 std::string LocationContext::path() const { return this->path_; }
 std::string LocationContext::redirect_url() const {
@@ -47,7 +46,7 @@ std::string LocationContext::cgi_extension() const {
 void LocationContext::set_client_max_body_size(int client_max_body_size) {
     this->client_max_body_size_ = client_max_body_size;
 }
-void LocationContext::set_auto_index(bool auto_index) {
+void LocationContext::set_auto_index(std::string auto_index) {
     this->auto_index_ = auto_index;
 }
 void LocationContext::set_index_page(const std::string& index_page) {

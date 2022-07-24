@@ -16,7 +16,7 @@ class InitialValues {
     static const std::string kCgiExtension;
     static const int kPort;
     static const int kClientMaxBodySize;
-    static const bool kAutoIndex;
+    static const std::string kAutoIndex;
 };
 
 #endif  // SRCS_CONFIG_INITIALVALUES_HPP_

@@ -39,4 +39,10 @@ T strtonum(const std::string& s) {
     return num;
 }
 
+template <typename T>
+static std::string numtostr(T num) {
+    std::stringstream ss;
+    ss << num;
+    return ss.str();
+}
 #endif  // SRCS_UTILS_UTILS_HPP_

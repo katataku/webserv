@@ -1,6 +1,6 @@
 #include "ServerLocation.hpp"
 
-ServerLocation::ServerLocation() {}
+ServerLocation::ServerLocation() : logging_(Logging(__FUNCTION__)) {}
 
 ServerLocation::ServerLocation(ServerLocation const &other) { *this = other; }
 
@@ -56,7 +56,7 @@ const std::map<int, std::string> &ServerLocation::error_pages() const {
 int ServerLocation::client_max_body_size() const {
     return client_max_body_size_;
 }
-bool ServerLocation::auto_index() const { return auto_index_; }
+std::string ServerLocation::auto_index() const { return auto_index_; }
 const std::string &ServerLocation::index_page() const { return index_page_; }
 const std::string &ServerLocation::redirect_url() const {
     return redirect_url_;
@@ -79,7 +79,7 @@ void ServerLocation::set_error_pages(
 void ServerLocation::set_client_max_body_size(int client_max_body_size) {
     this->client_max_body_size_ = client_max_body_size;
 }
-void ServerLocation::set_auto_index(bool auto_index) {
+void ServerLocation::set_auto_index(std::string auto_index) {
     this->auto_index_ = auto_index;
 }
 void ServerLocation::set_index_page(const std::string &index_page) {
@@ -119,7 +119,7 @@ void ServerLocation::SetDefaultAllowMethods() {
 ServerLocation::ServerLocation(
     int port, const std::string &host, const std::string &path,
     const std::map<int, std::string> &error_pages, int client_max_body_size,
-    bool auto_index, const std::string &index_page,
+    std::string auto_index, const std::string &index_page,
     const std::string &redirect_url, const std::set<std::string> &allow_methods,
     const std::string &alias, const std::string &cgi_extension)
     : port_(port),
@@ -136,5 +136,6 @@ ServerLocation::ServerLocation(
 
 std::string ServerLocation::ResolveAlias(std::string request_uri) const {
     // 雑な仮実装
+    logging_.Debug("alias() = [" + this->alias() + "]");
     return this->alias() + request_uri;
 }

@@ -12,4 +12,4 @@ const std::string DefaultValues::kAlias = "";         // NOLINT
 const std::string DefaultValues::kCgiExtension = "";  // NOLINT
 const int DefaultValues::kPort = 80;
 const int DefaultValues::kClientMaxBodySize = 1024;
-const bool DefaultValues::kAutoIndex = false;
+const std::string DefaultValues::kAutoIndex = "off";  // NOLINT

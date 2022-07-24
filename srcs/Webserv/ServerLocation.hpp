@@ -13,7 +13,7 @@ class ServerLocation {
     ServerLocation(ServerLocation const &other);
     ServerLocation(int port, const std::string &host, const std::string &path,
                    const std::map<int, std::string> &error_pages,
-                   int client_max_body_size, bool auto_index,
+                   int client_max_body_size, std::string auto_index,
                    const std::string &index_page,
                    const std::string &redirect_url,
                    const std::set<std::string> &allow_methods,
@@ -26,7 +26,7 @@ class ServerLocation {
     const std::string &path() const;
     const std::map<int, std::string> &error_pages() const;
     int client_max_body_size() const;
-    bool auto_index() const;
+    std::string auto_index() const;
     const std::string &index_page() const;
     const std::string &redirect_url() const;
     const std::set<std::string> &allow_methods() const;
@@ -38,7 +38,7 @@ class ServerLocation {
     void set_path(const std::string &path);
     void set_error_pages(const std::map<int, std::string> &error_pages);
     void set_client_max_body_size(int client_max_body_size);
-    void set_auto_index(bool auto_index);
+    void set_auto_index(std::string auto_index);
     void set_index_page(const std::string &index_page);
     void set_redirect_url(const std::string &redirect_url);
     void set_allow_methods(const std::set<std::string> &allow_methods);
@@ -55,12 +55,13 @@ class ServerLocation {
     std::string ResolveAlias(std::string request_uri) const;
 
  private:
+    Logging logging_;
     int port_;
     std::string host_;
     std::string path_;
     std::map<int, std::string> error_pages_;
     int client_max_body_size_;
-    bool auto_index_;
+    std::string auto_index_;
     std::string index_page_;
     std::string redirect_url_;
     std::set<std::string> allow_methods_;

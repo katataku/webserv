@@ -28,7 +28,7 @@ TEST_F(TransactionTest, FileReadExecutor) {
     allow_methods.insert("GET");
 
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
                        "index.html", "", allow_methods, "/var/www", "");
 
     Transaction tr;
@@ -49,7 +49,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
                        "index.html", "", allow_methods, "/var/www", "");
 
     Transaction tr;
@@ -71,7 +71,7 @@ TEST_F(TransactionTest, Allowed_methods_single) {
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
                        "index.html", "", allow_methods, "/var/www", "");
 
     Transaction tr;
@@ -90,7 +90,7 @@ TEST_F(TransactionTest, Allowed_methods) {
     allow_methods.insert("POST");
     allow_methods.insert("DELETE");
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, false,
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
                        "index.html", "", allow_methods, "/var/www", "");
 
     Transaction tr;
@@ -111,7 +111,7 @@ TEST_F(TransactionTest, client_max_body_size) {
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 1, false,
+        ServerLocation(8081, "webserv1", "/html", error_pages, 1, "off",
                        "index.html", "", allow_methods, "/var/www", "");
 
     Transaction tr;
@@ -133,7 +133,7 @@ TEST_F(TransactionTest, redirect) {
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
     ServerLocation sl = ServerLocation(
-        8081, "webserv1", "/html", error_pages, 4086, false, "index.html",
+        8081, "webserv1", "/html", error_pages, 4086, "off", "index.html",
         location_string, allow_methods, "/var/www", "");
 
     Transaction tr;
