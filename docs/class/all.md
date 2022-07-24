@@ -52,8 +52,6 @@ classDiagram
 
     ResponseBuilder --> HTTPResponse: use
 
-    HTTPResponse --> Socket :use
-
     class ConfigProcesser {
       +Exec() WebservConfig
     }
@@ -149,7 +147,7 @@ classDiagram
 
   class HTTPResponse {
     +HTTPResponse(int)
-    +Write(Socket)* void
+    +GetResponseString() String
   }
 
   class Transaction {
