@@ -42,6 +42,7 @@ ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
         this->server_locations_.begin();
     itr++;
     return &(itr->second);
+    // pathの最長のものから試していく。どれもマッチしない場合はデフォルト設定
 }
 
 std::vector<std::string> ServerLocationFacade::GetPorts() const {
