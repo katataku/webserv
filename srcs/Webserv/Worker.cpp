@@ -31,7 +31,7 @@ void Worker::Exec(Socket *socket) {
         if (request->IsReady()) {
             // TODO(ahayashi): port番号をソケットから取れるように
             ServerLocation *sl = this->server_location_facade_.Choose(
-                "port", request->host(), request->absolute_path());
+                socket->port(), request->host(), request->absolute_path());
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, sl);
             response->Write(*socket);
