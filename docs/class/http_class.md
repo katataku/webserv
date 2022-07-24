@@ -130,7 +130,7 @@ Worker {
 
                 HTTPResponse response = Transaction.Exec(request, sl);
 
-                Socket.send(HTTPResponse.GetResponseString());
+                Socket.Send(HTTPResponse.GetResponseString());
                 RequestFacade.Finish(socket_);
                 socket.should_close_socket = true;
             }
