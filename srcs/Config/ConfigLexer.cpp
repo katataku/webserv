@@ -18,10 +18,6 @@ static std::string MakeErrorMsg(const std::string& line) {
     return ss.str();
 }
 
-static bool IsDigit(const char c) { return std::isdigit(c); }
-static bool IsAlpha(const char c) { return std::isalpha(c); }
-static bool IsSpace(const char c) { return std::isspace(c); }
-
 static bool StartsWithValueCharacters(const std::string& s) {
     return IsValueChar(s[0]);
 }

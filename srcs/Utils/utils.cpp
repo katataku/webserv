@@ -1,5 +1,8 @@
 #include "utils.hpp"
 
+#include <cctype>
+#include <iostream>
+
 std::vector<std::string> Split(std::string const str, std::string const delim) {
     std::vector<std::string> strs;
     std::string::size_type pos = 0;
@@ -39,8 +42,12 @@ bool Expect(std::string* s, const std::string& keyword) {
     return false;
 }
 
+static bool IsDigit(const char c) { return std::isdigit(c) != 0; }
+static bool IsAlpha(const char c) { return std::isalpha(c) != 0; }
+static bool IsSpace(const char c) { return std::isspace(c) != 0; }
+
 std::string ConsumeSpace(const std::string& s) {
-    if (std::isspace(s[0]) == 1) {
+    if (IsSpace(s[0])) {
         return s.substr(1);
     }
     throw std::runtime_error("Failed to Consume. Expected space, but got " + s);
@@ -60,10 +67,10 @@ std::string SkipLine(const std::string& s) {
 
 // TODO(iyamada) ファイルパスとして扱うべき文字を追加
 bool IsPathChar(const char c) {
-    return c == '/' || c == '_' || c == '.' || std::isalpha(c) == 1;
+    return c == '/' || c == '_' || c == '.' || IsAlpha(c);
 }
 
-bool IsValueChar(const char c) { return IsPathChar(c) || std::isdigit(c) == 1; }
+bool IsValueChar(const char c) { return IsPathChar(c) || IsDigit(c); }
 
 std::string GetValueCharacters(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
@@ -89,7 +96,7 @@ std::string SkipString(const std::string& s, const std::string& kw) {
 
 std::string SkipSpace(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {
-        if (std::isspace(s[i]) != 0) {
+        if (!IsSpace(s[i])) {
             return s.substr(i);
         }
     }
