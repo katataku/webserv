@@ -152,4 +152,4 @@ int Socket::sock_fd() const { return this->sock_fd_; }
 
 void Socket::set_is_listening(bool cond) { this->is_listening_ = cond; }
 
-int Socket::port() const { return this->port_; }
+std::string Socket::port() const { return this->port_; }
