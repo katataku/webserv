@@ -1,1 +1,0 @@
-curl -s --include -H 'Expect: 100-continue' http://localhost:8081/

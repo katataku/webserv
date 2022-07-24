@@ -25,7 +25,7 @@ class IOMultiplexer {
     static const int kMaxNEvents = 10;
 
     Logging logging_;
-    std::vector<Socket> sockets_;
+    std::vector<Socket *> sockets_;
     int epollfd;
     std::set<int> listenfds;
     epoll_event ev;

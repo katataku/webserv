@@ -96,6 +96,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
     logging_.Debug("Exec starts");
     struct stat stat_buf;
+    logging_.Debug("request.absolute_path = [" + request.absolute_path() + "]");
     std::string alias_resolved_path = sl.ResolveAlias(request.absolute_path());
 
     logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");

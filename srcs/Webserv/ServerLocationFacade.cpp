@@ -3,8 +3,10 @@
 #include <map>
 
 #include "ServerLocationKey.hpp"
+#include "utils.hpp"
 
-ServerLocationFacade::ServerLocationFacade() {}
+ServerLocationFacade::ServerLocationFacade()
+    : logging_(Logging(__FUNCTION__)) {}
 
 ServerLocationFacade::ServerLocationFacade(
     std::map<ServerLocationKey, ServerLocation> server_locations)
@@ -24,13 +26,21 @@ ServerLocationFacade &ServerLocationFacade::operator=(
 
 ServerLocationFacade::~ServerLocationFacade() {}
 
+// TODO(takkatao): chooseの処理を実装する。
+// 現在は、2番目のSLを取得するようにする。(初めに出てくるLocationのSL)
 ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
                                              std::string path) {
     (void)port;
     (void)host;
     (void)path;
+
+    logging_.Debug("Choose start");
+    logging_.Debug("ServerLocation.size() = [" +
+                   numtostr<int>(this->server_locations_.size()) + "]");
+
     std::map<ServerLocationKey, ServerLocation>::iterator itr =
         this->server_locations_.begin();
+    itr++;
     return &(itr->second);
 }
 

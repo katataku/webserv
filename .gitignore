@@ -2,6 +2,7 @@ webserv
 !webserv/
 localhost
 
+log/
 .DS_Store
 **/build/*
 **/actual/*

@@ -55,6 +55,7 @@ class ServerLocation {
     std::string ResolveAlias(std::string request_uri) const;
 
  private:
+    Logging logging_;
     int port_;
     std::string host_;
     std::string path_;
