@@ -19,3 +19,79 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
     }
     return strs;
 }
+
+bool StartsWith(const std::string& s, const std::string& prefix) {
+    return s.find(prefix, 0) == 0;
+}
+
+std::string Consume(const std::string& s, const std::string& keyword) {
+    if (StartsWith(s, keyword)) {
+        return s.substr(keyword.size());
+    }
+    throw std::runtime_error("Failed to Consume " + s + " " + keyword);
+}
+
+bool Expect(std::string* s, const std::string& keyword) {
+    if (StartsWith(*s, keyword)) {
+        *s = Consume(*s, keyword);
+        return true;
+    }
+    return false;
+}
+
+std::string ConsumeSpace(const std::string& s) {
+    if (std::isspace(s[0]) == 1) {
+        return s.substr(1);
+    }
+    throw std::runtime_error("Failed to Consume. Expected space, but got " + s);
+}
+
+std::string ConsumeWithSpace(const std::string& s, const std::string& keyword) {
+    return ConsumeSpace(Consume(s, keyword));
+}
+
+std::string SkipLine(const std::string& s) {
+    std::string::size_type nl_at = s.find("\n");
+    if (nl_at == std::string::npos) {
+        return "";
+    }
+    return s.substr(nl_at + 1);
+}
+
+// TODO(iyamada) ファイルパスとして扱うべき文字を追加
+bool IsPathChar(const char c) {
+    return c == '/' || c == '_' || c == '.' || std::isalpha(c) == 1;
+}
+
+bool IsValueChar(const char c) { return IsPathChar(c) || std::isdigit(c) == 1; }
+
+std::string GetValueCharacters(const std::string& s) {
+    for (std::string::size_type i = 0; i < s.size(); ++i) {
+        if (!IsValueChar(s[i])) {
+            return s.substr(0, i);
+        }
+    }
+    throw std::runtime_error("Failed to GetValueCharacters");
+}
+
+std::string ConsumeValueCharacters(const std::string& s) {
+    return s.substr(GetValueCharacters(s).size());
+}
+
+std::string SkipString(const std::string& s, const std::string& kw) {
+    for (std::string::size_type i = 0; i < s.size(); ++i) {
+        if (StartsWith(s.substr(i), kw)) {
+            return s.substr(i + kw.size());
+        }
+    }
+    return "";
+}
+
+std::string SkipSpace(const std::string& s) {
+    for (std::string::size_type i = 0; i < s.size(); ++i) {
+        if (std::isspace(s[i]) != 0) {
+            return s.substr(i);
+        }
+    }
+    return "";
+}
