@@ -31,7 +31,7 @@ Socket &Socket::operator=(Socket const &other) {
     return *this;
 }
 
-Socket::~Socket() {}
+Socket::~Socket() { this->Close(); }
 
 void Socket::Send(std::string data) const {
     std::size_t data_size = data.size();
@@ -82,10 +82,6 @@ std::string Socket::Recv() const {
 }
 
 void Socket::Close() const {
-    if (shutdown(this->sock_fd_, SHUT_RDWR) == -1) {
-        throw std::runtime_error("Error: shutdown " +
-                                 std::string(strerror(errno)));
-    }
     if (close(this->sock_fd_) == -1) {
         throw std::runtime_error("Error: close " +
                                  std::string(strerror(errno)));
@@ -94,7 +90,7 @@ void Socket::Close() const {
     logging_.Debug("close sock_fd : [" + numtostr(this->sock_fd_) + "]");
 }
 
-Socket Socket::Accept() const {
+int Socket::Accept() const {
     sockaddr clientaddr;
     socklen_t addrlen = sizeof(sockaddr);
 
@@ -106,10 +102,10 @@ Socket Socket::Accept() const {
 
     this->logging_.Debug("Accept");
 
-    return Socket(new_socket, false);
+    return new_socket;
 }
 
-Socket Socket::OpenListeningSocket(const std::string &port) {
+Socket *Socket::OpenListeningSocket(const std::string &port) {
     addrinfo hints, *listp = NULL;
     bzero(&hints, sizeof(addrinfo));
     hints.ai_socktype = SOCK_STREAM;              // Connections only
@@ -143,7 +139,7 @@ Socket Socket::OpenListeningSocket(const std::string &port) {
         throw std::runtime_error("Failed to listen");
     }
 
-    return Socket(listenfd, true);  // return listen status socket
+    return new Socket(listenfd, true);  // return listen status socket
 }
 
 bool Socket::is_listening() const {
