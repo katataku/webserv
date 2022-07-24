@@ -41,4 +41,5 @@ HTTPRequest *RequestFacade::SelectRequest(Socket const &socket) {
 void RequestFacade::Finish(Socket *socket) {
     this->list_.erase(socket->sock_fd());
     delete socket;
+    socket = NULL;
 }
