@@ -14,7 +14,7 @@ classDiagram
         +vector~ServerContext~ contexts_
         +map~int, string~ error_pages
         +int client_max_body_size
-        +String autoindex
+        +string autoindex
         +string index_page
         +CreateServerLocations()
         +Parse(string)
@@ -24,7 +24,7 @@ classDiagram
         +vector~LocationContext~ contexts_
         +map~int, string~ error_pages
         +int client_max_body_size
-        +String autoindex
+        +string autoindex
         +string index_page
         +string redirect_url
         +string server_name
@@ -34,7 +34,7 @@ classDiagram
     class LocationContext {
         -map~int, string~ error_pages
         -int client_max_body_size
-        -String autoindex
+        -string autoindex
         -string index_page
         -string path
         -string redirect_url
@@ -72,7 +72,7 @@ classDiagram
         -string path
         -map~int, string~ error_pages
         -int client_max_body_size
-        -String autoindex
+        -string autoindex
         -string index_page
         -string redirect_url
         -set~string~ allow_methods
