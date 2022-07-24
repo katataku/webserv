@@ -49,7 +49,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
+        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "on",
                        "index.html", "", allow_methods, "/var/www", "");
 
     Transaction tr;
