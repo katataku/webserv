@@ -52,6 +52,7 @@ class ServerLocation {
     bool IsValidBodySize(int) const;
     bool IsRedirect() const;
     bool IsCGI(std::string path) const;
+    bool IsAutoIndexEnabled() const;
     std::string ResolveAlias(std::string request_uri) const;
 
  private:

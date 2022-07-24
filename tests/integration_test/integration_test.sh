@@ -123,8 +123,7 @@ echo ""
     do_test
 
     CONFIG_NO=autoindex_on.conf
-    # 簡易的に設定ファイルを切り替えて起動するように
-    docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv bash ./app/webserv ${CONFIG_PATH}${CONFIG_NO}
+    start_server_container
 
     REQUEST_NO=GET_directory
     do_test

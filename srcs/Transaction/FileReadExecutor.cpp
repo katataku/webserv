@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 
+#include "HTTPException.hpp"
 #include "ResponseBuilder.hpp"
 #include "ServerLocation.hpp"
 
@@ -102,10 +103,9 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");
 
     if (stat(alias_resolved_path.c_str(), &stat_buf) == -1) {
-        // TODO(takkatao): ファイルが存在しないときはここに入る。404を返す。
         logging_.Fatal("stat failed");
         logging_.Fatal(strerror(errno));
-        return NULL;
+        throw HTTPException(404);
     }
 
     if (S_ISREG(stat_buf.st_mode)) {
@@ -115,7 +115,12 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     }
     if (S_ISDIR(stat_buf.st_mode)) {
         logging_.Debug("URI indicate Directory.");
-        return ListDirectoryExec(request.absolute_path(), alias_resolved_path);
+        if (sl.IsAutoIndexEnabled()) {
+            return ListDirectoryExec(request.absolute_path(),
+                                     alias_resolved_path);
+        } else {
+            throw HTTPException(403);
+        }
     }
     logging_.Info("Function ends abnormally");
     return NULL;
