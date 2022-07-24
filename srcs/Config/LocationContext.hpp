@@ -14,7 +14,7 @@ class LocationContext {
 
     std::map<int, std::string> error_pages() const;
     int client_max_body_size() const;
-    bool auto_index() const;
+    std::string auto_index() const;
     std::string index_page() const;
     std::string path() const;
     std::string redirect_url() const;
@@ -23,7 +23,7 @@ class LocationContext {
     std::string cgi_extension() const;
 
     void set_client_max_body_size(int client_max_body_size);
-    void set_auto_index(bool auto_index);
+    void set_auto_index(std::string auto_index);
     void set_index_page(const std::string& index_page);
     void set_path(const std::string& path);
     void set_redirect_url(const std::string& redirect_url);
@@ -36,7 +36,7 @@ class LocationContext {
  private:
     std::map<int, std::string> error_pages_;
     int client_max_body_size_;
-    bool auto_index_;
+    std::string auto_index_;
     std::string index_page_;
     std::string path_;
     std::string redirect_url_;

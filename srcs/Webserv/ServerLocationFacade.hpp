@@ -23,6 +23,7 @@ class ServerLocationFacade {
     std::vector<std::string> GetPorts() const;
 
  private:
+    Logging logging_;
     std::map<ServerLocationKey, ServerLocation> server_locations_;
 };
 

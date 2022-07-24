@@ -216,11 +216,11 @@ TEST_F(DISABLED_CreateServerLocationTest, complex_test) {
     serv_contx1.PushLocationContext(locate_contx1);
     serv_contx1.PushLocationContext(locate_contx2);
     serv_contx2.set_port(81);
-    serv_contx2.set_auto_index(false);
+    serv_contx2.set_auto_index("off");
 
     conf.PushServerContext(serv_contx1);
     conf.PushServerContext(serv_contx2);
-    conf.set_auto_index(true);
+    conf.set_auto_index("on");
 
     std::map<ServerLocationKey, ServerLocation> sl_container =
         conf.CreateServerLocations();
@@ -232,20 +232,20 @@ TEST_F(DISABLED_CreateServerLocationTest, complex_test) {
     ServerLocation serv_sl1 = sl_container[serv_key1];
 
     ASSERT_EQ(serv_sl1.port(), 8080);
-    ASSERT_EQ(serv_sl1.auto_index(), true);
+    ASSERT_EQ(serv_sl1.auto_index(), "on");
 
     ServerLocationKey serv_key2("81", "", "");
     ServerLocation serv_sl2 = sl_container[serv_key2];
 
     ASSERT_EQ(serv_sl2.port(), 81);
-    ASSERT_EQ(serv_sl2.auto_index(), false);
+    ASSERT_EQ(serv_sl2.auto_index(), "off");
 
     // locationコンテキストのServerLocationをチェック
     ServerLocationKey locate_key1("8080", "", "/");
     ServerLocation locate_sl1 = sl_container[locate_key1];
 
     ASSERT_EQ(locate_sl1.port(), 8080);
-    ASSERT_EQ(locate_sl1.auto_index(), true);
+    ASSERT_EQ(locate_sl1.auto_index(), "on");
     ASSERT_EQ(locate_sl1.path(), "/");
     ASSERT_EQ(locate_sl1.alias(), "/var/www/html");
 
@@ -253,7 +253,7 @@ TEST_F(DISABLED_CreateServerLocationTest, complex_test) {
     ServerLocation locate_sl2 = sl_container[locate_key2];
 
     ASSERT_EQ(locate_sl2.port(), 8080);
-    ASSERT_EQ(locate_sl2.auto_index(), true);
+    ASSERT_EQ(locate_sl2.auto_index(), "on");
     ASSERT_EQ(locate_sl2.path(), "/hoge");
     ASSERT_EQ(locate_sl2.alias(), "/var/www/hoge");
 }

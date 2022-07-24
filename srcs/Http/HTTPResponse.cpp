@@ -122,8 +122,3 @@ std::string HTTPResponse::GetResponseString() const {
     }
     return oss.str();
 }
-
-void HTTPResponse::Write(Socket socket) {
-    std::string response_string = this->GetResponseString();
-    socket.Send(response_string);
-}

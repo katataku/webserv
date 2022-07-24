@@ -45,7 +45,7 @@ std::map<int, std::string> ServerContext::error_pages() const {
 int ServerContext::client_max_body_size() const {
     return this->client_max_body_size_;
 }
-bool ServerContext::auto_index() const { return this->auto_index_; }
+std::string ServerContext::auto_index() const { return this->auto_index_; }
 std::string ServerContext::index_page() const { return this->index_page_; }
 std::string ServerContext::redirect_url() const { return this->redirect_url_; }
 std::string ServerContext::server_name() const { return this->server_name_; }
@@ -54,7 +54,7 @@ int ServerContext::port() const { return this->port_; }
 void ServerContext::set_client_max_body_size(int client_max_body_size) {
     this->client_max_body_size_ = client_max_body_size;
 }
-void ServerContext::set_auto_index(bool auto_index) {
+void ServerContext::set_auto_index(std::string auto_index) {
     this->auto_index_ = auto_index;
 }
 void ServerContext::set_index_page(const std::string& index_page) {

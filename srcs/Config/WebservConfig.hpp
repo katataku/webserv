@@ -20,11 +20,11 @@ class WebservConfig {
     std::vector<ServerContext> contexts() const;
     std::map<int, std::string> error_pages() const;
     int client_max_body_size() const;
-    bool auto_index() const;
+    std::string auto_index() const;
     std::string index_page() const;
 
     void set_client_max_body_size(int client_max_body_size);
-    void set_auto_index(bool auto_index);
+    void set_auto_index(std::string auto_index);
     void set_index_page(std::string index_page);
 
     void PushServerContext(ServerContext context);
@@ -39,7 +39,7 @@ class WebservConfig {
     std::vector<ServerContext> contexts_;
     std::map<int, std::string> error_pages_;
     int client_max_body_size_;
-    bool auto_index_;
+    std::string auto_index_;
     std::string index_page_;
 };
 
