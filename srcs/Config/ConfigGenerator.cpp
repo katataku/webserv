@@ -143,13 +143,8 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsCgiExtensionDirective()) {
-            std::list<std::string> direciteve_vals = itr->directive_vals();
-            if (direciteve_vals.size() != 1) {
-                // TODO(iyamada) エラー処理
-                throw std::runtime_error(
-                    "Syntax Error: alias directive can only take one value");
-            }
-            locate.set_cgi_extension(direciteve_vals.back());
+            itr->ValidateSize(1);
+            locate.set_cgi_extension(itr->GetValue());
             continue;
         }
 

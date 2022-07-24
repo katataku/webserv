@@ -52,6 +52,8 @@ class Node {
 
     void ValidateAutoindexValue();
     std::string GetAutoindexValueWithValidate();
+    std::string GetValue();
+    void ValidateSize(std::size_t size);
 
  private:
     NodeKind kind_;

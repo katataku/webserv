@@ -91,6 +91,15 @@ std::string Node::GetAutoindexValueWithValidate() {
     return directive_val;
 }
 
+std::string Node::GetValue() { return this->directive_vals_.back(); }
+
+void Node::ValidateSize(std::size_t size) {
+    if (this->directive_vals_.size() != size) {
+        throw std::runtime_error(
+            "Syntax Error: autoindex directive can only take on/off");
+    }
+}
+
 static void WriteDirevtiveVals(std::ostream& out, std::list<std::string> vals) {
     for (std::list<std::string>::iterator v_itr = vals.begin();
          v_itr != vals.end(); ++v_itr) {
