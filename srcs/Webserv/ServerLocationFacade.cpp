@@ -55,12 +55,13 @@ ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
     // pathの最長のものから試していく。どれもマッチしない場合はデフォルト設定
     std::string::size_type pos = path.find_last_of("/");
 
-    for (; path != "" || pos == std::string::npos;) {
+    for (; path != "" && pos != std::string::npos;) {
         path = path.substr(0, pos + 1);
+        std::cout << "path: " << path << std::endl;
         if (server.find(path) != server.end()) {
             return server[path];
         }
-        path = path.substr(-1);
+        path = path.substr(0, path.size() - 1);
         pos = path.find_last_of("/");
     }
     return server[""];
