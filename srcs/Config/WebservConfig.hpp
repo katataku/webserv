@@ -8,7 +8,6 @@
 #include "Logging.hpp"
 #include "ServerContext.hpp"
 #include "ServerLocation.hpp"
-#include "ServerLocationKey.hpp"
 
 class WebservConfig {
  public:
