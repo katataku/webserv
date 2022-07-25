@@ -12,10 +12,7 @@ ServerLocationFacade::ServerLocationFacade(
     std::vector<ServerLocation> server_locations) {
     std::vector<ServerLocation>::iterator itr = server_locations.begin();
     for (; itr != server_locations.end(); ++itr) {
-        // portをstd::stringで持ったほうが良さそう
-        std::stringstream ss;
-        ss << itr->port();
-        ServerLocationKey key(ss.str(), itr->host());
+        ServerLocationKey key(numtostr<int>(itr->port()), itr->host());
         this->server_locations_[key][itr->path()] = *itr;
     }
 }

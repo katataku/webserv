@@ -18,7 +18,7 @@ TEST_F(ServerLocationFacadeTest, Parse) {
     std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
     ServerLocation* sl = facade.Choose("80", "", "/");
-    ASSERT_EQ("80", sl->port());
+    ASSERT_EQ(80, sl->port());
     ASSERT_EQ("", sl->host());
     ASSERT_EQ("/", sl->path());
     ASSERT_EQ("/app/sample_data/html", sl->alias());
