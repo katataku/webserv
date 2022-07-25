@@ -100,6 +100,7 @@ function start_server_container() {
 }
 
 #コンテナ直近化のために、冒頭に一度だけコンテナビルドを行う
+echo "Building docker container for test"
 ${COMMAND_MAKE_DC_BUILD} > /dev/null 2>&1
 
 echo "test case means : [config][request]"
@@ -117,6 +118,12 @@ echo ""
         do_test
 
     CONFIG_NO=autoindex_on.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=return_on.conf
     start_server_container
 
         REQUEST_NO=GET_directory
