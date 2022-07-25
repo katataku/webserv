@@ -111,7 +111,7 @@ TEST_F(ConfigParserTest, alias) {
 
 TEST_F(ConfigParserTest, redirect) {
     ConfigProcesser confproc(
-        "../../../test_data/config/webserv/ok/return.conf");
+        "../../../test_data/config/webserv/ok/return_on.conf");
     WebservConfig conf = confproc.Exec();
     std::vector<ServerContext> serv_contexts = conf.contexts();
     ServerContext serv_context = serv_contexts.at(0);
