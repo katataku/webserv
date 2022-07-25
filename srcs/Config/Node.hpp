@@ -53,12 +53,10 @@ class Node {
     void PushChildContext(Node node);
 
     void ValidateAutoindexValue();
-    std::string GetAutoindexValueWithValidate();
+    void ValidateReturnValue();
+
     std::string GetValue();
     void ValidateSize(std::size_t size);
-
-    void ValidateReturnValue();
-    std::string GetReturnValueWithValidate();
 
  private:
     NodeKind kind_;

@@ -37,7 +37,9 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAutoindexDirective()) {
-            conf.set_auto_index(itr->GetAutoindexValueWithValidate());
+            itr->ValidateSize(1);
+            itr->ValidateAutoindexValue();
+            conf.set_auto_index(itr->GetValue());
             continue;
         }
         // TODO(iyamada) エラー処理
@@ -75,13 +77,18 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             serv.set_port(itr->GetValue());
             continue;
         }
+
         if (itr->IsAutoindexDirective()) {
-            serv.set_auto_index(itr->GetAutoindexValueWithValidate());
+            itr->ValidateSize(1);
+            itr->ValidateAutoindexValue();
+            serv.set_auto_index(itr->GetValue());
             continue;
         }
 
         if (itr->IsReturnDirective()) {
-            serv.set_redirect_url(itr->GetReturnValueWithValidate());
+            itr->ValidateSize(1);
+            itr->ValidateReturnValue();
+            serv.set_redirect_url(itr->GetValue());
             continue;
         }
 
@@ -126,19 +133,22 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsAutoindexDirective()) {
-            locate.set_auto_index(itr->GetAutoindexValueWithValidate());
+            itr->ValidateSize(1);
+            itr->ValidateAutoindexValue();
+            locate.set_auto_index(itr->GetValue());
             continue;
         }
 
         if (itr->IsReturnDirective()) {
-            locate.set_redirect_url(itr->GetReturnValueWithValidate());
-
+            itr->ValidateSize(1);
+            itr->ValidateReturnValue();
+            locate.set_redirect_url(itr->GetValue());
             continue;
         }
+
         if (itr->IsCgiExtensionDirective()) {
             itr->ValidateSize(1);
             locate.set_cgi_extension(itr->GetValue());
-
             continue;
         }
 
