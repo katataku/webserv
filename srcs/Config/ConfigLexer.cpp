@@ -24,7 +24,11 @@ static bool IsAlpha(const char c) { return std::isalpha(c); }
 static bool IsPathChar(const char c) {
     return c == '/' || c == '_' || c == '.' || IsAlpha(c);
 }
-static bool IsValueChar(const char c) { return IsPathChar(c) || IsDigit(c); }
+// "http://hogehoge"の':'の文字を追加
+static bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
+static bool IsValueChar(const char c) {
+    return IsURIChar(c) || IsPathChar(c) || IsDigit(c);
+}
 static bool IsSpace(const char c) { return std::isspace(c); }
 
 static bool StartsWith(const std::string& s, const std::string& prefix) {
@@ -85,6 +89,7 @@ ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
     this->keywords_["listen"] = Token::SingleDirective;
     this->keywords_["alias"] = Token::SingleDirective;
     this->keywords_["autoindex"] = Token::SingleDirective;
+    this->keywords_["return"] = Token::SingleDirective;
     this->keywords_["{"] = Token::OpenBraceToken;
     this->keywords_["}"] = Token::CloseBraceToken;
     this->keywords_[";"] = Token::SemicolonToken;

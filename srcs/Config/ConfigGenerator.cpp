@@ -142,6 +142,11 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
             continue;
         }
 
+        if (itr->IsReturnDirective()) {
+            locate.set_redirect_url(itr->GetReturnValueWithValidate());
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
         throw std::runtime_error("[GenerateLocationContext]Unknown directive");
     }

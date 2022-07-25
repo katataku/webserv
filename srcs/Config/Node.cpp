@@ -60,6 +60,7 @@ bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
 bool Node::IsAutoindexDirective() {
     return kind_ == Node::AutoindexDirectiveNode;
 }
+bool Node::IsReturnDirective() { return kind_ == Node::ReturnDirectiveNode; }
 
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
@@ -84,6 +85,31 @@ void Node::ValidateAutoindexValue() {
 
 std::string Node::GetAutoindexValueWithValidate() {
     this->ValidateAutoindexValue();
+    std::string directive_val = this->directive_vals().back();
+    return directive_val;
+}
+
+void Node::ValidateReturnValue() {
+    if (this->IsReturnDirective()) {
+        std::list<std::string> direciteve_vals = this->directive_vals();
+        if (direciteve_vals.size() != 1) {
+            // TODO(takkatao) エラー処理
+            throw std::runtime_error(
+                "Syntax Error: return directive can only take one "
+                "value");
+        }
+        std::string directive_val = direciteve_vals.back();
+        // TODO(takkatao) valueの内容チェック
+        // if (directive_val != "on" && directive_val != "off") {
+        //     // TODO(takkatao) エラー処理
+        //     throw std::runtime_error(
+        //         "Syntax Error: autoindex directive can only take on/off");
+        // }
+    }
+}
+
+std::string Node::GetReturnValueWithValidate() {
+    this->ValidateReturnValue();
     std::string directive_val = this->directive_vals().back();
     return directive_val;
 }

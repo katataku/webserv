@@ -98,6 +98,8 @@ Node ConfigParser::single_directive() {
         node = Node::NewNode(Node::AliasDirectiveNode);
     } else if (Token::Expect(&this->token_, "autoindex")) {
         node = Node::NewNode(Node::AutoindexDirectiveNode);
+    } else if (Token::Expect(&this->token_, "return")) {
+        node = Node::NewNode(Node::ReturnDirectiveNode);
     }
 
     value(&node);
