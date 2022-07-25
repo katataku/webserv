@@ -19,6 +19,7 @@ SERVER_PORT = os.getenv('SERVER_PORT')
 SERVER_PROTOCOL = os.getenv('SERVER_PROTOCOL')
 SERVER_SOFTWARE = os.getenv('SERVER_SOFTWARE')
 SERVER_NAME = os.getenv('SERVER_NAME')
+REQUEST_METHOD = os.getenv('REQUEST_METHOD')
 
 
 def ptag(unformat: str) -> str:
@@ -54,6 +55,7 @@ print('    ' + ptag(f'SERVER_PORT       : {SERVER_PORT}'))
 print('    ' + ptag(f'SERVER_PROTOCOL   : {SERVER_PROTOCOL}'))
 print('    ' + ptag(f'SERVER_SOFTWARE   : {SERVER_SOFTWARE}'))
 print('    ' + ptag(f'SERVER_NAME       : {SERVER_NAME}'))
+print('    ' + ptag(f'REQUEST_METHOD    : {REQUEST_METHOD}'))
 
 for idx, arg in enumerate(sys.argv):
     print('    ' + ptag(f'ARGV[{idx}] : {arg}'))
