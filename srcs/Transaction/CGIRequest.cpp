@@ -32,7 +32,8 @@ CGIRequest::CGIRequest() : logging_(Logging(__FUNCTION__)) {}
 
 CGIRequest::CGIRequest(CGIRequest const &other) { *this = other; }
 
-CGIRequest::CGIRequest(HTTPRequest const &http, ServerLocation const &sl) {
+CGIRequest::CGIRequest(HTTPRequest const &http, ServerLocation const &sl)
+    : body_(http.request_body()) {
     PreparePath(http, sl);
     PrepareArgs();
     PrepareEnvs(http);
