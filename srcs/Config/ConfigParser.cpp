@@ -93,12 +93,12 @@ Node ConfigParser::single_directive() {
 
     Node node;
 
-<<<<<<< HEAD
     std::map<std::string, Node::NodeKind> token_node_map;
     token_node_map["listen"] = Node::ListenDirectiveNode;
     token_node_map["alias"] = Node::AliasDirectiveNode;
     token_node_map["autoindex"] = Node::AutoindexDirectiveNode;
     token_node_map["return"] = Node::ReturnDirectiveNode;
+    token_node_map["cgi_extension"] = Node::CgiExtDirectiveNode;
 
     std::map<std::string, Node::NodeKind>::iterator itr;
     for (itr = token_node_map.begin(); itr != token_node_map.end(); ++itr) {
@@ -106,16 +106,6 @@ Node ConfigParser::single_directive() {
             node = Node::NewNode((*itr).second);
             break;
         }
-=======
-    if (Token::Expect(&this->token_, "listen")) {
-        node = Node::NewNode(Node::ListenDirectiveNode);
-    } else if (Token::Expect(&this->token_, "alias")) {
-        node = Node::NewNode(Node::AliasDirectiveNode);
-    } else if (Token::Expect(&this->token_, "autoindex")) {
-        node = Node::NewNode(Node::AutoindexDirectiveNode);
-    } else if (Token::Expect(&this->token_, "cgi_extension")) {
-        node = Node::NewNode(Node::CgiExtDirectiveNode);
->>>>>>> main
     }
 
     value(&node);

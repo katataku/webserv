@@ -16,11 +16,8 @@ class Node {
         ListenDirectiveNode,
         AliasDirectiveNode,
         AutoindexDirectiveNode,
-<<<<<<< HEAD
-        ReturnDirectiveNode
-=======
+        ReturnDirectiveNode,
         CgiExtDirectiveNode
->>>>>>> main
     };
 
     Node();

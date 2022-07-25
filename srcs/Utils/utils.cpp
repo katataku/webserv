@@ -69,13 +69,11 @@ std::string SkipLine(const std::string& s) {
 bool IsPathChar(const char c) {
     return c == '/' || c == '_' || c == '.' || IsAlpha(c);
 }
-static bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
+bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
 
-static bool IsValueChar(const char c) {
+bool IsValueChar(const char c) {
     return IsURIChar(c) || IsPathChar(c) || IsDigit(c);
 }
-
-bool IsValueChar(const char c) { return IsPathChar(c) || IsDigit(c); }
 
 std::string GetValueCharacters(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {

@@ -60,13 +60,12 @@ bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
 bool Node::IsAutoindexDirective() {
     return kind_ == Node::AutoindexDirectiveNode;
 }
-<<<<<<< HEAD
+
 bool Node::IsReturnDirective() { return kind_ == Node::ReturnDirectiveNode; }
-=======
+
 bool Node::IsCgiExtensionDirective() {
     return kind_ == Node::CgiExtDirectiveNode;
 }
->>>>>>> main
 
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
