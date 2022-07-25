@@ -28,15 +28,13 @@ TEST_F(CreateServerLocationTest, single_ServerLocation) {
     serv_contx.set_port(8080);
     conf.PushServerContext(serv_contx);
 
-    std::map<ServerLocationKey, ServerLocation> sl_container =
-        conf.CreateServerLocations();
+    std::vector<ServerLocation> sl_container = conf.CreateServerLocations();
 
     ASSERT_EQ(sl_container.size(), 1);
 
-    std::map<ServerLocationKey, ServerLocation>::iterator itr =
-        sl_container.begin();
+    std::vector<ServerLocation>::iterator itr = sl_container.begin();
 
-    ASSERT_EQ(itr->second.port(), 8080);
+    ASSERT_EQ(itr->port(), 8080);
 }
 
 TEST_F(CreateServerLocationTest, two_ServerLocations) {
@@ -60,24 +58,18 @@ TEST_F(CreateServerLocationTest, two_ServerLocations) {
 
     conf.PushServerContext(serv_contx);
 
-    std::map<ServerLocationKey, ServerLocation> sl_container =
-        conf.CreateServerLocations();
+    std::vector<ServerLocation> sl_container = conf.CreateServerLocations();
 
     ASSERT_EQ(sl_container.size(), 2);
 
-    // serverコンテキストのServerLocationをチェック
-    ServerLocationKey serv_key("8080", "", "");
-    ServerLocation serv_sl = sl_container[serv_key];
+    ServerLocation sl = sl_container.at(0);
 
-    ASSERT_EQ(serv_sl.port(), 8080);
+    ASSERT_EQ(sl.port(), 8080);
+    ASSERT_EQ(sl.path(), "/");
+    ASSERT_EQ(sl.alias(), "/var/www/html");
 
-    // locationコンテキストのServerLocationをチェック
-    ServerLocationKey locate_key("8080", "", "/");
-    ServerLocation locate_sl = sl_container[locate_key];
-
-    ASSERT_EQ(locate_sl.port(), 8080);
-    ASSERT_EQ(locate_sl.path(), "/");
-    ASSERT_EQ(locate_sl.alias(), "/var/www/html");
+    sl = sl_container.at(1);
+    ASSERT_EQ(sl.port(), 8080);
 }
 
 TEST_F(CreateServerLocationTest, two_server_contexts) {
@@ -99,22 +91,15 @@ TEST_F(CreateServerLocationTest, two_server_contexts) {
     conf.PushServerContext(serv_contx1);
     conf.PushServerContext(serv_contx2);
 
-    std::map<ServerLocationKey, ServerLocation> sl_container =
-        conf.CreateServerLocations();
+    std::vector<ServerLocation> sl_container = conf.CreateServerLocations();
 
     ASSERT_EQ(sl_container.size(), 2);
 
-    // serverコンテキストのServerLocationをチェック
-    ServerLocationKey serv_key("8080", "", "");
-    ServerLocation serv_sl = sl_container[serv_key];
+    ServerLocation sl = sl_container.at(0);
+    ASSERT_EQ(sl.port(), 8080);
 
-    ASSERT_EQ(serv_sl.port(), 8080);
-
-    // locationコンテキストのServerLocationをチェック
-    ServerLocationKey locate_key("8081", "", "");
-    ServerLocation locate_sl = sl_container[locate_key];
-
-    ASSERT_EQ(locate_sl.port(), 8081);
+    sl = sl_container.at(1);
+    ASSERT_EQ(sl.port(), 8081);
 }
 
 TEST_F(CreateServerLocationTest, two_location_contexts) {
@@ -145,31 +130,27 @@ TEST_F(CreateServerLocationTest, two_location_contexts) {
 
     conf.PushServerContext(serv_contx);
 
-    std::map<ServerLocationKey, ServerLocation> sl_container =
-        conf.CreateServerLocations();
+    std::vector<ServerLocation> sl_container = conf.CreateServerLocations();
 
     ASSERT_EQ(sl_container.size(), 3);
 
-    // serverコンテキストのServerLocationをチェック
-    ServerLocationKey serv_key("8080", "", "");
-    ServerLocation serv_sl = sl_container[serv_key];
+    ServerLocation sl = sl_container.at(0);
 
-    ASSERT_EQ(serv_sl.port(), 8080);
+    ASSERT_EQ(sl.port(), 8080);
+    ASSERT_EQ(sl.path(), "/");
+    ASSERT_EQ(sl.alias(), "/var/www/html");
 
-    // locationコンテキストのServerLocationをチェック
-    ServerLocationKey locate_key1("8080", "", "/");
-    ServerLocation locate_sl1 = sl_container[locate_key1];
+    sl = sl_container.at(1);
 
-    ASSERT_EQ(locate_sl1.port(), 8080);
-    ASSERT_EQ(locate_sl1.path(), "/");
-    ASSERT_EQ(locate_sl1.alias(), "/var/www/html");
+    ASSERT_EQ(sl.port(), 8080);
+    ASSERT_EQ(sl.path(), "/hoge");
+    ASSERT_EQ(sl.alias(), "/var/www/hoge");
 
-    ServerLocationKey locate_key2("8080", "", "/hoge");
-    ServerLocation locate_sl2 = sl_container[locate_key2];
+    sl = sl_container.at(2);
 
-    ASSERT_EQ(locate_sl2.port(), 8080);
-    ASSERT_EQ(locate_sl2.path(), "/hoge");
-    ASSERT_EQ(locate_sl2.alias(), "/var/www/hoge");
+    ASSERT_EQ(sl.port(), 8080);
+    ASSERT_EQ(sl.path(), "");
+    ASSERT_EQ(sl.alias(), "");
 }
 
 class DISABLED_CreateServerLocationTest : public ::testing::Test {
@@ -222,35 +203,30 @@ TEST_F(DISABLED_CreateServerLocationTest, complex_test) {
     conf.PushServerContext(serv_contx2);
     conf.set_auto_index("on");
 
-    std::map<ServerLocationKey, ServerLocation> sl_container =
-        conf.CreateServerLocations();
+    std::vector<ServerLocation> sl_container = conf.CreateServerLocations();
 
     ASSERT_EQ(sl_container.size(), 4);
 
     // serverコンテキストのServerLocationをチェック
-    ServerLocationKey serv_key1("8080", "", "");
-    ServerLocation serv_sl1 = sl_container[serv_key1];
+    ServerLocation serv_sl1 = sl_container.at(0);
 
     ASSERT_EQ(serv_sl1.port(), 8080);
     ASSERT_EQ(serv_sl1.auto_index(), "on");
 
-    ServerLocationKey serv_key2("81", "", "");
-    ServerLocation serv_sl2 = sl_container[serv_key2];
+    ServerLocation serv_sl2 = sl_container.at(1);
 
     ASSERT_EQ(serv_sl2.port(), 81);
     ASSERT_EQ(serv_sl2.auto_index(), "off");
 
     // locationコンテキストのServerLocationをチェック
-    ServerLocationKey locate_key1("8080", "", "/");
-    ServerLocation locate_sl1 = sl_container[locate_key1];
+    ServerLocation locate_sl1 = sl_container.at(2);
 
     ASSERT_EQ(locate_sl1.port(), 8080);
     ASSERT_EQ(locate_sl1.auto_index(), "on");
     ASSERT_EQ(locate_sl1.path(), "/");
     ASSERT_EQ(locate_sl1.alias(), "/var/www/html");
 
-    ServerLocationKey locate_key2("8080", "", "/hoge");
-    ServerLocation locate_sl2 = sl_container[locate_key2];
+    ServerLocation locate_sl2 = sl_container.at(3);
 
     ASSERT_EQ(locate_sl2.port(), 8080);
     ASSERT_EQ(locate_sl2.auto_index(), "on");
