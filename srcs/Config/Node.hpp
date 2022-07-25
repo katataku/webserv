@@ -16,6 +16,7 @@ class Node {
         ListenDirectiveNode,
         AliasDirectiveNode,
         AutoindexDirectiveNode,
+        ReturnDirectiveNode,
         CgiExtDirectiveNode
     };
 
@@ -43,6 +44,7 @@ class Node {
     bool IsListenDirective();
     bool IsAliasDirective();
     bool IsAutoindexDirective();
+    bool IsReturnDirective();
     bool IsCgiExtensionDirective();
 
     // TODO(iyamada)
@@ -51,7 +53,8 @@ class Node {
     void PushChildContext(Node node);
 
     void ValidateAutoindexValue();
-    std::string GetAutoindexValueWithValidate();
+    void ValidateReturnValue();
+
     std::string GetValue();
     void ValidateSize(std::size_t size);
 

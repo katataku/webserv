@@ -30,6 +30,7 @@ ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
     this->keywords_["listen"] = Token::SingleDirective;
     this->keywords_["alias"] = Token::SingleDirective;
     this->keywords_["autoindex"] = Token::SingleDirective;
+    this->keywords_["return"] = Token::SingleDirective;
     this->keywords_["cgi_extension"] = Token::SingleDirective;
     this->keywords_["{"] = Token::OpenBraceToken;
     this->keywords_["}"] = Token::CloseBraceToken;

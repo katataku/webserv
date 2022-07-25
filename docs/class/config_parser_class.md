@@ -89,6 +89,7 @@ classDiagram
 | ListenDirectiveNode    | "listen"ディレクティブ        |
 | AliasDirectiveNode     | "alias"ディレクティブ         |
 | AutoindexDirectiveNode | "autoindex"ディレクティブ     |
+| ReturnDirectiveNode    | "return"ディレクティブ        |
 | CgiExtDirectiveNode    | "cgi_extension"ディレクティブ |
 
 ## Configファイルの文法
@@ -99,8 +100,10 @@ classDiagram
 config             ::= ( block_directive | single_directive )*
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive )* "}"
 location_directive ::= "location" value "{" ( single_directive )* "}"
-single_directive   ::= ( "listen" | "alias" | "autoindex" | "cgi_extension" ) value ";"
-value              ::= (英数字 | ".")+
+single_directive   ::= ( "listen" | "alias" | "autoindex" | "return" | "cgi_extension" ) value ";"
+value              ::= (英数字 | path_char | URIChar)+
+path_char          ::= ( '/' | '_' | '.')
+URIChar            ::= ( ':' )
 ```
 
 - メタ構文の意味

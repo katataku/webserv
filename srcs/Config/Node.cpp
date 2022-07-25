@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "utils.hpp"
+
 Node::Node() : kind_(Unknown) {}
 
 Node::Node(NodeKind kind) : kind_(kind) {}
@@ -60,6 +62,9 @@ bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
 bool Node::IsAutoindexDirective() {
     return kind_ == Node::AutoindexDirectiveNode;
 }
+
+bool Node::IsReturnDirective() { return kind_ == Node::ReturnDirectiveNode; }
+
 bool Node::IsCgiExtensionDirective() {
     return kind_ == Node::CgiExtDirectiveNode;
 }
@@ -69,34 +74,32 @@ void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 
 void Node::ValidateAutoindexValue() {
     if (this->IsAutoindexDirective()) {
-        std::list<std::string> direciteve_vals = this->directive_vals();
-        if (direciteve_vals.size() != 1) {
-            // TODO(takkatao) エラー処理
-            throw std::runtime_error(
-                "Syntax Error: autoindex directive can only take one "
-                "value");
-        }
-        std::string directive_val = direciteve_vals.back();
+        std::string directive_val = this->GetValue();
         if (directive_val != "on" && directive_val != "off") {
-            // TODO(takkatao) エラー処理
             throw std::runtime_error(
                 "Syntax Error: autoindex directive can only take on/off");
         }
     }
 }
 
-std::string Node::GetAutoindexValueWithValidate() {
-    this->ValidateAutoindexValue();
-    std::string directive_val = this->directive_vals().back();
-    return directive_val;
+void Node::ValidateReturnValue() {
+    if (this->IsReturnDirective()) {
+        std::string directive_val = this->GetValue();
+        if (!StartsWith(directive_val, "http://") &&
+            !StartsWith(directive_val, "https://")) {
+            throw std::runtime_error(
+                "Syntax Error: Return directive can only take http://... or "
+                "https://...");
+        }
+    }
 }
 
 std::string Node::GetValue() { return this->directive_vals_.back(); }
 
 void Node::ValidateSize(std::size_t size) {
     if (this->directive_vals_.size() != size) {
-        throw std::runtime_error(
-            "Syntax Error: autoindex directive can only take on/off");
+        throw std::runtime_error("Syntax Error: directive can only take " +
+                                 numtostr(size) + " derective");
     }
 }
 
