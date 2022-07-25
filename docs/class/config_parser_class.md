@@ -81,15 +81,16 @@ classDiagram
 
 ## NodeKindの種類
 
-| kind名                  | 説明                 |
-| ---------------------- | ------------------ |
-| HttpContextNode        | "http"コンテキスト       |
-| ServerContextNode      | "server"コンテキスト     |
-| LocationContextNode    | "location"コンテキスト   |
-| ListenDirectiveNode    | "listen"ディレクティブ    |
-| AliasDirectiveNode     | "alias"ディレクティブ     |
-| AutoindexDirectiveNode | "autoindex"ディレクティブ |
-| ReturnDirectiveNode    | "return"ディレクティブ    |
+| kind名                  | 説明                     |
+| ---------------------- | ---------------------- |
+| HttpContextNode        | "http"コンテキスト           |
+| ServerContextNode      | "server"コンテキスト         |
+| LocationContextNode    | "location"コンテキスト       |
+| ListenDirectiveNode    | "listen"ディレクティブ        |
+| AliasDirectiveNode     | "alias"ディレクティブ         |
+| AutoindexDirectiveNode | "autoindex"ディレクティブ     |
+| ReturnDirectiveNode    | "return"ディレクティブ        |
+| CgiExtDirectiveNode    | "cgi_extension"ディレクティブ |
 
 ## Configファイルの文法
 
@@ -99,7 +100,7 @@ classDiagram
 config             ::= ( block_directive | single_directive )*
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive )* "}"
 location_directive ::= "location" value "{" ( single_directive )* "}"
-single_directive   ::= ( "listen" | "alias" | "autoindex" | "return" ) value ";"
+single_directive   ::= ( "listen" | "alias" | "autoindex" | "return" | "cgi_extension" ) value ";"
 value              ::= (英数字 | path_char | URIChar)+
 path_char          ::= ( '/' | '_' | '.')
 URIChar            ::= ( ':' )

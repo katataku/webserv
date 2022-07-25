@@ -71,13 +71,8 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsListenDirective()) {
-            std::list<std::string> direciteve_vals = itr->directive_vals();
-            if (direciteve_vals.size() != 1) {
-                // TODO(iyamada) エラー処理
-                throw std::runtime_error(
-                    "Syntax Error: listen directive can only take one value");
-            }
-            serv.set_port(direciteve_vals.back());
+            itr->ValidateSize(1);
+            serv.set_port(itr->GetValue());
             continue;
         }
         if (itr->IsAutoindexDirective()) {
@@ -117,29 +112,16 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         throw std::runtime_error("Should be location context");
     }
 
-    // locationはvalueを一つだけ持つ
-    std::list<std::string> vals = node.directive_vals();
-    if (vals.size() != 1) {
-        // TODO(iyamada)
-        // 文法エラーかはわからない。でもどういうエラーが起きたかを出力したい
-        throw std::runtime_error(
-            "Syntax Error: location directive can only take one value");
-    }
-    // TODO(iyamada) URIのバリデーションする？
-    locate.set_path(vals.back());
+    // locationディレクティブはpathを持つ
+    node.ValidateSize(1);
+    locate.set_path(node.GetValue());
 
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAliasDirective()) {
-            std::list<std::string> direciteve_vals = itr->directive_vals();
-            if (direciteve_vals.size() != 1) {
-                // TODO(iyamada) エラー処理
-                throw std::runtime_error(
-                    "Syntax Error: alias directive can only take one value");
-            }
-            // TODO(iyamada) aliasのバリデーションする？
-            locate.set_alias(direciteve_vals.back());
+            itr->ValidateSize(1);
+            locate.set_alias(itr->GetValue());
             continue;
         }
 
@@ -150,6 +132,13 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
 
         if (itr->IsReturnDirective()) {
             locate.set_redirect_url(itr->GetReturnValueWithValidate());
+
+            continue;
+        }
+        if (itr->IsCgiExtensionDirective()) {
+            itr->ValidateSize(1);
+            locate.set_cgi_extension(itr->GetValue());
+
             continue;
         }
 

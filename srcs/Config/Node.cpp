@@ -60,7 +60,13 @@ bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
 bool Node::IsAutoindexDirective() {
     return kind_ == Node::AutoindexDirectiveNode;
 }
+<<<<<<< HEAD
 bool Node::IsReturnDirective() { return kind_ == Node::ReturnDirectiveNode; }
+=======
+bool Node::IsCgiExtensionDirective() {
+    return kind_ == Node::CgiExtDirectiveNode;
+}
+>>>>>>> main
 
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
@@ -112,6 +118,14 @@ std::string Node::GetReturnValueWithValidate() {
     this->ValidateReturnValue();
     std::string directive_val = this->directive_vals().back();
     return directive_val;
+}
+std::string Node::GetValue() { return this->directive_vals_.back(); }
+
+void Node::ValidateSize(std::size_t size) {
+    if (this->directive_vals_.size() != size) {
+        throw std::runtime_error(
+            "Syntax Error: autoindex directive can only take on/off");
+    }
 }
 
 static void WriteDirevtiveVals(std::ostream& out, std::list<std::string> vals) {
