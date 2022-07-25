@@ -5,7 +5,12 @@
 
 class ServerLocationKey {
  public:
+    ServerLocationKey();
     ServerLocationKey(std::string port, std::string host);
+
+    ServerLocationKey(ServerLocationKey const &other);
+    ServerLocationKey &operator=(ServerLocationKey const &other);
+    ~ServerLocationKey();
 
     bool operator<(const ServerLocationKey &rhs) const;
 

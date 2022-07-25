@@ -30,10 +30,10 @@ void Worker::Exec(Socket **socket_ptr) {
         std::string str = socket->Recv();
         request->Parse(str);
         if (request->IsReady()) {
-            ServerLocation *sl = this->server_location_facade_.Choose(
+            ServerLocation sl = this->server_location_facade_.Choose(
                 socket->port(), request->host(), request->absolute_path());
             Transaction transaction;
-            HTTPResponse *response = transaction.Exec(request, sl);
+            HTTPResponse *response = transaction.Exec(request, &sl);
             socket->Send(response->GetResponseString());
             this->request_facade_->Finish(socket_ptr);
         }

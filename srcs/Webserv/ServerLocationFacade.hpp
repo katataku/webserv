@@ -17,14 +17,14 @@ class ServerLocationFacade {
     ServerLocationFacade &operator=(ServerLocationFacade const &other);
     ~ServerLocationFacade();
 
-    ServerLocation *Choose(std::string port, std::string host,
-                           std::string path);
+    ServerLocation Choose(std::string port, std::string host, std::string path);
     std::vector<std::string> GetPorts() const;
 
  private:
     Logging logging_;
     std::map<ServerLocationKey, std::map<std::string, ServerLocation> >
         server_locations_;
+    std::map<std::string, ServerLocationKey> default_server_keys_;
 };
 
 #endif  // SRCS_WEBSERV_SERVERLOCATIONFACADE_HPP_

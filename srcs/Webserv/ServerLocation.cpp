@@ -146,11 +146,15 @@ bool ServerLocation::IsAutoIndexEnabled() const {
 
 std::ostream &operator<<(std::ostream &ost, const ServerLocation &rhs) {
     ost << "[ServerLocation] ";
-    ost << ", port: ";
+    ost << " port: ";
     ost << rhs.port();
     ost << ", host: ";
     ost << rhs.host();
     ost << ", path: ";
     ost << rhs.path();
+    ost << ", autoindex: ";
+    ost << rhs.auto_index();
+    ost << ", alias: ";
+    ost << rhs.alias();
     return (ost);
 }
