@@ -129,6 +129,7 @@ classDiagram
     +IsRedirect()* bool
     +IsCGI(path)* bool
     +ResolveAlias(path)* string
+    +IsAutoIndexEnabled() bool
   }
 
   class RequestFacade {

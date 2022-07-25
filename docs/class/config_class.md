@@ -81,7 +81,8 @@ classDiagram
         -string cgi_extension
         +IsRedirect() bool
         +IsCGI(string path) bool
-        +ResolveAlias(string path_info) string;
+        +ResolveAlias(string path_info) string
+        +IsAutoIndexEnabled() bool
     }
 ```
 
