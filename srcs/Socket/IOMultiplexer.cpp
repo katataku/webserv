@@ -103,4 +103,7 @@ void IOMultiplexer::CreateListenerSocket(std::string port) {
         std::pair<int, std::string>(new_socket->sock_fd(), new_socket->port()));
 }
 
-void IOMultiplexer::CloseFd(int fd) { this->fd_port_map_.erase(fd); }
+void IOMultiplexer::CloseFd(int fd) {
+    this->logging_.Debug("CloseFd(" + numtostr(fd) + ")");
+    this->fd_port_map_.erase(fd);
+}

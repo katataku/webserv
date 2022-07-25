@@ -20,9 +20,10 @@ Worker &Worker::operator=(Worker const &other) {
 
 Worker::~Worker() {}
 
-void Worker::Exec(Socket *socket) {
+void Worker::Exec(Socket **socket_ptr) {
     this->logging_.Debug("start Exec");
 
+    Socket *socket = *socket_ptr;
     this->request_facade_ = RequestFacade::GetInstance();
     HTTPRequest *request = this->request_facade_->SelectRequest(*socket);
     try {
@@ -34,7 +35,7 @@ void Worker::Exec(Socket *socket) {
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, sl);
             socket->Send(response->GetResponseString());
-            this->request_facade_->Finish(socket);
+            this->request_facade_->Finish(socket_ptr);
         }
     } catch (std::exception &e) {
         this->logging_.Debug(e.what());
