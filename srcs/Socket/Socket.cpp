@@ -14,9 +14,10 @@
 Socket::Socket()
     : sock_fd_(-1), is_listening_(false), logging_(Logging(__FUNCTION__)) {}
 
-Socket::Socket(int sock_fd, bool is_listening)
+Socket::Socket(int sock_fd, bool is_listening, std::string port)
     : sock_fd_(sock_fd),
       is_listening_(is_listening),
+      port_(port),
       logging_(Logging(__FUNCTION__)) {}
 
 Socket::Socket(Socket const &other) : logging_(Logging(__FUNCTION__)) {
@@ -139,7 +140,7 @@ Socket *Socket::OpenListeningSocket(const std::string &port) {
         throw std::runtime_error("Failed to listen");
     }
 
-    return new Socket(listenfd, true);  // return listen status socket
+    return new Socket(listenfd, true, port);  // return listen status socket
 }
 
 bool Socket::is_listening() const {
@@ -150,3 +151,5 @@ bool Socket::is_listening() const {
 int Socket::sock_fd() const { return this->sock_fd_; }
 
 void Socket::set_is_listening(bool cond) { this->is_listening_ = cond; }
+
+std::string Socket::port() const { return this->port_; }

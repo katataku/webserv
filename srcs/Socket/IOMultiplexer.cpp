@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <utility>
+
+#include "utils.hpp"
 IOMultiplexer::IOMultiplexer() : logging_(Logging(__FUNCTION__)) {}
 
 IOMultiplexer::IOMultiplexer(IOMultiplexer const &other) { *this = other; }
@@ -43,6 +46,8 @@ void IOMultiplexer::Init(std::vector<std::string> ports) {
                                      std::string(strerror(errno)));
         }
     }
+    this->logging_.Debug("Init listenfds.size(): [" +
+                         numtostr(listenfds.size()) + "]");
     this->logging_.Debug("Init end");
 }
 
@@ -57,11 +62,12 @@ std::vector<Socket *> IOMultiplexer::Wait() {
 
     for (int i = 0; i < nready; ++i) {
         std::set<int>::iterator itr = listenfds.find(events[i].data.fd);
+        std::string port = this->fd_port_map_[this->events[i].data.fd];
 
         if (itr != listenfds.end()) {  // Find listen status socket
-            sockets.push_back(new Socket(this->events[i].data.fd, true));
+            sockets.push_back(new Socket(this->events[i].data.fd, true, port));
         } else {
-            sockets.push_back(new Socket(this->events[i].data.fd, false));
+            sockets.push_back(new Socket(this->events[i].data.fd, false, port));
         }
     }
 
@@ -85,9 +91,19 @@ void IOMultiplexer::Accept(Socket const &socket) {
                                  std::string(strerror(errno)));
     }
 
+    this->fd_port_map_.insert(
+        std::pair<int, std::string>(conn_fd, socket.port()));
     this->logging_.Debug("Accept");
 }
 
 void IOMultiplexer::CreateListenerSocket(std::string port) {
-    this->sockets_.push_back(Socket::OpenListeningSocket(port));
+    Socket *new_socket = Socket::OpenListeningSocket(port);
+    this->sockets_.push_back(new_socket);
+    this->fd_port_map_.insert(
+        std::pair<int, std::string>(new_socket->sock_fd(), new_socket->port()));
+}
+
+void IOMultiplexer::CloseFd(int fd) {
+    this->logging_.Debug("CloseFd(" + numtostr(fd) + ")");
+    this->fd_port_map_.erase(fd);
 }

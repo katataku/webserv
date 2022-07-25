@@ -20,22 +20,22 @@ Worker &Worker::operator=(Worker const &other) {
 
 Worker::~Worker() {}
 
-void Worker::Exec(Socket *socket) {
+void Worker::Exec(Socket **socket_ptr) {
     this->logging_.Debug("start Exec");
 
+    Socket *socket = *socket_ptr;
     this->request_facade_ = RequestFacade::GetInstance();
     HTTPRequest *request = this->request_facade_->SelectRequest(*socket);
     try {
         std::string str = socket->Recv();
         request->Parse(str);
         if (request->IsReady()) {
-            // TODO(ahayashi): port番号をソケットから取れるように
             ServerLocation *sl = this->server_location_facade_.Choose(
-                "port", request->host(), request->absolute_path());
+                socket->port(), request->host(), request->absolute_path());
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, sl);
             socket->Send(response->GetResponseString());
-            this->request_facade_->Finish(socket);
+            this->request_facade_->Finish(socket_ptr);
         }
     } catch (std::exception &e) {
         this->logging_.Debug(e.what());

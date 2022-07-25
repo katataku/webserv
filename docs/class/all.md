@@ -112,6 +112,7 @@ classDiagram
     +Init()* void
     +Wait()* Socket[]
     +Accept(Socket)* void
+    +Finish(Socket) void
   }
 
   class Worker {

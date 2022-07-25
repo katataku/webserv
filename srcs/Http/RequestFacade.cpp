@@ -38,7 +38,13 @@ HTTPRequest *RequestFacade::SelectRequest(Socket const &socket) {
     return this->list_.at(socket_fd);
 }
 
-void RequestFacade::Finish(Socket *socket) {
-    this->list_.erase(socket->sock_fd());
-    delete socket;
+void RequestFacade::Finish(Socket **socket) {
+    this->logging_.Debug("Finish start");
+    this->logging_.Debug("Finish socket_fd:[" + numtostr((*socket)->sock_fd()) +
+                         "]");
+
+    this->list_.erase((*socket)->sock_fd());
+    delete *socket;
+    *socket = NULL;
+    this->logging_.Debug("Finish start");
 }

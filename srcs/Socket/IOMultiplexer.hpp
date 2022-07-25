@@ -3,6 +3,7 @@
 
 #include <sys/epoll.h>
 
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -20,6 +21,7 @@ class IOMultiplexer {
     void Init(std::vector<std::string> ports);
     std::vector<Socket *> Wait();
     void Accept(Socket const &socket);
+    void CloseFd(int);
 
  private:
     static const int kMaxNEvents = 10;
@@ -30,6 +32,7 @@ class IOMultiplexer {
     std::set<int> listenfds;
     epoll_event ev;
     epoll_event events[kMaxNEvents];
+    std::map<int, std::string> fd_port_map_;
 
     void CreateListenerSocket(std::string port);
 };

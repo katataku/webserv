@@ -35,8 +35,10 @@ void SuperVisor::Watch() {
             if ((*itr)->is_listening()) {
                 iomul.Accept(*(*itr));
             } else {
+                int fd = (*itr)->sock_fd();
                 Worker worker(this->facade_);
-                worker.Exec(*itr);
+                worker.Exec(&(*itr));
+                if (*itr == NULL) iomul.CloseFd(fd);
             }
         }
     }
