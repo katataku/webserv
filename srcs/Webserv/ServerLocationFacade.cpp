@@ -38,8 +38,10 @@ ServerLocationFacade &ServerLocationFacade::operator=(
 ServerLocationFacade::~ServerLocationFacade() {}
 
 // 仮想サーバーの決定 -> pathの決定という順番で処理を行う
+// pathについてはtrailing slashがある前提で実装している
+// TODO(ahayashi): 相対パスの解決
 ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
-                                             std::string path) {
+                                            std::string path) {
     logging_.Debug("Choose start");
     logging_.Debug("ServerLocation.size() = [" +
                    numtostr<int>(this->server_locations_.size()) + "]");
@@ -51,7 +53,17 @@ ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
     }
     std::map<std::string, ServerLocation> server = this->server_locations_[key];
     // pathの最長のものから試していく。どれもマッチしない場合はデフォルト設定
-    return server[path];
+    std::string::size_type pos = path.find_last_of("/");
+
+    for (; path != "" || pos == std::string::npos;) {
+        path = path.substr(0, pos + 1);
+        if (server.find(path) != server.end()) {
+            return server[path];
+        }
+        path = path.substr(-1);
+        pos = path.find_last_of("/");
+    }
+    return server[""];
 }
 
 std::vector<std::string> ServerLocationFacade::GetPorts() const {
