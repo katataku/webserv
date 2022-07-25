@@ -22,6 +22,7 @@ class HTTPRequest {
     int CalcBodySize() const;
     void set_method(std::string);
     void set_request_target(std::string);
+    void set_request_body(std::string);
 
     std::string unparsed_string() const;
     std::string method() const;

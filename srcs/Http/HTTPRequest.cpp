@@ -87,6 +87,9 @@ void HTTPRequest::set_method(std::string method) { this->method_ = method; }
 void HTTPRequest::set_request_target(std::string request_target) {
     this->request_target_ = request_target;
 }
+void HTTPRequest::set_request_body(std::string request_body) {
+    this->request_body_ = request_body;
+}
 
 void HTTPRequest::Parse(std::string str) {
     this->logging_.Debug("Parse");
