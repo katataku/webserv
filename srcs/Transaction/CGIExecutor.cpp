@@ -34,13 +34,12 @@ HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
 }
 
 static void ResisterEnv(std::map<std::string, std::string> env) {
-    if (setenv("CONTENT_LENGTH", env["CONTENT_LENGTH"].c_str(), 1) == -1 ||
-        setenv("CONTENT_TYPE", env["CONTENT_TYPE"].c_str(), 1) == -1 ||
-        setenv("PATH_INFO", env["PATH_INFO"].c_str(), 1) == -1 ||
-        setenv("REQUEST_METHOD", env["REQUEST_METHOD"].c_str(), 1) == -1 ||
-        setenv("SERVER_PROTOCOL", env["SERVER_PROTOCOL"].c_str(), 1) == -1) {
-        throw std::runtime_error("Error: setenv failed " +
-                                 std::string(strerror(errno)));
+    for (std::map<std::string, std::string>::iterator itr = env.begin();
+         itr != env.end(); ++itr) {
+        if (setenv(itr->first, itr->second.c_str(), 1) == -1) {
+            throw std::runtime_error("Error: setenv failed " +
+                                     std::string(strerror(errno)));
+        }
     }
 }
 
