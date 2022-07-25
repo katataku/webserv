@@ -57,6 +57,8 @@ static int execve(const std::string &path, std::vector<std::string> arg,
 
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req,
                                  ServerLocation const &sl) {
+    (void)sl;
+
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     if (pipe(pipe_to_cgi) == -1) {

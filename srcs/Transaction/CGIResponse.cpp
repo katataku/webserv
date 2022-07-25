@@ -8,14 +8,6 @@ CGIResponse::CGIResponse() {}
 
 CGIResponse::CGIResponse(CGIResponse const &other) { *this = other; }
 
-static std::string strtok(std::string s, std::string sep) {
-    std::string::size_type sep_at = s.find_first_of(sep);
-    if (sep_at == std::string::npos) {
-        return "";
-    }
-    return s.substr(0, sep_at);
-}
-
 // document-response = Content-Type [ Status ] *other-field NL response-body
 CGIResponse::CGIResponse(std::string const &resp) {
     std::string line = resp;

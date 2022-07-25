@@ -4,16 +4,21 @@
 
 void CGIRequest::PreparePath(HTTPRequest const &http,
                              ServerLocation const &sl) {
+    (void)sl;
     // CGIプログラムの絶対パス取得
     this->path_ = sl.ResolveAlias(http.request_target());
 }
 
 void CGIRequest::PrepareArgs(HTTPRequest const &http) {
+    (void)http;
     // CGIプログラムのコマンドライン引数に0番目に絶対パスを詰める
     this->arg_.push_back(this->path_);
 }
 
-static std::string GetPathInfoFromURI(std::string const &uri) { return ""; }
+static std::string GetPathInfoFromURI(std::string const &uri) {
+    (void)uri;
+    return "";
+}
 
 void CGIRequest::PrepareEnvs(HTTPRequest const &http) {
     this->env_["CONTENT_LENGTH"] = http.content_length();
