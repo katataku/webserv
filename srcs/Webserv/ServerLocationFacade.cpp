@@ -52,9 +52,12 @@ ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
         key = this->default_server_keys_[port];
     }
     std::map<std::string, ServerLocation> server = this->server_locations_[key];
+    for (std::map<std::string, ServerLocation>::iterator itr = server.begin();
+         itr != server.end(); ++itr) {
+        std::cout << itr->second << std::endl;
+    }
     // pathの最長のものから試していく。どれもマッチしない場合はデフォルト設定
     std::string::size_type pos = path.find_last_of("/");
-
     for (; path != "" && pos != std::string::npos;) {
         path = path.substr(0, pos + 1);
         std::cout << "path: " << path << std::endl;

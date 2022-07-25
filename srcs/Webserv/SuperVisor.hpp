@@ -8,14 +8,14 @@ class SuperVisor {
  public:
     SuperVisor();
     SuperVisor(SuperVisor const &other);
-    explicit SuperVisor(ServerLocationFacade);
+    explicit SuperVisor(ServerLocationFacade *);
     SuperVisor &operator=(SuperVisor const &other);
     ~SuperVisor();
 
     void Watch();
 
  private:
-    ServerLocationFacade facade_;
+    ServerLocationFacade *facade_;
     Logging logging_;
 };
 #endif  // SRCS_WEBSERV_SUPERVISOR_HPP_

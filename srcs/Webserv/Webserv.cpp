@@ -38,6 +38,6 @@ void Webserv::Run(int argc, char **argv) {
         std::cout << *itr << std::endl;
     }
     ServerLocationFacade facade(locations);
-    SuperVisor sv(facade);
+    SuperVisor sv(&facade);
     sv.Watch();
 }
