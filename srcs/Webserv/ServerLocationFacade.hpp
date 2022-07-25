@@ -13,8 +13,7 @@ class ServerLocationFacade {
  public:
     ServerLocationFacade();
     ServerLocationFacade(ServerLocationFacade const &other);
-    explicit ServerLocationFacade(
-        std::map<ServerLocationKey, ServerLocation> server_locations);
+    explicit ServerLocationFacade(std::vector<ServerLocation> server_locations);
     ServerLocationFacade &operator=(ServerLocationFacade const &other);
     ~ServerLocationFacade();
 
@@ -24,7 +23,7 @@ class ServerLocationFacade {
 
  private:
     Logging logging_;
-    std::map<ServerLocationKey, ServerLocation> server_locations_;
+    std::vector<ServerLocation> server_locations_;
 };
 
 #endif  // SRCS_WEBSERV_SERVERLOCATIONFACADE_HPP_

@@ -69,29 +69,19 @@ WebservConfig WebservConfig::Parse(std::string str) {
     return conf_proc.Exec();
 }
 
-static std::map<ServerLocationKey, ServerLocation> JoinMap(
-    std::map<ServerLocationKey, ServerLocation> map1,
-    std::map<ServerLocationKey, ServerLocation> map2) {
-    for (std::map<ServerLocationKey, ServerLocation>::iterator itr =
-             map2.begin();
-         itr != map2.end(); ++itr) {
-        map1[itr->first] = itr->second;
+static std::vector<ServerLocation> JoinVec(std::vector<ServerLocation> vec1,
+                                           std::vector<ServerLocation> vec2) {
+    for (std::vector<ServerLocation>::iterator itr = vec2.begin();
+         itr != vec2.end(); ++itr) {
+        vec1.push_back(*itr);
     }
-    return map1;
+
+    return vec1;
 }
 
-static std::map<ServerLocationKey, ServerLocation> JoinMaps(
-    std::map<ServerLocationKey, ServerLocation> map1,
-    std::map<ServerLocationKey, ServerLocation> map2) {
-    std::map<ServerLocationKey, ServerLocation> ret;
-
-    ret = JoinMap(ret, map1);
-    return JoinMap(ret, map2);
-}
-
-static std::map<ServerLocationKey, ServerLocation> CreateWithLocationContext(
+static std::vector<ServerLocation> CreateWithLocationContext(
     LocationContext locate, ServerLocation serv_sv) {
-    std::map<ServerLocationKey, ServerLocation> ret;
+    std::vector<ServerLocation> ret;
     ServerLocation locate_sv;
 
     /*
@@ -158,14 +148,14 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithLocationContext(
 
     ServerLocationKey svkey(numtostr<int>(locate_sv.port()), locate_sv.host(),
                             locate_sv.path());
-    ret[svkey] = locate_sv;
+    ret.push_back(locate_sv);
 
     return ret;
 }
 
-static std::map<ServerLocationKey, ServerLocation> CreateWithServerContext(
+static std::vector<ServerLocation> CreateWithServerContext(
     ServerContext serv, ServerLocation http_sv) {
-    std::map<ServerLocationKey, ServerLocation> ret;
+    std::vector<ServerLocation> ret;
 
     ServerLocation serv_sv;
 
@@ -233,20 +223,19 @@ static std::map<ServerLocationKey, ServerLocation> CreateWithServerContext(
     std::vector<LocationContext> locates = serv.contexts();
     for (std::vector<LocationContext>::iterator itr = locates.begin();
          itr != locates.end(); ++itr) {
-        ret = JoinMaps(ret, CreateWithLocationContext(*itr, serv_sv));
+        ret = JoinVec(ret, CreateWithLocationContext(*itr, serv_sv));
     }
 
     // serverコンテキストのデフォルトServerLocationを登録
     ServerLocationKey svkey(numtostr<int>(serv_sv.port()), serv_sv.host(),
                             serv_sv.path());
-    ret[svkey] = serv_sv;
+    ret.push_back(serv_sv);
 
     return ret;
 }
 
-std::map<ServerLocationKey, ServerLocation>
-WebservConfig::CreateServerLocations() {
-    std::map<ServerLocationKey, ServerLocation> ret;
+std::vector<ServerLocation> WebservConfig::CreateServerLocations() {
+    std::vector<ServerLocation> ret;
     std::vector<ServerContext> servs = this->contexts_;
 
     // httpコンテキストに値が設定されていたら、ネストされたコンテキストの値を上書きする場合があるので、後で使うために用意
@@ -259,8 +248,7 @@ WebservConfig::CreateServerLocations() {
     // serverコンテキストがある場合
     for (std::vector<ServerContext>::iterator itr = servs.begin();
          itr != servs.end(); ++itr) {
-        ret = JoinMaps(ret, CreateWithServerContext(*itr, http_sv));
+        ret = JoinVec(ret, CreateWithServerContext(*itr, http_sv));
     }
-
     return ret;
 }

@@ -32,8 +32,11 @@ void Webserv::Run(int argc, char **argv) {
         this->logging_.Debug("config : default");
         config = WebservConfig::Parse();
     }
-    std::map<ServerLocationKey, ServerLocation> locations =
-        config.CreateServerLocations();
+    std::vector<ServerLocation> locations = config.CreateServerLocations();
+    for (std::vector<ServerLocation>::iterator itr = locations.begin();
+         itr != locations.end(); itr++) {
+        std::cout << *itr << std::endl;
+    }
     ServerLocationFacade facade(locations);
     SuperVisor sv(facade);
     sv.Watch();

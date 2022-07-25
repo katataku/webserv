@@ -32,7 +32,7 @@ class WebservConfig {
 
     static WebservConfig Parse();
 
-    std::map<ServerLocationKey, ServerLocation> CreateServerLocations();
+    std::vector<ServerLocation> CreateServerLocations();
     static WebservConfig Parse(std::string);
 
  private:

@@ -9,7 +9,7 @@ ServerLocationFacade::ServerLocationFacade()
     : logging_(Logging(__FUNCTION__)) {}
 
 ServerLocationFacade::ServerLocationFacade(
-    std::map<ServerLocationKey, ServerLocation> server_locations)
+    std::vector<ServerLocation> server_locations)
     : server_locations_(server_locations) {}
 
 ServerLocationFacade::ServerLocationFacade(ServerLocationFacade const &other) {
@@ -38,10 +38,7 @@ ServerLocation *ServerLocationFacade::Choose(std::string port, std::string host,
     logging_.Debug("ServerLocation.size() = [" +
                    numtostr<int>(this->server_locations_.size()) + "]");
 
-    std::map<ServerLocationKey, ServerLocation>::iterator itr =
-        this->server_locations_.begin();
-    itr++;
-    return &(itr->second);
+    return &this->server_locations_.at(0);
     // pathの最長のものから試していく。どれもマッチしない場合はデフォルト設定
 }
 
