@@ -84,6 +84,12 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             serv.set_auto_index(itr->GetAutoindexValueWithValidate());
             continue;
         }
+
+        if (itr->IsReturnDirective()) {
+            serv.set_redirect_url(itr->GetReturnValueWithValidate());
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
         throw std::runtime_error("[GenerateServerContext]Unknown directive");
     }
