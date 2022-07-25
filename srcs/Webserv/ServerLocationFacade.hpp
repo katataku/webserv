@@ -23,7 +23,8 @@ class ServerLocationFacade {
 
  private:
     Logging logging_;
-    std::vector<ServerLocation> server_locations_;
+    std::map<ServerLocationKey, std::map<std::string, ServerLocation> >
+        server_locations_;
 };
 
 #endif  // SRCS_WEBSERV_SERVERLOCATIONFACADE_HPP_

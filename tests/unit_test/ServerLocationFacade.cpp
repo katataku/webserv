@@ -13,10 +13,14 @@ class ServerLocationFacadeTest : public ::testing::Test {
 };
 
 TEST_F(ServerLocationFacadeTest, Parse) {
-    WebservConfig config = WebservConfig::Parse(".");
-    std::map<ServerLocationKey, ServerLocation> locations =
-        config.CreateServerLocations();
+    WebservConfig config =
+        WebservConfig::Parse("../../../test_data/config/webserv/default.conf");
+    std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
-    facade.Choose("a", "a", "b");
-    ASSERT_EQ("", "");
+    ServerLocation* sl = facade.Choose("80", "", "/");
+    ASSERT_EQ("80", sl->port());
+    ASSERT_EQ("", sl->host());
+    ASSERT_EQ("/", sl->path());
+    ASSERT_EQ("/app/sample_data/html", sl->alias());
+    ASSERT_EQ("off", sl->auto_index());
 }

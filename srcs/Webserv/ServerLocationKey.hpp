@@ -5,14 +5,13 @@
 
 class ServerLocationKey {
  public:
-    ServerLocationKey(std::string port, std::string host, std::string path);
+    ServerLocationKey(std::string port, std::string host);
 
     bool operator<(const ServerLocationKey &rhs) const;
 
  private:
     std::string port_;
     std::string host_;
-    std::string path_;
 };
 
 #endif  // SRCS_WEBSERV_SERVERLOCATIONKEY_HPP_

@@ -146,8 +146,6 @@ static std::vector<ServerLocation> CreateWithLocationContext(
     // pathは必ず設定されている
     locate_sv.set_path(locate.path());
 
-    ServerLocationKey svkey(numtostr<int>(locate_sv.port()), locate_sv.host(),
-                            locate_sv.path());
     ret.push_back(locate_sv);
 
     return ret;
@@ -227,8 +225,6 @@ static std::vector<ServerLocation> CreateWithServerContext(
     }
 
     // serverコンテキストのデフォルトServerLocationを登録
-    ServerLocationKey svkey(numtostr<int>(serv_sv.port()), serv_sv.host(),
-                            serv_sv.path());
     ret.push_back(serv_sv);
 
     return ret;
