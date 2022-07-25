@@ -36,7 +36,7 @@ HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
 static void ResisterEnv(std::map<std::string, std::string> env) {
     for (std::map<std::string, std::string>::iterator itr = env.begin();
          itr != env.end(); ++itr) {
-        if (setenv(itr->first, itr->second.c_str(), 1) == -1) {
+        if (setenv(itr->first.c_str(), itr->second.c_str(), 1) == -1) {
             throw std::runtime_error("Error: setenv failed " +
                                      std::string(strerror(errno)));
         }
