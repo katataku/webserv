@@ -21,6 +21,9 @@ CONFIG_ARRAY=(`ls ${CONFIG_PATH}`)
 REQUEST_ARRAY=(`ls ${REQUEST_PATH} | tr -d '.sh'`)
 
 COMMAND_MAKE_DC_RE="make dc-re"
+COMMAND_MAKE_DC_DOWN="make dc-down"
+COMMAND_MAKE_DC_UP="make dc-up"
+COMMAND_MAKE_DC_BUILD="make dc-build"
 
 function do_single_command_check(){
     #引数で与えられたコマンドを実行し、OK/NGを判定。
@@ -89,44 +92,35 @@ function do_test() {
 function start_server_container() {
     echo "--- starting server container. config:[${CONFIG_NO}] ---"
     cp ${CONFIG_PATH}${CONFIG_NO} ${CONFIG_PATH}localhost
-    ${COMMAND_MAKE_DC_RE} > /dev/null 2>&1
+    ${COMMAND_MAKE_DC_DOWN} > /dev/null 2>&1
+    ${COMMAND_MAKE_DC_UP} > /dev/null 2>&1
+    docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make
     docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv bash /usr/local/bin/start.sh &
-    sleep 10 #コンテナでのwebserv起動待ち。
+    sleep 1 #コンテナでのwebservプロセス起動待ち。makeは待たないので、1秒程度でOK。
 }
 
+#コンテナ直近化のために、冒頭に一度だけコンテナビルドを行う
+${COMMAND_MAKE_DC_BUILD} > /dev/null 2>&1
 
 echo "test case means : [config][request]"
 echo ""
-
-##全てのCONFIG/REQUESTのパターンを網羅的に実行する。
-#    for CONFIG_NO in "${CONFIG_ARRAY[@]}"
-#    do
-#        # configファイルを変更するごとにコンテナを再作成する。
-#        start_server_container
-#
-#        for REQUEST_NO in "${REQUEST_ARRAY[@]}"
-#        do 
-#            do_test
-#        done
-#    done
 
 #ひとつひとつのテストを個別に実行することもできる。
 #CONFIGを変更した後はstart_server_containerを実行すること。
     CONFIG_NO=default.conf
     start_server_container
 
-    #0001-0001
-    REQUEST_NO=GET_simple
-    do_test
+        REQUEST_NO=GET_simple
+        do_test
 
-    REQUEST_NO=GET_directory
-    do_test
+        REQUEST_NO=GET_directory
+        do_test
 
     CONFIG_NO=autoindex_on.conf
     start_server_container
 
-    REQUEST_NO=GET_directory
-    do_test
+        REQUEST_NO=GET_directory
+        do_test
 
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
