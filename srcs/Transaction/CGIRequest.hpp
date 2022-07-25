@@ -32,7 +32,7 @@ class CGIRequest {
     std::string body_;
 
     void PreparePath(HTTPRequest const &http, ServerLocation const &sl);
-    void PrepareArgs(HTTPRequest const &http);
+    void PrepareArgs();
     void PrepareEnvs(HTTPRequest const &http);
 };
 
