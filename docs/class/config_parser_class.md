@@ -89,19 +89,20 @@ classDiagram
 | ListenDirectiveNode    | "listen"ディレクティブ    |
 | AliasDirectiveNode     | "alias"ディレクティブ     |
 | AutoindexDirectiveNode | "autoindex"ディレクティブ |
+| ReturnDirectiveNode    | "return"ディレクティブ    |
 
 ## Configファイルの文法
 
 - パーサーはこの文法に従い、構文解析していく
 
-<!-- TOOD(iyamada) block_directive, single_directive, location_directiveは一つしかパースできない -->
-
 ```bnf
 config             ::= ( block_directive | single_directive )*
 block_directive    ::= ("server" | "location" value ) "{" ( single_directive | location_directive )* "}"
 location_directive ::= "location" value "{" ( single_directive )* "}"
-single_directive   ::= ( "listen" | "alias" | "autoindex" ) value ";"
-value              ::= (英数字 | ".")+
+single_directive   ::= ( "listen" | "alias" | "autoindex" | "return" ) value ";"
+value              ::= (英数字 | "." | path_char | URIChar)+
+path_char          ::= ( '/' | '_' | '.')
+URIChar            ::= ( ':' )
 ```
 
 - メタ構文の意味
