@@ -15,7 +15,8 @@ class Node {
         LocationContextNode,
         ListenDirectiveNode,
         AliasDirectiveNode,
-        AutoindexDirectiveNode
+        AutoindexDirectiveNode,
+        CgiExtDirectiveNode
     };
 
     Node();
@@ -42,6 +43,7 @@ class Node {
     bool IsListenDirective();
     bool IsAliasDirective();
     bool IsAutoindexDirective();
+    bool IsCgiExtensionDirective();
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
@@ -50,6 +52,8 @@ class Node {
 
     void ValidateAutoindexValue();
     std::string GetAutoindexValueWithValidate();
+    std::string GetValue();
+    void ValidateSize(std::size_t size);
 
  private:
     NodeKind kind_;

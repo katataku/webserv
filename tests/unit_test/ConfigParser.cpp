@@ -98,6 +98,28 @@ TEST_F(ConfigParserTest, multi_directive) {
     ASSERT_EQ(locate_contexts.size(), 3);
 }
 
+TEST_F(ConfigParserTest, cgi_extension) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/cgi_extension.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+
+    ASSERT_EQ(serv_contexts.size(), 1);
+
+    ServerContext serv_context = serv_contexts.at(0);
+
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    ASSERT_EQ(locate_contexts.size(), 1);
+
+    LocationContext locate_context = locate_contexts.at(0);
+
+    ASSERT_EQ(locate_context.path(), "/");
+    ASSERT_EQ(locate_context.alias(), "/var/www/html");
+    ASSERT_EQ(locate_context.cgi_extension(), "py");
+}
+
 TEST_F(ConfigParserTest, alias) {
     ConfigProcesser confproc("../../../test_data/config/webserv/ok/alias.conf");
     WebservConfig conf = confproc.Exec();

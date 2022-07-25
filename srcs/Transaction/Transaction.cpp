@@ -1,5 +1,6 @@
 #include "Transaction.hpp"
 
+#include "CGIExecutor.hpp"
 #include "FileReadExecutor.hpp"
 #include "HTTPException.hpp"
 #include "ResponseBuilder.hpp"
@@ -29,12 +30,12 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
             return ResponseBuilder::BuildRedirect(sl->redirect_url());
         }
         // TODO(takkatao): CGIの処理を実装。
-        /*
-        string alias_resolved_uri = ServerLocation.ResolveAlias(request->uri());
-        if (sl->IsCGI()) {
-            return FileExecExecutor(req, sl);
+        // std::string alias_resolved_uri =
+        //     ServerLocation.ResolveAlias(request->uri());
+        if (sl->IsCGI(request->absolute_path())) {
+            CGIExecutor cgi;
+            return cgi.Exec(*request, *sl);
         }
-        */
         if (request->method() == "GET") {
             FileReadExecutor fre;
             return fre.Exec(*request, *sl);

@@ -21,6 +21,7 @@ add_executable(main
         ConfigParser.cpp
         CreateServerLocation.cpp
         Transaction.cpp
+        CGI.cpp
 )
 
 target_link_libraries(main

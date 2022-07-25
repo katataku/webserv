@@ -139,3 +139,7 @@ std::string ServerLocation::ResolveAlias(std::string request_uri) const {
     logging_.Debug("alias() = [" + this->alias() + "]");
     return this->alias() + request_uri;
 }
+
+bool ServerLocation::IsAutoIndexEnabled() const {
+    return this->auto_index_ == "on";
+}

@@ -112,6 +112,7 @@ classDiagram
     +Init()* void
     +Wait()* Socket[]
     +Accept(Socket)* void
+    +Finish(Socket) void
   }
 
   class Worker {
@@ -129,6 +130,7 @@ classDiagram
     +IsRedirect()* bool
     +IsCGI(path)* bool
     +ResolveAlias(path)* string
+    +IsAutoIndexEnabled() bool
   }
 
   class RequestFacade {
