@@ -143,3 +143,14 @@ std::string ServerLocation::ResolveAlias(std::string request_uri) const {
 bool ServerLocation::IsAutoIndexEnabled() const {
     return this->auto_index_ == "on";
 }
+
+std::ostream &operator<<(std::ostream &ost, const ServerLocation &rhs) {
+    ost << "[ServerLocation] ";
+    ost << ", port: ";
+    ost << rhs.port();
+    ost << ", host: ";
+    ost << rhs.host();
+    ost << ", path: ";
+    ost << rhs.path();
+    return (ost);
+}

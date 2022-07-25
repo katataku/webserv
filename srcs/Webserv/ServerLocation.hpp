@@ -70,4 +70,6 @@ class ServerLocation {
     std::string cgi_extension_;
 };
 
+std::ostream &operator<<(std::ostream &ost, const ServerLocation &rhs);
+
 #endif  // SRCS_WEBSERV_SERVERLOCATION_HPP_
