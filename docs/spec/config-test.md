@@ -52,10 +52,10 @@ server {
     server_name hoge1.com;
     server_name hoge2.com;
 }
-``` -->
+```
 
 Error:
-duplicate "server_name" in server context
+duplicate "server_name" in server context -->
 
 ### limit_except
 
