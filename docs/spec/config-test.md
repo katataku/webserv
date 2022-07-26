@@ -17,6 +17,46 @@ server {
 Error:
 "limit_except" directive is not allowed here
 
+### ディレクティブに必要な値の数が異なる
+
+Example:
+
+```
+server {
+    server_name;
+}
+```
+
+Error:
+invalid number of arguments in "server_name" directive
+
+### ディレクティブに不適切な値が設定されている
+
+Example:
+
+```
+server {
+    server_name .;
+}
+```
+
+Error:
+server name "." is invalid
+
+### 同コンテキストにディレクティブが重複して存在する
+
+Example:
+
+```
+server {
+    server_name hoge1.com;
+    server_name hoge2.com;
+}
+```
+
+Error:
+duplicate "server_name" in server context
+
 ### limit_except
 
 Example:
