@@ -28,7 +28,7 @@ CGIExecutor::~CGIExecutor() {}
 HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
                                 ServerLocation const &sl) {
     CGIRequest cgi_req(request, sl);
-    CGIResponse cgi_res = this->CGIExec(cgi_req, sl);
+    CGIResponse cgi_res = this->CGIExec(cgi_req);
 
     // POSTだったらステータスコードを201に
     if (request.method() == "POST") {
@@ -104,10 +104,7 @@ static std::string read(int fd) {
 }
 
 // TODO(iyamada) エラー処理
-CGIResponse CGIExecutor::CGIExec(CGIRequest const &req,
-                                 ServerLocation const &sl) {
-    (void)sl;
-
+CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     if (pipe(pipe_to_cgi) == -1 || pipe(pipe_to_serv) == -1) {
