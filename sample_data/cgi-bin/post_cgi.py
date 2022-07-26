@@ -12,14 +12,11 @@ def write_to_file(path: str, data: str) -> None:
 CONTENT_LENGTH = os.getenv('CONTENT_LENGTH')
 PATH_INFO = os.getenv('PATH_INFO')
 
-print(f'content length [{CONTENT_LENGTH}]', file=sys.stderr)
-
 # サーバーからbodyが送信される場合
 if CONTENT_LENGTH:
-    print(f'[CGI log] Read body', file=sys.stderr)
-
-    body = input()
-    write_to_file('./hoge.file', body)
+    print("[CGI log] Read body", file=sys.stderr)
+    body = sys.stdin.read()
+    write_to_file('/var/www/html/hoge.file', body)
 
 
 print('Content-Type: text/plain')
