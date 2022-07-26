@@ -172,19 +172,11 @@ TEST_F(CreateServerLocationTest, two_location_contexts) {
     ASSERT_EQ(locate_sl2.alias(), "/var/www/hoge");
 }
 
-class DISABLED_CreateServerLocationTest : public ::testing::Test {
- protected:
-    static void SetUpTestCase() {}
-    static void TearDownTestCase() {}
-    virtual void SetUp() {}
-    virtual void TearDown() {}
-};
-
 /*
     autoindexをboolで持っているため、autoindex
    offが設定されているか、設定されていないかが判断できない。だから浅いコンテキストの値で上書きされてしまう
 */
-TEST_F(DISABLED_CreateServerLocationTest, complex_test) {
+TEST_F(CreateServerLocationTest, complex_test) {
     /* 想定したconfigファイル
         autoindex on;
         server {
