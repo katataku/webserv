@@ -33,10 +33,6 @@ void Webserv::Run(int argc, char **argv) {
         config = WebservConfig::Parse();
     }
     std::vector<ServerLocation> locations = config.CreateServerLocations();
-    for (std::vector<ServerLocation>::iterator itr = locations.begin();
-         itr != locations.end(); itr++) {
-        std::cout << *itr << std::endl;
-    }
     ServerLocationFacade facade(locations);
     SuperVisor sv(&facade);
     sv.Watch();
