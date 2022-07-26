@@ -26,14 +26,17 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
 
     ServerContext serv_context = serv_contexts.at(0);
 
-    ASSERT_EQ(serv_context.contexts().size(), 1);
+    ASSERT_EQ(serv_context.contexts().size(), 2);
     ASSERT_EQ(serv_context.port(), 80);
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
-    ASSERT_EQ(locate_contexts.size(), 1);
+    ASSERT_EQ(locate_contexts.size(), 2);
 
     LocationContext locate_context = locate_contexts.at(0);
     ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+
+    locate_context = locate_contexts.at(1);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/files");
 }
 
 TEST_F(ConfigParserTest, autoindex_on_location) {

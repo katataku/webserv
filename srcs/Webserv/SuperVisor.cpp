@@ -20,12 +20,12 @@ SuperVisor &SuperVisor::operator=(SuperVisor const &other) {
 
 SuperVisor::~SuperVisor() {}
 
-SuperVisor::SuperVisor(ServerLocationFacade facade)
+SuperVisor::SuperVisor(ServerLocationFacade *facade)
     : facade_(facade), logging_(Logging(__FUNCTION__)) {}
 
 void SuperVisor::Watch() {
     IOMultiplexer iomul;
-    std::vector<std::string> ports = this->facade_.GetPorts();
+    std::vector<std::string> ports = this->facade_->GetPorts();
     iomul.Init(ports);
     this->logging_.Debug("start loop");
     while (true) {

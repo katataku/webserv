@@ -1,7 +1,7 @@
 #include "Webserv.hpp"
 
-#include <map>
 #include <string>
+#include <vector>
 
 #include "ServerLocation.hpp"
 #include "ServerLocationFacade.hpp"
@@ -32,9 +32,8 @@ void Webserv::Run(int argc, char **argv) {
         this->logging_.Debug("config : default");
         config = WebservConfig::Parse();
     }
-    std::map<ServerLocationKey, ServerLocation> locations =
-        config.CreateServerLocations();
+    std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
-    SuperVisor sv(facade);
+    SuperVisor sv(&facade);
     sv.Watch();
 }
