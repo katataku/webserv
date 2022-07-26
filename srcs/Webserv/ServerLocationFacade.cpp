@@ -68,6 +68,25 @@ ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
 std::vector<std::string> ServerLocationFacade::GetPorts() const {
     std::vector<std::string> ports;
 
-    ports.push_back("80");
+    // ServerLocationのportをportsに全て追加する
+    // portは全てユニークにする
+    std::set<std::string> ports_set;
+
+    for (std::map<ServerLocationKey,
+                  std::map<std::string, ServerLocation> >::const_iterator itr =
+             this->server_locations_.begin();
+         itr != this->server_locations_.end(); ++itr) {
+        for (std::map<std::string, ServerLocation>::const_iterator sl_itr =
+                 itr->second.begin();
+             sl_itr != itr->second.end(); ++sl_itr) {
+            ports_set.insert(numtostr<int>(sl_itr->second.port()));
+        }
+    }
+
+    for (std::set<std::string>::iterator itr = ports_set.begin();
+         itr != ports_set.end(); ++itr) {
+        ports.push_back(*itr);
+    }
+
     return ports;
 }
