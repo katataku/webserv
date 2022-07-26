@@ -43,7 +43,7 @@ server {
 Error:
 server name "." is invalid
 
-### 同コンテキストにディレクティブが重複して存在する
+<!-- ### 同コンテキストにディレクティブが重複して存在する
 
 Example:
 
@@ -52,7 +52,7 @@ server {
     server_name hoge1.com;
     server_name hoge2.com;
 }
-```
+``` -->
 
 Error:
 duplicate "server_name" in server context
