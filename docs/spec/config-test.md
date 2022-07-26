@@ -105,7 +105,6 @@ invalid port in "65536" of the "listen" directive
 
 ### error_page
 
-
 ### client_max_body_size
 
 Example:
@@ -166,8 +165,8 @@ server {
 Error:
 unknown method "get", may be "GET"? -->
 
-
 ### autoindex
+
 <!-- 
 nginxはケースインセンシティブ?
 
@@ -183,7 +182,6 @@ Error:
 autoindex cat take "on" or "off" -->
 
 ### index
-
 
 ### return
 
