@@ -10,7 +10,7 @@ Example:
 
 ```
 server {
-    limit_except GET POST DELETE;
+	limit_except GET POST DELETE;
 }
 ```
 
@@ -23,7 +23,7 @@ Example:
 
 ```
 server {
-    server_name;
+	server_name;
 }
 ```
 
@@ -36,7 +36,7 @@ Example:
 
 ```
 server {
-    server_name .;
+	server_name .;
 }
 ```
 
@@ -49,37 +49,32 @@ Example:
 
 ```
 server {
-    server_name hoge1.com;
-    server_name hoge2.com;
+	server_name hoge1.com;
+	server_name hoge2.com;
 }
 ```
 
 Error:
 duplicate "server_name" in server context -->
 
-### limit_except
+## 具体的なケース
+
+### server_name
+
+<!-- 
+TODO(iyamada) エラーにするべき値を調べる
+See https://suu-g.hateblo.jp/entry/2019/09/19/232913 -->
 
 Example:
 
 ```
 server {
-    limit_except HOGE;
+	server_name .;
 }
 ```
 
 Error:
-invalid method "HOGE"
-
-Example:
-
-```
-server {
-    limit_except;
-}
-```
-
-Error:
-invalid number of arguments in "limit_except" directive
+server name "." is invalid
 
 ### listen
 
@@ -107,3 +102,150 @@ server {
 ```
 
 invalid port in "65536" of the "listen" directive
+
+### error_page
+
+
+### client_max_body_size
+
+Example:
+
+```
+server {
+	client_max_body_size a;
+}
+```
+
+Error:
+"client_max_body_size" directive invalid value
+
+### alias
+
+### limit_except
+
+Example:
+
+```
+server {
+	limit_except HOGE;
+}
+```
+
+Error:
+invalid method "HOGE"
+
+Example:
+
+```
+server {
+	limit_except;
+}
+```
+
+Error:
+invalid number of arguments in "limit_except" directive
+
+<!-- 
+これはエラー？
+
+```
+server {
+	limit_except GET GET;
+}
+```
+
+Error:
+duplicate method "GET"
+
+```
+server {
+	limit_except get;
+}
+```
+
+Error:
+unknown method "get", may be "GET"? -->
+
+
+### autoindex
+<!-- 
+nginxはケースインセンシティブ?
+
+Example:
+
+```
+server {
+	autoindex OFF;
+}
+```
+
+Error:
+autoindex cat take "on" or "off" -->
+
+### index
+
+
+### return
+
+Example:
+
+```
+server {
+	return fuga://hoge.www.com;
+}
+```
+
+Error:
+invalid return code "fuga://hoge.www.com"
+
+### server
+
+Example:
+
+```
+server
+```
+
+Error:
+unexpected end of file, expecting ";" or "}"
+
+Example:
+
+```
+server hoge {
+	listen 80;
+}
+```
+
+Error:
+invalid number of arguments in "server" directive
+
+### location
+
+Example:
+
+```
+server {
+	location {
+		alias /var/html/www;
+	}
+}
+```
+
+Error:
+invalid number of arguments in "location" directive
+
+<!-- Example:
+
+このケースもinvalid number of arguments in "location" directiveでエラーにしたい
+
+```
+server {
+	location / /hoge {
+		alias /var/html/www;
+	}
+}
+```
+
+Error:
+invalid location modifier "/" -->
