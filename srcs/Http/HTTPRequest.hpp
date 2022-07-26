@@ -23,6 +23,7 @@ class HTTPRequest {
     void set_method(std::string);
     void set_request_target(std::string);
     void set_request_body(std::string);
+    void set_content_length(int);
 
     std::string unparsed_string() const;
     std::string method() const;

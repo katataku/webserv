@@ -22,7 +22,7 @@ static std::string GetPathInfoFromURI(std::string const &uri) {
 
 // TODO(iyamada) 環境変数はデフォ値があるのでそれを詰めた方が無難そう
 void CGIRequest::PrepareEnvs(HTTPRequest const &http) {
-    this->env_["CONTENT_LENGTH"] = http.content_length();
+    this->env_["CONTENT_LENGTH"] = numtostr<int>(http.content_length());
     this->env_["PATH_INFO"] = GetPathInfoFromURI(http.request_target());
     this->env_["REQUEST_METHOD"] = http.method();
     this->env_["SERVER_PROTOCOL"] = "HTTP/1.1";
