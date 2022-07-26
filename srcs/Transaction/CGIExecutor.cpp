@@ -30,7 +30,7 @@ HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
     CGIRequest cgi_req(request, sl);
     CGIResponse cgi_res = this->CGIExec(cgi_req);
 
-    // POSTだったらステータスコードを201に
+    // POSTだったらステータスコードを201にする
     if (request.method() == "POST") {
         cgi_res.set_status_code("201");
     }
