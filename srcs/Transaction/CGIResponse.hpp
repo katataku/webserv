@@ -16,6 +16,8 @@ class CGIResponse {
 
     HTTPResponse *ToHTTPResponse();
 
+    void set_status_code(const std::string &status_code);
+
  private:
     std::string status_;
     std::string status_code_;

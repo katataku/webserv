@@ -50,3 +50,7 @@ HTTPResponse *CGIResponse::ToHTTPResponse() {
 
     return http;
 }
+
+void CGIResponse::set_status_code(const std::string &status_code) {
+    this->status_code_ = status_code;
+}

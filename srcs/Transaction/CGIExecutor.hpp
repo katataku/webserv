@@ -24,7 +24,7 @@ class CGIExecutor : public IExecutor {
     static const int kRead = 0;
     static const int kWrite = 1;
 
-    CGIResponse CGIExec(CGIRequest const &request, ServerLocation const &sl);
+    CGIResponse CGIExec(CGIRequest const &request);
 };
 
 #endif  // SRCS_TRANSACTION_CGIEXECUTOR_HPP_
