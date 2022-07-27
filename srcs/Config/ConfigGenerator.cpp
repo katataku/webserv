@@ -3,6 +3,8 @@
 #include <list>
 #include <string>
 
+#include "utils.hpp"
+
 ConfigGenerator::ConfigGenerator() {}
 
 ConfigGenerator::ConfigGenerator(const Node& node) : node_(node) {}
@@ -149,6 +151,15 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         if (itr->IsCgiExtensionDirective()) {
             itr->ValidateSize(1);
             locate.set_cgi_extension(itr->GetValue());
+            continue;
+        }
+
+        if (itr->IsErrorPageDirective()) {
+            std::list<std::string>::iterator val_itr;
+            for (val_itr = itr->directive_vals().begin();
+                 *val_itr != itr->directive_vals().back(); val_itr++) {
+                locate.PushErrorPage(strtonum<int>(*val_itr), itr->GetValue());
+            }
             continue;
         }
 

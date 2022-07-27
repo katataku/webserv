@@ -99,6 +99,7 @@ Node ConfigParser::single_directive() {
     token_node_map["autoindex"] = Node::AutoindexDirectiveNode;
     token_node_map["return"] = Node::ReturnDirectiveNode;
     token_node_map["cgi_extension"] = Node::CgiExtDirectiveNode;
+    token_node_map["error_page"] = Node::ErrorPageDirectiveNode;
 
     std::map<std::string, Node::NodeKind>::iterator itr;
     for (itr = token_node_map.begin(); itr != token_node_map.end(); ++itr) {
@@ -118,7 +119,8 @@ void ConfigParser::value(Node* node) {
     std::list<std::string> vals;
 
     if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-        throw std::runtime_error("Error: invalid token " + this->token_->val());
+        throw std::runtime_error("value Error: invalid token " +
+                                 this->token_->val());
     }
 
     vals.push_back(this->token_->val());
@@ -131,7 +133,7 @@ void ConfigParser::values(Node* node) {
 
     while (!Token::SameToken(&this->token_, ";")) {
         if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-            throw std::runtime_error("Error: invalid token " +
+            throw std::runtime_error("values Error: invalid token " +
                                      this->token_->val());
         }
 

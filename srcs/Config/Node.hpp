@@ -17,7 +17,8 @@ class Node {
         AliasDirectiveNode,
         AutoindexDirectiveNode,
         ReturnDirectiveNode,
-        CgiExtDirectiveNode
+        CgiExtDirectiveNode,
+        ErrorPageDirectiveNode
     };
 
     Node();
@@ -46,6 +47,7 @@ class Node {
     bool IsAutoindexDirective();
     bool IsReturnDirective();
     bool IsCgiExtensionDirective();
+    bool IsErrorPageDirective();
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
