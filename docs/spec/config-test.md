@@ -62,8 +62,22 @@ duplicate "server_name" in server context -->
 ### server_name
 
 <!-- 
-TODO(iyamada) エラーにするべき値を調べる
-See https://suu-g.hateblo.jp/entry/2019/09/19/232913 -->
+
+BNF
+
+<official hostname> ::= <hname>
+<hname> ::= <name>*["."<name>]
+<name>  ::= <let-or-digit>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+
+letter or digitだがRFC的には以下の文字が推奨されている
+
+Recommended
+
+"A-Z", "a-z", "0-9", dash and underscore
+
+See https://suu-g.hateblo.jp/entry/2019/09/19/232913
+
+ -->
 
 Example:
 
