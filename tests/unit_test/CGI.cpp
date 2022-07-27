@@ -18,12 +18,12 @@ class CGITest : public ::testing::Test {
 
 TEST_F(CGITest, hello_cgi) {
     /*
-        GET /sample_data/cgi-bin/hello_cgi.py HTTP/1.1
+        GET /sample_data/cgi-bin/cgi_test.py HTTP/1.1
     */
     HTTPRequest http_req;
 
     http_req.set_method("GET");
-    http_req.set_request_target("/sample_data/cgi-bin/hello_cgi.py");
+    http_req.set_request_target("/sample_data/cgi-bin/cgi_test.py");
 
     ServerLocation sl;
 
