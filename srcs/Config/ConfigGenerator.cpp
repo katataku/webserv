@@ -5,9 +5,10 @@
 
 #include "utils.hpp"
 
-ConfigGenerator::ConfigGenerator() {}
+ConfigGenerator::ConfigGenerator() : logging_(Logging(__FUNCTION__)) {}
 
-ConfigGenerator::ConfigGenerator(const Node& node) : node_(node) {}
+ConfigGenerator::ConfigGenerator(const Node& node)
+    : node_(node), logging_(Logging(__FUNCTION__)) {}
 
 ConfigGenerator::ConfigGenerator(const ConfigGenerator& other) {
     *this = other;
@@ -155,10 +156,18 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsErrorPageDirective()) {
-            std::list<std::string>::iterator val_itr;
-            for (val_itr = itr->directive_vals().begin();
-                 *val_itr != itr->directive_vals().back(); val_itr++) {
-                locate.PushErrorPage(strtonum<int>(*val_itr), itr->GetValue());
+            std::string error_page_path = itr->GetValue();
+            std::list<std::string> status_list;
+            status_list = std::list<std::string>(itr->directive_vals());
+            status_list.pop_back();
+
+            std::list<std::string>::iterator status_list_itr;
+            for (status_list_itr = status_list.begin();
+                 status_list_itr != status_list.end(); status_list_itr++) {
+                this->logging_.Debug("insert error_page directive[" +
+                                     *status_list_itr + "]:" + error_page_path);
+                locate.PushErrorPage(strtonum<int>(*status_list_itr),
+                                     error_page_path);
             }
             continue;
         }

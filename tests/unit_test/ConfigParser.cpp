@@ -155,3 +155,16 @@ TEST_F(ConfigParserTest, redirect_on_server) {
     LocationContext locate_context = locate_contexts.at(0);
     ASSERT_EQ(locate_context.redirect_url(), "");
 }
+
+TEST_F(ConfigParserTest, error_page) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/error_page.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.error_pages().at(404),
+              "/error_page/404_custom.html");
+}
