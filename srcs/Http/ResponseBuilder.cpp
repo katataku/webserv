@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <set>
 #include <sstream>
 #include <string>
@@ -37,7 +38,7 @@ std::string ResponseBuilder::ReadFile(std::string file_path) {
     if (!ifs) {
         // TODO(takkatao):
         // オープンできないときはここに入る。
-        return "hoghgoe";
+        throw std::runtime_error("ReadFile ifs open fail");
     }
 
     oss << ifs.rdbuf();
@@ -47,6 +48,12 @@ std::string ResponseBuilder::ReadFile(std::string file_path) {
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     HTTPResponse *res = new HTTPResponse();
+
+    std::map<int, std::string> default_error_page_map;
+    default_error_page_map[403] =
+        "/app/sample_data/html/error_page/403_default.html";
+    default_error_page_map[404] =
+        "/app/sample_data/html/error_page/404_default.html";
 
     res->set_status_code(status_code);
     if (status_code == 403) {
@@ -67,7 +74,7 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
         error_page_filepath =
             sl->ResolveAlias(sl->error_pages().at(status_code));
     } else {
-        error_page_filepath = "defaultpath";
+        error_page_filepath = default_error_page_map[status_code];
     }
 
     std::string body;
