@@ -75,7 +75,13 @@ function do_test() {
     PICKUP_CMD="grep success</p>"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
+	echo -n "  \"<title>\": "
+    PICKUP_CMD="grep <title>"
+    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
+	echo -n "  \"<center>webserv\": "
+    PICKUP_CMD="grep <center>webserv"
+    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
     # サマリーの出力
     echo -n "[${CONFIG_NO}-${REQUEST_NO}]test finish. Conclusion:"
@@ -127,6 +133,12 @@ echo ""
     start_server_container
 
         REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=error_page.conf
+    start_server_container
+
+        REQUEST_NO=GET_incorrect_path
         do_test
 
 echo    "----------------------------"
