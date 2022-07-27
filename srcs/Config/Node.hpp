@@ -18,7 +18,7 @@ class Node {
         AutoindexDirectiveNode,
         ReturnDirectiveNode,
         CgiExtDirectiveNode,
-        ServerNameDirectiveNode,
+        ServerNameDirectiveNode
     };
 
     Node();
