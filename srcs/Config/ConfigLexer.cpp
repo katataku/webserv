@@ -1,25 +1,15 @@
 #include "ConfigLexer.hpp"
 
-#include <cctype>
 #include <iostream>
 
 #include "utils.hpp"
 
-#define RED "\033[31m"
-#define RESET "\033[0m"
-
-// TODO(iyamada) もっと良い感じのエラーメッセージ出せたら嬉しい
-static std::string MakeErrorMsg(const std::string& line) {
+static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
     std::stringstream ss;
 
-    ss << RED << "Error" << RESET << ": Failed to tokenize\n";
-    ss << line;
-    ss << "  Found unknown characters";
-    return ss.str();
-}
-
-static bool StartsWithValueCharacters(const std::string& s) {
-    return IsValueChar(s[0]);
+    ss << "unknown directive \"";
+    ss << keyword;
+    ss << "\"";
 }
 
 ConfigLexer::ConfigLexer() {}
@@ -32,9 +22,10 @@ ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
     this->keywords_["autoindex"] = Token::SingleDirective;
     this->keywords_["return"] = Token::SingleDirective;
     this->keywords_["cgi_extension"] = Token::SingleDirective;
-    this->keywords_["{"] = Token::OpenBraceToken;
-    this->keywords_["}"] = Token::CloseBraceToken;
-    this->keywords_[";"] = Token::SemicolonToken;
+
+    this->controls_["{"] = Token::OpenBraceToken;
+    this->controls_["}"] = Token::CloseBraceToken;
+    this->controls_[";"] = Token::SemicolonToken;
 }
 
 ConfigLexer::ConfigLexer(const ConfigLexer& other) { *this = other; }
@@ -54,36 +45,13 @@ std::string ConfigLexer::ReadKeyword() {
     if (keyword_len == std::string::npos) {
         return "";
     }
-    std::map<std::string, Token::TokenKind>::iterator itr =
-        keywords_.find(this->content_.substr(0, keyword_len));
-    if (itr == keywords_.end()) {
-        return "";
-    }
-    return itr->first;
+    return this->content_.substr(0, keyword_len);
 }
 
-bool ConfigLexer::IsBlockDirectiveKeyword(std::string keyword) {
-    std::map<std::string, Token::TokenKind>::iterator itr =
-        keywords_.find(keyword);
-    if (itr == keywords_.end()) {
-        return false;
-    }
-    return itr->second == Token::BlockDirective;
-}
-
-bool ConfigLexer::IsSingleDirectiveKeyword(std::string keyword) {
-    std::map<std::string, Token::TokenKind>::iterator itr =
-        keywords_.find(keyword);
-    if (itr == keywords_.end()) {
-        return false;
-    }
-    return itr->second == Token::SingleDirective;
-}
-
-// TODO(iyamada) content_をメンバで持つ必要なさそう
 Token* ConfigLexer::Tokenize() {
     Token head;
     Token* cur_tok = &head;
+    bool expectValue = false;
 
     while (true) {
         this->content_ = SkipSpace(this->content_);
@@ -91,59 +59,36 @@ Token* ConfigLexer::Tokenize() {
             break;
         }
 
-        /*
-            Read keyword e.g. "server",  "location", "listen", "alias"
-        */
         std::string keyword = ReadKeyword();
 
-        /*
-            Tokenize Block directives e.g. "server", "location"
-        */
-        if (IsBlockDirectiveKeyword(keyword)) {
-            cur_tok = Token::NewToken(cur_tok, Token::BlockDirective, keyword);
+        // controls字句("{" "}" ";")を処理する
+        std::map<std::string, Token::TokenKind>::iterator itr =
+            this->controls_.find(keyword);
+        if (itr != this->controls_.end()) {
+            cur_tok =
+                Token::NewToken(cur_tok, this->controls_.at(keyword), keyword);
             this->content_ = ConsumeWithSpace(this->content_, keyword);
-            continue;
-        }
-        /*
-            Tokenize Single directives e.g. "listen", "alias"
-        */
-        if (IsSingleDirectiveKeyword(keyword)) {
-            cur_tok = Token::NewToken(cur_tok, Token::SingleDirective, keyword);
-            this->content_ = ConsumeWithSpace(this->content_, keyword);
+            expectValue = false;
             continue;
         }
 
-        // TODO(iyamada) "{" "}" ";"を一言で表す言葉をコメントとして入れたい
-        /*
-            Tokenize *** e.g.  "{", "}" and ";"
-        */
-        if (keyword == "{") {
-            cur_tok = Token::NewToken(cur_tok, Token::OpenBraceToken, keyword);
-            this->content_ = Consume(this->content_, keyword);
-            continue;
-        }
-        if (keyword == "}") {
-            cur_tok = Token::NewToken(cur_tok, Token::CloseBraceToken, keyword);
-            this->content_ = Consume(this->content_, keyword);
-            continue;
-        }
-        if (keyword == ";") {
-            cur_tok = Token::NewToken(cur_tok, Token::SemicolonToken, keyword);
-            this->content_ = Consume(this->content_, keyword);
-            continue;
-        }
-        // TODO(iyamada)
-        // パスとして解釈すべき文字によっては、トーカナイズの優先順位が変わってくる
-        /*
-            Tokenize value word e.g. "/somepath"
-        */
-        if (StartsWithValueCharacters(this->content_)) {
+        if (expectValue) {
+            // valueの処理
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));
             this->content_ = ConsumeValueCharacters(this->content_);
-            continue;
+        } else {
+            // keywordの処理
+            try {
+                Token::TokenKind kind = this->keywords_.at(keyword);
+                cur_tok = Token::NewToken(cur_tok, kind, keyword);
+                this->content_ = ConsumeWithSpace(this->content_, keyword);
+                expectValue = true;
+            } catch (std::exception& e) {
+                throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
+            }
         }
-        throw std::runtime_error(MakeErrorMsg(this->content_));
     }
+
     return head.next_token();
 }
