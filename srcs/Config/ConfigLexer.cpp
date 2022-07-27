@@ -10,6 +10,7 @@ static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
     ss << "unknown directive \"";
     ss << keyword;
     ss << "\"";
+    return ss.str();
 }
 
 ConfigLexer::ConfigLexer() {}
