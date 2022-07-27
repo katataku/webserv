@@ -1,6 +1,7 @@
 #include "ServerLocationFacade.hpp"
 
 #include <map>
+#include <set>
 
 #include "ServerLocationKey.hpp"
 #include "utils.hpp"
@@ -68,6 +69,12 @@ ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
 std::vector<std::string> ServerLocationFacade::GetPorts() const {
     std::vector<std::string> ports;
 
-    ports.push_back("80");
+    // ServerLocationのportをportsに全て追加する
+    for (std::map<std::string, ServerLocationKey>::const_iterator itr =
+             default_server_keys_.begin();
+         itr != default_server_keys_.end(); ++itr) {
+        ports.push_back(itr->second.port());
+    }
+
     return ports;
 }

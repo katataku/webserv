@@ -50,3 +50,55 @@ TEST_F(ServerLocationFacadeTest, longest_path_match) {
     ASSERT_EQ("/app/sample_data/files", sl.alias());
     ASSERT_EQ("off", sl.auto_index());
 }
+
+TEST_F(ServerLocationFacadeTest, get_ports_single) {
+    std::vector<ServerLocation> sls;
+
+    ServerLocation sl1;
+    sl1.set_port(80);
+    sls.push_back(sl1);
+
+    ServerLocationFacade sl_facade(sls);
+
+    std::vector<std::string> ports = sl_facade.GetPorts();
+
+    ASSERT_EQ(ports.size(), 1);
+    ASSERT_EQ(ports.at(0), "80");
+}
+
+TEST_F(ServerLocationFacadeTest, get_ports_multi) {
+    std::vector<ServerLocation> sls;
+
+    ServerLocation sl1;
+    sl1.set_port(80);
+    ServerLocation sl2;
+    sl2.set_port(8080);
+    sls.push_back(sl1);
+    sls.push_back(sl2);
+
+    ServerLocationFacade sl_facade(sls);
+
+    std::vector<std::string> ports = sl_facade.GetPorts();
+
+    ASSERT_EQ(ports.size(), 2);
+    ASSERT_EQ(ports.at(0), "80");
+    ASSERT_EQ(ports.at(1), "8080");
+}
+
+TEST_F(ServerLocationFacadeTest, get_ports_duplicate) {
+    std::vector<ServerLocation> sls;
+
+    ServerLocation sl1;
+    sl1.set_port(80);
+    ServerLocation sl2;
+    sl2.set_port(80);
+    sls.push_back(sl1);
+    sls.push_back(sl2);
+
+    ServerLocationFacade sl_facade(sls);
+
+    std::vector<std::string> ports = sl_facade.GetPorts();
+
+    ASSERT_EQ(ports.size(), 1);
+    ASSERT_EQ(ports.at(0), "80");
+}
