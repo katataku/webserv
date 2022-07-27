@@ -50,10 +50,24 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     HTTPResponse *res = new HTTPResponse();
 
     std::map<int, std::string> default_error_page_map;
+    default_error_page_map[302] =
+        "/app/sample_data/html/default_error_page/302.html";
+    default_error_page_map[400] =
+        "/app/sample_data/html/default_error_page/400.html";
     default_error_page_map[403] =
-        "/app/sample_data/html/error_page/403_default.html";
+        "/app/sample_data/html/default_error_page/403.html";
     default_error_page_map[404] =
-        "/app/sample_data/html/error_page/404_default.html";
+        "/app/sample_data/html/default_error_page/404.html";
+    default_error_page_map[413] =
+        "/app/sample_data/html/default_error_page/413.html";
+    default_error_page_map[414] =
+        "/app/sample_data/html/default_error_page/414.html";
+    default_error_page_map[500] =
+        "/app/sample_data/html/default_error_page/500.html";
+    default_error_page_map[501] =
+        "/app/sample_data/html/default_error_page/501.html";
+    default_error_page_map[505] =
+        "/app/sample_data/html/default_error_page/505.html";
 
     res->set_status_code(status_code);
     if (status_code == 403) {
