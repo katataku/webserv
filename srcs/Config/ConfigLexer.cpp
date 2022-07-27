@@ -23,6 +23,7 @@ ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
     this->keywords_["autoindex"] = Token::SingleDirective;
     this->keywords_["return"] = Token::SingleDirective;
     this->keywords_["cgi_extension"] = Token::SingleDirective;
+    this->keywords_["server_name"] = Token::SingleDirective;
 
     this->controls_["{"] = Token::OpenBraceToken;
     this->controls_["}"] = Token::CloseBraceToken;
