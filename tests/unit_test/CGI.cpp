@@ -41,7 +41,7 @@ TEST_F(CGITest, hello_cgi) {
 
 TEST_F(CGITest, post_cgi) {
     /*
-        POST /sample_data/cgi-bin/file_manager.py HTTP/1.1
+        POST /sample_data/cgi-bin/cgi_test.py HTTP/1.1
 
         hello world
     */
@@ -51,7 +51,7 @@ TEST_F(CGITest, post_cgi) {
 
     std::string body = "hello world\n";
     http_req.set_method("POST");
-    http_req.set_request_target("/sample_data/cgi-bin/post_cgi.py");
+    http_req.set_request_target("/sample_data/cgi-bin/cgi_test.py");
     http_req.set_request_body(body);
     http_req.set_content_length(body.size());
 
@@ -75,4 +75,30 @@ TEST_F(CGITest, post_cgi) {
     unlink("/var/www/html/hoge.file");
 
     ASSERT_EQ(http_resp->status_code(), 201);
+}
+
+TEST_F(CGITest, delete_cgi) {
+    /*
+        DELETE /sample_data/cgi-bin/cgi_test.py HTTP/1.1
+    */
+    system("mkdir -p /var/www/html");
+    system("touch /var/www/html/hoge.file");
+
+    HTTPRequest http_req;
+
+    std::string body = "hello world\n";
+    http_req.set_method("DELETE");
+    http_req.set_request_target("/sample_data/cgi-bin/cgi_test.py");
+
+    ServerLocation sl;
+
+    sl.set_alias("./../../..");
+
+    CGIExecutor cgi;
+
+    HTTPResponse *http_resp = cgi.Exec(http_req, sl);
+
+    delete http_resp;
+
+    ASSERT_EQ(access("/var/www/html/hoge.file", F_OK) == 0, false);
 }
