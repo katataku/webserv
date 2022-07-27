@@ -36,7 +36,7 @@ std::string ResponseBuilder::ReadFile(std::string file_path) {
 
     if (!ifs) {
         // TODO(takkatao):
-        // ファイルが存在するが、権限がなくオープンできないときはここに入る。
+        // オープンできないときはここに入る。
         return "hoghgoe";
     }
 
@@ -64,13 +64,15 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
 
     std::string error_page_filepath;
     if (sl->error_pages().find(status_code) != sl->error_pages().end()) {
-        error_page_filepath = sl->error_pages().at(status_code);
+        error_page_filepath =
+            sl->ResolveAlias(sl->error_pages().at(status_code));
     } else {
         error_page_filepath = "defaultpath";
     }
 
     std::string body;
     body = ReadFile(error_page_filepath);
+    res->set_content_length(body.size());
     res->set_response_body(body);
 
     return res;

@@ -17,8 +17,8 @@ class ConfigGenerator {
     WebservConfig Generate();
 
  private:
-    Logging logging_;
     Node node_;
+    Logging logging_;
 
     WebservConfig GenerateWebservConfig(Node node);
     ServerContext GenerateServerContext(Node node);
