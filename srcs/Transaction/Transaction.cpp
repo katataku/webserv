@@ -1,5 +1,7 @@
 #include "Transaction.hpp"
 
+#include <string>
+
 #include "CGIExecutor.hpp"
 #include "FileReadExecutor.hpp"
 #include "HTTPException.hpp"
@@ -49,6 +51,10 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
         */
         return ResponseBuilder::BuildError(400, sl);
     } catch (HTTPException &e) {
+        logging_.Debug("Exec catch error: " + numtostr(e.status_code()));
+        if (sl->error_pages().find(e.status_code()) == sl->error_pages().end())
+            logging_.Debug(
+                "Exec sl->error_pages() dont contains e.status_code()");
         return ResponseBuilder::BuildError(e.status_code(), sl);
     } catch (...) {
         return ResponseBuilder::BuildError(500,
