@@ -141,6 +141,18 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+    CONFIG_NO=error_page_multi.conf
+    start_server_container
+
+        REQUEST_NO=GET_incorrect_path
+        do_test
+
+    CONFIG_NO=error_page_override.conf
+    start_server_container
+
+        REQUEST_NO=GET_incorrect_path
+        do_test
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then
