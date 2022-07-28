@@ -28,6 +28,7 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
 
     ASSERT_EQ(serv_context.contexts().size(), 2);
     ASSERT_EQ(serv_context.port(), 80);
+    ASSERT_EQ(serv_context.server_name(), "default");
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     ASSERT_EQ(locate_contexts.size(), 2);

@@ -92,6 +92,12 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             continue;
         }
 
+        if (itr->IsServerNameDirective()) {
+            itr->ValidateSize(1);
+            serv.set_server_name(itr->GetValue());
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
         throw std::runtime_error("[GenerateServerContext]Unknown directive");
     }

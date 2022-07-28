@@ -21,9 +21,8 @@ class ConfigLexer {
  private:
     std::string content_;
     std::map<std::string, Token::TokenKind> keywords_;
+    std::map<std::string, Token::TokenKind> controls_;
 
-    bool IsBlockDirectiveKeyword(std::string keyword);
-    bool IsSingleDirectiveKeyword(std::string keyword);
     std::string ReadKeyword();
 };
 

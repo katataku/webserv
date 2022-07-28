@@ -19,7 +19,7 @@ TEST_F(ServerLocationFacadeTest, basic) {
     ServerLocationFacade facade(locations);
     ServerLocation sl = facade.Choose("80", "", "/");
     ASSERT_EQ(80, sl.port());
-    ASSERT_EQ("", sl.host());
+    ASSERT_EQ("default", sl.host());
     ASSERT_EQ("/", sl.path());
     ASSERT_EQ("/app/sample_data/html", sl.alias());
     ASSERT_EQ("off", sl.auto_index());
@@ -32,7 +32,7 @@ TEST_F(ServerLocationFacadeTest, default_server) {
     ServerLocationFacade facade(locations);
     ServerLocation sl = facade.Choose("80", "not_matching", "/");
     ASSERT_EQ(80, sl.port());
-    ASSERT_EQ("", sl.host());
+    ASSERT_EQ("default", sl.host());
     ASSERT_EQ("/", sl.path());
     ASSERT_EQ("/app/sample_data/html", sl.alias());
     ASSERT_EQ("off", sl.auto_index());
@@ -45,7 +45,7 @@ TEST_F(ServerLocationFacadeTest, longest_path_match) {
     ServerLocationFacade facade(locations);
     ServerLocation sl = facade.Choose("80", "", "/files/hoge.html");
     ASSERT_EQ(80, sl.port());
-    ASSERT_EQ("", sl.host());
+    ASSERT_EQ("default", sl.host());
     ASSERT_EQ("/files/", sl.path());
     ASSERT_EQ("/app/sample_data/files", sl.alias());
     ASSERT_EQ("off", sl.auto_index());

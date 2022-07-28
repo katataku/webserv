@@ -99,6 +99,7 @@ Node ConfigParser::single_directive() {
     token_node_map["autoindex"] = Node::AutoindexDirectiveNode;
     token_node_map["return"] = Node::ReturnDirectiveNode;
     token_node_map["cgi_extension"] = Node::CgiExtDirectiveNode;
+    token_node_map["server_name"] = Node::ServerNameDirectiveNode;
 
     std::map<std::string, Node::NodeKind>::iterator itr;
     for (itr = token_node_map.begin(); itr != token_node_map.end(); ++itr) {
