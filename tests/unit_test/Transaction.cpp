@@ -20,8 +20,9 @@ TEST_F(TransactionTest, FileReadExecutor) {
     system("echo 'hello world' > /var/www/html/hello_world.html");
 
     HTTPRequest req = HTTPRequest();
-    req.set_method("GET");
-    req.set_request_target("/html/hello_world.html");
+    req.Parse("GET /html/hello_world.html HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("\r\n");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
@@ -42,8 +43,9 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     system("echo 'hello world' > /var/www/html/hello_world.html");
 
     HTTPRequest req = HTTPRequest();
-    req.set_method("GET");
-    req.set_request_target("/html?query=value");
+    req.Parse("GET /html?query=value HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("\r\n");
 
     std::map<int, std::string> error_pages;
     std::set<std::string> allow_methods;
