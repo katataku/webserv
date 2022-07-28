@@ -53,7 +53,7 @@ std::string ConfigLexer::ReadKeyword() {
 Token* ConfigLexer::Tokenize() {
     Token head;
     Token* cur_tok = &head;
-    bool expectValue = false;
+    bool is_expected_value = false;
 
     while (true) {
         this->content_ = SkipSpace(this->content_);
@@ -70,11 +70,11 @@ Token* ConfigLexer::Tokenize() {
             cur_tok =
                 Token::NewToken(cur_tok, this->controls_.at(keyword), keyword);
             this->content_ = ConsumeWithSpace(this->content_, keyword);
-            expectValue = false;
+            is_expected_value = false;
             continue;
         }
 
-        if (expectValue) {
+        if (is_expected_value) {
             // valueの処理
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));
@@ -85,7 +85,7 @@ Token* ConfigLexer::Tokenize() {
                 Token::TokenKind kind = this->keywords_.at(keyword);
                 cur_tok = Token::NewToken(cur_tok, kind, keyword);
                 this->content_ = ConsumeWithSpace(this->content_, keyword);
-                expectValue = true;
+                is_expected_value = true;
             } catch (std::exception& e) {
                 throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
             }
