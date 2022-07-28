@@ -50,13 +50,30 @@ std::string ConfigLexer::ReadKeyword() {
     return this->content_.substr(0, keyword_len);
 }
 
+static std::string SkipSpaceAndComment(const std::string& s) {
+    std::string::size_type pos = 0;
+    for (; pos < s.size();) {
+        if (IsSpace(s[pos])) {
+            pos++;
+        } else if (s[pos] == '#') {
+            pos = s.find("\n", pos);
+            if (pos == std::string::npos) {
+                return "";
+            }
+        } else {
+            break;
+        }
+    }
+    return s.substr(pos);
+}
+
 Token* ConfigLexer::Tokenize() {
     Token head;
     Token* cur_tok = &head;
     bool is_expected_value = false;
 
     while (true) {
-        this->content_ = SkipSpace(this->content_);
+        this->content_ = SkipSpaceAndComment(this->content_);
         if (this->content_.empty()) {
             break;
         }
