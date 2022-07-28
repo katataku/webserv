@@ -45,6 +45,23 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             conf.set_auto_index(itr->GetValue());
             continue;
         }
+
+        if (itr->IsErrorPageDirective()) {
+            std::string error_page_path = itr->GetValue();
+            std::list<std::string> status_list;
+            status_list = std::list<std::string>(itr->directive_vals());
+            status_list.pop_back();
+
+            std::list<std::string>::iterator status_list_itr;
+            for (status_list_itr = status_list.begin();
+                 status_list_itr != status_list.end(); status_list_itr++) {
+                this->logging_.Debug("insert error_page directive[" +
+                                     *status_list_itr + "]:" + error_page_path);
+                conf.PushErrorPage(strtonum<int>(*status_list_itr),
+                                   error_page_path);
+            }
+            continue;
+        }
         // TODO(iyamada) エラー処理
         throw std::runtime_error("[GenerateWebservConfig]Unknown directive");
     }
@@ -98,6 +115,22 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         if (itr->IsServerNameDirective()) {
             itr->ValidateSize(1);
             serv.set_server_name(itr->GetValue());
+            continue;
+        }
+        if (itr->IsErrorPageDirective()) {
+            std::string error_page_path = itr->GetValue();
+            std::list<std::string> status_list;
+            status_list = std::list<std::string>(itr->directive_vals());
+            status_list.pop_back();
+
+            std::list<std::string>::iterator status_list_itr;
+            for (status_list_itr = status_list.begin();
+                 status_list_itr != status_list.end(); status_list_itr++) {
+                this->logging_.Debug("insert error_page directive[" +
+                                     *status_list_itr + "]:" + error_page_path);
+                serv.PushErrorPage(strtonum<int>(*status_list_itr),
+                                   error_page_path);
+            }
             continue;
         }
 

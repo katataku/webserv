@@ -13,9 +13,10 @@ static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
     return ss.str();
 }
 
-ConfigLexer::ConfigLexer() {}
+ConfigLexer::ConfigLexer() : logging_(Logging(__FUNCTION__)) {}
 
-ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
+ConfigLexer::ConfigLexer(const std::string& content)
+    : logging_(Logging(__FUNCTION__)), content_(content) {
     this->keywords_["server"] = Token::BlockDirective;
     this->keywords_["location"] = Token::BlockDirective;
     this->keywords_["listen"] = Token::SingleDirective;
@@ -105,6 +106,7 @@ Token* ConfigLexer::Tokenize() {
                 this->content_ = ConsumeWithSpace(this->content_, keyword);
                 is_expected_value = true;
             } catch (std::exception& e) {
+                logging_.Debug(e.what());
                 throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
             }
         }
