@@ -23,3 +23,12 @@ TEST(Split, no_delim_in_the_end) {
     ASSERT_EQ(std::string("second"), strs[1]);
     ASSERT_EQ(std::string("third"), strs[2]);
 }
+
+TEST(Join, basic) {
+    std::vector<std::string> strs;
+    strs.push_back("var");
+    strs.push_back("www");
+    strs.push_back("html");
+
+    ASSERT_EQ("var/www/html", Join(strs, "/"));
+}

@@ -23,6 +23,19 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
     return strs;
 }
 
+std::string Join(std::vector<std::string> strs, std::string separator) {
+    std::stringstream ss;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = strs.begin(); itr != strs.end(); ++itr) {
+        if (itr != strs.begin()) {
+            ss << separator;
+        }
+        ss << *itr;
+    }
+    return ss.str();
+}
+
 bool StartsWith(const std::string& s, const std::string& prefix) {
     return s.find(prefix, 0) == 0;
 }
