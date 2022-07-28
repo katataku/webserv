@@ -217,3 +217,15 @@ TEST_F(ConfigParserTest, error_page_not_exist) {
     LocationContext locate_context = locate_contexts.at(0);
     ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/999.html");
 }
+
+TEST_F(ConfigParserTest, error_page_same_code) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/error_page_same_code.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
+}
