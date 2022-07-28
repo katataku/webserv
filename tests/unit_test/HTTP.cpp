@@ -94,6 +94,16 @@ TEST_F(HTTPTest, parse_body_by_chuncked) {
     ASSERT_EQ(req.request_body(), "hello,world!");
 }
 
+TEST_F(HTTPTest, remove_dot_segment) {
+    HTTPRequest req = HTTPRequest();
+    req.Parse(
+        "GET /a/b/c/./../../g HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n");
+    ASSERT_EQ(req.request_target(), "/a/b/c/./../../g");
+    ASSERT_EQ(req.absolute_path(), "/a/g");
+}
+
 TEST_F(HTTPTest, ResponseBuilder_200) {
     HTTPResponse *res = ResponseBuilder::Build("hoge");
 

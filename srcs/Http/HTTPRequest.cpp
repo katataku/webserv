@@ -247,12 +247,28 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
     }
 }
 
-std::string HTTPRequest::ConvertToAbsolutePath(std::string request_target) {
-    std::string::size_type pos = request_target.find("?");
-    if (pos == std::string::npos) {
-        return request_target;
+std::string HTTPRequest::ConvertToAbsolutePath(std::string path) {
+    std::string::size_type pos = path.find("?");
+    if (pos != std::string::npos) {
+        path = path.substr(0, pos);
     }
-    return request_target.substr(0, pos);
+    std::vector<std::string> input = Split(path, "/");
+    std::vector<std::string> output;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = input.begin(); itr != input.end(); ++itr) {
+        if (*itr == ".") {
+            // do nothing
+        } else if (*itr == "..") {
+            if (output.size() == 0) {
+                throw std::runtime_error("invalid");
+            }
+            output.pop_back();
+        } else {
+            output.push_back(*itr);
+        }
+    }
+    return Join(output, "/");
 }
 
 // TODO(takkatao): chunked requestのbody size計算の実装が必要。
