@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+#include <sys/stat.h>
+
 #include <cctype>
 #include <fstream>
 #include <iostream>
@@ -120,4 +122,26 @@ std::string ReadFile(std::string file_path) {
     oss << ifs.rdbuf();
 
     return oss.str();
+}
+
+bool isExistRegularFile(std::string filepath) {
+    struct stat stat_buf;
+
+    if (stat(filepath.c_str(), &stat_buf) == -1) {
+        return false;
+    }
+
+    if (S_ISREG(stat_buf.st_mode)) {
+        return true;
+    }
+    return false;
+}
+
+bool hasPermissionToRead(std::string filepath) {
+    std::ifstream ifs(filepath.c_str());
+
+    if (!ifs) {
+        return false;
+    }
+    return true;
 }

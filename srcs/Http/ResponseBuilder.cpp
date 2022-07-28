@@ -59,6 +59,25 @@ std::string BuildSpecialResponseBody(int status_code) {
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     HTTPResponse *res = new HTTPResponse();
 
+    bool isReturnDefaultResponse = true;
+    std::string body;
+    if (sl->error_pages().find(status_code) != sl->error_pages().end()) {
+        std::string error_page_filepath =
+            sl->ResolveAlias(sl->error_pages().at(status_code));
+        if (!isExistRegularFile(error_page_filepath)) {
+            status_code = 404;
+        } else if (!hasPermissionToRead(error_page_filepath)) {
+            status_code = 403;
+        } else {
+            body = ReadFile(error_page_filepath);
+            isReturnDefaultResponse = false;
+        }
+    }
+
+    if (isReturnDefaultResponse) {
+        body = BuildSpecialResponseBody(status_code);
+    }
+
     res->set_status_code(status_code);
     if (status_code == 403) {
         std::ostringstream oss;
@@ -71,16 +90,6 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
             if (iter != sl->allow_methods().end()) oss << ", ";
         }
         res->set_allow(oss.str());
-    }
-
-    std::string body;
-    if (sl->error_pages().find(status_code) != sl->error_pages().end()) {
-        std::string error_page_filepath;
-        error_page_filepath =
-            sl->ResolveAlias(sl->error_pages().at(status_code));
-        body = ReadFile(error_page_filepath);
-    } else {
-        body = BuildSpecialResponseBody(status_code);
     }
 
     res->set_content_length(body.size());
