@@ -253,11 +253,7 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
     }
 }
 
-// TODO(takkatao): chunked requestのbody size計算の実装が必要。
-int HTTPRequest::CalcBodySize() const {
-    // Transactionの動作確認のための暫定的な実装。
-    return this->request_body_.size();
-}
+int HTTPRequest::CalcBodySize() const { return this->request_body_.size(); }
 
 bool HTTPRequest::IsReady() const {
     return this->is_finish_to_read_header_ && this->is_finish_to_read_body_;
