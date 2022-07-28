@@ -17,7 +17,7 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
         }
     }
     // 区切り文字のあとに来る文字(空文字含む）を追加する
-    // 区切り文字が存在しない場合はstrgがそのまま入る
+    // 区切り文字が存在しない場合はstrがそのまま入る
     strs.push_back(str.substr(pos));
     return strs;
 }

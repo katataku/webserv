@@ -260,8 +260,9 @@ std::string HTTPRequest::ConvertToAbsolutePath(std::string path) {
         if (*itr == ".") {
             // do nothing
         } else if (*itr == "..") {
-            if (output.size() == 0) {
-                throw std::runtime_error("invalid");
+            // 取り除くディレクトリがない場合はエラー
+            if (output.size() <= 1) {
+                throw std::runtime_error("invalid path");
             }
             output.pop_back();
         } else {

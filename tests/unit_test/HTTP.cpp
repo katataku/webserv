@@ -104,6 +104,15 @@ TEST_F(HTTPTest, remove_dot_segment) {
     ASSERT_EQ(req.absolute_path(), "/a/g");
 }
 
+TEST_F(HTTPTest, cannot_remove_directory) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET /a/b/./../../../g HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), std::runtime_error);
+}
+
 TEST_F(HTTPTest, ResponseBuilder_200) {
     HTTPResponse *res = ResponseBuilder::Build("hoge");
 
