@@ -10,7 +10,8 @@
 #include "ServerLocationKey.hpp"
 #include "utils.hpp"
 
-WebservConfig::WebservConfig() : client_max_body_size_(1024) {}
+WebservConfig::WebservConfig()
+    : client_max_body_size_(InitialValues::kClientMaxBodySize) {}
 
 WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
 
