@@ -38,7 +38,7 @@ Hostヘッダがどのサーバー名ともマッチしない場合はデフォ�
 Usage:
 
 ```
-Syntax:	server_name name;
+Syntax: server_name name;
 Default: server_name "";
 Context: server
 ```
@@ -73,14 +73,14 @@ listen 8080;
 
 特定のエラーに対して表示するページを設定することができる。
 
-設定されていない場合はデフォルトのエラーページが表示される。
+設定されていない場合はデフォルトのエラーページが生成され、表示される。
 
 同一のコンテキスト内で特定のエラーコードに対するエラーページが複数設定されている場合は最初に定義された値が使用される。
 
 Usage:
 
 ```
-Syntax:	error_page code ... uri;
+Syntax: error_page code ... uri;
 Default: —
 Context: http, server, location
 ```
@@ -103,7 +103,7 @@ error_page 500 501 505 /50x.html;
 Usage:
 
 ```
-Syntax:	client_max_body_size size;
+Syntax: client_max_body_size size;
 Default: client_max_body_size 1024;
 Context: http, server, location
 ```
@@ -164,7 +164,7 @@ location /kapouet {
 Usage:
 
 ```
-Syntax:	limit_except method ...;
+Syntax: limit_except method ...;
 Default: —
 Context: location
 ```
@@ -182,7 +182,7 @@ limit_except GET POST;
 Usage:
 
 ```
-Syntax:	autoindex on | off;
+Syntax: autoindex on | off;
 Default: autoindex off;
 Context: http, server, location
 ```
@@ -200,7 +200,7 @@ autoindex on;
 Usage:
 
 ```
-Syntax:	index file;
+Syntax: index file;
 Default: index index.html;
 Context: http, server, location
 ```
@@ -236,7 +236,7 @@ return https://www.google.com;
 Usage:
 
 ```
-Syntax:	server { ... }
+Syntax: server { ... }
 Default: —
 Context: http
 ```
@@ -252,7 +252,7 @@ URIの末尾は/で終了している必要がある。
 Usage:
 
 ```
-Syntax:	location uri { ... }
+Syntax: location uri { ... }
 Default: —
 Context: server
 ```
@@ -264,7 +264,7 @@ cgi_extensionのディレクティブがある場合に、拡張子が値とマ�
 Usage:
 
 ```
-Syntax:	cgi_extension extension
+Syntax: cgi_extension extension
 Default: —
 Context: location
 ```

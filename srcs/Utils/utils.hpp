@@ -51,4 +51,9 @@ static std::string numtostr(T num) {
     ss << num;
     return ss.str();
 }
+
+std::string ReadFile(std::string file_path);
+bool IsExistRegularFile(std::string filepath);
+bool HasPermissionToRead(std::string filepath);
+
 #endif  // SRCS_UTILS_UTILS_HPP_

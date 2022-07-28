@@ -2,13 +2,11 @@
 
 #include <iostream>
 #include <list>
-#include <map>
 #include <stdexcept>
-#include <string>
 
-ConfigParser::ConfigParser() {}
+ConfigParser::ConfigParser() { SetTokenNodeMap(); }
 
-ConfigParser::ConfigParser(Token* token) : token_(token) {}
+ConfigParser::ConfigParser(Token* token) : token_(token) { SetTokenNodeMap(); }
 
 ConfigParser::ConfigParser(const ConfigParser& other) { *this = other; }
 
@@ -20,6 +18,16 @@ ConfigParser& ConfigParser::operator=(const ConfigParser& other) {
 }
 
 ConfigParser::~ConfigParser() {}
+
+void ConfigParser::SetTokenNodeMap() {
+    this->token_node_map_["listen"] = Node::ListenDirectiveNode;
+    this->token_node_map_["alias"] = Node::AliasDirectiveNode;
+    this->token_node_map_["autoindex"] = Node::AutoindexDirectiveNode;
+    this->token_node_map_["return"] = Node::ReturnDirectiveNode;
+    this->token_node_map_["cgi_extension"] = Node::CgiExtDirectiveNode;
+    this->token_node_map_["error_page"] = Node::ErrorPageDirectiveNode;
+    this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
+}
 
 Node ConfigParser::Parse() { return config(); }
 
@@ -93,23 +101,16 @@ Node ConfigParser::single_directive() {
 
     Node node;
 
-    std::map<std::string, Node::NodeKind> token_node_map;
-    token_node_map["listen"] = Node::ListenDirectiveNode;
-    token_node_map["alias"] = Node::AliasDirectiveNode;
-    token_node_map["autoindex"] = Node::AutoindexDirectiveNode;
-    token_node_map["return"] = Node::ReturnDirectiveNode;
-    token_node_map["cgi_extension"] = Node::CgiExtDirectiveNode;
-    token_node_map["server_name"] = Node::ServerNameDirectiveNode;
-
     std::map<std::string, Node::NodeKind>::iterator itr;
-    for (itr = token_node_map.begin(); itr != token_node_map.end(); ++itr) {
+    for (itr = this->token_node_map_.begin();
+         itr != this->token_node_map_.end(); ++itr) {
         if (Token::Expect(&this->token_, (*itr).first)) {
             node = Node::NewNode((*itr).second);
             break;
         }
     }
 
-    value(&node);
+    values(&node);
     Token::Consume(&this->token_, ";");
 
     return node;
@@ -119,11 +120,26 @@ void ConfigParser::value(Node* node) {
     std::list<std::string> vals;
 
     if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-        throw std::runtime_error("Error: invalid token " + this->token_->val());
+        throw std::runtime_error("value Error: invalid token " +
+                                 this->token_->val());
     }
 
-    // TODO(iyamada) トークンのvalueは一個としている
     vals.push_back(this->token_->val());
     node->set_directive_vals(vals);
     Token::Consume(&this->token_, Token::ValueToken);
+}
+
+void ConfigParser::values(Node* node) {
+    std::list<std::string> vals;
+
+    while (!Token::SameToken(&this->token_, ";")) {
+        if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
+            throw std::runtime_error("values Error: invalid token " +
+                                     this->token_->val());
+        }
+
+        vals.push_back(this->token_->val());
+        Token::Consume(&this->token_, Token::ValueToken);
+    }
+    node->set_directive_vals(vals);
 }

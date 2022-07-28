@@ -1,6 +1,9 @@
 #include "utils.hpp"
 
+#include <sys/stat.h>
+
 #include <cctype>
+#include <fstream>
 #include <iostream>
 
 std::vector<std::string> Split(std::string const str, std::string const delim) {
@@ -104,4 +107,41 @@ std::string SkipSpace(const std::string& s) {
         }
     }
     return "";
+}
+
+std::string ReadFile(std::string file_path) {
+    std::ifstream ifs(file_path.c_str());
+    std::ostringstream oss;
+
+    if (!ifs) {
+        // TODO(takkatao):
+        // オープンできないときはここに入る。
+        throw std::runtime_error("ReadFile ifs open fail");
+    }
+
+    oss << ifs.rdbuf();
+
+    return oss.str();
+}
+
+bool IsExistRegularFile(std::string filepath) {
+    struct stat stat_buf;
+
+    if (stat(filepath.c_str(), &stat_buf) == -1) {
+        return false;
+    }
+
+    if (S_ISREG(stat_buf.st_mode)) {
+        return true;
+    }
+    return false;
+}
+
+bool HasPermissionToRead(std::string filepath) {
+    std::ifstream ifs(filepath.c_str());
+
+    if (!ifs) {
+        return false;
+    }
+    return true;
 }

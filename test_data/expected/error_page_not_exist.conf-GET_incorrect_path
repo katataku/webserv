@@ -1,16 +1,15 @@
-HTTP/1.1 403 Forbidden
+HTTP/1.1 404 Not Found
 Connection: close
 Content-Length: 184
-Allow: DELETE, GET, POST
 
 <html>
 <head>
-    <title>403 Forbidden</title>
+    <title>404 Not Found</title>
 </head>
 
 <body>
     <center>
-        <h1>403 Forbidden</h1>
+        <h1>404 Not Found</h1>
     </center>
     <hr>
     <center>webserv/default</center>

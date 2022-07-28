@@ -13,9 +13,10 @@ static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
     return ss.str();
 }
 
-ConfigLexer::ConfigLexer() {}
+ConfigLexer::ConfigLexer() : logging_(Logging(__FUNCTION__)) {}
 
-ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
+ConfigLexer::ConfigLexer(const std::string& content)
+    : logging_(Logging(__FUNCTION__)), content_(content) {
     this->keywords_["server"] = Token::BlockDirective;
     this->keywords_["location"] = Token::BlockDirective;
     this->keywords_["listen"] = Token::SingleDirective;
@@ -23,6 +24,7 @@ ConfigLexer::ConfigLexer(const std::string& content) : content_(content) {
     this->keywords_["autoindex"] = Token::SingleDirective;
     this->keywords_["return"] = Token::SingleDirective;
     this->keywords_["cgi_extension"] = Token::SingleDirective;
+    this->keywords_["error_page"] = Token::SingleDirective;
     this->keywords_["server_name"] = Token::SingleDirective;
 
     this->controls_["{"] = Token::OpenBraceToken;
@@ -104,6 +106,7 @@ Token* ConfigLexer::Tokenize() {
                 this->content_ = ConsumeWithSpace(this->content_, keyword);
                 is_expected_value = true;
             } catch (std::exception& e) {
+                logging_.Debug(e.what());
                 throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
             }
         }
