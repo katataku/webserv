@@ -44,7 +44,6 @@ class HTTPResponse {
     std::string GetStatusLineString() const;
     std::string GetHeadersString() const;
     std::string GetBodyString() const;
-    static std::string GetReasonPhrase(int);
 };
 
 #endif  // SRCS_HTTP_HTTPRESPONSE_HPP_

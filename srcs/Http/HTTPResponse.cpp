@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "HTTPReasonPhrase.hpp"
+
 HTTPResponse::HTTPResponse()
     : logging_(Logging(__FUNCTION__)),
       new_line_string_("\r\n"),
@@ -43,36 +45,6 @@ void HTTPResponse::set_response_body(std::string response_body) {
     this->response_body_ = response_body;
 }
 
-// TODO(takkatao) defaultでexceptionを投げても良いかも。
-std::string HTTPResponse::GetReasonPhrase(int status_code) {
-    switch (status_code) {
-        case 200:
-            return "OK";
-        case 201:
-            return "Created";
-        case 302:
-            return "Moved Temporarily";
-        case 400:
-            return "Bad Request";
-        case 403:
-            return "Forbidden";
-        case 404:
-            return "Not Found";
-        case 413:
-            return "Payload Too Large";
-        case 414:
-            return "URI Too Long";
-        case 500:
-            return "Internal Server Error";
-        case 501:
-            return "Not Implemented";
-        case 505:
-            return "HTTP Version Not Supported";
-        default:
-            return "";
-    }
-}
-
 std::string HTTPResponse::GetStatusLineString() const {
     std::ostringstream oss;
 
@@ -80,7 +52,7 @@ std::string HTTPResponse::GetStatusLineString() const {
     oss << " ";
     oss << this->status_code();
     oss << " ";
-    oss << GetReasonPhrase(this->status_code());
+    oss << HTTPReasonPhrase::GetReasonPhrase(this->status_code());
     oss << new_line_string_;
 
     return oss.str();

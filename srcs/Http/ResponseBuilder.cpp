@@ -30,6 +30,11 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     return res;
 }
 
+std::string BuildSpecialResponseBody(int status_code) {
+    (void)status_code;
+    return "";
+}
+
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     HTTPResponse *res = new HTTPResponse();
 
@@ -67,16 +72,16 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
         res->set_allow(oss.str());
     }
 
-    std::string error_page_filepath;
+    std::string body;
     if (sl->error_pages().find(status_code) != sl->error_pages().end()) {
+        std::string error_page_filepath;
         error_page_filepath =
             sl->ResolveAlias(sl->error_pages().at(status_code));
+        body = ReadFile(error_page_filepath);
     } else {
-        error_page_filepath = default_error_page_map[status_code];
+        body = BuildSpecialResponseBody(status_code);
     }
 
-    std::string body;
-    body = ReadFile(error_page_filepath);
     res->set_content_length(body.size());
     res->set_response_body(body);
 
