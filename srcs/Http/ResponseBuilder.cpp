@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 
+#include "HTTPReasonPhrase.hpp"
 #include "utils.hpp"
 
 ResponseBuilder::ResponseBuilder() : logging_(Logging(__FUNCTION__)) {}
@@ -32,31 +33,31 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
 
 std::string BuildSpecialResponseBody(int status_code) {
     (void)status_code;
-    return "";
+    std::ostringstream oss;
+
+    oss << "<html>" << std::endl;
+    oss << "<head>" << std::endl;
+    oss << "    <title>" << numtostr(status_code) << " "
+        << HTTPReasonPhrase::GetReasonPhrase(status_code) << "</title>"
+        << std::endl;
+    oss << "</head>" << std::endl;
+    oss << "" << std::endl;
+    oss << "<body>" << std::endl;
+    oss << "    <center>" << std::endl;
+    oss << "        <h1>" << numtostr(status_code) << " "
+        << HTTPReasonPhrase::GetReasonPhrase(status_code) << "</h1>"
+        << std::endl;
+    oss << "    </center>" << std::endl;
+    oss << "    <hr>" << std::endl;
+    oss << "    <center>webserv/default</center>" << std::endl;
+    oss << "</body>" << std::endl;
+    oss << "" << std::endl;
+    oss << "</html>" << std::endl;
+    return oss.str();
 }
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     HTTPResponse *res = new HTTPResponse();
-
-    std::map<int, std::string> default_error_page_map;
-    default_error_page_map[302] =
-        "/app/sample_data/html/default_error_page/302.html";
-    default_error_page_map[400] =
-        "/app/sample_data/html/default_error_page/400.html";
-    default_error_page_map[403] =
-        "/app/sample_data/html/default_error_page/403.html";
-    default_error_page_map[404] =
-        "/app/sample_data/html/default_error_page/404.html";
-    default_error_page_map[413] =
-        "/app/sample_data/html/default_error_page/413.html";
-    default_error_page_map[414] =
-        "/app/sample_data/html/default_error_page/414.html";
-    default_error_page_map[500] =
-        "/app/sample_data/html/default_error_page/500.html";
-    default_error_page_map[501] =
-        "/app/sample_data/html/default_error_page/501.html";
-    default_error_page_map[505] =
-        "/app/sample_data/html/default_error_page/505.html";
 
     res->set_status_code(status_code);
     if (status_code == 403) {
