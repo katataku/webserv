@@ -58,7 +58,7 @@ std::string BuildDefaultErrorResponseBody(int status_code) {
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     HTTPResponse *res = new HTTPResponse();
 
-    bool isReturnDefaultResponse = true;
+    bool is_return_default_response = true;
     std::string body;
     if (sl->error_pages().find(status_code) != sl->error_pages().end()) {
         std::string error_page_filepath =
@@ -69,11 +69,11 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
             status_code = 403;
         } else {
             body = ReadFile(error_page_filepath);
-            isReturnDefaultResponse = false;
+            is_return_default_response = false;
         }
     }
 
-    if (isReturnDefaultResponse) {
+    if (is_return_default_response) {
         body = BuildDefaultErrorResponseBody(status_code);
     }
 
