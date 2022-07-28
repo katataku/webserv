@@ -1,5 +1,8 @@
 #include "ServerLocation.hpp"
 
+#include "DefaultValues.hpp"
+#include "InitialValues.hpp"
+
 ServerLocation::ServerLocation() : logging_(Logging(__FUNCTION__)) {}
 
 ServerLocation::ServerLocation(ServerLocation const &other) { *this = other; }
@@ -28,7 +31,10 @@ bool ServerLocation::IsAllowedMethod(std::string method) const {
 }
 
 bool ServerLocation::IsValidBodySize(int body_size) const {
-    if (body_size > this->client_max_body_size()) return false;
+    int max_body_size = this->client_max_body_size();
+    if (max_body_size == InitialValues::kClientMaxBodySize)
+        max_body_size = DefaultValues::kClientMaxBodySize;
+    if (body_size > max_body_size) return false;
     return true;
 }
 

@@ -165,6 +165,15 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+    CONFIG_NO=client_max_body_size_on_location.conf
+    start_server_container
+
+        REQUEST_NO=POST_hello_world
+        do_test
+
+        REQUEST_NO=POST_hello_world_chunked
+        do_test
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then
