@@ -60,7 +60,7 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
-std::string HTTPRequest::absolute_path() const { this->absolute_path_; }
+std::string HTTPRequest::absolute_path() const { return this->absolute_path_; }
 
 std::map<std::string, std::string> HTTPRequest::queries() const {
     // TODO(takkatao): queryを返すように実装する。
