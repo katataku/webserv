@@ -1,7 +1,5 @@
 #include "Transaction.hpp"
 
-#include <string>
-
 #include "CGIExecutor.hpp"
 #include "FileReadExecutor.hpp"
 #include "HTTPException.hpp"
