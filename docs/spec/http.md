@@ -140,7 +140,6 @@ POST /hoge HTTP/1.1
 
 ### DELETEメソッドについて
 
-
 HTTPリクエストを例に交えて説明する。
 
 ```http
