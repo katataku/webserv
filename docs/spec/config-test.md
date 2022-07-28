@@ -4,6 +4,8 @@
 
 ## 全般
 
+- エラーの種類を以下に列挙する。
+
 ### コンテキストが違う場所にディレクティブがある
 
 Example:
@@ -43,7 +45,9 @@ server {
 Error:
 server name "." is invalid
 
-<!-- ### 同コンテキストにディレクティブが重複して存在する
+### 同コンテキストにディレクティブが重複して存在する
+
+- nginxの場合、以下の例だと構文的にokだがwebservはエラーとして扱う。
 
 Example:
 
@@ -55,29 +59,21 @@ server {
 ```
 
 Error:
-duplicate "server_name" in server context -->
+duplicate "server_name" in server context
 
 ## 具体的なケース
 
 ### server_name
 
-<!-- 
+- server_name(ホスト名)は[このサイト](https://suu-g.hateblo.jp/entry/2019/09/19/232913)を見るに、RFCで定義されている。
+- `_`の扱いは曖昧だが、webservはこの文字をserver_nameに設定しても良いとする。
+- ホスト名のBNF
 
-BNF
-
+```
 <official hostname> ::= <hname>
 <hname> ::= <name>*["."<name>]
 <name>  ::= <let-or-digit>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-
-letter or digitだがRFC的には以下の文字が推奨されている
-
-Recommended
-
-"A-Z", "a-z", "0-9", dash and underscore
-
-See https://suu-g.hateblo.jp/entry/2019/09/19/232913
-
- -->
+```
 
 Example:
 
@@ -117,7 +113,7 @@ server {
 
 invalid port in "65536" of the "listen" directive
 
-### error_page
+<!-- ### error_page -->
 
 ### client_max_body_size
 
@@ -132,7 +128,7 @@ server {
 Error:
 "client_max_body_size" directive invalid value
 
-### alias
+<!-- ### alias -->
 
 ### limit_except
 
@@ -158,9 +154,6 @@ server {
 Error:
 invalid number of arguments in "limit_except" directive
 
-<!-- 
-これはエラー？
-
 ```
 server {
 	limit_except GET GET;
@@ -177,12 +170,9 @@ server {
 ```
 
 Error:
-unknown method "get", may be "GET"? -->
+unknown method "get", may be "GET"?
 
 ### autoindex
-
-<!-- 
-nginxはケースインセンシティブ?
 
 Example:
 
@@ -193,9 +183,9 @@ server {
 ```
 
 Error:
-autoindex cat take "on" or "off" -->
+autoindex can take "on" or "off"
 
-### index
+<!-- ### index -->
 
 ### return
 
@@ -219,7 +209,7 @@ server
 ```
 
 Error:
-unexpected end of file, expecting ";" or "}"
+unexpected end of file, expecting "{"
 
 Example:
 
@@ -247,10 +237,6 @@ server {
 Error:
 invalid number of arguments in "location" directive
 
-<!-- Example:
-
-このケースもinvalid number of arguments in "location" directiveでエラーにしたい
-
 ```
 server {
 	location / /hoge {
@@ -260,4 +246,4 @@ server {
 ```
 
 Error:
-invalid location modifier "/" -->
+invalid location modifier "/"
