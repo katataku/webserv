@@ -63,6 +63,9 @@ duplicate "server_name" in server context
 
 ## 具体的なケース
 
+- 考慮すべきエラーケースを記載
+- ディレクティブで共通するエラーケースは省略。例えば値がない、;がないなど。
+
 ### server_name
 
 - server_name(ホスト名)は[このサイト](https://suu-g.hateblo.jp/entry/2019/09/19/232913)を見るに、RFCで定義されている。
