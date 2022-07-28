@@ -44,7 +44,6 @@ server_name同一コンテキストに複数設定できない。
 <name>  ::= <let-or-digit>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
 ```
 
-
 同一のポートで複数の仮想サーバーがリクエストを待ち受けている場合、HTTPリクエストのHostヘッダを見てどの仮想サーバーの処理を振り分けるかを決定する。
 
 Hostヘッダがどのサーバー名ともマッチしない場合はデフォルトサーバーに処理が振り分けられる。
@@ -232,6 +231,7 @@ autoindex on;
 ディレクトリのデフォルトページを設定する。
 
 <!-- TODO(iyamada) nginxは設定できるけどどうする -->
+
 index同一コンテキストに複数設定できない。
 
 Usage:
@@ -253,6 +253,7 @@ index index.html;
 一時的なリダイレクト(302)を設定する。
 
 <!-- TODO(iyamada) nginxは設定できるけどどうする -->
+
 returnは同一コンテキストに複数設定できない。
 
 URLは"http://"もしくは"https://"で始まる必要がある。
@@ -306,6 +307,7 @@ Context: server
 cgi_extensionのディレクティブがある場合に、拡張子が値とマッチするファイルをCGIプログラムとしてを起動する。
 
 <!-- TODO(iyamada) mandatoryは複数設定できないようにする？ -->
+
 cgi_extensionは同一コンテキストに複数設定できる。
 
 Usage:
