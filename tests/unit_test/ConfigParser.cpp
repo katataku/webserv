@@ -171,3 +171,49 @@ TEST_F(ConfigParserTest, error_page) {
     LocationContext locate_context = locate_contexts.at(0);
     ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
 }
+
+TEST_F(ConfigParserTest, error_page_multi) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/error_page_multi.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
+    ASSERT_EQ(locate_context.error_pages().at(500), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(502), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(503), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(504), "/error_page/50x.html");
+}
+
+TEST_F(ConfigParserTest, error_page_override) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/error_page_override.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.error_pages().at(400), "/error_page/40x.html");
+    ASSERT_EQ(serv_context.error_pages().at(404), "/error_page/40x.html");
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
+    ASSERT_EQ(locate_context.error_pages().at(500), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(502), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(503), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(504), "/error_page/50x.html");
+}
+
+TEST_F(ConfigParserTest, error_page_not_exist) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/error_page_not_exist.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/999.html");
+}
