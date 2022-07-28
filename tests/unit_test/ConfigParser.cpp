@@ -169,6 +169,5 @@ TEST_F(ConfigParserTest, error_page) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.error_pages().at(404),
-              "/error_page/404_custom.html");
+    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
 }
