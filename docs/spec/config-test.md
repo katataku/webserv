@@ -173,7 +173,7 @@ server {
 ```
 
 Error:
-unknown method "get", may be "GET"?
+limit_except "get" is invalid
 
 ### autoindex
 
@@ -201,7 +201,7 @@ server {
 ```
 
 Error:
-invalid return code "fuga://hoge.www.com"
+"fuga://hoge.www.com" is invalid
 
 ### server
 
