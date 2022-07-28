@@ -32,7 +32,6 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
 }
 
 std::string BuildSpecialResponseBody(int status_code) {
-    (void)status_code;
     std::ostringstream oss;
 
     oss << "<html>" << std::endl;
