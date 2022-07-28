@@ -45,4 +45,7 @@ static std::string numtostr(T num) {
     ss << num;
     return ss.str();
 }
+
+std::string ReadFile(std::string file_path);
+
 #endif  // SRCS_UTILS_UTILS_HPP_

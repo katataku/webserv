@@ -20,7 +20,6 @@ class ResponseBuilder {
 
  private:
     Logging logging_;
-    static std::string ReadFile(std::string filepath);
 };
 
 #endif  // SRCS_HTTP_RESPONSEBUILDER_HPP_

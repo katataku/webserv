@@ -1,11 +1,10 @@
 #include "ResponseBuilder.hpp"
 
-#include <fstream>
-#include <iostream>
 #include <map>
 #include <set>
-#include <sstream>
 #include <string>
+
+#include "utils.hpp"
 
 ResponseBuilder::ResponseBuilder() : logging_(Logging(__FUNCTION__)) {}
 
@@ -29,21 +28,6 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     res->set_content_length(body.size());
     res->set_response_body(body);
     return res;
-}
-
-std::string ResponseBuilder::ReadFile(std::string file_path) {
-    std::ifstream ifs(file_path.c_str());
-    std::ostringstream oss;
-
-    if (!ifs) {
-        // TODO(takkatao):
-        // オープンできないときはここに入る。
-        throw std::runtime_error("ReadFile ifs open fail");
-    }
-
-    oss << ifs.rdbuf();
-
-    return oss.str();
 }
 
 HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {

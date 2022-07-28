@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 #include <cctype>
+#include <fstream>
 #include <iostream>
 
 std::vector<std::string> Split(std::string const str, std::string const delim) {
@@ -104,4 +105,19 @@ std::string SkipSpace(const std::string& s) {
         }
     }
     return "";
+}
+
+std::string ReadFile(std::string file_path) {
+    std::ifstream ifs(file_path.c_str());
+    std::ostringstream oss;
+
+    if (!ifs) {
+        // TODO(takkatao):
+        // オープンできないときはここに入る。
+        throw std::runtime_error("ReadFile ifs open fail");
+    }
+
+    oss << ifs.rdbuf();
+
+    return oss.str();
 }
