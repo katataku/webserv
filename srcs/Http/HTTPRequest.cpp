@@ -60,14 +60,7 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
-// TODO(takkatao): pathに含まれるドットセグメント削除を実装する。
-std::string HTTPRequest::absolute_path() const {
-    std::string::size_type pos = this->request_target_.find("?");
-    if (pos == std::string::npos) {
-        return this->request_target_;
-    }
-    return this->request_target_.substr(0, pos);
-}
+std::string HTTPRequest::absolute_path() const { this->absolute_path_; }
 
 std::map<std::string, std::string> HTTPRequest::queries() const {
     // TODO(takkatao): queryを返すように実装する。
@@ -153,6 +146,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     }
     this->method_ = items[0];
     this->request_target_ = items[1];
+    this->absolute_path_ = this->ConvertToAbsolutePath(this->request_target_);
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
@@ -251,6 +245,14 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
             this->unparsed_string_ = this->unparsed_string_.substr(CRLF.size());
         }
     }
+}
+
+std::string HTTPRequest::ConvertToAbsolutePath(std::string request_target) {
+    std::string::size_type pos = request_target.find("?");
+    if (pos == std::string::npos) {
+        return request_target;
+    }
+    return request_target.substr(0, pos);
 }
 
 // TODO(takkatao): chunked requestのbody size計算の実装が必要。

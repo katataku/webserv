@@ -20,6 +20,7 @@ TEST_F(HTTPTest, Parse) {
         "\r\n");
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.absolute_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
@@ -33,6 +34,7 @@ TEST_F(HTTPTest, parse_mutiple) {
     req.Parse("\r\n");
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.absolute_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
@@ -47,6 +49,7 @@ TEST_F(HTTPTest, parse_body_by_content_length) {
     req.Parse("\r\n");
     req.Parse("12345678");
     ASSERT_EQ(req.method(), "GET");
+    ASSERT_EQ(req.request_target(), "/");
     ASSERT_EQ(req.absolute_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), 8);
@@ -65,6 +68,7 @@ TEST_F(HTTPTest, parse_body_by_chuncked_onetime) {
         "6\r\nworld!\r\n"
         "0\r\n\r\n");
     ASSERT_EQ(req.method(), "POST");
+    ASSERT_EQ(req.request_target(), "/cgi-bin/file_manager.py");
     ASSERT_EQ(req.absolute_path(), "/cgi-bin/file_manager.py");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
@@ -82,6 +86,7 @@ TEST_F(HTTPTest, parse_body_by_chuncked) {
     req.Parse("6\r\nworld!\r\n");
     req.Parse("0\r\n\r\n");
     ASSERT_EQ(req.method(), "POST");
+    ASSERT_EQ(req.request_target(), "/cgi-bin/file_manager.py");
     ASSERT_EQ(req.absolute_path(), "/cgi-bin/file_manager.py");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);

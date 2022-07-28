@@ -43,6 +43,7 @@ class HTTPRequest {
     void ParseBodyByContentLength(std::string str);
     void ParseBodyByChunked(std::string str);
     void ParseRequestLine(std::string line);
+    std::string ConvertToAbsolutePath(std::string request_target);
 
     Logging logging_;
     std::string unparsed_string_;
@@ -54,6 +55,7 @@ class HTTPRequest {
     std::string content_type_;
     std::string transfer_encoding_;
     std::string request_body_;
+    std::string absolute_path_;
     bool is_finish_to_read_header_;
     bool is_finish_to_read_body_;
 };
