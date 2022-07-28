@@ -79,16 +79,6 @@ unexpected end of file, expecting "{"
 
 ### server_name
 
-- server_name(ホスト名)は[このサイト](https://suu-g.hateblo.jp/entry/2019/09/19/232913)を見るに、RFCで定義されている。
-- `_`の扱いは曖昧だが、webservはこの文字をserver_nameに設定しても良いとする。
-- ホスト名のBNF
-
-```
-<official hostname> ::= <hname>
-<hname> ::= <name>*["."<name>]
-<name>  ::= <let-or-digit>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-```
-
 Example:
 
 ```
