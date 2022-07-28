@@ -61,6 +61,17 @@ server {
 Error:
 duplicate "server_name" in server context
 
+### 期待する文字と異なるものが存在する
+
+Example:
+
+```
+server
+```
+
+Error:
+unexpected end of file, expecting "{"
+
 ## 具体的なケース
 
 - 考慮すべきエラーケースを記載
