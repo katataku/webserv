@@ -43,7 +43,7 @@ server {
 ```
 
 Error:
-server name "." is invalid
+"server_name" directive invalid value "."
 
 ### 同コンテキストにディレクティブが重複して存在する
 
@@ -59,7 +59,7 @@ server {
 ```
 
 Error:
-duplicate "server_name" in server context
+"server_name" directive is duplicate
 
 ### 期待する文字と異なるものが存在する
 
@@ -72,91 +72,9 @@ server
 Error:
 unexpected end of file, expecting "{"
 
-## 具体的なケース
-
-- 考慮すべきエラーケースを記載
-- ディレクティブで共通するエラーケースは省略。例えば値がない、;がないなど。
-
-### server_name
+### 複数の値をとるディレクティブに重複した値が存在する
 
 Example:
-
-```
-server {
-	server_name .;
-}
-```
-
-Error:
-server name "." is invalid
-
-### listen
-
-Example:
-
-```
-server {
-	listen 8080;
-	listen 8080;
-}
-```
-
-"listen" directive is allowed only one.
-
-Example:
-
-```
-server {
-	listen 65536;
-}
-
-server {
-	listen 0;
-}
-```
-
-invalid port in "65536" of the "listen" directive
-
-<!-- ### error_page -->
-
-### client_max_body_size
-
-Example:
-
-```
-server {
-	client_max_body_size a;
-}
-```
-
-Error:
-"client_max_body_size" directive invalid value
-
-<!-- ### alias -->
-
-### limit_except
-
-Example:
-
-```
-server {
-	limit_except HOGE;
-}
-```
-
-Error:
-invalid method "HOGE"
-
-Example:
-
-```
-server {
-	limit_except;
-}
-```
-
-Error:
-invalid number of arguments in "limit_except" directive
 
 ```
 server {
@@ -165,44 +83,16 @@ server {
 ```
 
 Error:
-duplicate method "GET"
+"limit_except" directive value is duplicate
 
-```
-server {
-	limit_except get;
-}
-```
+## 具体的なケース
 
-Error:
-limit_except "get" is invalid
+- 考慮すべきエラーケースを記載
+- ディレクティブで共通するエラーケースは省略
+  - 値が存在しない
+  - 不適切な値が存在する
+  - `{`、`}`、`;`がない
 
-### autoindex
-
-Example:
-
-```
-server {
-	autoindex OFF;
-}
-```
-
-Error:
-autoindex can take "on" or "off"
-
-<!-- ### index -->
-
-### return
-
-Example:
-
-```
-server {
-	return fuga://hoge.www.com;
-}
-```
-
-Error:
-"fuga://hoge.www.com" is invalid
 
 ### server
 
