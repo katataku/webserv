@@ -28,7 +28,13 @@ CGIExecutor::~CGIExecutor() {}
 HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
                                 ServerLocation const &sl) {
     CGIRequest cgi_req(request, sl);
-    CGIResponse cgi_res = this->CGIExec(cgi_req, sl);
+    CGIResponse cgi_res = this->CGIExec(cgi_req);
+
+    // POSTだったらステータスコードを201にする
+    if (request.method() == "POST") {
+        cgi_res.set_status_code("201");
+    }
+
     // TODO(iyamada) ResponseBuilderに任せても良いかも
     return cgi_res.ToHTTPResponse();
 }
@@ -98,10 +104,7 @@ static std::string read(int fd) {
 }
 
 // TODO(iyamada) エラー処理
-CGIResponse CGIExecutor::CGIExec(CGIRequest const &req,
-                                 ServerLocation const &sl) {
-    (void)sl;
-
+CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     if (pipe(pipe_to_cgi) == -1 || pipe(pipe_to_serv) == -1) {
@@ -110,6 +113,10 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req,
     }
 
     if (fork() == 0) {
+        // 必要ないパイプはクローズ
+        close(pipe_to_cgi[1]);
+        close(pipe_to_serv[0]);
+
         dup2(pipe_to_cgi[0], STDIN_FILENO);
         dup2(pipe_to_serv[1], STDOUT_FILENO);
         if (execve(req.path(), req.arg(), req.env()) == -1) {
@@ -117,6 +124,9 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req,
                                      std::string(strerror(errno)));
         }
     }
+    // 必要ないパイプはクローズ
+    close(pipe_to_cgi[0]);
+    close(pipe_to_serv[1]);
 
     // TODO(iyamada)
     // bodyは設定されていなかったら空文字列なのでifいらないかも

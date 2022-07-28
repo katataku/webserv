@@ -120,7 +120,7 @@ classDiagram
   }
 
   class ServerLocationFacade {
-    +Choose(port, host, path)* ServerLocation
+    +Choose(port, host, path) ServerLocation
     +GetPorts() vector~string~
     +InsertErrorPages(const std::map<int, std::string> &error_pages) void
     +SetDefaultAllowMethods() void

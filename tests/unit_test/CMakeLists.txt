@@ -22,6 +22,7 @@ add_executable(main
         CreateServerLocation.cpp
         Transaction.cpp
         CGI.cpp
+        ServerLocationFacade.cpp
 )
 
 target_link_libraries(main

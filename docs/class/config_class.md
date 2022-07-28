@@ -61,7 +61,7 @@ classDiagram
 
     %% どのServerLocationを使用するかを決定する責務 %%
     class ServerLocationFacade {
-        +Choose(port, host, path) ServerLocation*
+        +Choose(port, host, path) ServerLocation
         +GetPorts() vector~string~
     }
 

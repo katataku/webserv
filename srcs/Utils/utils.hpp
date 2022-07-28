@@ -7,6 +7,12 @@
 
 std::vector<std::string> Split(std::string const str, std::string const delim);
 
+bool IsDigit(const char c);
+
+bool IsAlpha(const char c);
+
+bool IsSpace(const char c);
+
 bool StartsWith(const std::string& s, const std::string& prefix);
 
 std::string Consume(const std::string& s, const std::string& keyword);

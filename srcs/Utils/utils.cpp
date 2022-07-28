@@ -45,9 +45,9 @@ bool Expect(std::string* s, const std::string& keyword) {
     return false;
 }
 
-static bool IsDigit(const char c) { return std::isdigit(c) != 0; }
-static bool IsAlpha(const char c) { return std::isalpha(c) != 0; }
-static bool IsSpace(const char c) { return std::isspace(c) != 0; }
+bool IsDigit(const char c) { return std::isdigit(c) != 0; }
+bool IsAlpha(const char c) { return std::isalpha(c) != 0; }
+bool IsSpace(const char c) { return std::isspace(c) != 0; }
 
 std::string ConsumeSpace(const std::string& s) {
     if (IsSpace(s[0])) {

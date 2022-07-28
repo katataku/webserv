@@ -10,7 +10,7 @@ class Worker {
  public:
     Worker();
     Worker(Worker const &other);
-    explicit Worker(ServerLocationFacade facade);
+    explicit Worker(ServerLocationFacade *facade);
     Worker &operator=(Worker const &other);
     ~Worker();
 
@@ -19,7 +19,7 @@ class Worker {
  private:
     Logging logging_;
     RequestFacade *request_facade_;
-    ServerLocationFacade server_location_facade_;
+    ServerLocationFacade *server_location_facade_;
 };
 
 #endif  // SRCS_WEBSERV_WORKER_HPP_

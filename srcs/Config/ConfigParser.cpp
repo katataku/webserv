@@ -26,6 +26,7 @@ void ConfigParser::SetTokenNodeMap() {
     this->token_node_map_["return"] = Node::ReturnDirectiveNode;
     this->token_node_map_["cgi_extension"] = Node::CgiExtDirectiveNode;
     this->token_node_map_["error_page"] = Node::ErrorPageDirectiveNode;
+    this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
 }
 
 Node ConfigParser::Parse() { return config(); }

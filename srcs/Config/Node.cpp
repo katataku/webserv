@@ -62,6 +62,9 @@ bool Node::IsAliasDirective() { return kind_ == Node::AliasDirectiveNode; }
 bool Node::IsAutoindexDirective() {
     return kind_ == Node::AutoindexDirectiveNode;
 }
+bool Node::IsServerNameDirective() {
+    return kind_ == Node::ServerNameDirectiveNode;
+}
 
 bool Node::IsReturnDirective() { return kind_ == Node::ReturnDirectiveNode; }
 

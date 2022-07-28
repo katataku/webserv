@@ -8,7 +8,6 @@
 #include "Logging.hpp"
 #include "ServerContext.hpp"
 #include "ServerLocation.hpp"
-#include "ServerLocationKey.hpp"
 
 class WebservConfig {
  public:
@@ -32,7 +31,7 @@ class WebservConfig {
 
     static WebservConfig Parse();
 
-    std::map<ServerLocationKey, ServerLocation> CreateServerLocations();
+    std::vector<ServerLocation> CreateServerLocations();
     static WebservConfig Parse(std::string);
 
  private:
