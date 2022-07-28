@@ -31,7 +31,7 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     return res;
 }
 
-std::string BuildSpecialResponseBody(int status_code) {
+std::string BuildDefaultResponseBody(int status_code) {
     std::ostringstream oss;
 
     oss << "<html>" << std::endl;
@@ -74,7 +74,7 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     }
 
     if (isReturnDefaultResponse) {
-        body = BuildSpecialResponseBody(status_code);
+        body = BuildDefaultResponseBody(status_code);
     }
 
     res->set_status_code(status_code);
