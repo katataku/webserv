@@ -53,7 +53,7 @@ static std::string numtostr(T num) {
 }
 
 std::string ReadFile(std::string file_path);
-bool isExistRegularFile(std::string filepath);
-bool hasPermissionToRead(std::string filepath);
+bool IsExistRegularFile(std::string filepath);
+bool HasPermissionToRead(std::string filepath);
 
 #endif  // SRCS_UTILS_UTILS_HPP_

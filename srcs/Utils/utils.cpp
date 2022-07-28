@@ -124,7 +124,7 @@ std::string ReadFile(std::string file_path) {
     return oss.str();
 }
 
-bool isExistRegularFile(std::string filepath) {
+bool IsExistRegularFile(std::string filepath) {
     struct stat stat_buf;
 
     if (stat(filepath.c_str(), &stat_buf) == -1) {
@@ -137,7 +137,7 @@ bool isExistRegularFile(std::string filepath) {
     return false;
 }
 
-bool hasPermissionToRead(std::string filepath) {
+bool HasPermissionToRead(std::string filepath) {
     std::ifstream ifs(filepath.c_str());
 
     if (!ifs) {
