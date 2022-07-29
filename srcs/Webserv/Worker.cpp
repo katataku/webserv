@@ -32,7 +32,7 @@ void Worker::Exec(Socket **socket_ptr) {
         request->Parse(str);
         if (request->IsReady()) {
             ServerLocation sl = this->server_location_facade_->Choose(
-                socket->port(), request->host(), request->absolute_path());
+                socket->port(), request->host(), request->canonical_path());
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, &sl);
             socket->Send(response->GetResponseString());

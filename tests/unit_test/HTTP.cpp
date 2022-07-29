@@ -20,6 +20,7 @@ TEST_F(HTTPTest, Parse) {
         "\r\n");
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.canonical_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
@@ -33,6 +34,7 @@ TEST_F(HTTPTest, parse_mutiple) {
     req.Parse("\r\n");
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.canonical_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "");
@@ -47,7 +49,8 @@ TEST_F(HTTPTest, parse_body_by_content_length) {
     req.Parse("\r\n");
     req.Parse("12345678");
     ASSERT_EQ(req.method(), "GET");
-    ASSERT_EQ(req.absolute_path(), "/");
+    ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.canonical_path(), "/");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), 8);
     ASSERT_EQ(req.transfer_encoding(), "");
@@ -65,7 +68,8 @@ TEST_F(HTTPTest, parse_body_by_chuncked_onetime) {
         "6\r\nworld!\r\n"
         "0\r\n\r\n");
     ASSERT_EQ(req.method(), "POST");
-    ASSERT_EQ(req.absolute_path(), "/cgi-bin/file_manager.py");
+    ASSERT_EQ(req.request_target(), "/cgi-bin/file_manager.py");
+    ASSERT_EQ(req.canonical_path(), "/cgi-bin/file_manager.py");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "chunked");
@@ -82,11 +86,31 @@ TEST_F(HTTPTest, parse_body_by_chuncked) {
     req.Parse("6\r\nworld!\r\n");
     req.Parse("0\r\n\r\n");
     ASSERT_EQ(req.method(), "POST");
-    ASSERT_EQ(req.absolute_path(), "/cgi-bin/file_manager.py");
+    ASSERT_EQ(req.request_target(), "/cgi-bin/file_manager.py");
+    ASSERT_EQ(req.canonical_path(), "/cgi-bin/file_manager.py");
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "chunked");
     ASSERT_EQ(req.request_body(), "hello,world!");
+}
+
+TEST_F(HTTPTest, remove_dot_segment) {
+    HTTPRequest req = HTTPRequest();
+    req.Parse(
+        "GET /a/b/c/./../../g HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n");
+    ASSERT_EQ(req.request_target(), "/a/b/c/./../../g");
+    ASSERT_EQ(req.canonical_path(), "/a/g");
+}
+
+TEST_F(HTTPTest, cannot_remove_directory) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET /a/b/./../../../g HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), std::runtime_error);
 }
 
 TEST_F(HTTPTest, ResponseBuilder_200) {

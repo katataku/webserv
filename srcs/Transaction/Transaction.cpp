@@ -32,7 +32,7 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
         // TODO(takkatao): CGIの処理を実装。
         // std::string alias_resolved_uri =
         //     ServerLocation.ResolveAlias(request->uri());
-        if (sl->IsCGI(request->absolute_path())) {
+        if (sl->IsCGI(request->canonical_path())) {
             CGIExecutor cgi;
             return cgi.Exec(*request, *sl);
         }
