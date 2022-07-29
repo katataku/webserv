@@ -347,3 +347,43 @@ TEST_F(ConfigParserDeathTest, server_in_server) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive is not allowed here");
 }
+
+TEST_F(ConfigParserDeathTest, server_name_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "server_name_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, listen_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "listen_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, server_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "server_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, location_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "location_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
