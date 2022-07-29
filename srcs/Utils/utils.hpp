@@ -7,6 +7,10 @@
 
 std::vector<std::string> Split(std::string const str, std::string const delim);
 
+bool IsInteger(std::string str);
+
+int ToInteger(std::string str);
+
 bool IsDigit(const char c);
 
 bool IsAlpha(const char c);

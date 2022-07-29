@@ -23,3 +23,32 @@ TEST(Split, no_delim_in_the_end) {
     ASSERT_EQ(std::string("second"), strs[1]);
     ASSERT_EQ(std::string("third"), strs[2]);
 }
+
+TEST(IsInteger, valid) {
+    ASSERT_EQ(true, IsInteger("0"));
+    ASSERT_EQ(true, IsInteger("42"));
+    ASSERT_EQ(true, IsInteger("-42"));
+    ASSERT_EQ(true, IsInteger("+42"));
+    ASSERT_EQ(true, IsInteger("2147483647"));
+    ASSERT_EQ(true, IsInteger("-2147483648"));
+}
+
+TEST(IsInteger, invalid) {
+    ASSERT_EQ(false, IsInteger(""));
+    ASSERT_EQ(false, IsInteger("42a"));
+    ASSERT_EQ(false, IsInteger("a42"));
+    ASSERT_EQ(false, IsInteger("4a2"));
+    ASSERT_EQ(false, IsInteger("++42"));
+    ASSERT_EQ(false, IsInteger("2147483648"));
+    ASSERT_EQ(false, IsInteger("-2147483649"));
+    ASSERT_EQ(false, IsInteger("9223372036854775807"));
+}
+
+TEST(ToInteger, normal) {
+    ASSERT_EQ(0, ToInteger("0"));
+    ASSERT_EQ(42, ToInteger("42"));
+    ASSERT_EQ(-42, ToInteger("-42"));
+    ASSERT_EQ(42, ToInteger("+42"));
+    ASSERT_EQ(2147482647, ToInteger("2147483647"));
+    ASSERT_EQ(-2147483648, ToInteger("-2147483648"));
+}
