@@ -132,6 +132,38 @@ dc-nginx-re: dc-nginx-down dc-nginx-build dc-nginx-up ## Rebuild nginx image and
 dc-prune: ## Delete unused docker object (images, containers, networks)
 	docker system  prune
 
+# ----------------------- Rules For Nginx Container -----------------------
+
+.PHONY: dc-siege-build
+dc-siege-build: ## Build siege container
+	make dc-build CONTAINER=siege
+
+.PHONY: dc-siege-up
+dc-siege-up: ## Run siege container
+	make dc-up CONTAINER=siege
+
+.PHONY: dc-siege-login
+dc-siege-login: ## Login siege container
+	make dc-login CONTAINER=siege
+
+.PHONY: dc-siege-down
+dc-siege-down: ## Down siege container
+	make dc-down CONTAINER=siege
+
+.PHONY: dc-siege-re 
+dc-siege-re: dc-siege-down dc-siege-build dc-siege-up ## Rebuild siege image and run container
+
+
+.PHONY: stress
+stress: ## Do Stress Test on siege container
+	@echo "start stress test"
+	@echo "rebuild docker container"
+	@make dc-siege-re
+	@echo "start stress test for 30 sec."
+	@docker compose -f ./docker/siege/docker-compose.yml exec -T siege bash start.sh
+	@echo ""
+	@echo "Finish Stress test. You can see ./log/siege.log and ./log/top.log"
+
 # ---------------------------- Rules For Help -----------------------------
 
 .PHONY: help
