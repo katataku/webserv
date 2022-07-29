@@ -125,20 +125,6 @@ void HTTPRequest::Parse(std::string str) {
     }
 }
 
-// utilにあってもいいかも
-// OWSをtrimする
-static std::string ltrim(const std::string &s) {
-    size_t start = s.find_first_not_of(" \t");
-    return (start == std::string::npos) ? "" : s.substr(start);
-}
-
-static std::string rtrim(const std::string &s) {
-    size_t end = s.find_last_not_of(" \t");
-    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
-}
-
-static std::string trim(const std::string &s) { return rtrim(ltrim(s)); }
-
 void HTTPRequest::ParseRequestLine(std::string line) {
     this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
@@ -169,7 +155,7 @@ void HTTPRequest::ParseHeader(std::string str) {
             throw std::runtime_error("header format invalid");
         }
         std::string header = lines[i].substr(0, found);
-        std::string value = trim(lines[i].substr(found + 1));
+        std::string value = Trim(lines[i].substr(found + 1), " \t");
         if (value.empty()) {
             // TODO(hayashi-ay): 対応するエラーを定義する
             throw std::runtime_error("header format invalid");
