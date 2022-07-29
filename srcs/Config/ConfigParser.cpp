@@ -13,6 +13,15 @@ ConfigParser::ConfigParser(Token* token) : token_(token) {
     this->directives_in_http_.insert("autoindex");
     this->directives_in_http_.insert("index");
     this->directives_in_http_.insert("server");
+
+    this->directives_in_server_.insert("error_page");
+    this->directives_in_server_.insert("client_max_body_size");
+    this->directives_in_server_.insert("autoindex");
+    this->directives_in_server_.insert("index");
+    this->directives_in_server_.insert("location");
+    this->directives_in_server_.insert("return");
+    this->directives_in_server_.insert("server_name");
+    this->directives_in_server_.insert("listen");
 }
 
 ConfigParser::ConfigParser(const ConfigParser& other) { *this = other; }
@@ -36,16 +45,32 @@ void ConfigParser::SetTokenNodeMap() {
     this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
 }
 
-void ConfigParser::AssertExistInHttpContext() {
-    if (this->token_ == NULL) {
+static std::string ErrorMessageNotAllowedDirective(const std::string& val) {
+    return "Error: \"" + val + "\" directive is not allowed here";
+}
+
+static bool IsExist(const std::set<std::string>& container,
+                    const std::string& val) {
+    return container.find(val) != container.end();
+}
+
+static void AssertExitInContext(const std::set<std::string>& context_container,
+                                const Token* tok) {
+    if (tok == NULL) {
         return;
     }
 
-    if (this->directives_in_http_.find(this->token_->val()) ==
-        this->directives_in_http_.end()) {
-        throw std::runtime_error("Error: \"" + this->token_->val() +
-                                 "\" directive is not allowed here");
+    if (!IsExist(context_container, tok->val())) {
+        throw std::runtime_error(ErrorMessageNotAllowedDirective(tok->val()));
     }
+}
+
+void ConfigParser::AssertExistInHttpContext() {
+    AssertExitInContext(this->directives_in_http_, this->token_);
+}
+
+void ConfigParser::AssertExistInServerContext() {
+    AssertExitInContext(this->directives_in_server_, this->token_);
 }
 
 Node ConfigParser::Parse() { return config(); }
@@ -77,16 +102,13 @@ Node ConfigParser::block_directive() {
     if (Token::Expect(&this->token_, "server")) {
         Token::Consume(&this->token_, "{");
         node.set_kind(Node::ServerContextNode);
-    } else if (Token::Expect(&this->token_, "location")) {
-        node.set_kind(Node::LocationContextNode);
-        value(&node);
-        Token::Consume(&this->token_, "{");
     }
 
     while (true) {
         if (Token::Expect(&this->token_, "}")) {
             break;
         }
+        AssertExistInServerContext();
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
             node.PushDirective(single_directive());
         }

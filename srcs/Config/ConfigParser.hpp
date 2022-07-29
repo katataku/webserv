@@ -21,6 +21,7 @@ class ConfigParser {
  private:
     std::map<std::string, Node::NodeKind> token_node_map_;
     std::set<std::string> directives_in_http_;
+    std::set<std::string> directives_in_server_;
     Token* token_;
 
     Node config();
@@ -32,6 +33,7 @@ class ConfigParser {
     void SetTokenNodeMap();
 
     void AssertExistInHttpContext();
+    void AssertExistInServerContext();
 };
 
 #endif  // SRCS_CONFIG_CONFIGPARSER_HPP_
