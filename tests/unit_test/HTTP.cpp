@@ -221,6 +221,18 @@ TEST_F(HTTPTest, transfer_encoding_is_not_chunked) {
     ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
+TEST_F(HTTPTest, content_length_and_transfer_encoding_in_header) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 8\r\n"
+        "Transfer-Encoding: chunked\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
 TEST_F(HTTPTest, ResponseBuilder_200) {
     HTTPResponse *res = ResponseBuilder::Build("hoge");
 
