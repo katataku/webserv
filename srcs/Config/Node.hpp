@@ -18,6 +18,7 @@ class Node {
         AutoindexDirectiveNode,
         ReturnDirectiveNode,
         CgiExtDirectiveNode,
+        ErrorPageDirectiveNode,
         ServerNameDirectiveNode
     };
 
@@ -47,6 +48,7 @@ class Node {
     bool IsAutoindexDirective();
     bool IsReturnDirective();
     bool IsCgiExtensionDirective();
+    bool IsErrorPageDirective();
     bool IsServerNameDirective();
 
     // TODO(iyamada)

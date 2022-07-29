@@ -1,7 +1,10 @@
 #include "utils.hpp"
 
+#include <sys/stat.h>
+
 #include <cctype>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 
 std::vector<std::string> Split(std::string const str, std::string const delim) {
@@ -17,11 +20,23 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
             break;
         }
     }
-    // 区切り文字のあとに文字が残っていればstrsにつめる
-    if (pos < str.size()) {
-        strs.push_back(str.substr(pos));
-    }
+    // 区切り文字のあとに来る文字(空文字含む）を追加する
+    // 区切り文字が存在しない場合はstrがそのまま入る
+    strs.push_back(str.substr(pos));
     return strs;
+}
+
+std::string Join(std::vector<std::string> strs, std::string separator) {
+    std::stringstream ss;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = strs.begin(); itr != strs.end(); ++itr) {
+        if (itr != strs.begin()) {
+            ss << separator;
+        }
+        ss << *itr;
+    }
+    return ss.str();
 }
 
 bool IsInteger(std::string str) {
@@ -132,4 +147,41 @@ std::string SkipSpace(const std::string& s) {
         }
     }
     return "";
+}
+
+std::string ReadFile(std::string file_path) {
+    std::ifstream ifs(file_path.c_str());
+    std::ostringstream oss;
+
+    if (!ifs) {
+        // TODO(takkatao):
+        // オープンできないときはここに入る。
+        throw std::runtime_error("ReadFile ifs open fail");
+    }
+
+    oss << ifs.rdbuf();
+
+    return oss.str();
+}
+
+bool IsExistRegularFile(std::string filepath) {
+    struct stat stat_buf;
+
+    if (stat(filepath.c_str(), &stat_buf) == -1) {
+        return false;
+    }
+
+    if (S_ISREG(stat_buf.st_mode)) {
+        return true;
+    }
+    return false;
+}
+
+bool HasPermissionToRead(std::string filepath) {
+    std::ifstream ifs(filepath.c_str());
+
+    if (!ifs) {
+        return false;
+    }
+    return true;
 }

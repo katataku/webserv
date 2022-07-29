@@ -65,7 +65,8 @@ void LocationContext::set_cgi_extension(const std::string& cgi_extension) {
 
 void LocationContext::PushErrorPage(int status_code,
                                     const std::string& error_page) {
-    this->error_pages_[status_code] = error_page;
+    if (this->error_pages_.find(status_code) == this->error_pages_.end())
+        this->error_pages_[status_code] = error_page;
 }
 void LocationContext::PushAllowMethod(const std::string& method) {
     this->allow_methods_.insert(method);

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 
+#include "Logging.hpp"
 #include "Token.hpp"
 
 class ConfigLexer {
@@ -19,6 +20,7 @@ class ConfigLexer {
     Token* Tokenize();
 
  private:
+    Logging logging_;
     std::string content_;
     std::map<std::string, Token::TokenKind> keywords_;
     std::map<std::string, Token::TokenKind> controls_;

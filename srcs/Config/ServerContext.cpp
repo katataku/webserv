@@ -77,5 +77,6 @@ void ServerContext::PushLocationContext(LocationContext context) {
 
 void ServerContext::PushErrorPage(int status_code,
                                   const std::string& error_page) {
-    this->error_pages_[status_code] = error_page;
+    if (this->error_pages_.find(status_code) == this->error_pages_.end())
+        this->error_pages_[status_code] = error_page;
 }

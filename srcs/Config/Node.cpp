@@ -72,6 +72,10 @@ bool Node::IsCgiExtensionDirective() {
     return kind_ == Node::CgiExtDirectiveNode;
 }
 
+bool Node::IsErrorPageDirective() {
+    return kind_ == Node::ErrorPageDirectiveNode;
+}
+
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 

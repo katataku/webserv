@@ -97,8 +97,9 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
     logging_.Debug("Exec starts");
     struct stat stat_buf;
-    logging_.Debug("request.absolute_path = [" + request.absolute_path() + "]");
-    std::string alias_resolved_path = sl.ResolveAlias(request.absolute_path());
+    logging_.Debug("request.canonical_path = [" + request.canonical_path() +
+                   "]");
+    std::string alias_resolved_path = sl.ResolveAlias(request.canonical_path());
 
     logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");
 
@@ -116,7 +117,7 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     if (S_ISDIR(stat_buf.st_mode)) {
         logging_.Debug("URI indicate Directory.");
         if (sl.IsAutoIndexEnabled()) {
-            return ListDirectoryExec(request.absolute_path(),
+            return ListDirectoryExec(request.canonical_path(),
                                      alias_resolved_path);
         } else {
             throw HTTPException(403);

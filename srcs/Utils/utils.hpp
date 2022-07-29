@@ -6,6 +6,7 @@
 #include <vector>
 
 std::vector<std::string> Split(std::string const str, std::string const delim);
+std::string Join(std::vector<std::string> strs, std::string separator);
 
 bool IsInteger(std::string str);
 
@@ -55,4 +56,9 @@ static std::string numtostr(T num) {
     ss << num;
     return ss.str();
 }
+
+std::string ReadFile(std::string file_path);
+bool IsExistRegularFile(std::string filepath);
+bool HasPermissionToRead(std::string filepath);
+
 #endif  // SRCS_UTILS_UTILS_HPP_

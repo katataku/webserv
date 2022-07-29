@@ -1,6 +1,7 @@
 #ifndef SRCS_CONFIG_CONFIGGENERATOR_HPP_
 #define SRCS_CONFIG_CONFIGGENERATOR_HPP_
 
+#include "Logging.hpp"
 #include "Node.hpp"
 #include "ServerContext.hpp"
 #include "WebservConfig.hpp"
@@ -17,6 +18,7 @@ class ConfigGenerator {
 
  private:
     Node node_;
+    Logging logging_;
 
     WebservConfig GenerateWebservConfig(Node node);
     ServerContext GenerateServerContext(Node node);
