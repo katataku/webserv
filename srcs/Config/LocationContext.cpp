@@ -62,6 +62,10 @@ void LocationContext::set_alias(const std::string& alias) {
 void LocationContext::set_cgi_extension(const std::string& cgi_extension) {
     this->cgi_extension_ = cgi_extension;
 }
+void LocationContext::set_allow_methods(
+    const std::set<std::string>& allow_methods) {
+    this->allow_methods_ = allow_methods;
+}
 
 void LocationContext::PushErrorPage(int status_code,
                                     const std::string& error_page) {

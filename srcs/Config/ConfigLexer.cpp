@@ -28,6 +28,8 @@ ConfigLexer::ConfigLexer(const std::string& content)
     this->keywords_["error_page"] = Token::SingleDirective;
     this->keywords_["server_name"] = Token::SingleDirective;
     this->keywords_["limit_except"] = Token::SingleDirective;
+    this->keywords_["client_max_body_size"] = Token::SingleDirective;
+    this->keywords_["index"] = Token::SingleDirective;
 
     this->controls_["{"] = Token::OpenBraceToken;
     this->controls_["}"] = Token::CloseBraceToken;

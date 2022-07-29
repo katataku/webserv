@@ -21,7 +21,8 @@ class Node {
         ErrorPageDirectiveNode,
         ServerNameDirectiveNode,
         ClientMaxBodySizeDirectiveNode,
-        IndexDirectiveNode
+        IndexDirectiveNode,
+        LimitExceptDirectiveNode
     };
 
     Node();
@@ -56,6 +57,7 @@ class Node {
     bool IsServerNameDirective();
     bool IsClientMaxBodySizeDirective();
     bool IsIndexDirective();
+    bool IsLimitExceptDirective();
 
     void AssertValueSize(bool cond) const;
 

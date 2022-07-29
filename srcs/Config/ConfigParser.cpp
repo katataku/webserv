@@ -24,7 +24,7 @@ ConfigParser::ConfigParser(Token* token) : token_(token) {
     this->directives_in_server_.insert("listen");
 
     this->directives_in_location_.insert("error_page");
-    this->directives_in_location_.insert("client_max_body");
+    this->directives_in_location_.insert("client_max_body_size");
     this->directives_in_location_.insert("autoindex");
     this->directives_in_location_.insert("index");
     this->directives_in_location_.insert("return");
@@ -52,6 +52,10 @@ void ConfigParser::SetTokenNodeMap() {
     this->token_node_map_["cgi_extension"] = Node::CgiExtDirectiveNode;
     this->token_node_map_["error_page"] = Node::ErrorPageDirectiveNode;
     this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
+    this->token_node_map_["client_max_body_size"] =
+        Node::ClientMaxBodySizeDirectiveNode;
+    this->token_node_map_["limit_except"] = Node::LimitExceptDirectiveNode;
+    this->token_node_map_["index"] = Node::IndexDirectiveNode;
 }
 
 static std::string ErrorMessageNotAllowedDirective(const std::string& val) {
@@ -162,6 +166,7 @@ Node ConfigParser::single_directive() {
     for (itr = this->token_node_map_.begin();
          itr != this->token_node_map_.end(); ++itr) {
         if (Token::Expect(&this->token_, (*itr).first)) {
+            std::cerr << "[log] node kind " << (*itr).second << std::endl;
             node = Node::NewNode((*itr).second);
             break;
         }

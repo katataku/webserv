@@ -44,7 +44,14 @@ std::string Node::GetNodeKindStr() const {
                          "ServerContextNode",
                          "LocationContextNode",
                          "ListenDirectiveNode",
-                         "AliasDirectiveNode"};
+                         "AliasDirectiveNode",
+                         "AutoindexDirectiveNode",
+                         "ReturnDirectiveNode",
+                         "CgiExtDirectiveNode",
+                         "ErrorPageDirectiveNode",
+                         "ServerNameDirectiveNode",
+                         "ClientMaxBodySizeDirectiveNode",
+                         "IndexDirectiveNode"};
     return arr[this->kind_];
 }
 
@@ -77,6 +84,10 @@ bool Node::IsClientMaxBodySizeDirective() {
 
 bool Node::IsIndexDirective() {
     return this->kind_ == Node::IndexDirectiveNode;
+}
+
+bool Node::IsLimitExceptDirective() {
+    return this->kind_ == Node::LimitExceptDirectiveNode;
 }
 
 void Node::AssertValueSize(bool cond) const {

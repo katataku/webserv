@@ -40,7 +40,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateAutoindexValue();
             conf.set_auto_index(itr->GetValue());
             continue;
@@ -50,14 +50,16 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
             std::list<std::string> status_list;
-            status_list = std::list<std::string>(itr->directive_vals());
+            status_list = itr->directive_vals();
+            // status_list = std::list<std::string>(itr->directive_vals());
             status_list.pop_back();
 
             std::list<std::string>::iterator status_list_itr;
             for (status_list_itr = status_list.begin();
                  status_list_itr != status_list.end(); status_list_itr++) {
-                this->logging_.Debug("insert error_page directive[" +
-                                     *status_list_itr + "]:" + error_page_path);
+                // this->logging_.Debug("insert error_page directive[" +
+                //                      *status_list_itr + "]:" +
+                //                      error_page_path);
                 conf.PushErrorPage(strtonum<int>(*status_list_itr),
                                    error_page_path);
             }
@@ -65,19 +67,19 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         }
 
         if (itr->IsClientMaxBodySizeDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             conf.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
 
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             conf.set_auto_index(itr->GetValue());
             continue;
         }
 
         if (itr->IsIndexDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             conf.set_index_page(itr->GetValue());
             continue;
         }
@@ -113,42 +115,57 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsListenDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             serv.set_port(itr->GetValue());
             continue;
         }
 
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateAutoindexValue();
             serv.set_auto_index(itr->GetValue());
             continue;
         }
 
         if (itr->IsReturnDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateReturnValue();
             serv.set_redirect_url(itr->GetValue());
             continue;
         }
 
         if (itr->IsServerNameDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             serv.set_server_name(itr->GetValue());
             continue;
         }
+
+        if (itr->IsClientMaxBodySizeDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() == 1);
+            serv.set_client_max_body_size(strtonum<int>(itr->GetValue()));
+            continue;
+        }
+
+        if (itr->IsIndexDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() == 1);
+            serv.set_index_page(itr->GetValue());
+            continue;
+        }
+
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
-            std::list<std::string> status_list;
-            status_list = std::list<std::string>(itr->directive_vals());
+            std::list<std::string> status_list = itr->directive_vals();
+            // status_list = itr->directive_vals();
+            // status_list = std::list<std::string>(itr->directive_vals());
             status_list.pop_back();
 
             std::list<std::string>::iterator status_list_itr;
             for (status_list_itr = status_list.begin();
                  status_list_itr != status_list.end(); status_list_itr++) {
-                this->logging_.Debug("insert error_page directive[" +
-                                     *status_list_itr + "]:" + error_page_path);
+                // this->logging_.Debug("insert error_page directive[" +
+                //                      *status_list_itr + "]:" +
+                //                      error_page_path);
                 serv.PushErrorPage(strtonum<int>(*status_list_itr),
                                    error_page_path);
             }
@@ -174,6 +191,16 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
     return serv;
 }
 
+static std::set<std::string> ToSetContainer(std::list<std::string> lis) {
+    std::set<std::string> st;
+
+    for (std::list<std::string>::iterator itr = lis.begin(); itr != lis.end();
+         ++itr) {
+        st.insert(*itr);
+    }
+    return st;
+}
+
 LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
     LocationContext locate;
 
@@ -183,35 +210,53 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
     }
 
     // locationディレクティブはpathを持つ
-    node.ValidateSize(1);
+    node.AssertValueSize(node.GetValueSize() == 1);
     locate.set_path(node.GetValue());
 
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAliasDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             locate.set_alias(itr->GetValue());
             continue;
         }
 
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateAutoindexValue();
             locate.set_auto_index(itr->GetValue());
             continue;
         }
 
         if (itr->IsReturnDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateReturnValue();
             locate.set_redirect_url(itr->GetValue());
             continue;
         }
 
         if (itr->IsCgiExtensionDirective()) {
-            itr->ValidateSize(1);
+            itr->AssertValueSize(itr->GetValueSize() == 1);
             locate.set_cgi_extension(itr->GetValue());
+            continue;
+        }
+
+        if (itr->IsClientMaxBodySizeDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() == 1);
+            locate.set_client_max_body_size(strtonum<int>(itr->GetValue()));
+            continue;
+        }
+
+        if (itr->IsIndexDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() == 1);
+            locate.set_index_page(itr->GetValue());
+            continue;
+        }
+
+        if (itr->IsLimitExceptDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() > 1);
+            locate.set_allow_methods(ToSetContainer(itr->directive_vals()));
             continue;
         }
 
@@ -219,14 +264,16 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
             std::list<std::string> status_list;
-            status_list = std::list<std::string>(itr->directive_vals());
+            status_list = itr->directive_vals();
+            // status_list = std::list<std::string>(itr->directive_vals());
             status_list.pop_back();
 
             std::list<std::string>::iterator status_list_itr;
             for (status_list_itr = status_list.begin();
                  status_list_itr != status_list.end(); status_list_itr++) {
-                this->logging_.Debug("insert error_page directive[" +
-                                     *status_list_itr + "]:" + error_page_path);
+                // this->logging_.Debug("insert error_page directive[" +
+                //                      *status_list_itr + "]:" +
+                //                      error_page_path);
                 locate.PushErrorPage(strtonum<int>(*status_list_itr),
                                      error_page_path);
             }
