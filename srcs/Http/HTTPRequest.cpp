@@ -60,7 +60,9 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
-std::string HTTPRequest::absolute_path() const { return this->absolute_path_; }
+std::string HTTPRequest::canonical_path() const {
+    return this->canonical_path_;
+}
 
 std::map<std::string, std::string> HTTPRequest::queries() const {
     // TODO(takkatao): queryを返すように実装する。
@@ -146,7 +148,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     }
     this->method_ = items[0];
     this->request_target_ = items[1];
-    this->absolute_path_ = this->ConvertToAbsolutePath(this->request_target_);
+    this->canonical_path_ = this->CanonicalizePath(this->request_target_);
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
@@ -247,12 +249,12 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
     }
 }
 
-std::string HTTPRequest::ConvertToAbsolutePath(std::string path) {
-    std::string::size_type pos = path.find("?");
+std::string HTTPRequest::CanonicalizePath(std::string request_target) {
+    std::string::size_type pos = request_target.find("?");
     if (pos != std::string::npos) {
-        path = path.substr(0, pos);
+        request_target = request_target.substr(0, pos);
     }
-    std::vector<std::string> input = Split(path, "/");
+    std::vector<std::string> input = Split(request_target, "/");
     std::vector<std::string> output;
 
     std::vector<std::string>::iterator itr;
