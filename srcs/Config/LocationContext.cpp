@@ -1,6 +1,9 @@
 #include "LocationContext.hpp"
 
-LocationContext::LocationContext() : client_max_body_size_(1024) {}
+#include "InitialValues.hpp"
+
+LocationContext::LocationContext()
+    : client_max_body_size_(InitialValues::kClientMaxBodySize) {}
 
 LocationContext::LocationContext(const LocationContext& other) {
     *this = other;

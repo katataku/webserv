@@ -27,6 +27,8 @@ void ConfigParser::SetTokenNodeMap() {
     this->token_node_map_["cgi_extension"] = Node::CgiExtDirectiveNode;
     this->token_node_map_["error_page"] = Node::ErrorPageDirectiveNode;
     this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
+    this->token_node_map_["client_max_body_size"] =
+        Node::ClientMaxBodySizeDirectiveNode;
 }
 
 Node ConfigParser::Parse() { return config(); }
