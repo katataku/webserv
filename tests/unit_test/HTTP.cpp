@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "HTTPException.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPResponse.hpp"
 #include "ResponseBuilder.hpp"
@@ -110,7 +111,7 @@ TEST_F(HTTPTest, cannot_remove_directory) {
         "GET /a/b/./../../../g HTTP/1.1\r\n"
         "Host: test\r\n"
         "\r\n";
-    ASSERT_THROW(req.Parse(str), std::runtime_error);
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, content_length_with_plus_sign) {
@@ -121,7 +122,7 @@ TEST_F(HTTPTest, content_length_with_plus_sign) {
         "Content-Length: +8\r\n"
         "\r\n"
         "12345678";
-    ASSERT_THROW(req.Parse(str), std::runtime_error);
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, content_length_with_non_numberic_char) {
@@ -132,7 +133,7 @@ TEST_F(HTTPTest, content_length_with_non_numberic_char) {
         "Content-Length: 8a\r\n"
         "\r\n"
         "12345678";
-    ASSERT_THROW(req.Parse(str), std::runtime_error);
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, content_length_is_only_one) {
@@ -144,7 +145,7 @@ TEST_F(HTTPTest, content_length_is_only_one) {
         "Content-Length: 8\r\n"
         "\r\n"
         "12345678";
-    ASSERT_THROW(req.Parse(str), std::runtime_error);
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, content_length_leading_zero_is_ignored) {

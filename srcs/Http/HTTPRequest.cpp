@@ -4,6 +4,8 @@
 #include <sstream>
 #include <vector>
 
+#include "HTTPException.hpp"
+
 HTTPRequest::HTTPRequest()
     : logging_(Logging(__FUNCTION__)),
       unparsed_string_(""),
@@ -143,8 +145,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
     if (items.size() != 3 || items[2] != "HTTP/1.1") {
-        // TODO(hayashi-ay): 対応するエラーを定義する
-        throw std::runtime_error("request line invalid");
+        throw HTTPException(400);
     }
     this->method_ = items[0];
     this->request_target_ = items[1];
@@ -178,11 +179,13 @@ void HTTPRequest::ParseHeader(std::string str) {
         if (header == "Host") {
             this->host_ = value;
         } else if (header == "Content-Length") {
-            this->content_length_ = std::atoi(value.c_str());
+            // TODO(バリデーション)
+            this->content_length_ = ToInteger(value);
         } else if (header == "Content-Type") {
-            // TODO(hayashi-ay): エラー処理も含める。たぶん自前で実装しそう。
+            // 特段バリデーションの必要なし
             this->content_type_ = value;
         } else if (header == "Transfer-Encoding") {
+            // chunked以外だと501 Not Implemented
             this->transfer_encoding_ = value;
         } else {
             // その他のヘッダについては無視して処理を継続する。
@@ -264,7 +267,7 @@ std::string HTTPRequest::CanonicalizePath(std::string request_target) {
         } else if (*itr == "..") {
             // 取り除くディレクトリがない場合はエラー
             if (output.size() <= 1) {
-                throw std::runtime_error("invalid path");
+                throw HTTPException(400);
             }
             output.pop_back();
         } else {
@@ -274,11 +277,7 @@ std::string HTTPRequest::CanonicalizePath(std::string request_target) {
     return Join(output, "/");
 }
 
-// TODO(takkatao): chunked requestのbody size計算の実装が必要。
-int HTTPRequest::CalcBodySize() const {
-    // Transactionの動作確認のための暫定的な実装。
-    return this->request_body_.size();
-}
+int HTTPRequest::CalcBodySize() const { return this->request_body_.size(); }
 
 bool HTTPRequest::IsReady() const {
     return this->is_finish_to_read_header_ && this->is_finish_to_read_body_;
