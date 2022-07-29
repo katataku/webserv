@@ -297,3 +297,13 @@ TEST_F(ConfigParserDeathTest, cgi_extension_in_http) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive is not allowed here");
 }
+
+TEST_F(ConfigParserDeathTest, location_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "location_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}

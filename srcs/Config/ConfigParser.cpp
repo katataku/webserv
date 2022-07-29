@@ -12,6 +12,7 @@ ConfigParser::ConfigParser(Token* token) : token_(token) {
     this->directives_in_http_.insert("client_max_body_size");
     this->directives_in_http_.insert("autoindex");
     this->directives_in_http_.insert("index");
+    this->directives_in_http_.insert("server");
 }
 
 ConfigParser::ConfigParser(const ConfigParser& other) { *this = other; }
@@ -57,6 +58,7 @@ Node ConfigParser::config() {
             AssertExistInHttpContext();
             head.PushDirective(single_directive());
         } else if (Token::SameTokenKind(&this->token_, Token::BlockDirective)) {
+            AssertExistInHttpContext();
             head.PushChildContext(block_directive());
         } else {
             break;
