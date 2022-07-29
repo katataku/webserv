@@ -387,3 +387,33 @@ TEST_F(ConfigParserDeathTest, location_in_location) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive is not allowed here");
 }
+
+TEST_F(ConfigParserDeathTest, error_page_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "error_page.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, error_page_none_value_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "error_page_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, error_page_none_value_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "error_page_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
