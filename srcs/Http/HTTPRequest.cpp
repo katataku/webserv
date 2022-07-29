@@ -60,13 +60,8 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
-// TODO(takkatao): pathに含まれるドットセグメント削除を実装する。
-std::string HTTPRequest::absolute_path() const {
-    std::string::size_type pos = this->request_target_.find("?");
-    if (pos == std::string::npos) {
-        return this->request_target_;
-    }
-    return this->request_target_.substr(0, pos);
+std::string HTTPRequest::canonical_path() const {
+    return this->canonical_path_;
 }
 
 std::map<std::string, std::string> HTTPRequest::queries() const {
@@ -153,6 +148,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     }
     this->method_ = items[0];
     this->request_target_ = items[1];
+    this->canonical_path_ = this->CanonicalizePath(this->request_target_);
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
@@ -253,6 +249,30 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
     }
 }
 
+std::string HTTPRequest::CanonicalizePath(std::string request_target) {
+    std::string::size_type pos = request_target.find("?");
+    if (pos != std::string::npos) {
+        request_target = request_target.substr(0, pos);
+    }
+    std::vector<std::string> input = Split(request_target, "/");
+    std::vector<std::string> output;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = input.begin(); itr != input.end(); ++itr) {
+        if (*itr == ".") {
+            // do nothing
+        } else if (*itr == "..") {
+            // 取り除くディレクトリがない場合はエラー
+            if (output.size() <= 1) {
+                throw std::runtime_error("invalid path");
+            }
+            output.pop_back();
+        } else {
+            output.push_back(*itr);
+        }
+    }
+    return Join(output, "/");
+}
 int HTTPRequest::CalcBodySize() const { return this->request_body_.size(); }
 
 bool HTTPRequest::IsReady() const {

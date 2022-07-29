@@ -6,6 +6,7 @@
 #include <vector>
 
 std::vector<std::string> Split(std::string const str, std::string const delim);
+std::string Join(std::vector<std::string> strs, std::string separator);
 
 bool IsDigit(const char c);
 

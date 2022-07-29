@@ -12,6 +12,7 @@ classDiagram
         string unparsed_string
         string method
         string request_target
+        string canonical_path_
         string host
         int content_length
         string content_type
@@ -24,7 +25,6 @@ classDiagram
         +IsReady() bool
         +CalcBodySize() int
         +RequestTarget() string
-        +AbsolutePath() string
         +Queries() map~StringString~
     }
 

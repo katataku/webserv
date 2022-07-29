@@ -19,11 +19,23 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
             break;
         }
     }
-    // 区切り文字のあとに文字が残っていればstrsにつめる
-    if (pos < str.size()) {
-        strs.push_back(str.substr(pos));
-    }
+    // 区切り文字のあとに来る文字(空文字含む）を追加する
+    // 区切り文字が存在しない場合はstrがそのまま入る
+    strs.push_back(str.substr(pos));
     return strs;
+}
+
+std::string Join(std::vector<std::string> strs, std::string separator) {
+    std::stringstream ss;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = strs.begin(); itr != strs.end(); ++itr) {
+        if (itr != strs.begin()) {
+            ss << separator;
+        }
+        ss << *itr;
+    }
+    return ss.str();
 }
 
 bool StartsWith(const std::string& s, const std::string& prefix) {

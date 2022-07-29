@@ -31,6 +31,19 @@ webservの設定ファイルはnginxのサブセットを目指しているが�
 
 仮想サーバーの名前を設定する。
 
+server_nameは同一コンテキストに複数存在する場合、エラーとする。
+
+名前で使える文字種は[このサイト](https://suu-g.hateblo.jp/entry/2019/09/19/232913)を見るに、RFCで定義されている。
+`_`の扱いは曖昧だが、webservはこの文字をserver_nameに設定しても良いとする。
+
+- ホスト名のBNF
+
+```
+<official hostname> ::= <hname>
+<hname> ::= <name>*["."<name>]
+<name>  ::= <let-or-digit>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+```
+
 同一のポートで複数の仮想サーバーがリクエストを待ち受けている場合、HTTPリクエストのHostヘッダを見てどの仮想サーバーの処理を振り分けるかを決定する。
 
 Hostヘッダがどのサーバー名ともマッチしない場合はデフォルトサーバーに処理が振り分けられる。
@@ -52,6 +65,10 @@ server_name example.com;
 ### [listen]
 
 サーバーがリクエストを受け付けるポート番号を設定する。
+
+listenは同一コンテキストに複数存在する場合、エラーとする。
+
+ポート番号の範囲は1から65535[参考](https://www.ibm.com/docs/ja/i/7.3?topic=ssw_ibm_i_73/cl/addtcpport.htm)。
 
 アドレスは固定でlocalhost(127.0.0.1)が用いられる。
 
@@ -96,6 +113,8 @@ error_page 500 501 505 /50x.html;
 
 リクエストボディで許可する最大サイズを設定する（単位はバイト）。
 
+client_max_body_sizeは同一コンテキストに複数存在する場合、エラーとする。
+
 0以下の値は設定できない。
 
 設定値を超えるリクエストが来た場合は413(Request Entity Too Large)を返す。
@@ -117,6 +136,8 @@ client_max_body_size 1024;
 ### [alias]
 
 ロケーションで指定されたパスに対するエイリアスを設定できる。
+
+aliasは同一コンテキストに複数存在する場合、エラーとする。
 
 Usage:
 
@@ -159,6 +180,10 @@ location /kapouet {
 
 設定されたリクエストメソッド以外のリクエストを制限する。
 
+limit_exceptは同一コンテキストに複数存在する場合、エラーとする。
+
+メソッド名は大文字のみ設定できる。
+
 許可されていないメソッドでのリクエストに対しては403(Forbidden)を返す。
 
 Usage:
@@ -179,6 +204,10 @@ limit_except GET POST;
 
 ディレクトリの一覧表示を行うかどうかを設定できる。
 
+autoindexは同一コンテキストに複数存在する場合、エラーとする。
+
+値は小文字のみ設定できる。
+
 Usage:
 
 ```
@@ -197,6 +226,8 @@ autoindex on;
 
 ディレクトリのデフォルトページを設定する。
 
+indexは同一コンテキストに複数存在する場合、エラーとする。
+
 Usage:
 
 ```
@@ -214,6 +245,8 @@ index index.html;
 ### [return]
 
 一時的なリダイレクト(302)を設定する。
+
+returnは同一コンテキストに複数存在する場合、エラーとする。
 
 URLは"http://"もしくは"https://"で始まる必要がある。
 
@@ -260,6 +293,10 @@ Context: server
 ### cgi_extension
 
 cgi_extensionのディレクティブがある場合に、拡張子が値とマッチするファイルをCGIプログラムとしてを起動する。
+
+<!-- TODO(iyamada) mandatoryは複数設定できないようにする？ -->
+
+cgi_extensionは同一コンテキストに複数設定できる。
 
 Usage:
 
