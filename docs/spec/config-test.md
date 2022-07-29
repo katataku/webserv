@@ -72,19 +72,6 @@ server
 Error:
 unexpected end of file, expecting "{"
 
-### 複数の値をとるディレクティブに重複した値が存在する
-
-Example:
-
-```
-server {
-	limit_except GET GET;
-}
-```
-
-Error:
-"limit_except" directive value is duplicate
-
 ## 具体的なケース
 
 - 考慮すべきエラーケースを記載
