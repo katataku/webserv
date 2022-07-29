@@ -20,9 +20,9 @@ Token* Token::NewToken(Token* cur_tok, TokenKind kind, std::string val) {
     return new_tok;
 }
 
-Token::TokenKind Token::kind() const { return kind_; }
-std::string Token::val() const { return val_; }
-Token* Token::next_token() const { return next_token_; }
+Token::TokenKind Token::kind() const { return this->kind_; }
+std::string Token::val() const { return this->val_; }
+Token* Token::next_token() const { return this->next_token_; }
 
 std::string Token::GetTokenKindStr() {
     return Token::GetTokenKindStr(this->kind_);
@@ -37,9 +37,11 @@ std::string Token::GetTokenKindStr(Token::TokenKind kind) {
     return arr[kind];
 }
 
-void Token::set_kind(TokenKind kind) { kind_ = kind; }
-void Token::set_val(std::string val) { val_ = val; }
-void Token::set_next_token(Token* next_token) { next_token_ = next_token; }
+void Token::set_kind(TokenKind kind) { this->kind_ = kind; }
+void Token::set_val(std::string val) { this->val_ = val; }
+void Token::set_next_token(Token* next_token) {
+    this->next_token_ = next_token;
+}
 
 // 次のトークンに進む。
 void Token::Consume(Token** tok, const std::string& expect_val) {
