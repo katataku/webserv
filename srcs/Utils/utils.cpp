@@ -41,9 +41,9 @@ std::string Join(std::vector<std::string> strs, std::string separator) {
 }
 
 bool IsInteger(std::string str) {
-    char* end;
+    char* end = NULL;
     errno = 0;
-    long l = std::strtol(str.c_str(), &end, 10);
+    long l = std::strtol(str.c_str(), &end, 10);  // NOLINT
 
     // empty string
     if (str == end) {
