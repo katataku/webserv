@@ -148,6 +148,7 @@ static std::vector<ServerLocation> CreateWithLocationContext(
     // pathは必ず設定されている
     locate_sv.set_path(locate.path());
 
+    locate_sv.SetDefaultValue();
     ret.push_back(locate_sv);
 
     return ret;
@@ -227,6 +228,7 @@ static std::vector<ServerLocation> CreateWithServerContext(
     }
 
     // serverコンテキストのデフォルトServerLocationを登録
+    serv_sv.SetDefaultValue();
     ret.push_back(serv_sv);
 
     return ret;

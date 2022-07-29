@@ -31,11 +31,7 @@ bool ServerLocation::IsAllowedMethod(std::string method) const {
 }
 
 bool ServerLocation::IsValidBodySize(int body_size) const {
-    int max_body_size = this->client_max_body_size();
-    if (max_body_size == InitialValues::kClientMaxBodySize)
-        max_body_size = DefaultValues::kClientMaxBodySize;
-    if (body_size > max_body_size) return false;
-    return true;
+    return body_size <= this->client_max_body_size();
 }
 
 bool ServerLocation::IsRedirect() const { return !this->redirect_url_.empty(); }
@@ -148,6 +144,25 @@ std::string ServerLocation::ResolveAlias(std::string request_uri) const {
 
 bool ServerLocation::IsAutoIndexEnabled() const {
     return this->auto_index_ == "on";
+}
+
+void ServerLocation::SetDefaultValue() {
+    if (this->port_ == InitialValues::kPort) this->port_ = DefaultValues::kPort;
+    if (this->client_max_body_size_ == InitialValues::kClientMaxBodySize)
+        this->client_max_body_size_ = DefaultValues::kClientMaxBodySize;
+    if (this->host_ == InitialValues::kServerName)
+        this->host_ = DefaultValues::kServerName;
+    if (this->path_ == InitialValues::kPath) this->path_ = DefaultValues::kPath;
+    if (this->auto_index_ == InitialValues::kAutoIndex)
+        this->auto_index_ = DefaultValues::kAutoIndex;
+    if (this->index_page_ == InitialValues::kIndexPage)
+        this->index_page_ = DefaultValues::kIndexPage;
+    if (this->redirect_url_ == InitialValues::kRedirectUrl)
+        this->redirect_url_ = DefaultValues::kRedirectUrl;
+    if (this->alias_ == InitialValues::kAlias)
+        this->alias_ = DefaultValues::kAlias;
+    if (this->cgi_extension_ == InitialValues::kCgiExtension)
+        this->cgi_extension_ = DefaultValues::kCgiExtension;
 }
 
 std::ostream &operator<<(std::ostream &ost, const ServerLocation &rhs) {
