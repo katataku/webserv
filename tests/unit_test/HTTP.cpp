@@ -114,6 +114,42 @@ TEST_F(HTTPTest, cannot_remove_directory) {
     ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
+TEST_F(HTTPTest, header_names_are_case_insensitive) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "HOST: test1\r\n"
+        "content-TYPE: text/html\r\n"
+        "content-length: 8\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_EQ(req.method(), "GET");
+    ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.host(), "test");
+    ASSERT_EQ(req.content_type(), "text/html");
+    ASSERT_EQ(req.content_length(), 8);
+    ASSERT_EQ(req.request_body(), "hello,world!");
+}
+
+TEST_F(HTTPTest, no_host_header) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+// nginxではエラーにならないがRFCに準拠してエラーにする
+TEST_F(HTTPTest, multiple_hot_header) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "Host: test2\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
 TEST_F(HTTPTest, content_length_with_plus_sign) {
     HTTPRequest req = HTTPRequest();
     std::string str =
@@ -170,6 +206,19 @@ TEST_F(HTTPTest, content_length_0_is_acceptable) {
         "12345678";
     ASSERT_EQ(req.request_body(), "");
     ASSERT_EQ(req.content_length(), 0);
+}
+
+TEST_F(HTTPTest, transfer_encoding_is_not_chunked) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "POST /cgi-bin/file_manager.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Transfer-Encoding: hunked\r\n"
+        "\r\n"
+        "6\r\nhello,\r\n"
+        "6\r\nworld!\r\n"
+        "0\r\n\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, ResponseBuilder_200) {
