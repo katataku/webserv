@@ -3,8 +3,10 @@
 #include <sys/stat.h>
 
 #include <cctype>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <limits>
 
 std::vector<std::string> Split(std::string const str, std::string const delim) {
     std::vector<std::string> strs;
@@ -37,6 +39,33 @@ std::string Join(std::vector<std::string> strs, std::string separator) {
     }
     return ss.str();
 }
+
+bool IsInteger(std::string str) {
+    char* end = NULL;
+    errno = 0;
+    long l = std::strtol(str.c_str(), &end, 10);  // NOLINT
+
+    // empty string
+    if (str == end) {
+        return false;
+    }
+    // non-numeric char is presents. for example, 1a
+    if (*end != '\0') {
+        return false;
+    }
+    // overflow long value
+    if (errno == ERANGE) {
+        return false;
+    }
+    // overflow int value
+    if (l < std::numeric_limits<int>::min() ||
+        l > std::numeric_limits<int>::max()) {
+        return false;
+    }
+    return true;
+}
+
+int ToInteger(std::string str) { return std::atoi(str.c_str()); }
 
 bool StartsWith(const std::string& s, const std::string& prefix) {
     return s.find(prefix, 0) == 0;
