@@ -77,6 +77,6 @@ TEST(ToInteger, normal) {
     ASSERT_EQ(42, ToInteger("42"));
     ASSERT_EQ(-42, ToInteger("-42"));
     ASSERT_EQ(42, ToInteger("+42"));
-    ASSERT_EQ(2147482647, ToInteger("2147483647"));
+    ASSERT_EQ(2147483647, ToInteger("2147483647"));
     ASSERT_EQ(-2147483648, ToInteger("-2147483648"));
 }
