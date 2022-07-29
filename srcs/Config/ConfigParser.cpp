@@ -22,6 +22,15 @@ ConfigParser::ConfigParser(Token* token) : token_(token) {
     this->directives_in_server_.insert("return");
     this->directives_in_server_.insert("server_name");
     this->directives_in_server_.insert("listen");
+
+    this->directives_in_location_.insert("error_page");
+    this->directives_in_location_.insert("client_max_body");
+    this->directives_in_location_.insert("autoindex");
+    this->directives_in_location_.insert("index");
+    this->directives_in_location_.insert("return");
+    this->directives_in_location_.insert("alias");
+    this->directives_in_location_.insert("limit_except");
+    this->directives_in_location_.insert("cgi_extension");
 }
 
 ConfigParser::ConfigParser(const ConfigParser& other) { *this = other; }
@@ -71,6 +80,10 @@ void ConfigParser::AssertExistInHttpContext() {
 
 void ConfigParser::AssertExistInServerContext() {
     AssertExitInContext(this->directives_in_server_, this->token_);
+}
+
+void ConfigParser::AssertExistInLocationContext() {
+    AssertExitInContext(this->directives_in_location_, this->token_);
 }
 
 Node ConfigParser::Parse() { return config(); }
@@ -129,6 +142,7 @@ Node ConfigParser::location_directive() {
     Token::Consume(&this->token_, "{");
 
     while (!Token::SameToken(&this->token_, "}")) {
+        AssertExistInLocationContext();
         node.PushDirective(single_directive());
     }
 
