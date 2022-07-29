@@ -153,6 +153,17 @@ dc-siege-down: ## Down siege container
 .PHONY: dc-siege-re 
 dc-siege-re: dc-siege-down dc-siege-build dc-siege-up ## Rebuild siege image and run container
 
+
+.PHONY: stress
+stress: ## Do Stress Test on siege container
+	@echo "start stress test"
+	@echo "rebuild docker container"
+	@make dc-siege-re
+	@echo "start stress test for 30 sec."
+	@docker compose -f ./docker/siege/docker-compose.yml exec -T siege bash start.sh
+	@echo ""
+	@echo "Finish Stress test. You can see ./log/siege.log and ./log/top.log"
+
 # ---------------------------- Rules For Help -----------------------------
 
 .PHONY: help
