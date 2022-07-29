@@ -19,7 +19,8 @@ class Node {
         ReturnDirectiveNode,
         CgiExtDirectiveNode,
         ErrorPageDirectiveNode,
-        ServerNameDirectiveNode
+        ServerNameDirectiveNode,
+        ClientMaxBodySizeDirectiveNode
     };
 
     Node();
@@ -50,6 +51,7 @@ class Node {
     bool IsCgiExtensionDirective();
     bool IsErrorPageDirective();
     bool IsServerNameDirective();
+    bool IsClientMaxBodySizeDirective();
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
@@ -58,6 +60,7 @@ class Node {
 
     void ValidateAutoindexValue();
     void ValidateReturnValue();
+    void ValidateClientMaxBodySizeValue();
 
     std::string GetValue();
     void ValidateSize(std::size_t size);

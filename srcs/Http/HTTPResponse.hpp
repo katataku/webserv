@@ -1,8 +1,6 @@
 #ifndef SRCS_HTTP_HTTPRESPONSE_HPP_
 #define SRCS_HTTP_HTTPRESPONSE_HPP_
 
-#include <gtest/gtest_prod.h>
-
 #include <string>
 
 #include "Logging.hpp"

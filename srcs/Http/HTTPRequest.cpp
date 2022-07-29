@@ -1,6 +1,5 @@
 #include "HTTPRequest.hpp"
 
-#include <cstdlib>
 #include <sstream>
 #include <vector>
 
