@@ -80,3 +80,12 @@ TEST(ToInteger, normal) {
     ASSERT_EQ(2147483647, ToInteger("2147483647"));
     ASSERT_EQ(-2147483648, ToInteger("-2147483648"));
 }
+
+TEST(Trim, normal) {
+    std::string str = " \t42 \t";
+    std::string chars = " \t";
+
+    ASSERT_EQ("42 \t", LeftTrim(str, chars));
+    ASSERT_EQ(" \t42", RightTrim(str, chars));
+    ASSERT_EQ("42", Trim(str, chars));
+}

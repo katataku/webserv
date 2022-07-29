@@ -9,8 +9,11 @@ std::vector<std::string> Split(std::string const str, std::string const delim);
 std::string Join(std::vector<std::string> strs, std::string separator);
 
 bool IsInteger(std::string str);
-
 int ToInteger(std::string str);
+
+std::string LeftTrim(const std::string& s, const std::string& chars);
+std::string RightTrim(const std::string& s, const std::string& chars);
+std::string Trim(const std::string& s, const std::string& chars);
 
 bool IsDigit(const char c);
 
