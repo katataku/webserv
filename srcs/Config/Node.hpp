@@ -19,7 +19,9 @@ class Node {
         ReturnDirectiveNode,
         CgiExtDirectiveNode,
         ErrorPageDirectiveNode,
-        ServerNameDirectiveNode
+        ServerNameDirectiveNode,
+        ClientMaxBodySizeDirectiveNode,
+        IndexDirectiveNode
     };
 
     Node();
@@ -39,6 +41,8 @@ class Node {
     void set_directive_vals(std::list<std::string> val);
     void set_kind(NodeKind kind);
 
+    int GetValueSize();
+
     std::string GetNodeKindStr() const;
     bool IsHttpContext();
     bool IsServerContext();
@@ -50,6 +54,10 @@ class Node {
     bool IsCgiExtensionDirective();
     bool IsErrorPageDirective();
     bool IsServerNameDirective();
+    bool IsClientMaxBodySizeDirective();
+    bool IsIndexDirective();
+
+    void AssertValueSize(bool cond) const;
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない

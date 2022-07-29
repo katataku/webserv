@@ -26,21 +26,17 @@ Node& Node::operator=(const Node& other) {
 
 Node::~Node() {}
 
-/*
-    Setter
-*/
 std::list<std::string> Node::directive_vals() const { return directive_vals_; }
 std::list<Node> Node::directives() const { return directives_; }
 std::list<Node> Node::child_contexts() const { return child_contexts_; }
 Node::NodeKind Node::kind() const { return kind_; }
 
-/*
-    Getter
-*/
 void Node::set_directive_vals(std::list<std::string> val) {
     directive_vals_ = val;
 }
 void Node::set_kind(Node::NodeKind kind) { this->kind_ = kind; }
+
+int Node::GetValueSize() { return this->directive_vals_.size(); }
 
 std::string Node::GetNodeKindStr() const {
     const char* arr[] = {"Unknown",
@@ -74,6 +70,20 @@ bool Node::IsCgiExtensionDirective() {
 
 bool Node::IsErrorPageDirective() {
     return kind_ == Node::ErrorPageDirectiveNode;
+}
+bool Node::IsClientMaxBodySizeDirective() {
+    return this->kind_ == Node::ClientMaxBodySizeDirectiveNode;
+}
+
+bool Node::IsIndexDirective() {
+    return this->kind_ == Node::IndexDirectiveNode;
+}
+
+void Node::AssertValueSize(bool cond) const {
+    if (!cond) {
+        throw std::runtime_error("Error: invalid number of arguments in \"" +
+                                 this->GetNodeKindStr() + "\" directive");
+    }
 }
 
 void Node::PushDirective(Node node) { directives_.push_back(node); }

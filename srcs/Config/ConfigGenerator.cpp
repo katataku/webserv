@@ -47,6 +47,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         }
 
         if (itr->IsErrorPageDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
             std::list<std::string> status_list;
             status_list = std::list<std::string>(itr->directive_vals());
@@ -62,6 +63,25 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             }
             continue;
         }
+
+        if (itr->IsClientMaxBodySizeDirective()) {
+            itr->ValidateSize(1);
+            conf.set_client_max_body_size(strtonum<int>(itr->GetValue()));
+            continue;
+        }
+
+        if (itr->IsAutoindexDirective()) {
+            itr->ValidateSize(1);
+            conf.set_auto_index(itr->GetValue());
+            continue;
+        }
+
+        if (itr->IsIndexDirective()) {
+            itr->ValidateSize(1);
+            conf.set_index_page(itr->GetValue());
+            continue;
+        }
+
         // TODO(iyamada) エラー処理
         throw std::runtime_error("[GenerateWebservConfig]Unknown directive");
     }
@@ -118,6 +138,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             continue;
         }
         if (itr->IsErrorPageDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
             std::list<std::string> status_list;
             status_list = std::list<std::string>(itr->directive_vals());
@@ -195,6 +216,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsErrorPageDirective()) {
+            itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
             std::list<std::string> status_list;
             status_list = std::list<std::string>(itr->directive_vals());
