@@ -229,3 +229,71 @@ TEST_F(ConfigParserTest, error_page_same_code) {
     LocationContext locate_context = locate_contexts.at(0);
     ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
 }
+
+class ConfigParserDeathTest : public ::testing::Test {
+ protected:
+    static void SetUpTestCase() {}
+    static void TearDownTestCase() {}
+    virtual void SetUp() {}
+    virtual void TearDown() {}
+};
+
+TEST_F(ConfigParserDeathTest, return_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "return_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, server_name_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "server_name_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, listen_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "listen_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, alias_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "alias_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, limit_except_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "limit_except_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
+
+TEST_F(ConfigParserDeathTest, cgi_extension_in_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/different_context/"
+        "cgi_extension_in_http.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is not allowed here");
+}
