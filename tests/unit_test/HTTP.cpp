@@ -113,6 +113,64 @@ TEST_F(HTTPTest, cannot_remove_directory) {
     ASSERT_THROW(req.Parse(str), std::runtime_error);
 }
 
+TEST_F(HTTPTest, content_length_with_plus_sign) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: +8\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), std::runtime_error);
+}
+
+TEST_F(HTTPTest, content_length_with_non_numberic_char) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 8a\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), std::runtime_error);
+}
+
+TEST_F(HTTPTest, content_length_is_only_one) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 8\r\n"
+        "Content-Length: 8\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), std::runtime_error);
+}
+
+TEST_F(HTTPTest, content_length_leading_zero_is_ignored) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 08\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_EQ(req.request_body(), "12345678");
+    ASSERT_EQ(req.content_length(), 8);
+}
+
+TEST_F(HTTPTest, content_length_0_is_acceptable) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 0\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_EQ(req.request_body(), "");
+    ASSERT_EQ(req.content_length(), 0);
+}
+
 TEST_F(HTTPTest, ResponseBuilder_200) {
     HTTPResponse *res = ResponseBuilder::Build("hoge");
 
