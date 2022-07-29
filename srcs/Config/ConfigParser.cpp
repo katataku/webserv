@@ -6,7 +6,13 @@
 
 ConfigParser::ConfigParser() { SetTokenNodeMap(); }
 
-ConfigParser::ConfigParser(Token* token) : token_(token) { SetTokenNodeMap(); }
+ConfigParser::ConfigParser(Token* token) : token_(token) {
+    SetTokenNodeMap();
+    this->directives_in_http_.insert("error_page");
+    this->directives_in_http_.insert("client_max_body_size");
+    this->directives_in_http_.insert("autoindex");
+    this->directives_in_http_.insert("index");
+}
 
 ConfigParser::ConfigParser(const ConfigParser& other) { *this = other; }
 
@@ -29,6 +35,18 @@ void ConfigParser::SetTokenNodeMap() {
     this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
 }
 
+void ConfigParser::AssertExistInHttpContext() {
+    if (this->token_ == NULL) {
+        return;
+    }
+
+    if (this->directives_in_http_.find(this->token_->val()) ==
+        this->directives_in_http_.end()) {
+        throw std::runtime_error("Error: \"" + this->token_->val() +
+                                 "\" directive is not allowed here");
+    }
+}
+
 Node ConfigParser::Parse() { return config(); }
 
 Node ConfigParser::config() {
@@ -36,6 +54,7 @@ Node ConfigParser::config() {
 
     while (true) {
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
+            AssertExistInHttpContext();
             head.PushDirective(single_directive());
         } else if (Token::SameTokenKind(&this->token_, Token::BlockDirective)) {
             head.PushChildContext(block_directive());

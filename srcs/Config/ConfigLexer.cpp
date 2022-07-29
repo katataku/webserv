@@ -19,6 +19,7 @@ ConfigLexer::ConfigLexer(const std::string& content)
     : logging_(Logging(__FUNCTION__)), content_(content) {
     this->keywords_["server"] = Token::BlockDirective;
     this->keywords_["location"] = Token::BlockDirective;
+
     this->keywords_["listen"] = Token::SingleDirective;
     this->keywords_["alias"] = Token::SingleDirective;
     this->keywords_["autoindex"] = Token::SingleDirective;
@@ -26,6 +27,7 @@ ConfigLexer::ConfigLexer(const std::string& content)
     this->keywords_["cgi_extension"] = Token::SingleDirective;
     this->keywords_["error_page"] = Token::SingleDirective;
     this->keywords_["server_name"] = Token::SingleDirective;
+    this->keywords_["limit_except"] = Token::SingleDirective;
 
     this->controls_["{"] = Token::OpenBraceToken;
     this->controls_["}"] = Token::CloseBraceToken;
