@@ -139,4 +139,4 @@ server {
 ```
 
 Error:
-invalid location modifier "/"
+invalid number of arguments in "location" directive
