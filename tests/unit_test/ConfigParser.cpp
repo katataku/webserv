@@ -417,3 +417,163 @@ TEST_F(ConfigParserDeathTest, error_page_none_value_in_location) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: invalid number of arguments in \".*\" directive");
 }
+
+TEST_F(ConfigParserDeathTest, client_max_body_size_multi_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "client_max_body_size.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, client_max_body_size_multi_value_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "client_max_body_size_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, client_max_body_size_multi_value_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "client_max_body_size_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, server_name_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "server_name.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, listen_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "listen.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, alias_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "alias.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, limit_except_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "limit_except.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, autoindex_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "autoindex.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, autoindex_none_value_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "autoindex_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, autoindex_none_value_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "autoindex_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, index_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "index.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, index_none_value_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "index_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, index_none_value_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "index_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, return_none_value_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "return_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, return_none_value_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "return_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
+
+TEST_F(ConfigParserDeathTest, cgi_extension_none_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value_size/"
+        "cgi_extension.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: invalid number of arguments in \".*\" directive");
+}
