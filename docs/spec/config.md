@@ -294,9 +294,7 @@ Context: server
 
 cgi_extensionのディレクティブがある場合に、拡張子が値とマッチするファイルをCGIプログラムとしてを起動する。
 
-<!-- TODO(iyamada) mandatoryは複数設定できないようにする？ -->
-
-cgi_extensionは同一コンテキストに複数設定できる。
+cgi_extensionは同一コンテキストに複数存在した場合、エラーとする。
 
 Usage:
 
