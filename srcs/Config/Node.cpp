@@ -133,6 +133,31 @@ void Node::ValidateClientMaxBodySizeValue() {
     }
 }
 
+void Node::ValidateServerNameValue() {
+    if (this->GetValue() == ".") {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
+    }
+}
+
+void Node::ValidateListenValue() {
+    std::string val = this->GetValue();
+
+    if (!IsInteger(val)) {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
+    }
+    int port = ToInteger(val);
+    if (1 <= port && port <= 65535) {
+        return;
+    }
+    throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                             "\" directive invalid value \"" +
+                             this->GetValue() + "\"");
+}
+
 std::string Node::GetValue() { return this->directive_vals_.back(); }
 
 void Node::ValidateSize(std::size_t size) {

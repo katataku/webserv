@@ -116,6 +116,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
          itr != directives.end(); ++itr) {
         if (itr->IsListenDirective()) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateListenValue();
             serv.set_port(itr->GetValue());
             continue;
         }
@@ -136,6 +137,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
 
         if (itr->IsServerNameDirective()) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateServerNameValue();
             serv.set_server_name(itr->GetValue());
             continue;
         }
