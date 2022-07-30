@@ -73,10 +73,13 @@ static std::string SkipSpaceAndComment(const std::string& s) {
     return s.substr(pos);
 }
 
+static bool StartsWithValueCharacters(const std::string& s) {
+    return IsValueChar(s[0]);
+}
+
 Token* ConfigLexer::Tokenize() {
     Token head;
     Token* cur_tok = &head;
-    bool is_expected_value = false;
 
     while (true) {
         this->content_ = SkipSpaceAndComment(this->content_);
@@ -85,36 +88,38 @@ Token* ConfigLexer::Tokenize() {
         }
 
         std::string keyword = ReadKeyword();
+        std::cerr << "keyword [" << keyword << "]" << std::endl;
 
-        // controls字句("{" "}" ";")を処理する
-        std::map<std::string, Token::TokenKind>::iterator itr =
-            this->controls_.find(keyword);
-        if (itr != this->controls_.end()) {
-            cur_tok =
-                Token::NewToken(cur_tok, this->controls_.at(keyword), keyword);
-            this->content_ = ExpectWithSpace(this->content_, keyword);
-            is_expected_value = false;
+        std::map<std::string, Token::TokenKind>::iterator itr_kw =
+            this->keywords_.find(keyword);
+        if (itr_kw != this->keywords_.end()) {
+            cur_tok = Token::NewToken(cur_tok, itr_kw->second, keyword);
+            this->content_ = ConsumeWithSpace(this->content_, keyword);
             continue;
         }
 
-        if (is_expected_value) {
-            // valueの処理
+        // controls字句("{" "}" ";")を処理する
+        std::map<std::string, Token::TokenKind>::iterator itr_ctrl =
+            this->controls_.find(keyword);
+        if (itr_ctrl != this->controls_.end()) {
+            cur_tok = Token::NewToken(cur_tok, itr_ctrl->second, keyword);
+            this->content_ = ConsumeWithSpace(this->content_, keyword);
+            continue;
+        }
+
+        std::cerr << "hoge [" << this->content_ << "]" << std::endl;
+        std::cerr << "hoge [" << keyword << "]" << std::endl;
+        if (StartsWithValueCharacters(this->content_)) {
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));
-            this->content_ = ExpectValueCharacters(this->content_);
-        } else {
-            // keywordの処理
-            try {
-                Token::TokenKind kind = this->keywords_.at(keyword);
-                cur_tok = Token::NewToken(cur_tok, kind, keyword);
-                this->content_ = ExpectWithSpace(this->content_, keyword);
-                is_expected_value = true;
-            } catch (std::exception& e) {
-                logging_.Debug(e.what());
-                throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
-            }
+            this->content_ = ConsumeValueCharacters(this->content_);
+            continue;
         }
+
+        throw std::runtime_error("Error: Failed to tokenize");
     }
+
+    cur_tok = Token::NewToken(cur_tok, Token::EOFToken, "");
 
     return head.next_token();
 }

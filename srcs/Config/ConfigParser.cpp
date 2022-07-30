@@ -102,6 +102,10 @@ Node ConfigParser::config() {
         } else if (Token::SameTokenKind(&this->token_, Token::BlockDirective)) {
             AssertExistInHttpContext();
             head.PushChildContext(block_directive());
+        } else if (Token::SameTokenKind(&this->token_, Token::ValueToken)) {
+            throw std::runtime_error("Error: unexpected \"" +
+                                     this->token_->val() +
+                                     "\", expecting directive");
         } else {
             break;
         }

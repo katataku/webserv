@@ -211,7 +211,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
 
     std::set<std::string> methods = MakeMustExistUniqueMethods();
 
-    // locationディレクティブはpathを持つp
+    // locationディレクティブはpathを持つ
     node.AssertValueSize(node.GetValueSize() == 1);
     locate.set_path(node.GetValue());
 

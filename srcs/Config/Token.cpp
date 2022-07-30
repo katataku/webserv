@@ -53,10 +53,10 @@ void Token::Expect(Token** tok, const std::string& expect_val) {
         *tok = (*tok)->next_token();
         return;
     }
-    throw std::runtime_error("Expect Token failed: expected: " + expect_val +
-                             " but got " + (*tok)->val() + " at " +
-                             (*tok)->GetTokenKindStr());
+    throw std::runtime_error("Error: unexpected \"" + (*tok)->val() +
+                             "\", expecting \"" + expect_val + "\"");
 }
+
 // 次のトークンに進む。
 void Token::Expect(Token** tok, TokenKind kind) {
     if (*tok == NULL) {
@@ -99,6 +99,10 @@ bool Token::Consume(Token** tok, const std::string& expect_val) {
     if (*tok == NULL) {
         throw std::runtime_error("Consume Token failed: expected: " +
                                  expect_val + " but got Nothing");
+    }
+    if ((*tok)->kind_ == Token::EOFToken) {
+        throw std::runtime_error("Error: unexpected end of file, expecting \"" +
+                                 expect_val + "\"");
     }
     if ((*tok)->val() == expect_val) {
         *tok = (*tok)->next_token();

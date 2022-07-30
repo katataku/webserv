@@ -19,7 +19,8 @@ class Token {
         CloseBraceToken,
         SemicolonToken,
         SingleDirective,
-        ValueToken
+        ValueToken,
+        EOFToken
     };
 
     static Token* NewToken(Token* cur_tok, TokenKind kind, std::string val);

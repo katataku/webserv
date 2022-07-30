@@ -1019,3 +1019,35 @@ TEST_F(ConfigParserDeathTest, duplicate_cgi_extension) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive is duplicate");
 }
+
+TEST_F(ConfigParserDeathTest, unexpected_server1) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "server1.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected \".*\", expecting \".*\"");
+}
+
+TEST_F(ConfigParserDeathTest, unexpected_server2) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "server2.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting \".*\"");
+}
+
+TEST_F(ConfigParserDeathTest, unexpected_server3) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "server3.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting \".*\"");
+
+    exit(1);
+}
