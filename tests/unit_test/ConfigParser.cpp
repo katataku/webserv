@@ -629,3 +629,53 @@ TEST_F(ConfigParserDeathTest, cgi_extension_none_value) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: invalid number of arguments in \".*\" directive");
 }
+
+TEST_F(ConfigParserDeathTest, invalid_server_name_value) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "server_name.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_listen_value_zero) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "listen_zero.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_listen_value_minus) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "listen_minus.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_listen_value_big) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "listen_big.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_listen_value_mix) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "listen_mix.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
