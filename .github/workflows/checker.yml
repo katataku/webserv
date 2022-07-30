@@ -10,16 +10,8 @@ on:
       - "README.md"
 
 jobs:
-  dummy:
-    name: dummy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
   clang-format:
     runs-on: ubuntu-latest
-    needs:
-      - dummy
     steps:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
@@ -34,8 +26,6 @@ jobs:
 
   cpplint:
     runs-on: ubuntu-latest
-    needs:
-      - dummy
     steps:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
@@ -50,8 +40,6 @@ jobs:
 
   tidy:
     runs-on: ubuntu-latest
-    needs:
-      - dummy
     steps:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
@@ -66,8 +54,6 @@ jobs:
 
   make:
     runs-on: ubuntu-latest
-    needs:
-      - dummy
     steps:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
@@ -82,8 +68,6 @@ jobs:
 
   unit_test:
     runs-on: ubuntu-latest
-    needs:
-      - dummy
     steps:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
@@ -98,8 +82,6 @@ jobs:
 
   integration_test:
     runs-on: ubuntu-latest
-    needs:
-      - dummy
     steps:
       - uses: actions/checkout@v2
       - name: compose-build # キャッシュしたいかも
