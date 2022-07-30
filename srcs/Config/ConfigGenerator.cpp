@@ -1,6 +1,7 @@
 #include "ConfigGenerator.hpp"
 
 #include <list>
+#include <set>
 #include <string>
 
 #include "utils.hpp"
