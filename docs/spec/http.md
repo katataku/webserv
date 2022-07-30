@@ -61,7 +61,7 @@ Syntax: absolute-path [ "?" query ]
   - absolute-pathはドットセグメント( "." と ".." )を許容する
     - `"/aaa/./bbb"`は`"/aaa/bbb"`とする。
     - `"/aaa/ccc/../bbb"`は`"/aaa/bbb"`とする。
-    - `"/../aaa/bbb"`は`"/aaa/bbb"`とする。
+    - `"/../aaa/bbb"`は400エラーとする。
     - ドットセグメントの削除処理詳細は[こちら](https://triple-underscore.github.io/rfc-others/RFC3986-ja.html#section-5.2.4)に規定されている。
 
 - queryは、「?」+「変数名」+「=」+「変数の値」というのが、基本構造になっている。パラメーターが複数ある場合は「&」でつないでいく。

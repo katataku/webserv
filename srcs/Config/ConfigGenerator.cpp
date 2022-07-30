@@ -68,6 +68,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
 
         if (itr->IsClientMaxBodySizeDirective()) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateClientMaxBodySizeValue();
             conf.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
@@ -169,6 +170,13 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
                 serv.PushErrorPage(strtonum<int>(*status_list_itr),
                                    error_page_path);
             }
+            continue;
+        }
+
+        if (itr->IsClientMaxBodySizeDirective()) {
+            itr->ValidateSize(1);
+            itr->ValidateClientMaxBodySizeValue();
+            serv.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
 
@@ -277,6 +285,13 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
                 locate.PushErrorPage(strtonum<int>(*status_list_itr),
                                      error_page_path);
             }
+            continue;
+        }
+
+        if (itr->IsClientMaxBodySizeDirective()) {
+            itr->ValidateSize(1);
+            itr->ValidateClientMaxBodySizeValue();
+            locate.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
 

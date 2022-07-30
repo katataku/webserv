@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 #include "ConfigProcesser.hpp"
+#include "InitialValues.hpp"
 #include "LocationContext.hpp"
 #include "ServerContext.hpp"
 #include "WebservConfig.hpp"
@@ -228,6 +229,57 @@ TEST_F(ConfigParserTest, error_page_same_code) {
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
     ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
+}
+
+TEST_F(ConfigParserTest, client_max_body_size_on_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "client_max_body_size_on_location.conf");
+    WebservConfig conf = confproc.Exec();
+    ASSERT_EQ(conf.client_max_body_size(), InitialValues::kClientMaxBodySize);
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.client_max_body_size(),
+              InitialValues::kClientMaxBodySize);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.client_max_body_size(), 1);
+}
+
+TEST_F(ConfigParserTest, client_max_body_size_on_server) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "client_max_body_size_on_server.conf");
+    WebservConfig conf = confproc.Exec();
+    ASSERT_EQ(conf.client_max_body_size(), InitialValues::kClientMaxBodySize);
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.client_max_body_size(), 1);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.client_max_body_size(),
+              InitialValues::kClientMaxBodySize);
+}
+TEST_F(ConfigParserTest, client_max_body_size_on_http) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "client_max_body_size_on_http.conf");
+    WebservConfig conf = confproc.Exec();
+    ASSERT_EQ(conf.client_max_body_size(), 1);
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.client_max_body_size(),
+              InitialValues::kClientMaxBodySize);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.client_max_body_size(),
+              InitialValues::kClientMaxBodySize);
 }
 
 class ConfigParserDeathTest : public ::testing::Test {

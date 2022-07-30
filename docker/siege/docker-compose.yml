@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  siege:
+    container_name: siege
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/app

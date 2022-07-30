@@ -60,13 +60,8 @@ std::string HTTPRequest::transfer_encoding() const {
 }
 std::string HTTPRequest::request_body() const { return this->request_body_; }
 
-// TODO(takkatao): pathに含まれるドットセグメント削除を実装する。
-std::string HTTPRequest::absolute_path() const {
-    std::string::size_type pos = this->request_target_.find("?");
-    if (pos == std::string::npos) {
-        return this->request_target_;
-    }
-    return this->request_target_.substr(0, pos);
+std::string HTTPRequest::canonical_path() const {
+    return this->canonical_path_;
 }
 
 std::map<std::string, std::string> HTTPRequest::queries() const {
@@ -130,20 +125,6 @@ void HTTPRequest::Parse(std::string str) {
     }
 }
 
-// utilにあってもいいかも
-// OWSをtrimする
-static std::string ltrim(const std::string &s) {
-    size_t start = s.find_first_not_of(" \t");
-    return (start == std::string::npos) ? "" : s.substr(start);
-}
-
-static std::string rtrim(const std::string &s) {
-    size_t end = s.find_last_not_of(" \t");
-    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
-}
-
-static std::string trim(const std::string &s) { return rtrim(ltrim(s)); }
-
 void HTTPRequest::ParseRequestLine(std::string line) {
     this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
@@ -153,6 +134,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     }
     this->method_ = items[0];
     this->request_target_ = items[1];
+    this->canonical_path_ = this->CanonicalizePath(this->request_target_);
 }
 
 void HTTPRequest::ParseHeader(std::string str) {
@@ -173,7 +155,7 @@ void HTTPRequest::ParseHeader(std::string str) {
             throw std::runtime_error("header format invalid");
         }
         std::string header = lines[i].substr(0, found);
-        std::string value = trim(lines[i].substr(found + 1));
+        std::string value = Trim(lines[i].substr(found + 1), " \t");
         if (value.empty()) {
             // TODO(hayashi-ay): 対応するエラーを定義する
             throw std::runtime_error("header format invalid");
@@ -253,11 +235,31 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
     }
 }
 
-// TODO(takkatao): chunked requestのbody size計算の実装が必要。
-int HTTPRequest::CalcBodySize() const {
-    // Transactionの動作確認のための暫定的な実装。
-    return this->request_body_.size();
+std::string HTTPRequest::CanonicalizePath(std::string request_target) {
+    std::string::size_type pos = request_target.find("?");
+    if (pos != std::string::npos) {
+        request_target = request_target.substr(0, pos);
+    }
+    std::vector<std::string> input = Split(request_target, "/");
+    std::vector<std::string> output;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = input.begin(); itr != input.end(); ++itr) {
+        if (*itr == ".") {
+            // do nothing
+        } else if (*itr == "..") {
+            // 取り除くディレクトリがない場合はエラー
+            if (output.size() <= 1) {
+                throw std::runtime_error("invalid path");
+            }
+            output.pop_back();
+        } else {
+            output.push_back(*itr);
+        }
+    }
+    return Join(output, "/");
 }
+int HTTPRequest::CalcBodySize() const { return this->request_body_.size(); }
 
 bool HTTPRequest::IsReady() const {
     return this->is_finish_to_read_header_ && this->is_finish_to_read_body_;

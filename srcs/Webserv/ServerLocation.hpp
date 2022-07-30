@@ -55,6 +55,8 @@ class ServerLocation {
     bool IsAutoIndexEnabled() const;
     std::string ResolveAlias(std::string request_uri) const;
 
+    void SetDefaultValue();
+
  private:
     Logging logging_;
     int port_;

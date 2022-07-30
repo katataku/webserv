@@ -68,6 +68,7 @@ class Node {
 
     void ValidateAutoindexValue();
     void ValidateReturnValue();
+    void ValidateClientMaxBodySizeValue();
 
     std::string GetValue();
     void ValidateSize(std::size_t size);

@@ -3,8 +3,10 @@
 #include <sys/stat.h>
 
 #include <cctype>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <limits>
 
 std::vector<std::string> Split(std::string const str, std::string const delim) {
     std::vector<std::string> strs;
@@ -19,11 +21,62 @@ std::vector<std::string> Split(std::string const str, std::string const delim) {
             break;
         }
     }
-    // 区切り文字のあとに文字が残っていればstrsにつめる
-    if (pos < str.size()) {
-        strs.push_back(str.substr(pos));
-    }
+    // 区切り文字のあとに来る文字(空文字含む）を追加する
+    // 区切り文字が存在しない場合はstrがそのまま入る
+    strs.push_back(str.substr(pos));
     return strs;
+}
+
+std::string Join(std::vector<std::string> strs, std::string separator) {
+    std::stringstream ss;
+
+    std::vector<std::string>::iterator itr;
+    for (itr = strs.begin(); itr != strs.end(); ++itr) {
+        if (itr != strs.begin()) {
+            ss << separator;
+        }
+        ss << *itr;
+    }
+    return ss.str();
+}
+
+bool IsInteger(std::string str) {
+    char* end = NULL;
+    errno = 0;
+    long l = std::strtol(str.c_str(), &end, 10);  // NOLINT
+
+    // empty string
+    if (str == end) {
+        return false;
+    }
+    // non-numeric char is presents. for example, 1a
+    if (*end != '\0') {
+        return false;
+    }
+    // overflow long value
+    if (errno == ERANGE) {
+        return false;
+    }
+    // overflow int value
+    if (l < std::numeric_limits<int>::min() ||
+        l > std::numeric_limits<int>::max()) {
+        return false;
+    }
+    return true;
+}
+
+int ToInteger(std::string str) { return std::atoi(str.c_str()); }
+
+std::string LeftTrim(const std::string& s, const std::string& chars) {
+    size_t start = s.find_first_not_of(chars);
+    return (start == std::string::npos) ? "" : s.substr(start);
+}
+std::string RightTrim(const std::string& s, const std::string& chars) {
+    size_t end = s.find_last_not_of(chars);
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+std::string Trim(const std::string& s, const std::string& chars) {
+    return RightTrim(LeftTrim(s, chars), chars);
 }
 
 bool StartsWith(const std::string& s, const std::string& prefix) {

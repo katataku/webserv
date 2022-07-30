@@ -10,7 +10,8 @@
 #include "ServerLocationKey.hpp"
 #include "utils.hpp"
 
-WebservConfig::WebservConfig() : client_max_body_size_(1024) {}
+WebservConfig::WebservConfig()
+    : client_max_body_size_(InitialValues::kClientMaxBodySize) {}
 
 WebservConfig::WebservConfig(WebservConfig const &other) { *this = other; }
 
@@ -147,6 +148,7 @@ static std::vector<ServerLocation> CreateWithLocationContext(
     // pathは必ず設定されている
     locate_sv.set_path(locate.path());
 
+    locate_sv.SetDefaultValue();
     ret.push_back(locate_sv);
 
     return ret;
@@ -226,6 +228,7 @@ static std::vector<ServerLocation> CreateWithServerContext(
     }
 
     // serverコンテキストのデフォルトServerLocationを登録
+    serv_sv.SetDefaultValue();
     ret.push_back(serv_sv);
 
     return ret;

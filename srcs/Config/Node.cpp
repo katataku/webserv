@@ -97,6 +97,10 @@ void Node::AssertValueSize(bool cond) const {
     }
 }
 
+bool Node::IsClientMaxBodySizeDirective() {
+    return kind_ == Node::ClientMaxBodySizeDirectiveNode;
+}
+
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 
@@ -118,6 +122,17 @@ void Node::ValidateReturnValue() {
             throw std::runtime_error(
                 "Syntax Error: Return directive can only take http://... or "
                 "https://...");
+        }
+    }
+}
+
+void Node::ValidateClientMaxBodySizeValue() {
+    if (this->IsClientMaxBodySizeDirective()) {
+        int directive_val = strtonum<int>(this->GetValue());
+        if (directive_val <= 0) {
+            throw std::runtime_error(
+                "Syntax Error: ClientMaxBodySize directive can only take more "
+                "than 0");
         }
     }
 }
