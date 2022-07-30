@@ -3,6 +3,7 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include <string>
 
 #include "Token.hpp"
@@ -75,6 +76,8 @@ class Node {
     void ValidateErrorPageValue();
     void ValidateLimitExceptValue();
     void ValidateCgiExtensionValue();
+    void ValidateIsUnique(std::set<std::string>& methods,
+                          const std::string& method);
 
     std::string GetValue();
     void ValidateSize(std::size_t size);

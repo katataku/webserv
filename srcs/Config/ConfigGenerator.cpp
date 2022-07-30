@@ -86,6 +86,12 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     return conf;
 }
 
+static std::set<std::string> MakeNoDuplicationMethodsInServerContext() {
+    std::set<std::string> methods;
+    methods.insert("server_name");
+    return methods;
+}
+
 ServerContext ConfigGenerator::GenerateServerContext(Node node) {
     ServerContext serv;
 
@@ -93,6 +99,8 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         // TODO(iyamada) エラー処理
         throw std::runtime_error("Should be server context");
     }
+
+    std::set<std::string> methods = MakeNoDuplicationMethodsInServerContext();
 
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
@@ -119,6 +127,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         }
 
         if (itr->IsServerNameDirective()) {
+            itr->ValidateIsUnique(methods, "server_name");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateServerNameValue();
             serv.set_server_name(itr->GetValue());
