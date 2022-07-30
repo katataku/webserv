@@ -116,13 +116,13 @@ Node ConfigParser::block_directive() {
     }
 
     Node node;
-    if (Token::Expect(&this->token_, "server")) {
-        Token::Consume(&this->token_, "{");
+    if (Token::ConumeTemp(&this->token_, "server")) {
+        Token::Expect(&this->token_, "{");
         node.set_kind(Node::ServerContextNode);
     }
 
     while (true) {
-        if (Token::Expect(&this->token_, "}")) {
+        if (Token::ConumeTemp(&this->token_, "}")) {
             break;
         }
         AssertExistInServerContext();
@@ -140,17 +140,17 @@ Node ConfigParser::block_directive() {
 Node ConfigParser::location_directive() {
     Node node;
 
-    Token::Consume(&this->token_, "location");
+    Token::Expect(&this->token_, "location");
     node.set_kind(Node::LocationContextNode);
     value(&node);
-    Token::Consume(&this->token_, "{");
+    Token::Expect(&this->token_, "{");
 
     while (!Token::SameToken(&this->token_, "}")) {
         AssertExistInLocationContext();
         node.PushDirective(single_directive());
     }
 
-    Token::Consume(&this->token_, "}");
+    Token::Expect(&this->token_, "}");
 
     return node;
 }
@@ -165,14 +165,14 @@ Node ConfigParser::single_directive() {
     std::map<std::string, Node::NodeKind>::iterator itr;
     for (itr = this->token_node_map_.begin();
          itr != this->token_node_map_.end(); ++itr) {
-        if (Token::Expect(&this->token_, (*itr).first)) {
+        if (Token::ConumeTemp(&this->token_, (*itr).first)) {
             node = Node::NewNode((*itr).second);
             break;
         }
     }
 
     values(&node);
-    Token::Consume(&this->token_, ";");
+    Token::Expect(&this->token_, ";");
 
     return node;
 }
@@ -187,7 +187,7 @@ void ConfigParser::value(Node* node) {
 
     vals.push_back(this->token_->val());
     node->set_directive_vals(vals);
-    Token::Consume(&this->token_, Token::ValueToken);
+    Token::Expect(&this->token_, Token::ValueToken);
 }
 
 void ConfigParser::values(Node* node) {
@@ -200,7 +200,7 @@ void ConfigParser::values(Node* node) {
         }
 
         vals.push_back(this->token_->val());
-        Token::Consume(&this->token_, Token::ValueToken);
+        Token::Expect(&this->token_, Token::ValueToken);
     }
     node->set_directive_vals(vals);
 }

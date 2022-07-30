@@ -92,7 +92,7 @@ Token* ConfigLexer::Tokenize() {
         if (itr != this->controls_.end()) {
             cur_tok =
                 Token::NewToken(cur_tok, this->controls_.at(keyword), keyword);
-            this->content_ = ConsumeWithSpace(this->content_, keyword);
+            this->content_ = ExpectWithSpace(this->content_, keyword);
             is_expected_value = false;
             continue;
         }
@@ -101,13 +101,13 @@ Token* ConfigLexer::Tokenize() {
             // valueの処理
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));
-            this->content_ = ConsumeValueCharacters(this->content_);
+            this->content_ = ExpectValueCharacters(this->content_);
         } else {
             // keywordの処理
             try {
                 Token::TokenKind kind = this->keywords_.at(keyword);
                 cur_tok = Token::NewToken(cur_tok, kind, keyword);
-                this->content_ = ConsumeWithSpace(this->content_, keyword);
+                this->content_ = ExpectWithSpace(this->content_, keyword);
                 is_expected_value = true;
             } catch (std::exception& e) {
                 logging_.Debug(e.what());

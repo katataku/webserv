@@ -66,13 +66,13 @@ classDiagram
     }
 
     class Token {
-          +Consume(Token, const string& expect_val) void
-          +Consume(Token, TokenKind kind) void
+          +Expect(Token, const string& expect_val) void
+          +Expect(Token, TokenKind kind) void
           +PeekKind(Token, TokenKind kind) bool
           +SameTokenKind(Token, TokenKind kind) bool
           +SameToken(Token, const string& val) bool
-          +Expect(Token, const string& expect_val) bool
-          +Expect(Token, TokenKind kind) bool
+          +ConumeTemp(Token, const string& expect_val) bool
+          +ConumeTemp(Token, TokenKind kind) bool
     }
 
     class Node {
