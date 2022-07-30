@@ -11,63 +11,15 @@ echo ""
 
 #ひとつひとつのテストを個別に実行することもできる。
 #CONFIGを変更した後はstart_server_containerを実行すること。
-    CONFIG_NO=default.conf
-    start_server_container
-
-        REQUEST_NO=GET_simple
-        do_test
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=autoindex_on.conf
-    start_server_container
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=return_on.conf
-    start_server_container
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=error_page.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_multi.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_override.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_not_exist.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_same_code.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
 
     CONFIG_NO=client_max_body_size_on_location.conf
     start_server_container
 
+        #413エラー(content-length)
         REQUEST_NO=POST_hello_world
         do_test
 
+        #413エラー(chunked)
         REQUEST_NO=POST_hello_world_chunked
         do_test
 
