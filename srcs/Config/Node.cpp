@@ -170,16 +170,6 @@ void Node::ValidateLimitExceptValue() {
     }
 }
 
-static bool IsPathStr(const std::string& path) {
-    for (std::string::const_iterator itr = path.begin(); itr != path.end();
-         ++itr) {
-        if (!IsPathChar(*itr)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 static bool IsErrorStatusCode(int code) { return (300 <= code && code <= 599); }
 
 // error_pagで設定するファイルパスはどんな文字でも構文的にOKなのでチェックしない
