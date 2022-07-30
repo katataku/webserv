@@ -679,3 +679,183 @@ TEST_F(ConfigParserDeathTest, invalid_listen_value_mix) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive invalid value .*");
 }
+
+TEST_F(ConfigParserDeathTest, invalid_error_page_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_error_page) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_error_page_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_error_page_mix) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page_mix.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_error_page_mix_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page_mix_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_error_page_mix_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page_mix_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size_mix) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size_mix.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size_mix_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size_mix_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size_mix_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size_mix_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_limit_except) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "limit_except.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_autoindex) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "autoindex.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_autoindex_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "autoindex_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_autoindex_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "autoindex_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_return_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "return_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_return_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "return_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
