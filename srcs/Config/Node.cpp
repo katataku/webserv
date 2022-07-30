@@ -167,6 +167,22 @@ void Node::ValidateSize(std::size_t size) {
     }
 }
 
+std::map<int, std::string> Node::GetErrorPages() {
+    std::string error_page_path = this->GetValue();
+    std::list<std::string> status_list = this->directive_vals();
+
+    status_list.pop_back();
+
+    std::map<int, std::string> error_pages;
+
+    std::list<std::string>::iterator status_list_itr;
+    for (status_list_itr = status_list.begin();
+         status_list_itr != status_list.end(); status_list_itr++) {
+        error_pages[strtonum<int>(*status_list_itr)] = error_page_path;
+    }
+    return error_pages;
+}
+
 static void WriteDirevtiveVals(std::ostream& out, std::list<std::string> vals) {
     for (std::list<std::string>::iterator v_itr = vals.begin();
          v_itr != vals.end(); ++v_itr) {

@@ -2,6 +2,7 @@
 #define SRCS_CONFIG_NODE_HPP_
 
 #include <list>
+#include <map>
 #include <string>
 
 #include "Token.hpp"
@@ -74,6 +75,8 @@ class Node {
 
     std::string GetValue();
     void ValidateSize(std::size_t size);
+
+    std::map<int, std::string> GetErrorPages();
 
  private:
     NodeKind kind_;

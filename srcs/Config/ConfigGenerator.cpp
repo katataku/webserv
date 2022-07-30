@@ -49,19 +49,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
 
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
-            std::string error_page_path = itr->GetValue();
-            std::list<std::string> status_list = itr->directive_vals();
-            status_list.pop_back();
-
-            std::list<std::string>::iterator status_list_itr;
-            for (status_list_itr = status_list.begin();
-                 status_list_itr != status_list.end(); status_list_itr++) {
-                // this->logging_.Debug("insert error_page directive[" +
-                //                      *status_list_itr + "]:" +
-                //                      error_page_path);
-                conf.PushErrorPage(strtonum<int>(*status_list_itr),
-                                   error_page_path);
-            }
+            conf.AddErrorPages(itr->GetErrorPages());
             continue;
         }
 
@@ -156,19 +144,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
 
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
-            std::string error_page_path = itr->GetValue();
-            std::list<std::string> status_list = itr->directive_vals();
-            status_list.pop_back();
-
-            std::list<std::string>::iterator status_list_itr;
-            for (status_list_itr = status_list.begin();
-                 status_list_itr != status_list.end(); status_list_itr++) {
-                // this->logging_.Debug("insert error_page directive[" +
-                //                      *status_list_itr + "]:" +
-                //                      error_page_path);
-                serv.PushErrorPage(strtonum<int>(*status_list_itr),
-                                   error_page_path);
-            }
+            serv.AddErrorPages(itr->GetErrorPages());
             continue;
         }
 
@@ -269,19 +245,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
 
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
-            std::string error_page_path = itr->GetValue();
-            std::list<std::string> status_list = itr->directive_vals();
-            status_list.pop_back();
-
-            std::list<std::string>::iterator status_list_itr;
-            for (status_list_itr = status_list.begin();
-                 status_list_itr != status_list.end(); status_list_itr++) {
-                // this->logging_.Debug("insert error_page directive[" +
-                //                      *status_list_itr + "]:" +
-                //                      error_page_path);
-                locate.PushErrorPage(strtonum<int>(*status_list_itr),
-                                     error_page_path);
-            }
+            locate.AddErrorPages(itr->GetErrorPages());
             continue;
         }
 
