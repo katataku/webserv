@@ -869,3 +869,153 @@ TEST_F(ConfigParserDeathTest, duplicate_server_name) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive is duplicate");
 }
+
+TEST_F(ConfigParserDeathTest, duplicate_listen) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "listen.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_client_max_body_size) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "client_max_body_size.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_client_max_body_size_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "client_max_body_size_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_client_max_body_size_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "client_max_body_size_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_alias) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "alias.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_limit_except) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "limit_except.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_autoindex) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "autoindex.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_autoindex_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "autoindex_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_autoindex_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "autoindex_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_index) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "index.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_index_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "index_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_index_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "index_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_return_in_serv) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "return_in_serv.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_return_in_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "return_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
+
+TEST_F(ConfigParserDeathTest, duplicate_cgi_extension) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "cgi_extension.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
