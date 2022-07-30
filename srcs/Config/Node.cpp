@@ -97,10 +97,6 @@ void Node::AssertValueSize(bool cond) const {
     }
 }
 
-bool Node::IsClientMaxBodySizeDirective() {
-    return kind_ == Node::ClientMaxBodySizeDirectiveNode;
-}
-
 void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 
