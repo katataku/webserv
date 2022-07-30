@@ -30,6 +30,7 @@ class ServerContext {
     void set_server_name(const std::string& server_name);
     void set_port(const std::string& port);
     void set_port(int port);
+    void AddErrorPages(const std::map<int, std::string>& error_pages);
 
     void PushLocationContext(LocationContext context);
     void PushErrorPage(int status_code, const std::string& error_page);

@@ -30,6 +30,7 @@ class LocationContext {
     void set_alias(const std::string& alias);
     void set_cgi_extension(const std::string& cgi_extension);
     void set_allow_methods(const std::set<std::string>& allow_methods);
+    void AddErrorPages(const std::map<int, std::string>& error_pages);
 
     void PushErrorPage(int status_code, const std::string& error_page);
     void PushAllowMethod(const std::string& method);

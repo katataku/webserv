@@ -49,6 +49,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
 
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
+            itr->ValidateErrorPageValue();
             conf.AddErrorPages(itr->GetErrorPages());
             continue;
         }
@@ -57,12 +58,6 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateClientMaxBodySizeValue();
             conf.set_client_max_body_size(strtonum<int>(itr->GetValue()));
-            continue;
-        }
-
-        if (itr->IsAutoindexDirective()) {
-            itr->AssertValueSize(itr->GetValueSize() == 1);
-            conf.set_auto_index(itr->GetValue());
             continue;
         }
 
@@ -132,6 +127,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
 
         if (itr->IsClientMaxBodySizeDirective()) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateClientMaxBodySizeValue();
             serv.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
@@ -144,14 +140,8 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
 
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
+            itr->ValidateErrorPageValue();
             serv.AddErrorPages(itr->GetErrorPages());
-            continue;
-        }
-
-        if (itr->IsClientMaxBodySizeDirective()) {
-            itr->ValidateSize(1);
-            itr->ValidateClientMaxBodySizeValue();
-            serv.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
 
@@ -192,7 +182,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         throw std::runtime_error("Should be location context");
     }
 
-    // locationディレクティブはpathを持つ
+    // locationディレクティブはpathを持つp
     node.AssertValueSize(node.GetValueSize() == 1);
     locate.set_path(node.GetValue());
 
@@ -221,12 +211,14 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
 
         if (itr->IsCgiExtensionDirective()) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateCgiExtensionValue();
             locate.set_cgi_extension(itr->GetValue());
             continue;
         }
 
         if (itr->IsClientMaxBodySizeDirective()) {
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateClientMaxBodySizeValue();
             locate.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
@@ -238,21 +230,16 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsLimitExceptDirective()) {
-            itr->AssertValueSize(itr->GetValueSize() > 1);
+            itr->AssertValueSize(itr->GetValueSize() >= 1);
+            itr->ValidateLimitExceptValue();
             locate.set_allow_methods(ToSetContainer(itr->directive_vals()));
             continue;
         }
 
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
+            itr->ValidateErrorPageValue();
             locate.AddErrorPages(itr->GetErrorPages());
-            continue;
-        }
-
-        if (itr->IsClientMaxBodySizeDirective()) {
-            itr->ValidateSize(1);
-            itr->ValidateClientMaxBodySizeValue();
-            locate.set_client_max_body_size(strtonum<int>(itr->GetValue()));
             continue;
         }
 

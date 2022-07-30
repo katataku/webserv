@@ -36,7 +36,7 @@ class ServerLocation {
     void set_port(int port);
     void set_host(const std::string &host);
     void set_path(const std::string &path);
-    void set_error_pages(const std::map<int, std::string> &error_pages);
+    void AddErrorPages(const std::map<int, std::string> &error_pages);
     void set_client_max_body_size(int client_max_body_size);
     void set_auto_index(std::string auto_index);
     void set_index_page(const std::string &index_page);

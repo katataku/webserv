@@ -51,7 +51,8 @@ std::string Node::GetNodeKindStr() const {
                          "ErrorPageDirectiveNode",
                          "ServerNameDirectiveNode",
                          "ClientMaxBodySizeDirectiveNode",
-                         "IndexDirectiveNode"};
+                         "IndexDirectiveNode",
+                         "LimitExceptDirectiveNode"};
     return arr[this->kind_];
 }
 
@@ -101,35 +102,34 @@ void Node::PushDirective(Node node) { directives_.push_back(node); }
 void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 
 void Node::ValidateAutoindexValue() {
-    if (this->IsAutoindexDirective()) {
-        std::string directive_val = this->GetValue();
-        if (directive_val != "on" && directive_val != "off") {
-            throw std::runtime_error(
-                "Syntax Error: autoindex directive can only take on/off");
-        }
+    std::string directive_val = this->GetValue();
+    if (directive_val != "on" && directive_val != "off") {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
     }
 }
 
 void Node::ValidateReturnValue() {
-    if (this->IsReturnDirective()) {
-        std::string directive_val = this->GetValue();
-        if (!StartsWith(directive_val, "http://") &&
-            !StartsWith(directive_val, "https://")) {
-            throw std::runtime_error(
-                "Syntax Error: Return directive can only take http://... or "
-                "https://...");
-        }
+    std::string val = this->GetValue();
+    if (!StartsWith(val, "http://") && !StartsWith(val, "https://")) {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
     }
 }
 
 void Node::ValidateClientMaxBodySizeValue() {
-    if (this->IsClientMaxBodySizeDirective()) {
-        int directive_val = strtonum<int>(this->GetValue());
-        if (directive_val <= 0) {
-            throw std::runtime_error(
-                "Syntax Error: ClientMaxBodySize directive can only take more "
-                "than 0");
-        }
+    if (!IsInteger(this->GetValue())) {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
+    }
+
+    if (ToInteger(this->GetValue()) <= 0) {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
     }
 }
 
@@ -156,6 +156,60 @@ void Node::ValidateListenValue() {
     throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
                              "\" directive invalid value \"" +
                              this->GetValue() + "\"");
+}
+
+static bool IsMethodName(const std::string& method) {
+    return method == "GET" || method == "POST" || method == "DELETE";
+}
+
+void Node::ValidateLimitExceptValue() {
+    if (!IsMethodName(this->GetValue())) {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
+    }
+}
+
+static bool IsPathStr(const std::string& path) {
+    for (std::string::const_iterator itr = path.begin(); itr != path.end();
+         ++itr) {
+        if (!IsPathChar(*itr)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool IsErrorStatusCode(int code) { return (300 <= code && code <= 599); }
+
+// error_pagで設定するファイルパスはどんな文字でも構文的にOKなのでチェックしない
+void Node::ValidateErrorPageValue() {
+    std::list<std::string> status_list = this->directive_vals();
+    std::list<std::string>::iterator end = status_list.end();
+    --end;
+
+    for (std::list<std::string>::iterator itr = status_list.begin(); itr != end;
+         ++itr) {
+        if (!IsInteger(*itr)) {
+            throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                     "\" directive invalid value \"" + *itr +
+                                     "\"");
+        }
+        int code = ToInteger(*itr);
+        if (!IsErrorStatusCode(code)) {
+            throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                     "\" directive invalid value \"" + *itr +
+                                     "\"");
+        }
+    }
+}
+
+void Node::ValidateCgiExtensionValue() {
+    if (this->GetValue() != "py") {
+        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
+                                 "\" directive invalid value \"" +
+                                 this->GetValue() + "\"");
+    }
 }
 
 std::string Node::GetValue() { return this->directive_vals_.back(); }

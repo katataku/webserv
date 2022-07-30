@@ -52,6 +52,17 @@ void WebservConfig::set_index_page(std::string index_page) {
     this->index_page_ = index_page;
 }
 
+void WebservConfig::AddErrorPages(
+    const std::map<int, std::string> &error_pages) {
+    for (std::map<int, std::string>::const_iterator itr = error_pages.begin();
+         itr != error_pages.end(); ++itr) {
+        if (this->error_pages_.find(itr->first) != this->error_pages_.end()) {
+            continue;
+        }
+        this->error_pages_[itr->first] = itr->second;
+    }
+}
+
 void WebservConfig::PushServerContext(ServerContext context) {
     this->contexts_.push_back(context);
 }
@@ -240,7 +251,7 @@ std::vector<ServerLocation> WebservConfig::CreateServerLocations() {
 
     // httpコンテキストに値が設定されていたら、ネストされたコンテキストの値を上書きする場合があるので、後で使うために用意
     ServerLocation http_sv;
-    http_sv.set_error_pages(this->error_pages());
+    http_sv.AddErrorPages(this->error_pages());
     http_sv.set_client_max_body_size(this->client_max_body_size());
     http_sv.set_auto_index(this->auto_index());
     http_sv.set_index_page(this->index_page());

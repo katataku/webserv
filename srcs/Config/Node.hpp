@@ -72,6 +72,9 @@ class Node {
     void ValidateClientMaxBodySizeValue();
     void ValidateServerNameValue();
     void ValidateListenValue();
+    void ValidateErrorPageValue();
+    void ValidateLimitExceptValue();
+    void ValidateCgiExtensionValue();
 
     std::string GetValue();
     void ValidateSize(std::size_t size);

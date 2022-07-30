@@ -166,7 +166,6 @@ Node ConfigParser::single_directive() {
     for (itr = this->token_node_map_.begin();
          itr != this->token_node_map_.end(); ++itr) {
         if (Token::Expect(&this->token_, (*itr).first)) {
-            std::cerr << "[log] node kind " << (*itr).second << std::endl;
             node = Node::NewNode((*itr).second);
             break;
         }
