@@ -49,9 +49,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
-            std::list<std::string> status_list;
-            status_list = itr->directive_vals();
-            // status_list = std::list<std::string>(itr->directive_vals());
+            std::list<std::string> status_list = itr->directive_vals();
             status_list.pop_back();
 
             std::list<std::string>::iterator status_list_itr;
@@ -157,8 +155,6 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
             std::list<std::string> status_list = itr->directive_vals();
-            // status_list = itr->directive_vals();
-            // status_list = std::list<std::string>(itr->directive_vals());
             status_list.pop_back();
 
             std::list<std::string>::iterator status_list_itr;
@@ -271,9 +267,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         if (itr->IsErrorPageDirective()) {
             itr->AssertValueSize(itr->GetValueSize() > 1);
             std::string error_page_path = itr->GetValue();
-            std::list<std::string> status_list;
-            status_list = itr->directive_vals();
-            // status_list = std::list<std::string>(itr->directive_vals());
+            std::list<std::string> status_list = itr->directive_vals();
             status_list.pop_back();
 
             std::list<std::string>::iterator status_list_itr;
