@@ -859,3 +859,13 @@ TEST_F(ConfigParserDeathTest, invalid_return_in_location) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: \".*\" directive invalid value .*");
 }
+
+TEST_F(ConfigParserDeathTest, duplicate_server_name) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "server_name.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive is duplicate");
+}
