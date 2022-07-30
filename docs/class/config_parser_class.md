@@ -52,8 +52,8 @@ classDiagram
         +PeekKind(Token**, TokenKind)$ bool
         +SameTokenKind(Token**, TokenKind)$ bool
         +SameToken(Token**, string)$ bool
-        +ConumeTemp(Token**, string)$ bool
-        +ConumeTemp(Token**, TokenKind)$ bool
+        +Consume(Token**, string)$ bool
+        +Consume(Token**, TokenKind)$ bool
         -TokenKind kind
         -string    val
         -Token     next
@@ -163,14 +163,14 @@ class ConfigParser {
     Token token
 
     Node block_directive() {
-      if (token.ConumeTemp("server")) {
+      if (token.Consume("server")) {
         MakeServerNode()
         UpdateServerNode()
-        if (token.ConumeTemp("{")) {
+        if (token.Consume("{")) {
           throw NeedOpenBrace()
         }
         node = single_directive()
-        if (token.ConumeTemp("}")) {
+        if (token.Consume("}")) {
           throw NeedOpenBrace()
         }
         return node
@@ -287,7 +287,7 @@ class Token {
 
     // 次のトークンが期待されるトークンかを判定する
     // 期待されるトークンだと次に進む
-    bool ConumeTemp(string expect_val)
+    bool Consume(string expect_val)
 
   private:
     TokenKind kind

@@ -71,8 +71,8 @@ classDiagram
           +PeekKind(Token, TokenKind kind) bool
           +SameTokenKind(Token, TokenKind kind) bool
           +SameToken(Token, const string& val) bool
-          +ConumeTemp(Token, const string& expect_val) bool
-          +ConumeTemp(Token, TokenKind kind) bool
+          +Consume(Token, const string& expect_val) bool
+          +Consume(Token, TokenKind kind) bool
     }
 
     class Node {

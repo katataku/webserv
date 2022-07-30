@@ -116,13 +116,13 @@ Node ConfigParser::block_directive() {
     }
 
     Node node;
-    if (Token::ConumeTemp(&this->token_, "server")) {
+    if (Token::Consume(&this->token_, "server")) {
         Token::Expect(&this->token_, "{");
         node.set_kind(Node::ServerContextNode);
     }
 
     while (true) {
-        if (Token::ConumeTemp(&this->token_, "}")) {
+        if (Token::Consume(&this->token_, "}")) {
             break;
         }
         AssertExistInServerContext();
@@ -165,7 +165,7 @@ Node ConfigParser::single_directive() {
     std::map<std::string, Node::NodeKind>::iterator itr;
     for (itr = this->token_node_map_.begin();
          itr != this->token_node_map_.end(); ++itr) {
-        if (Token::ConumeTemp(&this->token_, (*itr).first)) {
+        if (Token::Consume(&this->token_, (*itr).first)) {
             node = Node::NewNode((*itr).second);
             break;
         }

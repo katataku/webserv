@@ -47,8 +47,8 @@ class Token {
 
     // 次のトークンが期待されるトークンかを判定する
     // 期待されるトークンだと次に進む
-    static bool ConumeTemp(Token** tok, const std::string& expect_val);
-    static bool ConumeTemp(Token** tok, TokenKind kind);
+    static bool Consume(Token** tok, const std::string& expect_val);
+    static bool Consume(Token** tok, TokenKind kind);
 
  private:
     TokenKind kind_;

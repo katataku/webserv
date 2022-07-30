@@ -95,9 +95,9 @@ bool Token::SameToken(Token** tok, const std::string& val) {
 
 // 次のトークンが期待されるトークンかを判定する
 // 期待されるトークンだと次に進む
-bool Token::ConumeTemp(Token** tok, const std::string& expect_val) {
+bool Token::Consume(Token** tok, const std::string& expect_val) {
     if (*tok == NULL) {
-        throw std::runtime_error("ConumeTemp Token failed: expected: " +
+        throw std::runtime_error("Consume Token failed: expected: " +
                                  expect_val + " but got Nothing");
     }
     if ((*tok)->val() == expect_val) {
@@ -106,11 +106,11 @@ bool Token::ConumeTemp(Token** tok, const std::string& expect_val) {
     }
     return false;
 }
-bool Token::ConumeTemp(Token** tok, TokenKind kind) {
+bool Token::Consume(Token** tok, TokenKind kind) {
     if (*tok == NULL) {
-        throw std::runtime_error("ConumeTemp Token failed: expected: " +
-                                 Token::GetTokenKindStr(kind) +
-                                 " but got Nothing");
+        throw std::runtime_error(
+            "Consume Token failed: expected: " + Token::GetTokenKindStr(kind) +
+            " but got Nothing");
     }
     if ((*tok)->kind() == kind) {
         *tok = (*tok)->next_token();
