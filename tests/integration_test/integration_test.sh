@@ -84,7 +84,7 @@ function do_test() {
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
     # サマリーの出力
-    echo -n "[${CONFIG_NO}-${REQUEST_NO}]test finish. Conclusion:"
+    echo -n "[${CONFIG_NO}][${REQUEST_NO}]test finish. Conclusion:"
 	if [ $IS_OK -eq 1 ] ; then
         OK_SUM=$(( ${OK_SUM}+1))
 		printf " ${GREEN}[✓]${NC}\n"
@@ -104,82 +104,3 @@ function start_server_container() {
     docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv bash /usr/local/bin/start.sh &
     sleep 1 #コンテナでのwebservプロセス起動待ち。makeは待たないので、1秒程度でOK。
 }
-
-#コンテナ直近化のために、冒頭に一度だけコンテナビルドを行う
-echo "Building docker container for test"
-${COMMAND_MAKE_DC_BUILD} > /dev/null 2>&1
-
-echo "test case means : [config][request]"
-echo ""
-
-#ひとつひとつのテストを個別に実行することもできる。
-#CONFIGを変更した後はstart_server_containerを実行すること。
-    CONFIG_NO=default.conf
-    start_server_container
-
-        REQUEST_NO=GET_simple
-        do_test
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=autoindex_on.conf
-    start_server_container
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=return_on.conf
-    start_server_container
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=error_page.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_multi.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_override.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_not_exist.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_same_code.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=client_max_body_size_on_location.conf
-    start_server_container
-
-        REQUEST_NO=POST_hello_world
-        do_test
-
-        REQUEST_NO=POST_hello_world_chunked
-        do_test
-
-echo    "----------------------------"
-echo -n "ALL test finish. Final Conclusion:"
-if [ ${NG_SUM} -eq 0 ] ; then
-    printf " ${GREEN}[✓](OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
-    exit 0
-else
-    printf " ${RED}[-](OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
-    exit 1
-fi

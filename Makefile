@@ -45,13 +45,27 @@ test: utest itest ## Exec all tests for webserver
 utest: ## Exec unit tests for webserver
 	make -C tests/unit_test
 
-INTEGRATION_TEST_SHELL = ./tests/integration_test/integration_test.sh
 .PHONY: itest
 itest: ## Exec unit tests for webserver
-	@if [ ! -x $(INTEGRATION_TEST_SHELL) ]; then\
-		chmod +x $(INTEGRATION_TEST_SHELL);\
+	make itest-ok
+	make itest-errori
+
+INTEGRATION_TEST_SHELL_OK = ./tests/integration_test/ok.sh
+.PHONY: itest-ok
+itest-ok: ## Exec unit tests for webserver
+	@if [ ! -x $(INTEGRATION_TEST_SHELL_OK) ]; then\
+		chmod +x $(INTEGRATION_TEST_SHELL_OK);\
 	fi
-	$(INTEGRATION_TEST_SHELL)
+	$(INTEGRATION_TEST_SHELL_OK)
+
+
+INTEGRATION_TEST_SHELL_ERROR = ./tests/integration_test/error.sh
+.PHONY: itest-error
+itest-error: ## Exec unit tests for webserver
+	@if [ ! -x $(INTEGRATION_TEST_SHELL_ERROR) ]; then\
+		chmod +x $(INTEGRATION_TEST_SHELL_ERROR);\
+	fi
+	$(INTEGRATION_TEST_SHELL_ERROR)
 
 # -------------------- Rules For Static Analyser --------------------------
 
