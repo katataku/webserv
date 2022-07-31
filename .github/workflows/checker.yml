@@ -22,15 +22,14 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ github.ref }}-${{ github.sha }}
-      - name: Build and push
-        id: docker_build
+      - name: Build images
         uses: docker/build-push-action@v2
         with:
-          context: ./docker/webserv/
-          file: ./Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
           push: false
-          tags: ${{ env.TAGS }}
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: webserv
+          load: true
+          context: ./docker/webserv
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
@@ -48,15 +47,14 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ github.ref }}-${{ github.sha }}
-      - name: Build and push
-        id: docker_build
+      - name: Build images
         uses: docker/build-push-action@v2
         with:
-          context: ./docker/webserv/
-          file: ./Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
           push: false
-          tags: ${{ env.TAGS }}
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: webserv
+          load: true
+          context: ./docker/webserv
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: compose-build # キャッシュしたいかも
