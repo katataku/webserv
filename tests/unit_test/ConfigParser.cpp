@@ -136,6 +136,18 @@ TEST_F(ConfigParserTest, alias) {
     ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
 }
 
+TEST_F(ConfigParserTest, alias_no_newline) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/alias_no_newline.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
+}
+
 TEST_F(ConfigParserTest, redirect_on_location) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/ok/return_on.conf");
@@ -264,6 +276,7 @@ TEST_F(ConfigParserTest, client_max_body_size_on_server) {
     ASSERT_EQ(locate_context.client_max_body_size(),
               InitialValues::kClientMaxBodySize);
 }
+
 TEST_F(ConfigParserTest, client_max_body_size_on_http) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/ok/"
