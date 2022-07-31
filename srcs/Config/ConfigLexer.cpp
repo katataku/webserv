@@ -51,7 +51,7 @@ std::string ConfigLexer::ReadKeyword() {
     std::string::size_type keyword_len =
         this->content_.find_first_of(" \f\n\r\t\v");
     if (keyword_len == std::string::npos) {
-        return "";
+        return this->content_;
     }
     return this->content_.substr(0, keyword_len);
 }
@@ -102,7 +102,7 @@ Token* ConfigLexer::Tokenize() {
             this->controls_.find(keyword);
         if (itr_ctrl != this->controls_.end()) {
             cur_tok = Token::NewToken(cur_tok, itr_ctrl->second, keyword);
-            this->content_ = ConsumeWithSpace(this->content_, keyword);
+            this->content_ = Consume(this->content_, keyword);
             continue;
         }
 
