@@ -1027,7 +1027,7 @@ TEST_F(ConfigParserDeathTest, unexpected_server1) {
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
-                "Error: unexpected \".*\", expecting \".*\"");
+                "Error: unexpected .*, expecting .*");
 }
 
 TEST_F(ConfigParserDeathTest, unexpected_server2) {
@@ -1037,8 +1037,30 @@ TEST_F(ConfigParserDeathTest, unexpected_server2) {
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
-                "Error: unexpected .*, expecting \".*\"");
+                "Error: unexpected .*, expecting .*");
 }
+
+TEST_F(ConfigParserDeathTest, unexpected_server5) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "server5.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+}
+
+// TEST_F(ConfigParserDeathTest, unexpected_server4) {
+//     ConfigProcesser confproc(
+//         "../../../test_data/config/webserv/error/unexpected/"
+//         "server4.conf");
+//     WebservConfig conf;
+
+//     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+//                 "Error: unexpected .*, expecting \".*\"");
+
+//     exit(1);
+// }
 
 TEST_F(ConfigParserDeathTest, unexpected_server3) {
     ConfigProcesser confproc(
@@ -1047,7 +1069,55 @@ TEST_F(ConfigParserDeathTest, unexpected_server3) {
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
-                "Error: unexpected .*, expecting \".*\"");
+                "Error: unexpected .*, expecting .*");
+}
 
-    exit(1);
+TEST_F(ConfigParserDeathTest, unexpected_semicoron1) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "semicoron1.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+}
+
+TEST_F(ConfigParserDeathTest, unexpected_semicoron2) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "semicoron2.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+}
+
+TEST_F(ConfigParserDeathTest, unexpected_location1) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "location1.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+}
+
+TEST_F(ConfigParserDeathTest, unexpected_location2) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "location2.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+}
+
+TEST_F(ConfigParserDeathTest, unexpected_empty) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "empty.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
 }
