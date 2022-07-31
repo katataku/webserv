@@ -113,7 +113,8 @@ Token* ConfigLexer::Tokenize() {
             continue;
         }
 
-        throw std::runtime_error("Error: Failed to tokenize");
+        throw std::runtime_error("Error: Failed to tokenize at \"" +
+                                 this->content_ + "\"");
     }
 
     cur_tok = Token::NewToken(cur_tok, Token::EOFToken, "");

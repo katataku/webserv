@@ -1121,3 +1121,14 @@ TEST_F(ConfigParserDeathTest, unexpected_empty) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: unexpected .*, expecting .*");
 }
+
+TEST_F(ConfigParserDeathTest, unknown_directive) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unknown/"
+        "directive.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+    // exit(1);
+}
