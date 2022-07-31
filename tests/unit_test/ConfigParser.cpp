@@ -1130,5 +1130,4 @@ TEST_F(ConfigParserDeathTest, unknown_directive) {
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: unexpected .*, expecting .*");
-    // exit(1);
 }
