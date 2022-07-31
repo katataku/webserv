@@ -4,15 +4,6 @@
 
 #include "utils.hpp"
 
-static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
-    std::stringstream ss;
-
-    ss << "unknown directive \"";
-    ss << keyword;
-    ss << "\"";
-    return ss.str();
-}
-
 ConfigLexer::ConfigLexer() : logging_(Logging(__FUNCTION__)) {}
 
 ConfigLexer::ConfigLexer(const std::string& content)
