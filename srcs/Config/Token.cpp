@@ -68,7 +68,8 @@ void Token::Expect(Token** tok, TokenKind kind) {
         *tok = (*tok)->next_token();
         return;
     }
-    throw std::runtime_error("Expect Token failed");
+    throw std::runtime_error("Error: unexpected \"" + (*tok)->val() +
+                             "\", expecting value");
 }
 
 // 次のトークンのkindが一致するかどうか

@@ -88,7 +88,6 @@ Token* ConfigLexer::Tokenize() {
         }
 
         std::string keyword = ReadKeyword();
-        std::cerr << "keyword [" << keyword << "]" << std::endl;
 
         std::map<std::string, Token::TokenKind>::iterator itr_kw =
             this->keywords_.find(keyword);
@@ -107,8 +106,6 @@ Token* ConfigLexer::Tokenize() {
             continue;
         }
 
-        std::cerr << "hoge [" << this->content_ << "]" << std::endl;
-        std::cerr << "hoge [" << keyword << "]" << std::endl;
         if (StartsWithValueCharacters(this->content_)) {
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));

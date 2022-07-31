@@ -127,9 +127,7 @@ bool IsPathChar(const char c) {
 }
 bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
 
-bool IsValueChar(const char c) {
-    return IsURIChar(c) || IsPathChar(c) || IsDigit(c) || c == '-';
-}
+bool IsValueChar(const char c) { return IsURIChar(c) || c == '-'; }
 
 std::string GetValueCharacters(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {

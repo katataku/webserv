@@ -95,6 +95,11 @@ Node ConfigParser::Parse() { return config(); }
 Node ConfigParser::config() {
     Node head(Node::HttpContextNode);
 
+    if (Token::SameTokenKind(&this->token_, Token::EOFToken)) {
+        throw std::runtime_error(
+            "Error: unexpected end of file, expecting directive");
+    }
+
     while (true) {
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
             AssertExistInHttpContext();
@@ -185,8 +190,8 @@ void ConfigParser::value(Node* node) {
     std::list<std::string> vals;
 
     if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-        throw std::runtime_error("value Error: invalid token " +
-                                 this->token_->val());
+        Token::Expect(&this->token_, Token::ValueToken);
+        return;
     }
 
     vals.push_back(this->token_->val());
@@ -199,8 +204,7 @@ void ConfigParser::values(Node* node) {
 
     while (!Token::SameToken(&this->token_, ";")) {
         if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-            throw std::runtime_error("values Error: invalid token " +
-                                     this->token_->val());
+            break;
         }
 
         vals.push_back(this->token_->val());
