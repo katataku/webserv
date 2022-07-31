@@ -10,7 +10,7 @@ on:
       - "README.md"
 
 jobs:
-  program_check:
+  clang-format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,18 +23,73 @@ jobs:
       - name: clang-format
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make format
-      - name: make
+
+  cpplint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
         shell: bash
-        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make re
+        run: make dc-build
+      - name: compose up
+        shell: bash
+        run: make dc-up
       - name: cpplint
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make lint
+
+  tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: make dc-build
+      - name: compose up
+        shell: bash
+        run: make dc-up
       - name: clang-tidy
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make tidy
+
+  make:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: make dc-build
+      - name: compose up
+        shell: bash
+        run: make dc-up
+      - name: make
+        shell: bash
+        run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make re
+
+  unit_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: make dc-build
+      - name: compose up
+        shell: bash
+        run: make dc-up
       - name: 単体テスト
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make utest
+
+  integration_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: make dc-build
+      - name: compose up
+        shell: bash
+        run: make dc-up
       - name: 結合テスト
         shell: bash
         run: make itest
