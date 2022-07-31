@@ -202,13 +202,13 @@ void Node::ValidateCgiExtensionValue() {
     }
 }
 
-void Node::ValidateIsUnique(std::set<std::string>& methods,
+void Node::ValidateIsUnique(std::set<std::string>* methods,
                             const std::string& method) {
-    if (methods.find(method) == methods.end()) {
+    if (methods->find(method) == methods->end()) {
         throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
                                  "\" directive is duplicate");
     }
-    methods.erase(method);
+    methods->erase(method);
 }
 
 std::string Node::GetValue() { return this->directive_vals_.back(); }

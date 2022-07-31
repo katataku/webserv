@@ -76,7 +76,7 @@ class Node {
     void ValidateErrorPageValue();
     void ValidateLimitExceptValue();
     void ValidateCgiExtensionValue();
-    void ValidateIsUnique(std::set<std::string>& methods,
+    void ValidateIsUnique(std::set<std::string>* methods,
                           const std::string& method);
 
     std::string GetValue();

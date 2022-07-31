@@ -57,7 +57,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateIsUnique(methods, "autoindex");
+            itr->ValidateIsUnique(&methods, "autoindex");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateAutoindexValue();
             conf.set_auto_index(itr->GetValue());
@@ -72,7 +72,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         }
 
         if (itr->IsClientMaxBodySizeDirective()) {
-            itr->ValidateIsUnique(methods, "client_max_body_size");
+            itr->ValidateIsUnique(&methods, "client_max_body_size");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateClientMaxBodySizeValue();
             conf.set_client_max_body_size(strtonum<int>(itr->GetValue()));
@@ -80,7 +80,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         }
 
         if (itr->IsIndexDirective()) {
-            itr->ValidateIsUnique(methods, "index");
+            itr->ValidateIsUnique(&methods, "index");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             conf.set_index_page(itr->GetValue());
             continue;
@@ -119,7 +119,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsListenDirective()) {
-            itr->ValidateIsUnique(methods, "listen");
+            itr->ValidateIsUnique(&methods, "listen");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateListenValue();
             serv.set_port(itr->GetValue());
@@ -127,7 +127,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         }
 
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateIsUnique(methods, "autoindex");
+            itr->ValidateIsUnique(&methods, "autoindex");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateAutoindexValue();
             serv.set_auto_index(itr->GetValue());
@@ -135,7 +135,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         }
 
         if (itr->IsReturnDirective()) {
-            itr->ValidateIsUnique(methods, "return");
+            itr->ValidateIsUnique(&methods, "return");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateReturnValue();
             serv.set_redirect_url(itr->GetValue());
@@ -143,7 +143,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         }
 
         if (itr->IsServerNameDirective()) {
-            itr->ValidateIsUnique(methods, "server_name");
+            itr->ValidateIsUnique(&methods, "server_name");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateServerNameValue();
             serv.set_server_name(itr->GetValue());
@@ -151,7 +151,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         }
 
         if (itr->IsClientMaxBodySizeDirective()) {
-            itr->ValidateIsUnique(methods, "client_max_body_size");
+            itr->ValidateIsUnique(&methods, "client_max_body_size");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateClientMaxBodySizeValue();
             serv.set_client_max_body_size(strtonum<int>(itr->GetValue()));
@@ -159,7 +159,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         }
 
         if (itr->IsIndexDirective()) {
-            itr->ValidateIsUnique(methods, "index");
+            itr->ValidateIsUnique(&methods, "index");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             serv.set_index_page(itr->GetValue());
             continue;
@@ -219,14 +219,14 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
     for (std::list<Node>::iterator itr = directives.begin();
          itr != directives.end(); ++itr) {
         if (itr->IsAliasDirective()) {
-            itr->ValidateIsUnique(methods, "alias");
+            itr->ValidateIsUnique(&methods, "alias");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             locate.set_alias(itr->GetValue());
             continue;
         }
 
         if (itr->IsAutoindexDirective()) {
-            itr->ValidateIsUnique(methods, "autoindex");
+            itr->ValidateIsUnique(&methods, "autoindex");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateAutoindexValue();
             locate.set_auto_index(itr->GetValue());
@@ -234,7 +234,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsReturnDirective()) {
-            itr->ValidateIsUnique(methods, "return");
+            itr->ValidateIsUnique(&methods, "return");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateReturnValue();
             locate.set_redirect_url(itr->GetValue());
@@ -242,7 +242,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsCgiExtensionDirective()) {
-            itr->ValidateIsUnique(methods, "cgi_extension");
+            itr->ValidateIsUnique(&methods, "cgi_extension");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateCgiExtensionValue();
             locate.set_cgi_extension(itr->GetValue());
@@ -250,7 +250,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsClientMaxBodySizeDirective()) {
-            itr->ValidateIsUnique(methods, "client_max_body_size");
+            itr->ValidateIsUnique(&methods, "client_max_body_size");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             itr->ValidateClientMaxBodySizeValue();
             locate.set_client_max_body_size(strtonum<int>(itr->GetValue()));
@@ -258,14 +258,14 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsIndexDirective()) {
-            itr->ValidateIsUnique(methods, "index");
+            itr->ValidateIsUnique(&methods, "index");
             itr->AssertValueSize(itr->GetValueSize() == 1);
             locate.set_index_page(itr->GetValue());
             continue;
         }
 
         if (itr->IsLimitExceptDirective()) {
-            itr->ValidateIsUnique(methods, "limit_except");
+            itr->ValidateIsUnique(&methods, "limit_except");
             itr->AssertValueSize(itr->GetValueSize() >= 1);
             itr->ValidateLimitExceptValue();
             locate.set_allow_methods(ToSetContainer(itr->directive_vals()));
