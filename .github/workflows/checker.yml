@@ -57,6 +57,9 @@ jobs:
           context: ./docker/webserv
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 make dc-build
       - name: compose up
         shell: bash
         run: make dc-up
