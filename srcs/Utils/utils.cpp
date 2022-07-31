@@ -106,7 +106,8 @@ std::string ConsumeSpace(const std::string& s) {
     if (IsSpace(s[0])) {
         return s.substr(1);
     }
-    throw std::runtime_error("Failed to Consume. Expected space, but got " + s);
+    throw std::runtime_error("Error: unexpected \"" + s +
+                             "\", expecting space");
 }
 
 std::string ConsumeWithSpace(const std::string& s, const std::string& keyword) {

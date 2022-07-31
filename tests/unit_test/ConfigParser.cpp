@@ -1063,17 +1063,15 @@ TEST_F(ConfigParserDeathTest, unexpected_server5) {
                 "Error: unexpected .*, expecting .*");
 }
 
-// TEST_F(ConfigParserDeathTest, unexpected_server4) {
-//     ConfigProcesser confproc(
-//         "../../../test_data/config/webserv/error/unexpected/"
-//         "server4.conf");
-//     WebservConfig conf;
+TEST_F(ConfigParserDeathTest, unexpected_server4) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unexpected/"
+        "server4.conf");
+    WebservConfig conf;
 
-//     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
-//                 "Error: unexpected .*, expecting \".*\"");
-
-//     exit(1);
-// }
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unexpected .*, expecting .*");
+}
 
 TEST_F(ConfigParserDeathTest, unexpected_server3) {
     ConfigProcesser confproc(
