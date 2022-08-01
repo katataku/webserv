@@ -117,9 +117,8 @@ void HTTPRequest::Parse(std::string str) {
             return;
         }
         if (this->content_length_ != -1 && !this->transfer_encoding_.empty()) {
-            // TODO(hayashi-ay):
-            // Content-LengthとTransfer-Encodingが指定されている場合はエラーとみなす
-            throw std::runtime_error("error");
+            // Content-LengthとTransfer-Encodingが指定されている場合は400
+            throw HTTPException(400);
         }
         if (this->content_length_ != -1) {
             this->ParseBodyByContentLength(str);
