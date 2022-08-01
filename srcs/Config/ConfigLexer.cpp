@@ -79,10 +79,6 @@ static std::string SkipSpaceAndComment(const std::string& s) {
     return s.substr(pos);
 }
 
-static bool StartsWithValueCharacters(const std::string& s) {
-    return IsValueChar(s[0]);
-}
-
 Token* ConfigLexer::Tokenize() {
     Token head;
     Token* cur_tok = &head;
