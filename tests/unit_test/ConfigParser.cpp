@@ -735,6 +735,16 @@ TEST_F(ConfigParserDeathTest, invalid_error_page) {
                 "Error: \".*\" directive invalid value .*");
 }
 
+TEST_F(ConfigParserDeathTest, invalid_error_page_plus) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "error_page_plus.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
 TEST_F(ConfigParserDeathTest, invalid_error_page_in_location) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/error/invalid_value/"
@@ -779,6 +789,16 @@ TEST_F(ConfigParserDeathTest, invalid_client_max_body_size) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/error/invalid_value/"
         "client_max_body_size.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_client_max_body_size_plus) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "client_max_body_size_plus.conf");
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
