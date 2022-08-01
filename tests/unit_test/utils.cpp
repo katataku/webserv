@@ -89,3 +89,13 @@ TEST(Trim, normal) {
     ASSERT_EQ(" \t42", RightTrim(str, chars));
     ASSERT_EQ("42", Trim(str, chars));
 }
+
+TEST(ToUpper, normal) {
+    std::string str = "Content-Length";
+    ASSERT_EQ("CONTENT-LENGTH", ToUpper(str));
+}
+
+TEST(ToLower, normal) {
+    std::string str = "Content-Length";
+    ASSERT_EQ("content-length", ToLower(str));
+}

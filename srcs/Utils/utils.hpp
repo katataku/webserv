@@ -15,6 +15,9 @@ std::string LeftTrim(const std::string& s, const std::string& chars);
 std::string RightTrim(const std::string& s, const std::string& chars);
 std::string Trim(const std::string& s, const std::string& chars);
 
+std::string ToUpper(std::string& s);
+std::string ToLower(std::string& s);
+
 bool IsDigit(const char c);
 
 bool IsAlpha(const char c);
