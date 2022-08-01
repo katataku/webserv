@@ -190,6 +190,10 @@ void HTTPRequest::ParseHeader(std::string str) {
             if (!IsInteger(value)) {
                 throw HTTPException(400);
             }
+            // Content-Lengthが複数ある場合は400
+            if (this->content_length_ != -1) {
+                throw HTTPException(400);
+            }
             this->content_length_ = ToInteger(value);
             if (this->content_length_ < 0) {
                 throw HTTPException(400);
