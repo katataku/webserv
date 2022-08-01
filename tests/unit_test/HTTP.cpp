@@ -139,10 +139,20 @@ TEST_F(HTTPTest, no_host_header) {
     ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
-TEST_F(HTTPTest, http_vesrion_not_supported) {
+TEST_F(HTTPTest, protocol_vesrion_not_supported) {
     HTTPRequest req = HTTPRequest();
     std::string str =
         "GET / HTTP/1.2\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+// nginxは400を返しているがRFC7231に準拠して501を返す
+TEST_F(HTTPTest, method_not_supported) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "TOKYO / HTTP/1.2\r\n"
         "Host: test1\r\n"
         "\r\n";
     ASSERT_THROW(req.Parse(str), HTTPException);

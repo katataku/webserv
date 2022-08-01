@@ -133,7 +133,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
         // HTTP/1.1でない場合は505 HTTP Version Not Supportedを投げる
         throw HTTPException(400);
     }
-    this->method_ = items[0];
+    this->method_ = items[0];  // GET, POST, DELETE以外がくる場合は501
     this->request_target_ = items[1];
     this->canonical_path_ = this->CanonicalizePath(this->request_target_);
 }
