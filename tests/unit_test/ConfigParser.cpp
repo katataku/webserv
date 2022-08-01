@@ -148,6 +148,18 @@ TEST_F(ConfigParserTest, alias_no_newline) {
     ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
 }
 
+TEST_F(ConfigParserTest, block_dir_no_space) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/block_dir_no_space.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
+}
+
 TEST_F(ConfigParserTest, redirect_on_location) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/ok/return_on.conf");
