@@ -6,7 +6,32 @@
 
 ConfigParser::ConfigParser() { SetTokenNodeMap(); }
 
-ConfigParser::ConfigParser(Token* token) : token_(token) { SetTokenNodeMap(); }
+ConfigParser::ConfigParser(Token* token) : token_(token) {
+    SetTokenNodeMap();
+    this->directives_in_http_.insert("error_page");
+    this->directives_in_http_.insert("client_max_body_size");
+    this->directives_in_http_.insert("autoindex");
+    this->directives_in_http_.insert("index");
+    this->directives_in_http_.insert("server");
+
+    this->directives_in_server_.insert("error_page");
+    this->directives_in_server_.insert("client_max_body_size");
+    this->directives_in_server_.insert("autoindex");
+    this->directives_in_server_.insert("index");
+    this->directives_in_server_.insert("location");
+    this->directives_in_server_.insert("return");
+    this->directives_in_server_.insert("server_name");
+    this->directives_in_server_.insert("listen");
+
+    this->directives_in_location_.insert("error_page");
+    this->directives_in_location_.insert("client_max_body_size");
+    this->directives_in_location_.insert("autoindex");
+    this->directives_in_location_.insert("index");
+    this->directives_in_location_.insert("return");
+    this->directives_in_location_.insert("alias");
+    this->directives_in_location_.insert("limit_except");
+    this->directives_in_location_.insert("cgi_extension");
+}
 
 ConfigParser::ConfigParser(const ConfigParser& other) { *this = other; }
 
@@ -29,6 +54,40 @@ void ConfigParser::SetTokenNodeMap() {
     this->token_node_map_["server_name"] = Node::ServerNameDirectiveNode;
     this->token_node_map_["client_max_body_size"] =
         Node::ClientMaxBodySizeDirectiveNode;
+    this->token_node_map_["limit_except"] = Node::LimitExceptDirectiveNode;
+    this->token_node_map_["index"] = Node::IndexDirectiveNode;
+}
+
+static std::string ErrorMessageNotAllowedDirective(const std::string& val) {
+    return "Error: \"" + val + "\" directive is not allowed here";
+}
+
+static bool IsExist(const std::set<std::string>& container,
+                    const std::string& val) {
+    return container.find(val) != container.end();
+}
+
+static void AssertExitInContext(const std::set<std::string>& context_container,
+                                const Token* tok) {
+    if (tok == NULL) {
+        return;
+    }
+
+    if (!IsExist(context_container, tok->val())) {
+        throw std::runtime_error(ErrorMessageNotAllowedDirective(tok->val()));
+    }
+}
+
+void ConfigParser::AssertExistInHttpContext() {
+    AssertExitInContext(this->directives_in_http_, this->token_);
+}
+
+void ConfigParser::AssertExistInServerContext() {
+    AssertExitInContext(this->directives_in_server_, this->token_);
+}
+
+void ConfigParser::AssertExistInLocationContext() {
+    AssertExitInContext(this->directives_in_location_, this->token_);
 }
 
 Node ConfigParser::Parse() { return config(); }
@@ -36,11 +95,22 @@ Node ConfigParser::Parse() { return config(); }
 Node ConfigParser::config() {
     Node head(Node::HttpContextNode);
 
+    if (Token::SameTokenKind(&this->token_, Token::EOFToken)) {
+        throw std::runtime_error(
+            "Error: unexpected end of file, expecting directive");
+    }
+
     while (true) {
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
+            AssertExistInHttpContext();
             head.PushDirective(single_directive());
         } else if (Token::SameTokenKind(&this->token_, Token::BlockDirective)) {
+            AssertExistInHttpContext();
             head.PushChildContext(block_directive());
+        } else if (Token::SameTokenKind(&this->token_, Token::ValueToken)) {
+            throw std::runtime_error("Error: unexpected \"" +
+                                     this->token_->val() +
+                                     "\", expecting directive");
         } else {
             break;
         }
@@ -55,19 +125,16 @@ Node ConfigParser::block_directive() {
     }
 
     Node node;
-    if (Token::Expect(&this->token_, "server")) {
-        Token::Consume(&this->token_, "{");
+    if (Token::Consume(&this->token_, "server")) {
+        Token::Expect(&this->token_, "{");
         node.set_kind(Node::ServerContextNode);
-    } else if (Token::Expect(&this->token_, "location")) {
-        node.set_kind(Node::LocationContextNode);
-        value(&node);
-        Token::Consume(&this->token_, "{");
     }
 
     while (true) {
-        if (Token::Expect(&this->token_, "}")) {
+        if (Token::Consume(&this->token_, "}")) {
             break;
         }
+        AssertExistInServerContext();
         if (Token::SameTokenKind(&this->token_, Token::SingleDirective)) {
             node.PushDirective(single_directive());
         }
@@ -82,16 +149,17 @@ Node ConfigParser::block_directive() {
 Node ConfigParser::location_directive() {
     Node node;
 
-    Token::Consume(&this->token_, "location");
+    Token::Expect(&this->token_, "location");
     node.set_kind(Node::LocationContextNode);
     value(&node);
-    Token::Consume(&this->token_, "{");
+    Token::Expect(&this->token_, "{");
 
     while (!Token::SameToken(&this->token_, "}")) {
+        AssertExistInLocationContext();
         node.PushDirective(single_directive());
     }
 
-    Token::Consume(&this->token_, "}");
+    Token::Expect(&this->token_, "}");
 
     return node;
 }
@@ -106,14 +174,14 @@ Node ConfigParser::single_directive() {
     std::map<std::string, Node::NodeKind>::iterator itr;
     for (itr = this->token_node_map_.begin();
          itr != this->token_node_map_.end(); ++itr) {
-        if (Token::Expect(&this->token_, (*itr).first)) {
+        if (Token::Consume(&this->token_, (*itr).first)) {
             node = Node::NewNode((*itr).second);
             break;
         }
     }
 
     values(&node);
-    Token::Consume(&this->token_, ";");
+    Token::Expect(&this->token_, ";");
 
     return node;
 }
@@ -122,13 +190,13 @@ void ConfigParser::value(Node* node) {
     std::list<std::string> vals;
 
     if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-        throw std::runtime_error("value Error: invalid token " +
-                                 this->token_->val());
+        Token::ExpectValueToken(&this->token_);
+        return;
     }
 
     vals.push_back(this->token_->val());
     node->set_directive_vals(vals);
-    Token::Consume(&this->token_, Token::ValueToken);
+    Token::ExpectValueToken(&this->token_);
 }
 
 void ConfigParser::values(Node* node) {
@@ -136,12 +204,11 @@ void ConfigParser::values(Node* node) {
 
     while (!Token::SameToken(&this->token_, ";")) {
         if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-            throw std::runtime_error("values Error: invalid token " +
-                                     this->token_->val());
+            break;
         }
 
         vals.push_back(this->token_->val());
-        Token::Consume(&this->token_, Token::ValueToken);
+        Token::ExpectValueToken(&this->token_);
     }
     node->set_directive_vals(vals);
 }

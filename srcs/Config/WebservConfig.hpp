@@ -26,6 +26,8 @@ class WebservConfig {
     void set_auto_index(std::string auto_index);
     void set_index_page(std::string index_page);
 
+    void AddErrorPages(const std::map<int, std::string>& error_pages);
+
     void PushServerContext(ServerContext context);
     void PushErrorPage(int status_code, const std::string& error_page);
 

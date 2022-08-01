@@ -2,6 +2,8 @@
 #define SRCS_CONFIG_NODE_HPP_
 
 #include <list>
+#include <map>
+#include <set>
 #include <string>
 
 #include "Token.hpp"
@@ -20,7 +22,9 @@ class Node {
         CgiExtDirectiveNode,
         ErrorPageDirectiveNode,
         ServerNameDirectiveNode,
-        ClientMaxBodySizeDirectiveNode
+        ClientMaxBodySizeDirectiveNode,
+        IndexDirectiveNode,
+        LimitExceptDirectiveNode
     };
 
     Node();
@@ -40,6 +44,8 @@ class Node {
     void set_directive_vals(std::list<std::string> val);
     void set_kind(NodeKind kind);
 
+    int GetValueSize();
+
     std::string GetNodeKindStr() const;
     bool IsHttpContext();
     bool IsServerContext();
@@ -52,6 +58,10 @@ class Node {
     bool IsErrorPageDirective();
     bool IsServerNameDirective();
     bool IsClientMaxBodySizeDirective();
+    bool IsIndexDirective();
+    bool IsLimitExceptDirective();
+
+    void AssertValueSize(bool cond) const;
 
     // TODO(iyamada)
     // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
@@ -61,9 +71,17 @@ class Node {
     void ValidateAutoindexValue();
     void ValidateReturnValue();
     void ValidateClientMaxBodySizeValue();
+    void ValidateServerNameValue();
+    void ValidateListenValue();
+    void ValidateErrorPageValue();
+    void ValidateLimitExceptValue();
+    void ValidateCgiExtensionValue();
+    void ValidateIsUnique(std::set<std::string>* directives,
+                          const std::string& directive);
 
-    std::string GetValue();
-    void ValidateSize(std::size_t size);
+    std::string GetValue() const;
+
+    std::map<int, std::string> GetErrorPages();
 
  private:
     NodeKind kind_;
@@ -72,6 +90,10 @@ class Node {
     std::list<std::string> directive_vals_;
     std::list<Node> child_contexts_;
     std::list<Node> directives_;
+
+    std::string MakeErrMsgNumOfArgs() const;
+    std::string MakeErrMsgInvalidValue() const;
+    std::string MakeErrMsgDuplicate() const;
 };
 
 std::ostream& operator<<(std::ostream& out, const Node& rhs);
