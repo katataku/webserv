@@ -91,11 +91,10 @@ TEST(Trim, normal) {
 }
 
 TEST(ToUpper, normal) {
-    std::string str = "Content-Length";
-    ASSERT_EQ("CONTENT-LENGTH", ToUpper(str));
+    ASSERT_EQ("CONTENT-LENGTH", ToUpper("Content-Length"));
 }
 
 TEST(ToLower, normal) {
     std::string str = "Content-Length";
-    ASSERT_EQ("content-length", ToLower(str));
+    ASSERT_EQ("content-length", ToLower("Content-Length"));
 }

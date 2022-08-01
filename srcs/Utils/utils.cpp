@@ -79,14 +79,14 @@ std::string Trim(const std::string& s, const std::string& chars) {
     return RightTrim(LeftTrim(s, chars), chars);
 }
 
-std::string ToUpper(std::string& s) {
+std::string ToUpper(std::string s) {
     for (std::string::size_type i = 0; i < s.size(); i++) {
         s[i] = std::toupper(s[i]);
     }
     return s;
 }
 
-std::string ToLower(std::string& s) {
+std::string ToLower(std::string s) {
     for (std::string::size_type i = 0; i < s.size(); i++) {
         s[i] = std::tolower(s[i]);
     }
