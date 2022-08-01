@@ -14,6 +14,13 @@ echo ""
 #ひとつひとつのテストを個別に実行することもできる。
 #CONFIGを変更した後はstart_server_containerを実行すること。
 
+    CONFIG_NO=limit_except.conf
+    start_server_container
+
+        #403エラー
+        REQUEST_NO=GET_simple
+        do_test
+
     CONFIG_NO=default.conf
     start_server_container
 
