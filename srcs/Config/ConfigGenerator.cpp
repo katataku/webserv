@@ -24,7 +24,7 @@ ConfigGenerator& ConfigGenerator::operator=(const ConfigGenerator& other) {
 
 ConfigGenerator::~ConfigGenerator() {}
 
-static std::set<std::string> MakeMustExistUniqueMethods() {
+static std::set<std::string> MakeMustExistUniqueDirectives() {
     std::set<std::string> methods;
     methods.insert("server_name");
     methods.insert("listen");
@@ -51,7 +51,7 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         throw std::runtime_error("Should be http context");
     }
 
-    std::set<std::string> methods = MakeMustExistUniqueMethods();
+    std::set<std::string> methods = MakeMustExistUniqueDirectives();
 
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
@@ -113,7 +113,7 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
         throw std::runtime_error("Should be server context");
     }
 
-    std::set<std::string> methods = MakeMustExistUniqueMethods();
+    std::set<std::string> methods = MakeMustExistUniqueDirectives();
 
     std::list<Node> directives = node.directives();
     for (std::list<Node>::iterator itr = directives.begin();
@@ -209,7 +209,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         throw std::runtime_error("Should be location context");
     }
 
-    std::set<std::string> methods = MakeMustExistUniqueMethods();
+    std::set<std::string> methods = MakeMustExistUniqueDirectives();
 
     // locationディレクティブはpathを持つ
     node.AssertValueSize(node.GetValueSize() == 1);
