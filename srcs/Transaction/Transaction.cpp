@@ -48,7 +48,7 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
         }
         */
 
-        // この処理には入らない。入った場合はErrorレベルでログ出力。
+        // ここに到達するまでに処理されるべき。到達した場合はErrorレベルでログ出力。
         logging_.Error("Unexpected request incoming. Response 400.");
         return ResponseBuilder::BuildError(400, sl);
     } catch (HTTPException &e) {
