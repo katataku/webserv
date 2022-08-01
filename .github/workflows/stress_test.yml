@@ -1,0 +1,20 @@
+name: stress_test
+on: workflow_dispatch
+
+jobs:
+  stress-tets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: stress
+        shell: bash
+        run: make stress
+      - name: log
+        shell: bash
+        run: cat ./log/log.txt
+      - name: siege_log
+        shell: bash
+        run: cat ./log/siege.log
+      - name: top_log
+        shell: bash
+        run: cat ./log/top.log

@@ -13,6 +13,6 @@ siege -b http://localhost/ > /app/log/siege.log &
 #-d: 実行間隔（秒）
 #-n: 実行回数（回）
 top -b -n 1 |grep MEM > /app/log/top.log #ラベル行出力用
-top -b -d 1 -n 20 |grep webserv >> /app/log/top.log
+top -b -d 1 -n 500 |grep webserv >> /app/log/top.log
 pkill siege
 sleep 1
