@@ -129,12 +129,25 @@ void HTTPRequest::Parse(std::string str) {
 void HTTPRequest::ParseRequestLine(std::string line) {
     this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
-    if (items.size() != 3 || items[2] != "HTTP/1.1") {
-        // HTTP/1.1でない場合は505 HTTP Version Not Supportedを投げる
+    // Request Lineに含まれる要素の数が異なる場合は400
+    if (items.size() != 3) {
         throw HTTPException(400);
     }
-    this->method_ = items[0];  // GET, POST, DELETE以外がくる場合は501
+    // http protocol versionはHTTP/1.1のみをサポートしそれ以外は505
+    if (items[2] != "HTTP/1.1") {
+        throw HTTPException(505);
+    }
+    this->method_ = items[0];
     this->request_target_ = items[1];
+    // GET, POST, DELETE以外のmethodについては501
+    if (this->method_ != "GET" || this->method_ != "POST" ||
+        this->method_ != "DELETE") {
+        throw HTTPException(501);
+    }
+    // uriの長さが1024以上だと414
+    if (this->request_target_.size() >= 1024) {
+        throw HTTPException(414);
+    }
     this->canonical_path_ = this->CanonicalizePath(this->request_target_);
 }
 
@@ -152,17 +165,18 @@ void HTTPRequest::ParseHeader(std::string str) {
 
         std::string::size_type found = lines[i].find(":");
         if (found == std::string::npos) {
-            // TODO(hayashi-ay): 対応するエラーを定義する
-            throw std::runtime_error("header format invalid");
+            // nginxでは単純にignoreしている
+            throw HTTPException(400);
         }
         std::string header = lines[i].substr(0, found);
         std::string value = Trim(lines[i].substr(found + 1), " \t");
         if (value.empty()) {
-            // TODO(hayashi-ay): 対応するエラーを定義する
-            throw std::runtime_error("header format invalid");
+            // nginxでは単純にignoreしている
+            throw HTTPException(400);
         }
 
         if (header == "Host") {
+            // RFC3986 3.2.2.で定義がuri-hostの定義があるが全て許容する
             this->host_ = value;
         } else if (header == "Content-Length") {
             // TODO(バリデーション)
