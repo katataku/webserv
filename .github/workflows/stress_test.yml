@@ -1,0 +1,11 @@
+name: checker
+on: workflow_dispatch
+
+jobs:
+  stress-tets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: stress
+        shell: bash
+        run: make stress
