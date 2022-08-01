@@ -9,3 +9,12 @@ jobs:
       - name: stress
         shell: bash
         run: make stress
+      - name: log
+        shell: bash
+        run: cat ./log/log.txt
+      - name: siege_log
+        shell: bash
+        run: cat ./log/siege.log
+      - name: top_log
+        shell: bash
+        run: cat ./log/top.log
