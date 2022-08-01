@@ -79,8 +79,7 @@ class Node {
     void ValidateIsUnique(std::set<std::string>* directives,
                           const std::string& directive);
 
-    std::string GetValue();
-    void ValidateSize(std::size_t size);
+    std::string GetValue() const;
 
     std::map<int, std::string> GetErrorPages();
 
@@ -91,6 +90,10 @@ class Node {
     std::list<std::string> directive_vals_;
     std::list<Node> child_contexts_;
     std::list<Node> directives_;
+
+    std::string MakeErrMsgNumOfArgs() const;
+    std::string MakeErrMsgInvalidValue() const;
+    std::string MakeErrMsgDuplicate() const;
 };
 
 std::ostream& operator<<(std::ostream& out, const Node& rhs);

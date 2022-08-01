@@ -82,10 +82,23 @@ bool Node::IsLimitExceptDirective() {
     return this->kind_ == Node::LimitExceptDirectiveNode;
 }
 
+std::string Node::MakeErrMsgNumOfArgs() const {
+    return "Error: invalid number of arguments in \"" + this->GetNodeKindStr() +
+           "\" directive";
+}
+
+std::string Node::MakeErrMsgInvalidValue() const {
+    return "Error: \"" + this->GetNodeKindStr() +
+           "\" directive invalid value \"" + this->GetValue() + "\"";
+}
+
+std::string Node::MakeErrMsgDuplicate() const {
+    return "Error: \"" + this->GetNodeKindStr() + "\" directive is duplicate";
+}
+
 void Node::AssertValueSize(bool cond) const {
     if (!cond) {
-        throw std::runtime_error("Error: invalid number of arguments in \"" +
-                                 this->GetNodeKindStr() + "\" directive");
+        throw std::runtime_error(this->MakeErrMsgNumOfArgs());
     }
 }
 
@@ -95,40 +108,30 @@ void Node::PushChildContext(Node node) { child_contexts_.push_back(node); }
 void Node::ValidateAutoindexValue() {
     std::string directive_val = this->GetValue();
     if (directive_val != "on" && directive_val != "off") {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 }
 
 void Node::ValidateReturnValue() {
     std::string val = this->GetValue();
     if (!StartsWith(val, "http://") && !StartsWith(val, "https://")) {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 }
 
 void Node::ValidateClientMaxBodySizeValue() {
     if (!IsInteger(this->GetValue())) {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 
     if (ToInteger(this->GetValue()) <= 0) {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 }
 
 void Node::ValidateServerNameValue() {
     if (this->GetValue() == ".") {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 }
 
@@ -136,17 +139,13 @@ void Node::ValidateListenValue() {
     std::string val = this->GetValue();
 
     if (!IsInteger(val)) {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
     int port = ToInteger(val);
     if (1 <= port && port <= 65535) {
         return;
     }
-    throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                             "\" directive invalid value \"" +
-                             this->GetValue() + "\"");
+    throw std::runtime_error(this->MakeErrMsgInvalidValue());
 }
 
 static bool IsMethodName(const std::string& method) {
@@ -155,9 +154,7 @@ static bool IsMethodName(const std::string& method) {
 
 void Node::ValidateLimitExceptValue() {
     if (!IsMethodName(this->GetValue())) {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 }
 
@@ -172,44 +169,30 @@ void Node::ValidateErrorPageValue() {
     for (std::list<std::string>::iterator itr = status_list.begin(); itr != end;
          ++itr) {
         if (!IsInteger(*itr)) {
-            throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                     "\" directive invalid value \"" + *itr +
-                                     "\"");
+            throw std::runtime_error(this->MakeErrMsgInvalidValue());
         }
         int code = ToInteger(*itr);
         if (!IsErrorStatusCode(code)) {
-            throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                     "\" directive invalid value \"" + *itr +
-                                     "\"");
+            throw std::runtime_error(this->MakeErrMsgInvalidValue());
         }
     }
 }
 
 void Node::ValidateCgiExtensionValue() {
     if (this->GetValue() != "py") {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive invalid value \"" +
-                                 this->GetValue() + "\"");
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
     }
 }
 
 void Node::ValidateIsUnique(std::set<std::string>* directives,
                             const std::string& directive) {
     if (directives->find(directive) == directives->end()) {
-        throw std::runtime_error("Error: \"" + this->GetNodeKindStr() +
-                                 "\" directive is duplicate");
+        throw std::runtime_error(this->MakeErrMsgDuplicate());
     }
     directives->erase(directive);
 }
 
-std::string Node::GetValue() { return this->directive_vals_.back(); }
-
-void Node::ValidateSize(std::size_t size) {
-    if (this->directive_vals_.size() != size) {
-        throw std::runtime_error("Syntax Error: directive can only take " +
-                                 numtostr(size) + " derective");
-    }
-}
+std::string Node::GetValue() const { return this->directive_vals_.back(); }
 
 std::map<int, std::string> Node::GetErrorPages() {
     std::string error_page_path = this->GetValue();
