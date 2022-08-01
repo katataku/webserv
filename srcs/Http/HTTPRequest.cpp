@@ -171,21 +171,22 @@ void HTTPRequest::ParseHeader(std::string str) {
             // nginxでは単純にignoreしている
             throw HTTPException(400);
         }
-        std::string header = lines[i].substr(0, found);
+        // HTTPヘッダーはcase-insensitive
+        std::string header = ToLower(lines[i].substr(0, found));
         std::string value = Trim(lines[i].substr(found + 1), " \t");
         if (value.empty()) {
             // nginxでは単純にignoreしている
             throw HTTPException(400);
         }
 
-        if (header == "Host") {
+        if (header == "host") {
             // host headerが複数ある場合は400
             if (!this->host_.empty()) {
                 throw HTTPException(400);
             }
             // RFC3986 3.2.2.で定義がuri-hostの定義があるが全て許容する
             this->host_ = value;
-        } else if (header == "Content-Length") {
+        } else if (header == "content-length") {
             if (!IsInteger(value)) {
                 throw HTTPException(400);
             }
@@ -193,10 +194,10 @@ void HTTPRequest::ParseHeader(std::string str) {
             if (this->content_length_ < 0) {
                 throw HTTPException(400);
             }
-        } else if (header == "Content-Type") {
+        } else if (header == "content-type") {
             // 特段バリデーションの必要なし
             this->content_type_ = value;
-        } else if (header == "Transfer-Encoding") {
+        } else if (header == "transfer-encoding") {
             this->transfer_encoding_ = value;
             if (this->transfer_encoding_ != "chunked") {
                 throw HTTPException(501);
