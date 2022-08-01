@@ -1,4 +1,4 @@
-name: checker
+name: stress_test
 on: workflow_dispatch
 
 jobs:
