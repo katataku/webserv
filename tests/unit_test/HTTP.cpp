@@ -126,7 +126,7 @@ TEST_F(HTTPTest, header_names_are_case_insensitive) {
     req.Parse(str);
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
-    ASSERT_EQ(req.host(), "test");
+    ASSERT_EQ(req.host(), "test1");
     ASSERT_EQ(req.content_type(), "text/html");
     ASSERT_EQ(req.content_length(), 8);
     ASSERT_EQ(req.request_body(), "hello,world!");
