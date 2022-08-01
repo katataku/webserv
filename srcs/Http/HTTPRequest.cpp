@@ -143,7 +143,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     this->method_ = items[0];
     this->request_target_ = items[1];
     // GET, POST, DELETE以外のmethodについては501
-    if (this->method_ != "GET" || this->method_ != "POST" ||
+    if (this->method_ != "GET" && this->method_ != "POST" &&
         this->method_ != "DELETE") {
         throw HTTPException(501);
     }
