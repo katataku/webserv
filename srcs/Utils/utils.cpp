@@ -40,7 +40,17 @@ std::string Join(std::vector<std::string> strs, std::string separator) {
     return ss.str();
 }
 
+static bool HasPlusSign(const std::string& str) {
+    std::string trimmed_spaces = LeftTrim(str, " \f\n\r\t\v");
+
+    return trimmed_spaces[0] == '+';
+}
+
 bool IsInteger(std::string str) {
+    if (HasPlusSign(str)) {
+        return false;
+    }
+
     char* end = NULL;
     errno = 0;
     long l = std::strtol(str.c_str(), &end, 10);  // NOLINT
@@ -105,6 +115,9 @@ bool IsSpace(const char c) { return std::isspace(c) != 0; }
 std::string ConsumeSpace(const std::string& s) {
     if (IsSpace(s[0])) {
         return s.substr(1);
+    }
+    if (s[0] == '{') {
+        return s;
     }
     throw std::runtime_error("Error: unexpected \"" + s +
                              "\", expecting space");
