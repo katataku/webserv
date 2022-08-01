@@ -104,8 +104,8 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");
 
     if (stat(alias_resolved_path.c_str(), &stat_buf) == -1) {
-        logging_.Fatal("stat failed");
-        logging_.Fatal(strerror(errno));
+        logging_.Error("stat failed");
+        logging_.Error(strerror(errno));
         throw HTTPException(404);
     }
 

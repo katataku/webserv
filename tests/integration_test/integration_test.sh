@@ -28,7 +28,7 @@ COMMAND_MAKE_DC_BUILD="make dc-build"
 function do_single_command_check(){
     #引数で与えられたコマンドを実行し、OK/NGを判定。
     $@ > /dev/null 2>&1
-    if [ $? -eq 0 ] ;then
+    if [ $? -eq ${EXPECTED_EXIT_STATUS} ] ;then
 		printf "${GREEN}OK${NC}"
 	else
 		printf "${RED}NG${NC}"
@@ -49,6 +49,8 @@ function do_test() {
     nc localhost 8080 < ${REQUEST_FILE_NAME} > ${ACTUAL_FILE_NAME} 2>&1
 
     #---個別チェックの実行---
+    EXPECTED_EXIT_STATUS=0;
+
     # 1行目のstatus-lineの完全一致判定
 	echo -n "  header line: "
     PICKUP_CMD="sed -n 1p"
@@ -82,6 +84,11 @@ function do_test() {
 	echo -n "  \"<center>webserv\": "
     PICKUP_CMD="grep <center>webserv"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
+
+    EXPECTED_EXIT_STATUS=1;
+    echo -n "  log check \"FATAL\": "
+    PICKUP_CMD="grep FATAL ./log/log.txt"
+    do_single_command_check ${PICKUP_CMD}
 
     # サマリーの出力
     echo -n "[${CONFIG_NO}][${REQUEST_NO}]test finish. Conclusion:"

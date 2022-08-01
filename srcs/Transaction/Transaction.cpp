@@ -47,6 +47,9 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
             //もしくは    return FileWriteExecutor(req, sl);
         }
         */
+
+        // この処理には入らない。入った場合はErrorレベルでログ出力。
+        logging_.Error("Unexpected request incoming. Response 400.");
         return ResponseBuilder::BuildError(400, sl);
     } catch (HTTPException &e) {
         logging_.Info("HTTPException caught: " + numtostr(e.status_code()));
