@@ -123,6 +123,7 @@ TEST_F(HTTPTest, header_names_are_case_insensitive) {
         "content-length: 8\r\n"
         "\r\n"
         "12345678";
+    req.Parse(str);
     ASSERT_EQ(req.method(), "GET");
     ASSERT_EQ(req.request_target(), "/");
     ASSERT_EQ(req.host(), "test");
@@ -253,6 +254,7 @@ TEST_F(HTTPTest, content_length_leading_zero_is_ignored) {
         "Content-Length: 08\r\n"
         "\r\n"
         "12345678";
+    req.Parse(str);
     ASSERT_EQ(req.request_body(), "12345678");
     ASSERT_EQ(req.content_length(), 8);
 }
@@ -265,6 +267,7 @@ TEST_F(HTTPTest, content_length_0_is_acceptable) {
         "Content-Length: 0\r\n"
         "\r\n"
         "12345678";
+    req.Parse(str);
     ASSERT_EQ(req.request_body(), "");
     ASSERT_EQ(req.content_length(), 0);
 }
