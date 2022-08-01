@@ -7,7 +7,7 @@
 static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
     std::stringstream ss;
 
-    ss << "unknown directive \"";
+    ss << "Error: unknown directive \"";
     ss << keyword;
     ss << "\"";
     return ss.str();
@@ -19,6 +19,7 @@ ConfigLexer::ConfigLexer(const std::string& content)
     : logging_(Logging(__FUNCTION__)), content_(content) {
     this->keywords_["server"] = Token::BlockDirective;
     this->keywords_["location"] = Token::BlockDirective;
+
     this->keywords_["listen"] = Token::SingleDirective;
     this->keywords_["alias"] = Token::SingleDirective;
     this->keywords_["autoindex"] = Token::SingleDirective;
@@ -26,7 +27,9 @@ ConfigLexer::ConfigLexer(const std::string& content)
     this->keywords_["cgi_extension"] = Token::SingleDirective;
     this->keywords_["error_page"] = Token::SingleDirective;
     this->keywords_["server_name"] = Token::SingleDirective;
+    this->keywords_["limit_except"] = Token::SingleDirective;
     this->keywords_["client_max_body_size"] = Token::SingleDirective;
+    this->keywords_["index"] = Token::SingleDirective;
 
     this->controls_["{"] = Token::OpenBraceToken;
     this->controls_["}"] = Token::CloseBraceToken;
@@ -45,10 +48,16 @@ ConfigLexer& ConfigLexer::operator=(const ConfigLexer& other) {
 ConfigLexer::~ConfigLexer() {}
 
 std::string ConfigLexer::ReadKeyword() {
+    if (StartsWith(this->content_, "server") &&
+        this->content_[std::string("server").size()] == '{') {
+        return std::string("server");
+    }
+
     std::string::size_type keyword_len =
         this->content_.find_first_of(" \f\n\r\t\v");
+
     if (keyword_len == std::string::npos) {
-        return "";
+        return this->content_;
     }
     return this->content_.substr(0, keyword_len);
 }
@@ -84,12 +93,11 @@ Token* ConfigLexer::Tokenize() {
         std::string keyword = ReadKeyword();
 
         // controls字句("{" "}" ";")を処理する
-        std::map<std::string, Token::TokenKind>::iterator itr =
+        std::map<std::string, Token::TokenKind>::iterator itr_ctrl =
             this->controls_.find(keyword);
-        if (itr != this->controls_.end()) {
-            cur_tok =
-                Token::NewToken(cur_tok, this->controls_.at(keyword), keyword);
-            this->content_ = ConsumeWithSpace(this->content_, keyword);
+        if (itr_ctrl != this->controls_.end()) {
+            cur_tok = Token::NewToken(cur_tok, itr_ctrl->second, keyword);
+            this->content_ = Consume(this->content_, keyword);
             is_expected_value = false;
             continue;
         }
@@ -99,19 +107,22 @@ Token* ConfigLexer::Tokenize() {
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));
             this->content_ = ConsumeValueCharacters(this->content_);
-        } else {
-            // keywordの処理
-            try {
-                Token::TokenKind kind = this->keywords_.at(keyword);
-                cur_tok = Token::NewToken(cur_tok, kind, keyword);
-                this->content_ = ConsumeWithSpace(this->content_, keyword);
-                is_expected_value = true;
-            } catch (std::exception& e) {
-                logging_.Debug(e.what());
-                throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
-            }
+            continue;
+        }
+
+        // keywordの処理
+        try {
+            Token::TokenKind kind = this->keywords_.at(keyword);
+            cur_tok = Token::NewToken(cur_tok, kind, keyword);
+            this->content_ = ConsumeWithSpace(this->content_, keyword);
+            is_expected_value = true;
+        } catch (std::exception& e) {
+            logging_.Debug(e.what());
+            throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
         }
     }
+
+    cur_tok = Token::NewToken(cur_tok, Token::EOFToken, "");
 
     return head.next_token();
 }

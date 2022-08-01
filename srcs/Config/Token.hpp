@@ -19,7 +19,8 @@ class Token {
         CloseBraceToken,
         SemicolonToken,
         SingleDirective,
-        ValueToken
+        ValueToken,
+        EOFToken
     };
 
     static Token* NewToken(Token* cur_tok, TokenKind kind, std::string val);
@@ -35,9 +36,9 @@ class Token {
     void set_next_token(Token* next_token);
 
     // 次のトークンに進む。
-    static void Consume(Token** tok, const std::string& expect_val);
+    static void Expect(Token** tok, const std::string& expect_val);
     // 次のトークンに進む。
-    static void Consume(Token** tok, TokenKind kind);
+    static void ExpectValueToken(Token** tok);
 
     // 次のトークンのkindが一致するかどうか
     static bool PeekKind(Token** tok, TokenKind kind);
@@ -47,8 +48,8 @@ class Token {
 
     // 次のトークンが期待されるトークンかを判定する
     // 期待されるトークンだと次に進む
-    static bool Expect(Token** tok, const std::string& expect_val);
-    static bool Expect(Token** tok, TokenKind kind);
+    static bool Consume(Token** tok, const std::string& expect_val);
+    static bool Consume(Token** tok, TokenKind kind);
 
  private:
     TokenKind kind_;

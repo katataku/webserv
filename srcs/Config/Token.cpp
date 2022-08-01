@@ -20,31 +20,31 @@ Token* Token::NewToken(Token* cur_tok, TokenKind kind, std::string val) {
     return new_tok;
 }
 
-Token::TokenKind Token::kind() const { return kind_; }
-std::string Token::val() const { return val_; }
-Token* Token::next_token() const { return next_token_; }
+Token::TokenKind Token::kind() const { return this->kind_; }
+std::string Token::val() const { return this->val_; }
+Token* Token::next_token() const { return this->next_token_; }
 
 std::string Token::GetTokenKindStr() {
     return Token::GetTokenKindStr(this->kind_);
 }
 
 std::string Token::GetTokenKindStr(Token::TokenKind kind) {
-    const char* arr[] = {
-        "Unknown",         "BlockDirective", "OpenBraceToken",
-        "CloseBraceToken", "SemicolonToken", "SingleDirective",
-        "ValueToken",
-    };
+    const char* arr[] = {"Unknown",         "BlockDirective", "OpenBraceToken",
+                         "CloseBraceToken", "SemicolonToken", "SingleDirective",
+                         "ValueToken",      "EOFToken"};
     return arr[kind];
 }
 
-void Token::set_kind(TokenKind kind) { kind_ = kind; }
-void Token::set_val(std::string val) { val_ = val; }
-void Token::set_next_token(Token* next_token) { next_token_ = next_token; }
+void Token::set_kind(TokenKind kind) { this->kind_ = kind; }
+void Token::set_val(std::string val) { this->val_ = val; }
+void Token::set_next_token(Token* next_token) {
+    this->next_token_ = next_token;
+}
 
 // 次のトークンに進む。
-void Token::Consume(Token** tok, const std::string& expect_val) {
+void Token::Expect(Token** tok, const std::string& expect_val) {
     if (*tok == NULL) {
-        throw std::runtime_error("Consume Token failed: expected: " +
+        throw std::runtime_error("Expect Token failed: expected: " +
                                  expect_val + " but got Nothing");
     }
     if ((*tok)->val() == expect_val) {
@@ -53,24 +53,24 @@ void Token::Consume(Token** tok, const std::string& expect_val) {
         delete old;
         return;
     }
-    throw std::runtime_error("Consume Token failed: expected: " + expect_val +
-                             " but got " + (*tok)->val() + " at " +
-                             (*tok)->GetTokenKindStr());
+    throw std::runtime_error("Error: unexpected \"" + (*tok)->val() +
+                             "\", expecting \"" + expect_val + "\"");
 }
+
 // 次のトークンに進む。
-void Token::Consume(Token** tok, TokenKind kind) {
+void Token::ExpectValueToken(Token** tok) {
     if (*tok == NULL) {
         throw std::runtime_error(
-            "Consume Token failed: expected: " + Token::GetTokenKindStr(kind) +
-            " but got Nothing");
+            "Expect Token failed: expected: value but got Nothing");
     }
-    if ((*tok)->kind() == kind) {
-        Token* old = (*tok);
+    if ((*tok)->kind() == Token::ValueToken) {
+        Token* old = *tok;
         *tok = (*tok)->next_token();
         delete old;
         return;
     }
-    throw std::runtime_error("Consume Token failed");
+    throw std::runtime_error("Error: unexpected \"" + (*tok)->val() +
+                             "\", expecting value");
 }
 
 // 次のトークンのkindが一致するかどうか
@@ -97,10 +97,14 @@ bool Token::SameToken(Token** tok, const std::string& val) {
 
 // 次のトークンが期待されるトークンかを判定する
 // 期待されるトークンだと次に進む
-bool Token::Expect(Token** tok, const std::string& expect_val) {
+bool Token::Consume(Token** tok, const std::string& expect_val) {
     if (*tok == NULL) {
-        throw std::runtime_error("Expect Token failed: expected: " +
+        throw std::runtime_error("Consume Token failed: expected: " +
                                  expect_val + " but got Nothing");
+    }
+    if ((*tok)->kind_ == Token::EOFToken) {
+        throw std::runtime_error("Error: unexpected end of file, expecting \"" +
+                                 expect_val + "\"");
     }
     if ((*tok)->val() == expect_val) {
         Token* old = (*tok);
@@ -110,10 +114,10 @@ bool Token::Expect(Token** tok, const std::string& expect_val) {
     }
     return false;
 }
-bool Token::Expect(Token** tok, TokenKind kind) {
+bool Token::Consume(Token** tok, TokenKind kind) {
     if (*tok == NULL) {
         throw std::runtime_error(
-            "Expect Token failed: expected: " + Token::GetTokenKindStr(kind) +
+            "Consume Token failed: expected: " + Token::GetTokenKindStr(kind) +
             " but got Nothing");
     }
     if ((*tok)->kind() == kind) {
