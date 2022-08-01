@@ -148,7 +148,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
 
     logging_.Debug("CGIExec finish wait: exit_status=" + numtostr(exit_status));
     if (exit_status != 0) {
-        throw std::runtime_error("Error: child process abnormal end: " +
+        throw std::runtime_error("Error: child process abnormal end. strerro=" +
                                  std::string(strerror(errno)));
     }
 
