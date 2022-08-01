@@ -48,7 +48,9 @@ void Token::Expect(Token** tok, const std::string& expect_val) {
                                  expect_val + " but got Nothing");
     }
     if ((*tok)->val() == expect_val) {
+        Token* old = (*tok);
         *tok = (*tok)->next_token();
+        delete old;
         return;
     }
     throw std::runtime_error("Error: unexpected \"" + (*tok)->val() +
@@ -62,7 +64,9 @@ void Token::ExpectValueToken(Token** tok) {
             "Expect Token failed: expected: value but got Nothing");
     }
     if ((*tok)->kind() == Token::ValueToken) {
+        Token* old = *tok;
         *tok = (*tok)->next_token();
+        delete old;
         return;
     }
     throw std::runtime_error("Error: unexpected \"" + (*tok)->val() +
@@ -103,7 +107,9 @@ bool Token::Consume(Token** tok, const std::string& expect_val) {
                                  expect_val + "\"");
     }
     if ((*tok)->val() == expect_val) {
+        Token* old = (*tok);
         *tok = (*tok)->next_token();
+        delete old;
         return true;
     }
     return false;
@@ -115,7 +121,9 @@ bool Token::Consume(Token** tok, TokenKind kind) {
             " but got Nothing");
     }
     if ((*tok)->kind() == kind) {
+        Token* old = (*tok);
         *tok = (*tok)->next_token();
+        delete old;
         return true;
     }
     return false;
