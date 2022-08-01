@@ -80,7 +80,7 @@ jobs:
         shell: bash
         run: docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make utest
 
-  integration_test:
+  integration_test-ok:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -92,4 +92,18 @@ jobs:
         run: make dc-up
       - name: 結合テスト
         shell: bash
-        run: make itest
+        run: make itest-ok
+
+  integration_test-error:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build # キャッシュしたいかも
+        shell: bash
+        run: make dc-build
+      - name: compose up
+        shell: bash
+        run: make dc-up
+      - name: 結合テスト
+        shell: bash
+        run: make itest-error

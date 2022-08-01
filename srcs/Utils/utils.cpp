@@ -140,7 +140,8 @@ std::string SkipLine(const std::string& s) {
 
 // TODO(iyamada) ファイルパスとして扱うべき文字を追加
 bool IsPathChar(const char c) {
-    return c == '/' || c == '_' || c == '.' || IsAlpha(c) || IsDigit(c);
+    return c == '/' || c == '_' || c == '.' || c == '-' || IsAlpha(c) ||
+           IsDigit(c);
 }
 bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
 
