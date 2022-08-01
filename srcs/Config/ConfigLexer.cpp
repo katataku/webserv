@@ -4,6 +4,15 @@
 
 #include "utils.hpp"
 
+static std::string ErrorMessageUnknownDirective(const std::string& keyword) {
+    std::stringstream ss;
+
+    ss << "Error: unknown directive \"";
+    ss << keyword;
+    ss << "\"";
+    return ss.str();
+}
+
 ConfigLexer::ConfigLexer() : logging_(Logging(__FUNCTION__)) {}
 
 ConfigLexer::ConfigLexer(const std::string& content)
@@ -77,6 +86,7 @@ static bool StartsWithValueCharacters(const std::string& s) {
 Token* ConfigLexer::Tokenize() {
     Token head;
     Token* cur_tok = &head;
+    bool is_expected_value = false;
 
     while (true) {
         this->content_ = SkipSpaceAndComment(this->content_);
@@ -86,32 +96,34 @@ Token* ConfigLexer::Tokenize() {
 
         std::string keyword = ReadKeyword();
 
-        std::map<std::string, Token::TokenKind>::iterator itr_kw =
-            this->keywords_.find(keyword);
-        if (itr_kw != this->keywords_.end()) {
-            cur_tok = Token::NewToken(cur_tok, itr_kw->second, keyword);
-            this->content_ = ConsumeWithSpace(this->content_, keyword);
-            continue;
-        }
-
         // controls字句("{" "}" ";")を処理する
         std::map<std::string, Token::TokenKind>::iterator itr_ctrl =
             this->controls_.find(keyword);
         if (itr_ctrl != this->controls_.end()) {
             cur_tok = Token::NewToken(cur_tok, itr_ctrl->second, keyword);
             this->content_ = Consume(this->content_, keyword);
+            is_expected_value = false;
             continue;
         }
 
-        if (StartsWithValueCharacters(this->content_)) {
+        if (is_expected_value) {
+            // valueの処理
             cur_tok = Token::NewToken(cur_tok, Token::ValueToken,
                                       GetValueCharacters(this->content_));
             this->content_ = ConsumeValueCharacters(this->content_);
             continue;
         }
 
-        throw std::runtime_error("Error: Failed to tokenize at \"" +
-                                 this->content_ + "\"");
+        // keywordの処理
+        try {
+            Token::TokenKind kind = this->keywords_.at(keyword);
+            cur_tok = Token::NewToken(cur_tok, kind, keyword);
+            this->content_ = ConsumeWithSpace(this->content_, keyword);
+            is_expected_value = true;
+        } catch (std::exception& e) {
+            logging_.Debug(e.what());
+            throw std::runtime_error(ErrorMessageUnknownDirective(keyword));
+        }
     }
 
     cur_tok = Token::NewToken(cur_tok, Token::EOFToken, "");

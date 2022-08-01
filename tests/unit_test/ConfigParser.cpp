@@ -1182,5 +1182,5 @@ TEST_F(ConfigParserDeathTest, unknown_directive) {
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
-                "Error: unexpected .*, expecting .*");
+                "Error: unknown directive \".*\"");
 }

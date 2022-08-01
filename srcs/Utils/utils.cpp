@@ -113,6 +113,9 @@ bool IsAlpha(const char c) { return std::isalpha(c) != 0; }
 bool IsSpace(const char c) { return std::isspace(c) != 0; }
 
 std::string ConsumeSpace(const std::string& s) {
+    if (s.empty()) {
+        return s;
+    }
     if (IsSpace(s[0])) {
         return s.substr(1);
     }
