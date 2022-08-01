@@ -38,7 +38,7 @@ class Token {
     // 次のトークンに進む。
     static void Expect(Token** tok, const std::string& expect_val);
     // 次のトークンに進む。
-    static void Expect(Token** tok, TokenKind kind);
+    static void ExpectValueToken(Token** tok);
 
     // 次のトークンのkindが一致するかどうか
     static bool PeekKind(Token** tok, TokenKind kind);

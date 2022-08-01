@@ -190,13 +190,13 @@ void ConfigParser::value(Node* node) {
     std::list<std::string> vals;
 
     if (!Token::SameTokenKind(&this->token_, Token::ValueToken)) {
-        Token::Expect(&this->token_, Token::ValueToken);
+        Token::ExpectValueToken(&this->token_);
         return;
     }
 
     vals.push_back(this->token_->val());
     node->set_directive_vals(vals);
-    Token::Expect(&this->token_, Token::ValueToken);
+    Token::ExpectValueToken(&this->token_);
 }
 
 void ConfigParser::values(Node* node) {
@@ -208,7 +208,7 @@ void ConfigParser::values(Node* node) {
         }
 
         vals.push_back(this->token_->val());
-        Token::Expect(&this->token_, Token::ValueToken);
+        Token::ExpectValueToken(&this->token_);
     }
     node->set_directive_vals(vals);
 }

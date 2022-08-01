@@ -56,13 +56,12 @@ void Token::Expect(Token** tok, const std::string& expect_val) {
 }
 
 // 次のトークンに進む。
-void Token::Expect(Token** tok, TokenKind kind) {
+void Token::ExpectValueToken(Token** tok) {
     if (*tok == NULL) {
         throw std::runtime_error(
-            "Expect Token failed: expected: " + Token::GetTokenKindStr(kind) +
-            " but got Nothing");
+            "Expect Token failed: expected: value but got Nothing");
     }
-    if ((*tok)->kind() == kind) {
+    if ((*tok)->kind() == Token::ValueToken) {
         *tok = (*tok)->next_token();
         return;
     }
