@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "HTTPException.hpp"
 #include "utils.hpp"
 
 CGIResponse::CGIResponse() {}
@@ -18,9 +19,12 @@ CGIResponse::CGIResponse(std::string const &resp) {
         if (StartsWith(line, "\n")) {
             line = SkipString(line, "\n");
             this->body_ = line;
-            break;
+            return;
         }
     }
+
+    // ここにきたらレスポンスがおかしいからエラー
+    throw HTTPException(500);
 }
 
 CGIResponse &CGIResponse::operator=(CGIResponse const &other) {
