@@ -104,6 +104,10 @@ void HTTPRequest::Parse(std::string str) {
             str = body;
             this->unparsed_string_ = "";
             this->is_finish_to_read_header_ = true;
+            // Hostヘッダーが含まれない場合は400
+            if (this->host_.empty()) {
+                throw HTTPException(400);
+            }
         }
     }
     if (this->is_finish_to_read_header_) {
@@ -176,17 +180,28 @@ void HTTPRequest::ParseHeader(std::string str) {
         }
 
         if (header == "Host") {
+            // host headerが複数ある場合は400
+            if (!this->host_.empty()) {
+                throw HTTPException(400);
+            }
             // RFC3986 3.2.2.で定義がuri-hostの定義があるが全て許容する
             this->host_ = value;
         } else if (header == "Content-Length") {
-            // TODO(バリデーション)
+            if (!IsInteger(value)) {
+                throw HTTPException(400);
+            }
             this->content_length_ = ToInteger(value);
+            if (this->content_length_ < 0) {
+                throw HTTPException(400);
+            }
         } else if (header == "Content-Type") {
             // 特段バリデーションの必要なし
             this->content_type_ = value;
         } else if (header == "Transfer-Encoding") {
-            // chunked以外だと501 Not Implemented
             this->transfer_encoding_ = value;
+            if (this->transfer_encoding_ != "chunked") {
+                throw HTTPException(501);
+            }
         } else {
             // その他のヘッダについては無視して処理を継続する。
         }
