@@ -74,7 +74,7 @@ const std::string &ServerLocation::cgi_extension() const {
 void ServerLocation::set_port(int port) { this->port_ = port; }
 void ServerLocation::set_host(const std::string &host) { this->host_ = host; }
 void ServerLocation::set_path(const std::string &path) { this->path_ = path; }
-void ServerLocation::set_error_pages(
+void ServerLocation::AddErrorPages(
     const std::map<int, std::string> &error_pages) {
     this->error_pages_ = error_pages;
 }

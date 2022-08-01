@@ -47,13 +47,13 @@ classDiagram
     %% 字句解析後のトークンを表すクラス %%
     class Token {
         +NewToken(Token*, TokenKind, string)$ Token
-        +Consume(Token**, string)$ Token
-        +Consume(Token**, TokenKind)$ Token
+        +Expect(Token**, string)$ Token
+        +Expect(Token**, TokenKind)$ Token
         +PeekKind(Token**, TokenKind)$ bool
         +SameTokenKind(Token**, TokenKind)$ bool
         +SameToken(Token**, string)$ bool
-        +Expect(Token**, string)$ bool
-        +Expect(Token**, TokenKind)$ bool
+        +Consume(Token**, string)$ bool
+        +Consume(Token**, TokenKind)$ bool
         -TokenKind kind
         -string    val
         -Token     next
@@ -163,14 +163,14 @@ class ConfigParser {
     Token token
 
     Node block_directive() {
-      if (token.Expect("server")) {
+      if (token.Consume("server")) {
         MakeServerNode()
         UpdateServerNode()
-        if (token.Expect("{")) {
+        if (token.Consume("{")) {
           throw NeedOpenBrace()
         }
         node = single_directive()
-        if (token.Expect("}")) {
+        if (token.Consume("}")) {
           throw NeedOpenBrace()
         }
         return node
@@ -280,14 +280,14 @@ class ConfigProcesser {
 class Token {
   public:
     // 次のトークンに進む。
-    void Consume()
+    void Expect()
 
     // 次のトークンを返す。トークンは進めない
     Token Peek()
 
     // 次のトークンが期待されるトークンかを判定する
     // 期待されるトークンだと次に進む
-    bool Expect(string expect_val)
+    bool Consume(string expect_val)
 
   private:
     TokenKind kind

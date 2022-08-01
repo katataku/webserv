@@ -115,7 +115,7 @@ server {
 ```
 
 Error:
-invalid number of arguments in "location" directive
+unexpected "{", expecting value
 
 ```
 server {
@@ -126,4 +126,4 @@ server {
 ```
 
 Error:
-invalid number of arguments in "location" directive
+unexpected "/hoge", expecting "{"

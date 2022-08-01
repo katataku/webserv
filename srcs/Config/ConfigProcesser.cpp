@@ -2,16 +2,7 @@
 
 #include <cstdlib>
 
-static std::string ReadFile(const std::string& path) {
-    std::ifstream ifs(path.c_str());
-    std::stringstream ss;
-
-    if (!ifs) {
-        throw std::runtime_error("ReadFile");
-    }
-    ss << ifs.rdbuf();
-    return ss.str();
-}
+#include "utils.hpp"
 
 ConfigProcesser::ConfigProcesser() {}
 
