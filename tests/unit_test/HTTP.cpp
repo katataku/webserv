@@ -139,6 +139,15 @@ TEST_F(HTTPTest, no_host_header) {
     ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
+TEST_F(HTTPTest, http_vesrion_not_supported) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.2\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
 // nginxではエラーにならないがRFCに準拠してエラーにする
 TEST_F(HTTPTest, multiple_hot_header) {
     HTTPRequest req = HTTPRequest();

@@ -130,6 +130,7 @@ void HTTPRequest::ParseRequestLine(std::string line) {
     this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
     if (items.size() != 3 || items[2] != "HTTP/1.1") {
+        // HTTP/1.1でない場合は505 HTTP Version Not Supportedを投げる
         throw HTTPException(400);
     }
     this->method_ = items[0];
