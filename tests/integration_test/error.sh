@@ -30,6 +30,13 @@ echo ""
         REQUEST_NO=POST_hello_world_chunked
         do_test
 
+    CONFIG_NO=cgi_extension.conf
+    start_server_container
+
+        #500エラー
+        REQUEST_NO=GET_incorrect_py_path
+        do_test
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then

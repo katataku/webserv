@@ -47,8 +47,7 @@ utest: ## Exec unit tests for webserver
 
 .PHONY: itest
 itest: ## Exec unit tests for webserver
-	make itest-ok
-	make itest-errori
+	make itest-ok && make itest-error
 
 INTEGRATION_TEST_SHELL_OK = ./tests/integration_test/ok.sh
 .PHONY: itest-ok
