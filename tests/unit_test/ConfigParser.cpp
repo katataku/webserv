@@ -685,6 +685,16 @@ TEST_F(ConfigParserDeathTest, invalid_listen_value_minus) {
                 "Error: \".*\" directive invalid value .*");
 }
 
+TEST_F(ConfigParserDeathTest, invalid_listen_value_plus) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "listen_plus.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
 TEST_F(ConfigParserDeathTest, invalid_listen_value_big) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/error/invalid_value/"
