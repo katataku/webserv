@@ -172,7 +172,7 @@ void Node::ValidateLimitExceptValue() {
 
 static bool IsErrorStatusCode(int code) { return (300 <= code && code <= 599); }
 
-// error_pagで設定するファイルパスはどんな文字でも構文的にOKなのでチェックしない
+// error_pageで設定するファイルパスはどんな文字でも構文的にOKなのでチェックしない
 void Node::ValidateErrorPageValue() {
     std::list<std::string> status_list = this->directive_vals();
     std::list<std::string>::iterator end = status_list.end();
