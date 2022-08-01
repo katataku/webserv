@@ -67,6 +67,18 @@ bool IsInteger(std::string str) {
 
 int ToInteger(std::string str) { return std::atoi(str.c_str()); }
 
+std::string LeftTrim(const std::string& s, const std::string& chars) {
+    size_t start = s.find_first_not_of(chars);
+    return (start == std::string::npos) ? "" : s.substr(start);
+}
+std::string RightTrim(const std::string& s, const std::string& chars) {
+    size_t end = s.find_last_not_of(chars);
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+std::string Trim(const std::string& s, const std::string& chars) {
+    return RightTrim(LeftTrim(s, chars), chars);
+}
+
 bool StartsWith(const std::string& s, const std::string& prefix) {
     return s.find(prefix, 0) == 0;
 }
