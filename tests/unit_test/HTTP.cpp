@@ -129,7 +129,7 @@ TEST_F(HTTPTest, header_names_are_case_insensitive) {
     ASSERT_EQ(req.host(), "test1");
     ASSERT_EQ(req.content_type(), "text/html");
     ASSERT_EQ(req.content_length(), 8);
-    ASSERT_EQ(req.request_body(), "hello,world!");
+    ASSERT_EQ(req.request_body(), "12345678");
 }
 
 TEST_F(HTTPTest, no_host_header) {
