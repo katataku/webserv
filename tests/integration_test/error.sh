@@ -33,8 +33,12 @@ echo ""
     CONFIG_NO=cgi_extension.conf
     start_server_container
 
-        #500エラー
+        #500エラー(execve失敗)
         REQUEST_NO=GET_incorrect_py_path
+        do_test
+
+        #500エラー(execve成功・子プロセス異常終了)
+        REQUEST_NO=GET_cgi_error_exit
         do_test
 
 echo    "----------------------------"
