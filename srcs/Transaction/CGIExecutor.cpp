@@ -27,6 +27,7 @@ CGIExecutor::~CGIExecutor() {}
 
 HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
                                 ServerLocation const &sl) {
+    logging_.Debug("Exec start");
     CGIRequest cgi_req(request, sl);
     CGIResponse cgi_res = this->CGIExec(cgi_req);
 
@@ -105,6 +106,7 @@ static std::string read(int fd) {
 
 // TODO(iyamada) エラー処理
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
+    logging_.Debug("CGIExec start");
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     if (pipe(pipe_to_cgi) == -1 || pipe(pipe_to_serv) == -1) {
@@ -120,8 +122,8 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         dup2(pipe_to_cgi[0], STDIN_FILENO);
         dup2(pipe_to_serv[1], STDOUT_FILENO);
         if (execve(req.path(), req.arg(), req.env()) == -1) {
-            throw std::runtime_error("Error: execve failed " +
-                                     std::string(strerror(errno)));
+            // 子プロセスの異常時は、異常終了させる。
+            exit(1);
         }
     }
     // 必要ないパイプはクローズ
@@ -143,9 +145,15 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         throw std::runtime_error("Error: wait failed " +
                                  std::string(strerror(errno)));
     }
-    // TODO(iyamada) exit_status!=0の時、500を返すようにする
+
+    logging_.Debug("CGIExec finish wait: exit_status=" + numtostr(exit_status));
+    if (exit_status != 0) {
+        throw std::runtime_error("Error: child process abnormal end. strerro=" +
+                                 std::string(strerror(errno)));
+    }
 
     std::string buf = read(pipe_to_serv[0]);
     close(pipe_to_serv[0]);
+    logging_.Debug("CGIExec finish");
     return CGIResponse(std::string(buf));
 }
