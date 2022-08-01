@@ -125,6 +125,52 @@ TEST_F(ConfigParserTest, cgi_extension) {
     ASSERT_EQ(locate_context.cgi_extension(), "py");
 }
 
+TEST_F(ConfigParserTest, contain_keyword1) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/contain_keyword1.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+
+    ASSERT_EQ(serv_contexts.size(), 1);
+
+    ServerContext serv_context = serv_contexts.at(0);
+
+    ASSERT_EQ(serv_context.port(), 80);
+    ASSERT_EQ(serv_context.server_name(), "location");
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    ASSERT_EQ(locate_contexts.size(), 1);
+
+    LocationContext locate_context = locate_contexts.at(0);
+
+    ASSERT_EQ(locate_context.path(), "/");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.auto_index(), "off");
+}
+
+TEST_F(ConfigParserTest, contain_keyword2) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/contain_keyword2.conf");
+    WebservConfig conf = confproc.Exec();
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+
+    ASSERT_EQ(serv_contexts.size(), 1);
+
+    ServerContext serv_context = serv_contexts.at(0);
+
+    ASSERT_EQ(serv_context.port(), 80);
+    ASSERT_EQ(serv_context.server_name(), "location");
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    ASSERT_EQ(locate_contexts.size(), 1);
+
+    LocationContext locate_context = locate_contexts.at(0);
+
+    ASSERT_EQ(locate_context.path(), "/");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.auto_index(), "off");
+}
+
 TEST_F(ConfigParserTest, alias) {
     ConfigProcesser confproc("../../../test_data/config/webserv/ok/alias.conf");
     WebservConfig conf = confproc.Exec();
