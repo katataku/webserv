@@ -39,20 +39,11 @@ void Node::set_kind(Node::NodeKind kind) { this->kind_ = kind; }
 int Node::GetValueSize() { return this->directive_vals_.size(); }
 
 std::string Node::GetNodeKindStr() const {
-    const char* arr[] = {"Unknown",
-                         "HttpContextNode",
-                         "ServerContextNode",
-                         "LocationContextNode",
-                         "ListenDirectiveNode",
-                         "AliasDirectiveNode",
-                         "AutoindexDirectiveNode",
-                         "ReturnDirectiveNode",
-                         "CgiExtDirectiveNode",
-                         "ErrorPageDirectiveNode",
-                         "ServerNameDirectiveNode",
-                         "ClientMaxBodySizeDirectiveNode",
-                         "IndexDirectiveNode",
-                         "LimitExceptDirectiveNode"};
+    const char* arr[] = {"Unknown",    "http",        "server",
+                         "location",   "listen",      "alias",
+                         "autoindex",  "return",      "cgi_extension",
+                         "error_page", "server_name", "client_max_body_size",
+                         "index",      "limit_except"};
     return arr[this->kind_];
 }
 
