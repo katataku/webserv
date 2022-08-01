@@ -1,6 +1,7 @@
 #include "CGIExecutor.hpp"
 
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -11,6 +12,7 @@
 
 #include "CGIRequest.hpp"
 #include "CGIResponse.hpp"
+#include "HTTPException.hpp"
 
 CGIExecutor::CGIExecutor() : logging_(Logging(__FUNCTION__)) {}
 
@@ -103,47 +105,75 @@ static std::string read(int fd) {
     return ret;
 }
 
+static int wait_until(pid_t pid, int *st, int sec) {
+    int cnt = 0, ret = 0;
+    while (waitpid(pid, st, WNOHANG) == 0) {
+        if (cnt == sec) {
+            kill(pid, SIGKILL);
+            ret = 1;
+            break;
+        }
+        sleep(1);
+        cnt++;
+    }
+    return ret;
+}
+
+static void close_pipe(int pipe[2]) {
+    close(pipe[0]);
+    close(pipe[1]);
+}
+
 // TODO(iyamada) エラー処理
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     int pipe_to_cgi[2], pipe_to_serv[2];
 
-    if (pipe(pipe_to_cgi) == -1 || pipe(pipe_to_serv) == -1) {
-        throw std::runtime_error("Error: pipe failed " +
-                                 std::string(strerror(errno)));
+    if (pipe(pipe_to_cgi) == -1) {
+        throw HTTPException(500);
     }
 
-    if (fork() == 0) {
+    if (pipe(pipe_to_serv) == -1) {
+        close_pipe(pipe_to_cgi);
+        throw HTTPException(500);
+    }
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        close_pipe(pipe_to_cgi);
+        close_pipe(pipe_to_serv);
+        throw HTTPException(500);
+    }
+
+    if (pid == 0) {
         // 必要ないパイプはクローズ
         close(pipe_to_cgi[1]);
         close(pipe_to_serv[0]);
 
         dup2(pipe_to_cgi[0], STDIN_FILENO);
         dup2(pipe_to_serv[1], STDOUT_FILENO);
-        if (execve(req.path(), req.arg(), req.env()) == -1) {
-            throw std::runtime_error("Error: execve failed " +
-                                     std::string(strerror(errno)));
-        }
+        execve(req.path(), req.arg(), req.env());
+        // execvが-1を返すとき、子プロセスを終了するためexit
+        exit(1);
     }
     // 必要ないパイプはクローズ
     close(pipe_to_cgi[0]);
     close(pipe_to_serv[1]);
 
-    // TODO(iyamada)
-    // bodyは設定されていなかったら空文字列なのでifいらないかも
     if (req.ShouldSendRequestBody()) {
         if (write(pipe_to_cgi[1], req.body()) == -1) {
-            throw std::runtime_error("Error: write failed " +
-                                     std::string(strerror(errno)));
+            kill(pid, SIGKILL);
+            close(pipe_to_cgi[1]);
+            close(pipe_to_serv[0]);
+            throw HTTPException(500);
         }
     }
     close(pipe_to_cgi[1]);
 
     int exit_status = 0;
-    if (wait(&exit_status) == -1) {
-        throw std::runtime_error("Error: wait failed " +
-                                 std::string(strerror(errno)));
+    if (wait_until(pid, &exit_status, 5) != 0 || exit_status != 0) {
+        close(pipe_to_serv[0]);
+        throw HTTPException(500);
     }
-    // TODO(iyamada) exit_status!=0の時、500を返すようにする
 
     std::string buf = read(pipe_to_serv[0]);
     close(pipe_to_serv[0]);
