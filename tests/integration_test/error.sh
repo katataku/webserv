@@ -12,6 +12,13 @@ echo ""
 #ひとつひとつのテストを個別に実行することもできる。
 #CONFIGを変更した後はstart_server_containerを実行すること。
 
+    CONFIG_NO=default.conf
+    start_server_container
+
+        #404エラー
+        REQUEST_NO=GET_incorrect_path
+        do_test
+
     CONFIG_NO=client_max_body_size_on_location.conf
     start_server_container
 
