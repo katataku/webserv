@@ -104,8 +104,9 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
     logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");
 
     if (stat(alias_resolved_path.c_str(), &stat_buf) == -1) {
-        logging_.Error("stat failed");
-        logging_.Error(strerror(errno));
+        // Requestされたファイルが存在しない場合に、stat失敗する。
+        logging_.Info("stat failed");
+        logging_.Info(strerror(errno));
         throw HTTPException(404);
     }
 

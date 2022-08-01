@@ -2,6 +2,8 @@
 
 source tests/integration_test/integration_test.sh
 
+IS_ERROR_TEST=1
+
 #コンテナ直近化のために、冒頭に一度だけコンテナビルドを行う
 echo "Building docker container for test"
 ${COMMAND_MAKE_DC_BUILD} > /dev/null 2>&1

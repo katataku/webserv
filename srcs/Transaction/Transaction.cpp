@@ -55,11 +55,11 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
         logging_.Info("HTTPException caught: " + numtostr(e.status_code()));
         return ResponseBuilder::BuildError(e.status_code(), sl);
     } catch (std::exception &e) {
-        logging_.Info("std::exception caught: " + std::string(e.what()));
+        logging_.Error("std::exception caught: " + std::string(e.what()));
         return ResponseBuilder::BuildError(500,
                                            sl);  // その他エラーは500にする。
     } catch (...) {
-        logging_.Info("Exception caught: unexpected exception.");
+        logging_.Error("Exception caught: unexpected exception.");
         return ResponseBuilder::BuildError(500,
                                            sl);  // その他エラーは500にする。
     }

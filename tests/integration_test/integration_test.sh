@@ -85,10 +85,20 @@ function do_test() {
     PICKUP_CMD="grep <center>webserv"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
+
     EXPECTED_EXIT_STATUS=1;
+    # ログにFATALレベル出力がないことを確認する。
     echo -n "  log check \"FATAL\": "
     PICKUP_CMD="grep FATAL ./log/log.txt"
     do_single_command_check ${PICKUP_CMD}
+
+    # 正常系テストでは、ログにERRORレベル出力がないことを確認する。
+    if [ ${IS_ERROR_TEST} -eq 0 ]; then
+        echo -n "  log check \"ERROR\": "
+        PICKUP_CMD="grep ERROR ./log/log.txt"
+        do_single_command_check ${PICKUP_CMD}
+    fi
+
 
     # サマリーの出力
     echo -n "[${CONFIG_NO}][${REQUEST_NO}]test finish. Conclusion:"
