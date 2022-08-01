@@ -39,8 +39,14 @@ ConfigLexer& ConfigLexer::operator=(const ConfigLexer& other) {
 ConfigLexer::~ConfigLexer() {}
 
 std::string ConfigLexer::ReadKeyword() {
+    if (StartsWith(this->content_, "server") &&
+        this->content_[std::string("server").size()] == '{') {
+        return std::string("server");
+    }
+
     std::string::size_type keyword_len =
         this->content_.find_first_of(" \f\n\r\t\v");
+
     if (keyword_len == std::string::npos) {
         return this->content_;
     }
