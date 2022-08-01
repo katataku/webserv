@@ -121,7 +121,6 @@ TEST_F(ConfigParserTest, cgi_extension) {
     LocationContext locate_context = locate_contexts.at(0);
 
     ASSERT_EQ(locate_context.path(), "/");
-    ASSERT_EQ(locate_context.alias(), "/var/www/html");
     ASSERT_EQ(locate_context.cgi_extension(), "py");
 }
 

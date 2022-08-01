@@ -1,5 +1,7 @@
 #include "Transaction.hpp"
 
+#include <string>
+
 #include "CGIExecutor.hpp"
 #include "FileReadExecutor.hpp"
 #include "HTTPException.hpp"
@@ -19,6 +21,7 @@ Transaction &Transaction::operator=(Transaction const &other) {
 Transaction::~Transaction() {}
 
 HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
+    logging_.Debug("Exec start");
     try {
         if (!sl->IsAllowedMethod(request->method())) {
             throw HTTPException(403);  // ステータスコードを設定。
@@ -46,8 +49,14 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
         */
         return ResponseBuilder::BuildError(400, sl);
     } catch (HTTPException &e) {
+        logging_.Info("HTTPException caught: " + numtostr(e.status_code()));
         return ResponseBuilder::BuildError(e.status_code(), sl);
+    } catch (std::exception &e) {
+        logging_.Info("std::exception caught: " + std::string(e.what()));
+        return ResponseBuilder::BuildError(500,
+                                           sl);  // その他エラーは500にする。
     } catch (...) {
+        logging_.Info("Exception caught: unexpected exception.");
         return ResponseBuilder::BuildError(500,
                                            sl);  // その他エラーは500にする。
     }
