@@ -40,7 +40,17 @@ std::string Join(std::vector<std::string> strs, std::string separator) {
     return ss.str();
 }
 
+static bool HasPlusSign(const std::string& str) {
+    std::string trimmed_spaces = LeftTrim(str, " \f\n\r\t\v");
+
+    return trimmed_spaces[0] == '+';
+}
+
 bool IsInteger(std::string str) {
+    if (HasPlusSign(str)) {
+        return false;
+    }
+
     char* end = NULL;
     errno = 0;
     long l = std::strtol(str.c_str(), &end, 10);  // NOLINT
@@ -117,10 +127,17 @@ bool IsAlpha(const char c) { return std::isalpha(c) != 0; }
 bool IsSpace(const char c) { return std::isspace(c) != 0; }
 
 std::string ConsumeSpace(const std::string& s) {
+    if (s.empty()) {
+        return s;
+    }
     if (IsSpace(s[0])) {
         return s.substr(1);
     }
-    throw std::runtime_error("Failed to Consume. Expected space, but got " + s);
+    if (s[0] == '{') {
+        return s;
+    }
+    throw std::runtime_error("Error: unexpected \"" + s +
+                             "\", expecting space");
 }
 
 std::string ConsumeWithSpace(const std::string& s, const std::string& keyword) {
@@ -137,13 +154,11 @@ std::string SkipLine(const std::string& s) {
 
 // TODO(iyamada) ファイルパスとして扱うべき文字を追加
 bool IsPathChar(const char c) {
-    return c == '/' || c == '_' || c == '.' || IsAlpha(c);
+    return c == '/' || c == '_' || c == '.' || IsAlpha(c) || IsDigit(c);
 }
 bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
 
-bool IsValueChar(const char c) {
-    return IsURIChar(c) || IsPathChar(c) || IsDigit(c);
-}
+bool IsValueChar(const char c) { return IsURIChar(c) || c == '-' || c == '+'; }
 
 std::string GetValueCharacters(const std::string& s) {
     for (std::string::size_type i = 0; i < s.size(); ++i) {

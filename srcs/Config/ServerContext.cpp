@@ -70,6 +70,16 @@ void ServerContext::set_port(const std::string& port) {
     this->port_ = strtonum<int>(port);
 }
 void ServerContext::set_port(int port) { port_ = port; }
+void ServerContext::AddErrorPages(
+    const std::map<int, std::string>& error_pages) {
+    for (std::map<int, std::string>::const_iterator itr = error_pages.begin();
+         itr != error_pages.end(); ++itr) {
+        if (this->error_pages_.find(itr->first) != this->error_pages_.end()) {
+            continue;
+        }
+        this->error_pages_[itr->first] = itr->second;
+    }
+}
 
 void ServerContext::PushLocationContext(LocationContext context) {
     this->contexts_.push_back(context);

@@ -56,7 +56,6 @@ TEST(IsInteger, valid) {
     ASSERT_EQ(true, IsInteger("0"));
     ASSERT_EQ(true, IsInteger("42"));
     ASSERT_EQ(true, IsInteger("-42"));
-    ASSERT_EQ(true, IsInteger("+42"));
     ASSERT_EQ(true, IsInteger("2147483647"));
     ASSERT_EQ(true, IsInteger("-2147483648"));
 }
@@ -66,6 +65,8 @@ TEST(IsInteger, invalid) {
     ASSERT_EQ(false, IsInteger("42a"));
     ASSERT_EQ(false, IsInteger("a42"));
     ASSERT_EQ(false, IsInteger("4a2"));
+    ASSERT_EQ(false, IsInteger("+42"));
+    ASSERT_EQ(false, IsInteger("   +42"));
     ASSERT_EQ(false, IsInteger("++42"));
     ASSERT_EQ(false, IsInteger("2147483648"));
     ASSERT_EQ(false, IsInteger("-2147483649"));
