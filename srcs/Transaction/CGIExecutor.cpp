@@ -78,10 +78,9 @@ static int write(int fd, const std::string &msg) {
     return write(fd, msg.c_str(), msg.size());
 }
 
-static std::string read(int fd) {
+static int read(int fd, std::string *ret) {
     char buf[4096];
     ssize_t byte = 0;
-    std::string ret;
 
     for (;;) {
         byte = read(fd, buf, 4096);
@@ -90,11 +89,10 @@ static std::string read(int fd) {
             break;
         }
         if (byte == -1) {
-            throw std::runtime_error("Error: read failed " +
-                                     std::string(strerror(errno)));
+            return -1;
         }
         buf[byte] = '\0';
-        ret += std::string(buf);
+        *ret += std::string(buf);
 
         // 読み込んだバイト数が定数より少ない場合は全部読み込んだ
         if (byte < 4096) {
@@ -102,18 +100,20 @@ static std::string read(int fd) {
         }
     }
 
-    return ret;
+    return 0;
 }
-
+// 1000 000
 static int wait_until(pid_t pid, int *st, int sec) {
     int cnt = 0, ret = 0;
+    int step = 10000;  // 10ms
+    int dst = sec * 1000000 / step;
     while (waitpid(pid, st, WNOHANG) == 0) {
-        if (cnt == sec) {
+        if (cnt == dst) {
             kill(pid, SIGKILL);
             ret = 1;
             break;
         }
-        sleep(1);
+        usleep(step);  // 10ms
         cnt++;
     }
     return ret;
@@ -175,7 +175,10 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         throw HTTPException(500);
     }
 
-    std::string buf = read(pipe_to_serv[0]);
-    close(pipe_to_serv[0]);
+    std::string buf;
+    if (read(pipe_to_serv[0], &buf) != 0) {
+        close(pipe_to_serv[0]);
+        throw HTTPException(500);
+    }
     return CGIResponse(std::string(buf));
 }
