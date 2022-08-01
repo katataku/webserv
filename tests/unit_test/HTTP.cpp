@@ -139,6 +139,24 @@ TEST_F(HTTPTest, no_host_header) {
     ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
+TEST_F(HTTPTest, method_is_missing_in_request_line) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "/ HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, request_line_has_extra_segment) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / / HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
 TEST_F(HTTPTest, protocol_vesrion_not_supported) {
     HTTPRequest req = HTTPRequest();
     std::string str =
@@ -152,7 +170,31 @@ TEST_F(HTTPTest, protocol_vesrion_not_supported) {
 TEST_F(HTTPTest, method_not_supported) {
     HTTPRequest req = HTTPRequest();
     std::string str =
-        "TOKYO / HTTP/1.2\r\n"
+        "TOKYO / HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, uri_too_long) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET "
+        "/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1\r\n"
         "Host: test1\r\n"
         "\r\n";
     ASSERT_THROW(req.Parse(str), HTTPException);
