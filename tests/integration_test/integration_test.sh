@@ -56,11 +56,6 @@ function do_test() {
     PICKUP_CMD="sed -n 1p"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
-#    # 3行目のtimestampなので失敗想定のテスト(結合テスト自体の動作確認用)
-#	echo -n "  time line: "
-#    PICKUP_CMD="sed -n 3p"
-#    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
-
 	echo -n "  Content-Type: "
     PICKUP_CMD="grep Content-Type:"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
