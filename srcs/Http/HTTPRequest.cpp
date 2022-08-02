@@ -12,7 +12,7 @@ HTTPRequest::HTTPRequest()
       request_target_(""),
       host_(""),
       content_length_(-1),
-      chunked_rest_(0),
+      chunked_rest_(-1),
       transfer_encoding_(""),
       request_body_(""),
       is_finish_to_read_header_(false),
@@ -228,7 +228,7 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
     this->unparsed_string_ += str;
 
     for (; !this->unparsed_string_.empty();) {
-        if (this->chunked_rest_ == 0) {
+        if (this->chunked_rest_ == -1) {
             // 数値の部分を取得
             std::string::size_type pos = this->unparsed_string_.find(CRLF);
             if (pos != std::string::npos) {
@@ -240,11 +240,21 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
                     throw HTTPException(400);
                 }
                 this->chunked_rest_ = ToInteger(len_str_base_16, 16);
+                if (this->chunked_rest_ < 0) {
+                    throw HTTPException(400);
+                }
             }
         }
         if (this->chunked_rest_ == 0) {
-            this->is_finish_to_read_body_ = true;
-            return;
+            if (this->unparsed_string_.empty()) {
+                return;
+            }
+            // CRLFが来ていればチャンクの終了。トレーラーは来ない想定。
+            if (StartsWith(this->unparsed_string_, CRLF)) {
+                this->is_finish_to_read_body_ = true;
+                return;
+            }
+            throw HTTPException(400);
         }
         if (this->unparsed_string_.size() < this->chunked_rest_) {
             this->request_body_ += this->unparsed_string_;
@@ -255,7 +265,7 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
                 this->unparsed_string_.substr(0, this->chunked_rest_);
             this->unparsed_string_ =
                 this->unparsed_string_.substr(this->chunked_rest_);
-            this->chunked_rest_ = 0;
+            this->chunked_rest_ = -1;
             if (this->unparsed_string_.find(CRLF, 0) != 0) {
                 // /r/nが来ていない場合はエラー
                 throw HTTPException(400);
