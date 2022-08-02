@@ -224,14 +224,6 @@ void HTTPRequest::ParseBodyByContentLength(std::string str) {
     }
 }
 
-// TODO(ahayashi) 雑に持ってきたのでutilに移動？16進数に対応させる
-static int strtonum(const std::string &s) {
-    std::stringstream ss(s);
-    int num;
-    ss >> num;
-    return num;
-}
-
 void HTTPRequest::ParseBodyByChunked(std::string str) {
     this->unparsed_string_ += str;
 
