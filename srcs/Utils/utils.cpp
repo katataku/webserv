@@ -47,14 +47,21 @@ static bool HasPlusSign(const std::string& str) {
     return trimmed_spaces[0] == '+';
 }
 
-bool IsInteger(std::string str) {
-    if (HasPlusSign(str)) {
+static bool HasPrefix(const std::string& str) {
+    std::string trimmed_spaces = LeftTrim(str, " \f\n\r\t\v");
+    return StartsWith(trimmed_spaces, "0x") || StartsWith(trimmed_spaces, "0X");
+}
+
+// 10進数と16進数での使用を想定
+bool IsInteger(std::string str, int base) {
+    // +記号がある場合、0xなどのprefixがついている場合は有効な数値でないと扱う
+    if (HasPlusSign(str) || HasPrefix(str)) {
         return false;
     }
 
     char* end = NULL;
     errno = 0;
-    long l = std::strtol(str.c_str(), &end, 10);  // NOLINT
+    long l = std::strtol(str.c_str(), &end, base);  // NOLINT
 
     // empty string
     if (str == end) {
@@ -76,7 +83,9 @@ bool IsInteger(std::string str) {
     return true;
 }
 
-int ToInteger(std::string str) { return std::atoi(str.c_str()); }
+int ToInteger(std::string str, int base) {
+    return std::strtol(str.c_str(), NULL, base);
+}
 
 std::string LeftTrim(const std::string& s, const std::string& chars) {
     size_t start = s.find_first_not_of(chars);
