@@ -9,27 +9,46 @@ CGIResponse::CGIResponse() {}
 
 CGIResponse::CGIResponse(CGIResponse const &other) { *this = other; }
 
+void CGIResponse::ParseStatusLine(const std::string &line) {
+    std::string l = SkipSpace(Consume(line, "Status:"));
+    std::string status_code = GetValueCharacters(l);
+    if (IsInteger(status_code)) {
+        return;
+    }
+    int c = ToInteger(status_code);
+    if (c < 100 || 599 < c) {
+        return;
+    }
+    this->status_code_ = status_code;
+    l = SkipSpace(ConsumeValueCharacters(l));
+    this->reason_phrase_ = GetValueCharacters(l);
+}
+
 CGIResponse::CGIResponse(std::string const &resp) {
     std::string line = resp;
 
-    // TODO(iyamada) statusとかどうするか
     for (std::string line = resp; !line.empty();
          line = SkipString(line, "\n")) {
+        // `Status:`から始まる行にステータスコードがある
+        if (StartsWith(line, "Status:")) {
+            this->ParseStatusLine(line);
+            continue;
+        }
+
         // lineの先頭文字が改行だと空行を表すはずなので、それ以降はbody
         if (StartsWith(line, "\n")) {
-            line = SkipString(line, "\n");
+            line = Consume(line, "\n");
             this->body_ = line;
             return;
         }
     }
 
-    // ここにきたらレスポンスがおかしいからエラー
+    // ここに到達するとレスポンスが不正
     throw HTTPException(500);
 }
 
 CGIResponse &CGIResponse::operator=(CGIResponse const &other) {
     if (this != &other) {
-        this->status_ = other.status_;
         this->status_code_ = other.status_code_;
         this->reason_phrase_ = other.reason_phrase_;
         this->body_ = other.body_;
