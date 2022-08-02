@@ -63,7 +63,7 @@ static char **MakeArg(std::vector<std::string> arg) {
 
 extern char **environ;
 
-static int execve(const std::string &path, std::vector<std::string> arg,
+static int Execve(const std::string &path, std::vector<std::string> arg,
                   std::map<std::string, std::string> env) {
     char **av = MakeArg(arg);
     ResisterEnv(env);
@@ -75,11 +75,11 @@ static int execve(const std::string &path, std::vector<std::string> arg,
     return ret;
 }
 
-static int write(int fd, const std::string &msg) {
+static int Write(int fd, const std::string &msg) {
     return write(fd, msg.c_str(), msg.size());
 }
 
-static int read(int fd, std::string *ret) {
+static int Read(int fd, std::string *ret) {
     char buf[4096];
     ssize_t byte = 0;
 
@@ -147,11 +147,12 @@ static int Close(int fd) {
     return 0;
 }
 
-static int Read(int fd, std::string *buf) {
-    if (read(fd, buf) == -1) {
+static std::string Read(int fd) {
+    std::string buf;
+    if (Read(fd, &buf) == -1) {
         throw std::runtime_error(strerror(errno));
     }
-    return 0;
+    return buf;
 }
 
 // TODO(iyamada) エラー処理
@@ -171,7 +172,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
                 dup2(pipe_to_serv[1], STDOUT_FILENO) == -1) {
                 exit(1);
             }
-            execve(req.path(), req.arg(), req.env());
+            Execve(req.path(), req.arg(), req.env());
             // execvが-1を返すとき、子プロセスを終了するためのexit
             exit(1);
         }
@@ -180,7 +181,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         Close(pipe_to_serv[1]);
 
         if (req.ShouldSendRequestBody()) {
-            if (write(pipe_to_cgi[1], req.body()) == -1) {
+            if (Write(pipe_to_cgi[1], req.body()) == -1) {
                 kill(pid, SIGKILL);  // 子プロセスをkill
                 throw std::runtime_error(strerror(errno));
             }
@@ -195,8 +196,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
             throw std::runtime_error("Failed to exit CGI program properly");
         }
 
-        std::string buf;
-        Read(pipe_to_serv[0], &buf);
+        std::string buf = Read(pipe_to_serv[0]);
 
         logging_.Debug("CGIExec finish");
         return CGIResponse::Parse(std::string(buf));
