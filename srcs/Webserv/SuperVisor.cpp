@@ -1,5 +1,6 @@
 #include "SuperVisor.hpp"
 
+#include <string>
 #include <vector>
 
 #include "IOMultiplexer.hpp"
