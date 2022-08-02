@@ -24,7 +24,7 @@ function do_valgrind_test() {
     echo ""  >> ./log/summary-valgrind.log
 }
 
-
+mkdir -p ./log
 make dc-re > /dev/null 2>&1
 docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv make > /dev/null 2>&1
 
