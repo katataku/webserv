@@ -73,6 +73,21 @@ TEST(IsInteger, invalid) {
     ASSERT_EQ(false, IsInteger("9223372036854775807"));
 }
 
+TEST(IsInteger, hex_valid) {
+    ASSERT_EQ(true, IsInteger("0", 16));
+    ASSERT_EQ(true, IsInteger("2a", 16));
+    ASSERT_EQ(true, IsInteger("2A", 16));
+    ASSERT_EQ(true, IsInteger("7FFFFFFF", 16));
+    ASSERT_EQ(true, IsInteger("-2a", 16));
+}
+
+TEST(IsInteger, hex_invalid) {
+    ASSERT_EQ(false, IsInteger("g", 16));
+    ASSERT_EQ(false, IsInteger("+2a", 16));
+    ASSERT_EQ(false, IsInteger("0xa", 16));
+    ASSERT_EQ(false, IsInteger("0Xa", 16));
+}
+
 TEST(ToInteger, normal) {
     ASSERT_EQ(0, ToInteger("0"));
     ASSERT_EQ(42, ToInteger("42"));
@@ -80,6 +95,13 @@ TEST(ToInteger, normal) {
     ASSERT_EQ(42, ToInteger("+42"));
     ASSERT_EQ(2147483647, ToInteger("2147483647"));
     ASSERT_EQ(-2147483648, ToInteger("-2147483648"));
+}
+
+TEST(ToInteger, hex) {
+    ASSERT_EQ(0, ToInteger("0", 16));
+    ASSERT_EQ(42, ToInteger("2a", 16));
+    ASSERT_EQ(42, ToInteger("2A", 16));
+    ASSERT_EQ(2730, ToInteger("aAa", 16));
 }
 
 TEST(Trim, normal) {
