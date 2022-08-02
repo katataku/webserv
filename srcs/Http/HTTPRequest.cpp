@@ -244,8 +244,10 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
                     this->unparsed_string_.substr(0, pos);
                 this->unparsed_string_ =
                     this->unparsed_string_.substr(pos + CRLF.size());
-                this->chunked_rest_ = strtonum(len_str_base_16);
-                // TODO(ahayashi): 数値のバリデーション
+                if (!IsInteger(len_str_base_16, 16)) {
+                    throw HTTPException(400);
+                }
+                this->chunked_rest_ = ToInteger(len_str_base_16, 16);
             }
         }
         if (this->chunked_rest_ == 0) {
@@ -264,7 +266,7 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
             this->chunked_rest_ = 0;
             if (this->unparsed_string_.find(CRLF, 0) != 0) {
                 // /r/nが来ていない場合はエラー
-                throw std::runtime_error("bad request");
+                throw HTTPException(400);
             }
             this->unparsed_string_ = this->unparsed_string_.substr(CRLF.size());
         }
