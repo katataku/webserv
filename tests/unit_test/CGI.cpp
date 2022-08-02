@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "CGIExecutor.hpp"
+#include "HTTPException.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPResponse.hpp"
 #include "ResponseBuilder.hpp"
@@ -101,4 +102,40 @@ TEST_F(CGITest, delete_cgi) {
     delete http_resp;
 
     ASSERT_EQ(access("/var/www/html/hoge.file", F_OK) == 0, false);
+}
+
+TEST_F(CGITest, error_parse_empty_cgi_response) {
+    std::string resp = "";
+
+    ASSERT_THROW(CGIResponse::Parse(resp), HTTPException);
+}
+
+TEST_F(CGITest, error_parse_no_header_cgi_response) {
+    std::string resp = "\nhello world";
+
+    ASSERT_THROW(CGIResponse::Parse(resp), HTTPException);
+}
+
+TEST_F(CGITest, error_parse_no_empty_line_cgi_response) {
+    std::string resp = "Status:200 OK\nhello world";
+
+    ASSERT_THROW(CGIResponse::Parse(resp), HTTPException);
+}
+
+TEST_F(CGITest, error_parse_invalid_status_code_minus_cgi_response) {
+    std::string resp = "Status: -1 OK\nhello world";
+
+    ASSERT_THROW(CGIResponse::Parse(resp), HTTPException);
+}
+
+TEST_F(CGITest, error_parse_invalid_status_code_mix_cgi_response) {
+    std::string resp = "Status: 100a OK\nhello world";
+
+    ASSERT_THROW(CGIResponse::Parse(resp), HTTPException);
+}
+
+TEST_F(CGITest, error_parse_invalid_status_code_big_cgi_response) {
+    std::string resp = "Status: 1000 OK\nhello world";
+
+    ASSERT_THROW(CGIResponse::Parse(resp), HTTPException);
 }

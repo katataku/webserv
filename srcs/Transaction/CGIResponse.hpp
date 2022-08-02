@@ -10,7 +10,6 @@ class CGIResponse {
  public:
     CGIResponse();
     CGIResponse(CGIResponse const &other);
-    explicit CGIResponse(std::string const &resp);
     CGIResponse &operator=(CGIResponse const &other);
     ~CGIResponse();
 
@@ -18,11 +17,14 @@ class CGIResponse {
 
     void set_status_code(const std::string &status_code);
 
+    static CGIResponse Parse(const std::string &resp);
+
  private:
-    std::string status_;
     std::string status_code_;
     std::string reason_phrase_;
     std::string body_;
+
+    void ParseStatusLine(const std::string &line);
 };
 
 #endif  // SRCS_TRANSACTION_CGIRESPONSE_HPP_

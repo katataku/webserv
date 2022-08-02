@@ -1,6 +1,7 @@
 #include "CGIExecutor.hpp"
 
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -11,6 +12,7 @@
 
 #include "CGIRequest.hpp"
 #include "CGIResponse.hpp"
+#include "HTTPException.hpp"
 
 CGIExecutor::CGIExecutor() : logging_(Logging(__FUNCTION__)) {}
 
@@ -61,7 +63,7 @@ static char **MakeArg(std::vector<std::string> arg) {
 
 extern char **environ;
 
-static int execve(const std::string &path, std::vector<std::string> arg,
+static int Execve(const std::string &path, std::vector<std::string> arg,
                   std::map<std::string, std::string> env) {
     char **av = MakeArg(arg);
     ResisterEnv(env);
@@ -73,14 +75,13 @@ static int execve(const std::string &path, std::vector<std::string> arg,
     return ret;
 }
 
-static int write(int fd, const std::string &msg) {
+static int Write(int fd, const std::string &msg) {
     return write(fd, msg.c_str(), msg.size());
 }
 
-static std::string read(int fd) {
+static int Read(int fd, std::string *ret) {
     char buf[4096];
     ssize_t byte = 0;
-    std::string ret;
 
     for (;;) {
         byte = read(fd, buf, 4096);
@@ -89,11 +90,10 @@ static std::string read(int fd) {
             break;
         }
         if (byte == -1) {
-            throw std::runtime_error("Error: read failed " +
-                                     std::string(strerror(errno)));
+            return -1;
         }
         buf[byte] = '\0';
-        ret += std::string(buf);
+        *ret += std::string(buf);
 
         // 読み込んだバイト数が定数より少ない場合は全部読み込んだ
         if (byte < 4096) {
@@ -101,7 +101,58 @@ static std::string read(int fd) {
         }
     }
 
-    return ret;
+    return 0;
+}
+
+// タイムアウトすると1を返す
+static int WaitUntil(pid_t pid, int *status, int second) {
+    int cnt = 0;
+    int step_us = 10000;  // 10ms
+    int target = second * 1000000 / step_us;
+    while (waitpid(pid, status, WNOHANG) == 0) {
+        if (cnt == target) {
+            kill(pid, SIGKILL);  // 子プロセスをkill
+            return 1;
+        }
+        usleep(step_us);
+        cnt++;
+    }
+    return 0;
+}
+
+static void ClosePipe(int pipe[2]) {
+    close(pipe[0]);
+    close(pipe[1]);
+}
+
+static int Pipe(int *fds) {
+    if (pipe(fds) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return 0;
+}
+
+static pid_t Fork() {
+    pid_t pid = fork();
+    if (pid == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return pid;
+}
+
+static int Close(int fd) {
+    if (close(fd) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return 0;
+}
+
+static std::string Read(int fd) {
+    std::string buf;
+    if (Read(fd, &buf) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return buf;
 }
 
 // TODO(iyamada) エラー処理
@@ -109,51 +160,53 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     logging_.Debug("CGIExec start");
     int pipe_to_cgi[2], pipe_to_serv[2];
 
-    if (pipe(pipe_to_cgi) == -1 || pipe(pipe_to_serv) == -1) {
-        throw std::runtime_error("Error: pipe failed " +
-                                 std::string(strerror(errno)));
-    }
+    try {
+        Pipe(pipe_to_cgi);
+        Pipe(pipe_to_serv);
 
-    if (fork() == 0) {
-        // 必要ないパイプはクローズ
-        close(pipe_to_cgi[1]);
-        close(pipe_to_serv[0]);
-
-        dup2(pipe_to_cgi[0], STDIN_FILENO);
-        dup2(pipe_to_serv[1], STDOUT_FILENO);
-        if (execve(req.path(), req.arg(), req.env()) == -1) {
-            // 子プロセスの異常時は、異常終了させる。
+        pid_t pid = Fork();
+        if (pid == 0) {
+            // 必要ないパイプはクローズ
+            if (close(pipe_to_cgi[1]) == -1 || close(pipe_to_serv[0]) == -1 ||
+                dup2(pipe_to_cgi[0], STDIN_FILENO) == -1 ||
+                dup2(pipe_to_serv[1], STDOUT_FILENO) == -1) {
+                exit(1);
+            }
+            Execve(req.path(), req.arg(), req.env());
+            // execvが-1を返すとき、子プロセスを終了するためのexit
             exit(1);
         }
-    }
-    // 必要ないパイプはクローズ
-    close(pipe_to_cgi[0]);
-    close(pipe_to_serv[1]);
+        // 必要ないパイプはクローズ
+        Close(pipe_to_cgi[0]);
+        Close(pipe_to_serv[1]);
 
-    // TODO(iyamada)
-    // bodyは設定されていなかったら空文字列なのでifいらないかも
-    if (req.ShouldSendRequestBody()) {
-        if (write(pipe_to_cgi[1], req.body()) == -1) {
-            throw std::runtime_error("Error: write failed " +
-                                     std::string(strerror(errno)));
+        if (req.ShouldSendRequestBody()) {
+            if (Write(pipe_to_cgi[1], req.body()) == -1) {
+                kill(pid, SIGKILL);  // 子プロセスをkill
+                throw std::runtime_error(strerror(errno));
+            }
         }
-    }
-    close(pipe_to_cgi[1]);
+        Close(pipe_to_cgi[1]);
 
-    int exit_status = 0;
-    if (wait(&exit_status) == -1) {
-        throw std::runtime_error("Error: wait failed " +
-                                 std::string(strerror(errno)));
+        int exit_status = 0;
+        if (WaitUntil(pid, &exit_status, 5) != 0) {
+            throw std::runtime_error("Timeout during CGI program execution");
+        }
+        if (exit_status != 0) {
+            throw std::runtime_error("Failed to exit CGI program properly");
+        }
+
+        std::string buf = Read(pipe_to_serv[0]);
+
+        logging_.Debug("CGIExec finish");
+        return CGIResponse::Parse(std::string(buf));
+    } catch (const std::exception &e) {
+        logging_.Error(e.what());
+        // オープンしていないfdをcloseしても-1がリターンされるだけなので、とりあえずclose
+        ClosePipe(pipe_to_cgi);
+        ClosePipe(pipe_to_serv);
+        throw HTTPException(500);
     }
 
-    logging_.Debug("CGIExec finish wait: exit_status=" + numtostr(exit_status));
-    if (exit_status != 0) {
-        throw std::runtime_error("Error: child process abnormal end. strerro=" +
-                                 std::string(strerror(errno)));
-    }
-
-    std::string buf = read(pipe_to_serv[0]);
-    close(pipe_to_serv[0]);
-    logging_.Debug("CGIExec finish");
-    return CGIResponse(std::string(buf));
+    return CGIResponse::Parse("");
 }
