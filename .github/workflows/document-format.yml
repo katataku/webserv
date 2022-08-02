@@ -1,9 +1,12 @@
 name: doc-format
 on:
   push:
+    branches:
+      - main
+  pull_request:
     paths:
-      - docs/**
-      - README.md
+      - "docs/**"
+      - "README.md"
 
 jobs:
   mdformat:
