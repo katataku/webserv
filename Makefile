@@ -38,9 +38,6 @@ debug: fclean ## Build in debug mode
 
 # -------------------------- Rules For Test -------------------------------
 
-.PHONY: test
-test: utest itest ## Exec all tests for webserver
-
 .PHONY: utest
 utest: ## Exec unit tests for webserver
 	make -C tests/unit_test
@@ -79,10 +76,6 @@ lint: ## Lint webserver source files
 .PHONY: tidy
 tidy: ## Tidy webserver source files
 	clang-tidy $(HEADERS) $(SRCS) -- $(CXXFLAGS) $(INCS)
-
-.PHONY: syntax
-syntax: ## Check syntax of source files
-	$(CXX) -fsyntax-only $(HEADERS) $(SRCS)
 
 .PHONY: mdformat
 mdformat: ## Format Markdown files
