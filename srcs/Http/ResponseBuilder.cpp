@@ -2,7 +2,6 @@
 
 #include <map>
 #include <set>
-#include <string>
 
 #include "HTTPReasonPhrase.hpp"
 #include "utils.hpp"
@@ -78,7 +77,7 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     }
 
     res->set_status_code(status_code);
-    if (status_code == 403) {
+    if (status_code == 405) {
         std::ostringstream oss;
         std::set<std::string>::iterator iter;
 
