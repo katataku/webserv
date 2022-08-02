@@ -1,16 +1,16 @@
-HTTP/1.1 403 Forbidden
+HTTP/1.1 405 Method Not Allowed
 Connection: close
 Content-Length: 184
 Allow: DELETE
 
 <html>
 <head>
-    <title>403 Forbidden</title>
+    <title>405 Method Not Allowed</title>
 </head>
 
 <body>
     <center>
-        <h1>403 Forbidden</h1>
+        <h1>405 Method Not Allowed</h1>
     </center>
     <hr>
     <center>webserv/default</center>
