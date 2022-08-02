@@ -25,7 +25,7 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
 
   GET_directory:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
 
   GET_incorrect_path:
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
 
   GET_incorrect_py_path:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
 
   GET_simple:
     runs-on: ubuntu-latest
@@ -93,7 +93,7 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
 
   POST_hello_world:
     runs-on: ubuntu-latest
@@ -110,7 +110,7 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
 
   POST_hello_world_chunked:
     runs-on: ubuntu-latest
@@ -127,4 +127,4 @@ jobs:
         run: cat ./log/summary-valgrind.log
       - name: log check
         shell: bash
-        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
+        run: grep definitely ./log/summary-valgrind.log  | grep -v "0 byte" | wc -l
