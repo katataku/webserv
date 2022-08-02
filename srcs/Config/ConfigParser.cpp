@@ -1,6 +1,5 @@
 #include "ConfigParser.hpp"
 
-#include <iostream>
 #include <list>
 #include <stdexcept>
 
