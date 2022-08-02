@@ -24,12 +24,13 @@ SuperVisor::SuperVisor(ServerLocationFacade *facade)
     : facade_(facade), logging_(Logging(__FUNCTION__)) {}
 
 void SuperVisor::Watch() {
-    IOMultiplexer iomul;
     std::vector<std::string> ports = this->facade_->GetPorts();
-    iomul.Init(ports);
+    IOMultiplexer iomul(ports);
+
     this->logging_.Debug("start loop");
+
     while (true) {
-        std::vector<Socket *> sockets = iomul.Wait();
+        std::vector<Socket *> sockets = iomul.WaitAndGetReadySockets();
         for (std::vector<Socket *>::iterator itr = sockets.begin();
              itr != sockets.end(); ++itr) {
             if ((*itr)->is_listening()) {
