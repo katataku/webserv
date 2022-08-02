@@ -15,7 +15,6 @@ HTTPReasonPhrase &HTTPReasonPhrase::operator=(HTTPReasonPhrase const &other) {
 
 HTTPReasonPhrase::~HTTPReasonPhrase() {}
 
-// TODO(takkatao) defaultでexceptionを投げても良いかも。
 std::string HTTPReasonPhrase::GetReasonPhrase(int status_code) {
     switch (status_code) {
         case 200:
@@ -30,6 +29,8 @@ std::string HTTPReasonPhrase::GetReasonPhrase(int status_code) {
             return "Forbidden";
         case 404:
             return "Not Found";
+        case 405:
+            return "Method Not Allowed";
         case 413:
             return "Payload Too Large";
         case 414:
@@ -41,6 +42,6 @@ std::string HTTPReasonPhrase::GetReasonPhrase(int status_code) {
         case 505:
             return "HTTP Version Not Supported";
         default:
-            return "";
+            throw std::runtime_error("unsupported status code");
     }
 }

@@ -17,7 +17,7 @@ echo ""
     CONFIG_NO=limit_except.conf
     start_server_container
 
-        #403エラー
+        #405エラー
         REQUEST_NO=GET_simple
         do_test
 
