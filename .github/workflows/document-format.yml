@@ -5,8 +5,8 @@ on:
       - main
   pull_request:
     paths:
-      - "docs/**"
-      - "README.md"
+      - docs/**
+      - README.md
 
 jobs:
   mdformat:
