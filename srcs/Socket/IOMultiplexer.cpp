@@ -59,6 +59,7 @@ std::vector<Socket *> IOMultiplexer::Wait() {
         throw std::runtime_error("Error: epoll_wait " +
                                  std::string(strerror(errno)));
     }
+    this->logging_.Debug("epoll_wait nready:" + numtostr(nready));
 
     for (int i = 0; i < nready; ++i) {
         std::set<int>::iterator itr = listenfds.find(events[i].data.fd);
