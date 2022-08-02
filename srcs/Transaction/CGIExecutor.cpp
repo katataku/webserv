@@ -102,21 +102,21 @@ static int read(int fd, std::string *ret) {
 
     return 0;
 }
-// 1000 000
-static int wait_until(pid_t pid, int *st, int sec) {
-    int cnt = 0, ret = 0;
-    int step = 10000;  // 10ms
-    int dst = sec * 1000000 / step;
-    while (waitpid(pid, st, WNOHANG) == 0) {
-        if (cnt == dst) {
+
+// タイムアウトすると1を返す
+static int wait_until(pid_t pid, int *status, int sec) {
+    int cnt = 0;
+    int step_us = 10000;  // 10ms
+    int target = sec * 1000000 / step_us;
+    while (waitpid(pid, status, WNOHANG) == 0) {
+        if (cnt == target) {
             kill(pid, SIGKILL);
-            ret = 1;
-            break;
+            return 1;
         }
-        usleep(step);  // 10ms
+        usleep(step_us);
         cnt++;
     }
-    return ret;
+    return 0;
 }
 
 static void close_pipe(int pipe[2]) {
