@@ -18,7 +18,9 @@ Socket::Socket(int sock_fd, bool is_listening, std::string port)
     : sock_fd_(sock_fd),
       is_listening_(is_listening),
       port_(port),
-      logging_(Logging(__FUNCTION__)) {}
+      logging_(Logging(__FUNCTION__)) {
+    logging_.Debug("created sock_fd : [" + numtostr(this->sock_fd_) + "]");
+}
 
 Socket::Socket(Socket const &other) : logging_(Logging(__FUNCTION__)) {
     *this = other;
@@ -32,7 +34,7 @@ Socket &Socket::operator=(Socket const &other) {
     return *this;
 }
 
-Socket::~Socket() { this->Close(); }
+Socket::~Socket() {}
 
 void Socket::Send(std::string data) const {
     std::size_t data_size = data.size();

@@ -116,6 +116,11 @@ Node ConfigParser::config() {
         }
     }
 
+    if (!Token::SameTokenKind(&this->token_, Token::EOFToken)) {
+        throw std::runtime_error(
+            "Error: unexpected token, expecting end of file");
+    }
+    delete this->token_;
     return head;
 }
 

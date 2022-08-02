@@ -38,6 +38,7 @@ void Worker::Exec(Socket **socket_ptr) {
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, &sl);
             socket->Send(response->GetResponseString());
+            delete response;
             this->request_facade_->Finish(socket_ptr);
         }
     } catch (HTTPException &e) {
