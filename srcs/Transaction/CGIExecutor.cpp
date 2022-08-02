@@ -105,10 +105,10 @@ static int read(int fd, std::string *ret) {
 }
 
 // タイムアウトすると1を返す
-static int wait_until(pid_t pid, int *status, int sec) {
+static int wait_until(pid_t pid, int *status, int second) {
     int cnt = 0;
     int step_us = 10000;  // 10ms
-    int target = sec * 1000000 / step_us;
+    int target = second * 1000000 / step_us;
     while (waitpid(pid, status, WNOHANG) == 0) {
         if (cnt == target) {
             kill(pid, SIGKILL);
