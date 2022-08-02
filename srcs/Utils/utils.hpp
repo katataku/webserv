@@ -8,8 +8,8 @@
 std::vector<std::string> Split(std::string const str, std::string const delim);
 std::string Join(std::vector<std::string> strs, std::string separator);
 
-bool IsInteger(std::string str);
-int ToInteger(std::string str);
+bool IsInteger(std::string str, int base = 10);
+int ToInteger(std::string str, int base = 10);
 
 std::string LeftTrim(const std::string& s, const std::string& chars);
 std::string RightTrim(const std::string& s, const std::string& chars);
