@@ -19,3 +19,6 @@ jobs:
       - name: summary log
         shell: bash
         run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: ! grep definitely ./log/summary-valgrind.log  | grep -v "0 byte"
