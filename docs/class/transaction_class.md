@@ -52,10 +52,10 @@ class Transaction {
     HTTPResponse Exec(HTTPRequest req, ServerLocation sl) {
         try {
             if (req.method not in sl.allowed_method) {
-                throw HTTPException(403); // ステータスコードを設定。
+                throw HTTPException(405);
             }
             if (req.CalcBodySize() > sl.client_max_body_size) {
-                throw HTTPException(413); // ステータスコードを設定。
+                throw HTTPException(413);
             }
             if (sl.IsRedirect()) {
                 return ResponseBuilder.BuildRedirect(sl.redirect_url());

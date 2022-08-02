@@ -24,7 +24,7 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
     logging_.Debug("Exec start");
     try {
         if (!sl->IsAllowedMethod(request->method())) {
-            throw HTTPException(403);  // ステータスコードを設定。
+            throw HTTPException(405);
         }
         if (!sl->IsValidBodySize(request->CalcBodySize())) {
             throw HTTPException(413);
