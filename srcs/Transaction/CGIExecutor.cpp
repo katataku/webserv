@@ -125,14 +125,6 @@ static void ClosePipe(int pipe[2]) {
     close(pipe[1]);
 }
 
-static void InstallIgnoreSIGPIPEHandler() {
-    struct sigaction ignore_act;
-    ignore_act.sa_handler = SIG_IGN;
-    if (sigaction(SIGPIPE, &ignore_act, NULL) == -1) {
-        throw std::runtime_error(strerror(errno));
-    }
-}
-
 static int Pipe(int *fds) {
     if (pipe(fds) == -1) {
         throw std::runtime_error(strerror(errno));
@@ -168,9 +160,6 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     try {
-        // SIGPIPEが送信されるとプロセスが終了するのでignore
-        InstallIgnoreSIGPIPEHandler();
-
         Pipe(pipe_to_cgi);
         Pipe(pipe_to_serv);
 

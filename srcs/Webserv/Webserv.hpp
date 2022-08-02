@@ -1,6 +1,10 @@
 #ifndef SRCS_WEBSERV_WEBSERV_HPP_
 #define SRCS_WEBSERV_WEBSERV_HPP_
 
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
+
 #include "Logging.hpp"
 
 class Webserv {
