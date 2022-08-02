@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include <string.h>
 #include <sys/stat.h>
 
 #include <cctype>
@@ -227,4 +228,8 @@ bool HasPermissionToRead(std::string filepath) {
         return false;
     }
     return true;
+}
+
+std::string MakeSysCallErrorMsg(const std::string& syscall) {
+    return "Error: " + syscall + " " + std::string(strerror(errno));
 }

@@ -28,13 +28,17 @@ class IOMultiplexer {
 
     Logging logging_;
     std::vector<Socket *> sockets_;
-    int epollfd;
-    std::set<int> listenfds;
-    epoll_event ev;
-    epoll_event events[kMaxNEvents];
+    int epollfd_;
+    std::set<int> listenfds_;
+    epoll_event ev_;
+    epoll_event events_[kMaxNEvents];
     std::map<int, std::string> fd_port_map_;
 
-    void CreateListenerSocket(std::string port);
+    void CreateListenerSocket(const std::string &port);
+    void CreateListenerSockets(const std::vector<std::string> &ports);
+    void DestorySockets();
+
+    int GetSocketFdAt(int idx);
 };
 
 #endif  // SRCS_SOCKET_IOMULTIPLEXER_HPP_
