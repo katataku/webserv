@@ -256,7 +256,8 @@ void HTTPRequest::ParseBodyByChunked(std::string str) {
             }
             throw HTTPException(400);
         }
-        if (this->unparsed_string_.size() < this->chunked_rest_) {
+        if (static_cast<int>(this->unparsed_string_.size()) <
+            this->chunked_rest_) {
             this->request_body_ += this->unparsed_string_;
             this->chunked_rest_ -= this->unparsed_string_.size();
             this->unparsed_string_ = "";
