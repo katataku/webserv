@@ -29,6 +29,7 @@ CGIExecutor::~CGIExecutor() {}
 
 HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
                                 ServerLocation const &sl) {
+    logging_.Debug("Exec start");
     CGIRequest cgi_req(request, sl);
     CGIResponse cgi_res = this->CGIExec(cgi_req);
 
@@ -126,6 +127,7 @@ static void close_pipe(int pipe[2]) {
 
 // TODO(iyamada) エラー処理
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
+    logging_.Debug("CGIExec start");
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     if (pipe(pipe_to_cgi) == -1) {
@@ -174,11 +176,14 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         close(pipe_to_serv[0]);
         throw HTTPException(500);
     }
+    logging_.Debug("CGIExec finish wait: exit_status=" + numtostr(exit_status));
 
     std::string buf;
     if (read(pipe_to_serv[0], &buf) != 0) {
         close(pipe_to_serv[0]);
         throw HTTPException(500);
     }
+
+    logging_.Debug("CGIExec finish");
     return CGIResponse(std::string(buf));
 }

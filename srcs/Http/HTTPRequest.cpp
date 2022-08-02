@@ -1,8 +1,9 @@
 #include "HTTPRequest.hpp"
 
-#include <cstdlib>
 #include <sstream>
 #include <vector>
+
+#include "HTTPException.hpp"
 
 HTTPRequest::HTTPRequest()
     : logging_(Logging(__FUNCTION__)),
@@ -103,6 +104,10 @@ void HTTPRequest::Parse(std::string str) {
             str = body;
             this->unparsed_string_ = "";
             this->is_finish_to_read_header_ = true;
+            // Hostヘッダーが含まれない場合は400
+            if (this->host_.empty()) {
+                throw HTTPException(400);
+            }
         }
     }
     if (this->is_finish_to_read_header_) {
@@ -112,9 +117,8 @@ void HTTPRequest::Parse(std::string str) {
             return;
         }
         if (this->content_length_ != -1 && !this->transfer_encoding_.empty()) {
-            // TODO(hayashi-ay):
-            // Content-LengthとTransfer-Encodingが指定されている場合はエラーとみなす
-            throw std::runtime_error("error");
+            // Content-LengthとTransfer-Encodingが指定されている場合は400
+            throw HTTPException(400);
         }
         if (this->content_length_ != -1) {
             this->ParseBodyByContentLength(str);
@@ -128,12 +132,25 @@ void HTTPRequest::Parse(std::string str) {
 void HTTPRequest::ParseRequestLine(std::string line) {
     this->logging_.Debug("ParseRequestLine");
     std::vector<std::string> items = Split(line, " ");
-    if (items.size() != 3 || items[2] != "HTTP/1.1") {
-        // TODO(hayashi-ay): 対応するエラーを定義する
-        throw std::runtime_error("request line invalid");
+    // Request Lineに含まれる要素の数が異なる場合は400
+    if (items.size() != 3) {
+        throw HTTPException(400);
+    }
+    // http protocol versionはHTTP/1.1のみをサポートしそれ以外は505
+    if (items[2] != "HTTP/1.1") {
+        throw HTTPException(505);
     }
     this->method_ = items[0];
     this->request_target_ = items[1];
+    // GET, POST, DELETE以外のmethodについては501
+    if (this->method_ != "GET" && this->method_ != "POST" &&
+        this->method_ != "DELETE") {
+        throw HTTPException(501);
+    }
+    // uriの長さが1024以上だと414
+    if (this->request_target_.size() >= 1024) {
+        throw HTTPException(414);
+    }
     this->canonical_path_ = this->CanonicalizePath(this->request_target_);
 }
 
@@ -151,25 +168,44 @@ void HTTPRequest::ParseHeader(std::string str) {
 
         std::string::size_type found = lines[i].find(":");
         if (found == std::string::npos) {
-            // TODO(hayashi-ay): 対応するエラーを定義する
-            throw std::runtime_error("header format invalid");
+            // nginxでは単純にignoreしている
+            throw HTTPException(400);
         }
-        std::string header = lines[i].substr(0, found);
+        // HTTPヘッダーはcase-insensitive
+        std::string header = ToLower(lines[i].substr(0, found));
         std::string value = Trim(lines[i].substr(found + 1), " \t");
         if (value.empty()) {
-            // TODO(hayashi-ay): 対応するエラーを定義する
-            throw std::runtime_error("header format invalid");
+            // nginxでは単純にignoreしている
+            throw HTTPException(400);
         }
 
-        if (header == "Host") {
+        if (header == "host") {
+            // host headerが複数ある場合は400
+            if (!this->host_.empty()) {
+                throw HTTPException(400);
+            }
+            // RFC3986 3.2.2.で定義がuri-hostの定義があるが全て許容する
             this->host_ = value;
-        } else if (header == "Content-Length") {
-            this->content_length_ = std::atoi(value.c_str());
-        } else if (header == "Content-Type") {
-            // TODO(hayashi-ay): エラー処理も含める。たぶん自前で実装しそう。
+        } else if (header == "content-length") {
+            if (!IsInteger(value)) {
+                throw HTTPException(400);
+            }
+            // Content-Lengthが複数ある場合は400
+            if (this->content_length_ != -1) {
+                throw HTTPException(400);
+            }
+            this->content_length_ = ToInteger(value);
+            if (this->content_length_ < 0) {
+                throw HTTPException(400);
+            }
+        } else if (header == "content-type") {
+            // 特段バリデーションの必要なし
             this->content_type_ = value;
-        } else if (header == "Transfer-Encoding") {
+        } else if (header == "transfer-encoding") {
             this->transfer_encoding_ = value;
+            if (this->transfer_encoding_ != "chunked") {
+                throw HTTPException(501);
+            }
         } else {
             // その他のヘッダについては無視して処理を継続する。
         }
@@ -250,7 +286,7 @@ std::string HTTPRequest::CanonicalizePath(std::string request_target) {
         } else if (*itr == "..") {
             // 取り除くディレクトリがない場合はエラー
             if (output.size() <= 1) {
-                throw std::runtime_error("invalid path");
+                throw HTTPException(400);
             }
             output.pop_back();
         } else {
@@ -259,6 +295,7 @@ std::string HTTPRequest::CanonicalizePath(std::string request_target) {
     }
     return Join(output, "/");
 }
+
 int HTTPRequest::CalcBodySize() const { return this->request_body_.size(); }
 
 bool HTTPRequest::IsReady() const {

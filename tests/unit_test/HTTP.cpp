@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "HTTPException.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPResponse.hpp"
 #include "ResponseBuilder.hpp"
@@ -110,7 +111,190 @@ TEST_F(HTTPTest, cannot_remove_directory) {
         "GET /a/b/./../../../g HTTP/1.1\r\n"
         "Host: test\r\n"
         "\r\n";
-    ASSERT_THROW(req.Parse(str), std::runtime_error);
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, header_names_are_case_insensitive) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "HOST: test1\r\n"
+        "content-TYPE: text/html\r\n"
+        "content-length: 8\r\n"
+        "\r\n"
+        "12345678";
+    req.Parse(str);
+    ASSERT_EQ(req.method(), "GET");
+    ASSERT_EQ(req.request_target(), "/");
+    ASSERT_EQ(req.host(), "test1");
+    ASSERT_EQ(req.content_type(), "text/html");
+    ASSERT_EQ(req.content_length(), 8);
+    ASSERT_EQ(req.request_body(), "12345678");
+}
+
+TEST_F(HTTPTest, no_host_header) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, method_is_missing_in_request_line) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "/ HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, request_line_has_extra_segment) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / / HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, protocol_vesrion_not_supported) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.2\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+// nginxは400を返しているがRFC7231に準拠して501を返す
+TEST_F(HTTPTest, method_not_supported) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "TOKYO / HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, uri_too_long) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET "
+        "/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+// nginxではエラーにならないがRFCに準拠してエラーにする
+TEST_F(HTTPTest, multiple_hot_header) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test1\r\n"
+        "Host: test2\r\n"
+        "\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, content_length_with_plus_sign) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: +8\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, content_length_with_non_numberic_char) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 8a\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, content_length_is_only_one) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 8\r\n"
+        "Content-Length: 8\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, content_length_leading_zero_is_ignored) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 08\r\n"
+        "\r\n"
+        "12345678";
+    req.Parse(str);
+    ASSERT_EQ(req.request_body(), "12345678");
+    ASSERT_EQ(req.content_length(), 8);
+}
+
+TEST_F(HTTPTest, content_length_0_is_acceptable) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 0\r\n"
+        "\r\n"
+        "12345678";
+    req.Parse(str);
+    ASSERT_EQ(req.request_body(), "");
+    ASSERT_EQ(req.content_length(), 0);
+}
+
+TEST_F(HTTPTest, transfer_encoding_is_not_chunked) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "POST /cgi-bin/file_manager.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Transfer-Encoding: hunked\r\n"
+        "\r\n"
+        "6\r\nhello,\r\n"
+        "6\r\nworld!\r\n"
+        "0\r\n\r\n";
+    ASSERT_THROW(req.Parse(str), HTTPException);
+}
+
+TEST_F(HTTPTest, content_length_and_transfer_encoding_in_header) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "GET / HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length: 8\r\n"
+        "Transfer-Encoding: chunked\r\n"
+        "\r\n"
+        "12345678";
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, ResponseBuilder_200) {

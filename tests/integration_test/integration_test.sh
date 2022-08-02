@@ -28,7 +28,7 @@ COMMAND_MAKE_DC_BUILD="make dc-build"
 function do_single_command_check(){
     #引数で与えられたコマンドを実行し、OK/NGを判定。
     $@ > /dev/null 2>&1
-    if [ $? -eq 0 ] ;then
+    if [ $? -eq ${EXPECTED_EXIT_STATUS} ] ;then
 		printf "${GREEN}OK${NC}"
 	else
 		printf "${RED}NG${NC}"
@@ -49,15 +49,12 @@ function do_test() {
     nc localhost 8080 < ${REQUEST_FILE_NAME} > ${ACTUAL_FILE_NAME} 2>&1
 
     #---個別チェックの実行---
+    EXPECTED_EXIT_STATUS=0;
+
     # 1行目のstatus-lineの完全一致判定
 	echo -n "  header line: "
     PICKUP_CMD="sed -n 1p"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
-
-#    # 3行目のtimestampなので失敗想定のテスト(結合テスト自体の動作確認用)
-#	echo -n "  time line: "
-#    PICKUP_CMD="sed -n 3p"
-#    do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
 	echo -n "  Content-Type: "
     PICKUP_CMD="grep Content-Type:"
@@ -83,8 +80,23 @@ function do_test() {
     PICKUP_CMD="grep <center>webserv"
     do_single_command_check diff <(${PICKUP_CMD} ${ACTUAL_FILE_NAME}) <(${PICKUP_CMD} ${EXPECTED_FILE_NAME})
 
+
+    EXPECTED_EXIT_STATUS=1;
+    # ログにFATALレベル出力がないことを確認する。
+    echo -n "  log check \"FATAL\": "
+    PICKUP_CMD="grep FATAL ./log/log.txt"
+    do_single_command_check ${PICKUP_CMD}
+
+    # 正常系テストでは、ログにERRORレベル出力がないことを確認する。
+    if [ ${IS_ERROR_TEST} -eq 0 ]; then
+        echo -n "  log check \"ERROR\": "
+        PICKUP_CMD="grep ERROR ./log/log.txt"
+        do_single_command_check ${PICKUP_CMD}
+    fi
+
+
     # サマリーの出力
-    echo -n "[${CONFIG_NO}-${REQUEST_NO}]test finish. Conclusion:"
+    echo -n "[${CONFIG_NO}][${REQUEST_NO}]test finish. Conclusion:"
 	if [ $IS_OK -eq 1 ] ; then
         OK_SUM=$(( ${OK_SUM}+1))
 		printf " ${GREEN}[✓]${NC}\n"
@@ -104,82 +116,3 @@ function start_server_container() {
     docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv bash /usr/local/bin/start.sh &
     sleep 1 #コンテナでのwebservプロセス起動待ち。makeは待たないので、1秒程度でOK。
 }
-
-#コンテナ直近化のために、冒頭に一度だけコンテナビルドを行う
-echo "Building docker container for test"
-${COMMAND_MAKE_DC_BUILD} > /dev/null 2>&1
-
-echo "test case means : [config][request]"
-echo ""
-
-#ひとつひとつのテストを個別に実行することもできる。
-#CONFIGを変更した後はstart_server_containerを実行すること。
-    CONFIG_NO=default.conf
-    start_server_container
-
-        REQUEST_NO=GET_simple
-        do_test
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=autoindex_on.conf
-    start_server_container
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=return_on.conf
-    start_server_container
-
-        REQUEST_NO=GET_directory
-        do_test
-
-    CONFIG_NO=error_page.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_multi.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_override.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_not_exist.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=error_page_same_code.conf
-    start_server_container
-
-        REQUEST_NO=GET_incorrect_path
-        do_test
-
-    CONFIG_NO=client_max_body_size_on_location.conf
-    start_server_container
-
-        REQUEST_NO=POST_hello_world
-        do_test
-
-        REQUEST_NO=POST_hello_world_chunked
-        do_test
-
-echo    "----------------------------"
-echo -n "ALL test finish. Final Conclusion:"
-if [ ${NG_SUM} -eq 0 ] ; then
-    printf " ${GREEN}[✓](OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
-    exit 0
-else
-    printf " ${RED}[-](OK:${OK_SUM} / NG:${NG_SUM})${NC}\n"
-    exit 1
-fi

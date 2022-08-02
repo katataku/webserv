@@ -2,7 +2,9 @@
 
 #include <string>
 
+#include "HTTPException.hpp"
 #include "HTTPResponse.hpp"
+#include "ResponseBuilder.hpp"
 #include "Transaction.hpp"
 
 Worker::Worker() : logging_(Logging(__FUNCTION__)) {}
@@ -38,7 +40,9 @@ void Worker::Exec(Socket **socket_ptr) {
             socket->Send(response->GetResponseString());
             this->request_facade_->Finish(socket_ptr);
         }
-    } catch (std::exception &e) {
+    } catch (HTTPException &e) {
         this->logging_.Debug(e.what());
+        // RequestのエラーはServerLocationの情報を使えないのでは？
+        //        return ResponseBuilder::BuildError(e.status_code(), sl);
     }
 }

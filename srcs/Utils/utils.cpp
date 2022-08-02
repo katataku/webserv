@@ -89,6 +89,20 @@ std::string Trim(const std::string& s, const std::string& chars) {
     return RightTrim(LeftTrim(s, chars), chars);
 }
 
+std::string ToUpper(std::string s) {
+    for (std::string::size_type i = 0; i < s.size(); i++) {
+        s[i] = std::toupper(s[i]);
+    }
+    return s;
+}
+
+std::string ToLower(std::string s) {
+    for (std::string::size_type i = 0; i < s.size(); i++) {
+        s[i] = std::tolower(s[i]);
+    }
+    return s;
+}
+
 bool StartsWith(const std::string& s, const std::string& prefix) {
     return s.find(prefix, 0) == 0;
 }
@@ -140,7 +154,8 @@ std::string SkipLine(const std::string& s) {
 
 // TODO(iyamada) ファイルパスとして扱うべき文字を追加
 bool IsPathChar(const char c) {
-    return c == '/' || c == '_' || c == '.' || IsAlpha(c) || IsDigit(c);
+    return c == '/' || c == '_' || c == '.' || c == '-' || IsAlpha(c) ||
+           IsDigit(c);
 }
 bool IsURIChar(const char c) { return c == ':' || IsPathChar(c); }
 
