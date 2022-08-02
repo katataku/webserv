@@ -1,0 +1,130 @@
+name: valgrind
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "sample_data"
+      - "README.md"
+
+jobs:
+  GET_cgi_error_exit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh GET_cgi_error_exit.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
+
+  GET_directory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh GET_directory.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
+
+  GET_incorrect_path:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh GET_incorrect_path.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
+
+  GET_incorrect_py_path:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh GET_incorrect_py_path.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
+
+  GET_simple:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh GET_simple.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
+
+  POST_hello_world:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh POST_hello_world.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
+
+  POST_hello_world_chunked:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: compose-build
+        shell: bash
+        run: make dc-build
+      - name: valgrind
+        shell: bash
+        run: bash ./tests/valgrind/valgrind.sh POST_hello_world_chunked.txt
+      - name: summary log
+        shell: bash
+        run: cat ./log/summary-valgrind.log
+      - name: log check
+        shell: bash
+        run: bash ./tests/valgrind/log_check.sh
