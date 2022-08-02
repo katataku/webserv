@@ -67,6 +67,8 @@ TEST_F(HTTPTest, parse_body_by_chuncked_onetime) {
         "\r\n"
         "6\r\nhello,\r\n"
         "6\r\nworld!\r\n"
+        "a\r\n42Tokyo!!!\r\n"
+        "A\r\n42Tokyo!!!\r\n"
         "0\r\n\r\n");
     ASSERT_EQ(req.method(), "POST");
     ASSERT_EQ(req.request_target(), "/cgi-bin/file_manager.py");
@@ -74,7 +76,7 @@ TEST_F(HTTPTest, parse_body_by_chuncked_onetime) {
     ASSERT_EQ(req.host(), "test");
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "chunked");
-    ASSERT_EQ(req.request_body(), "hello,world!");
+    ASSERT_EQ(req.request_body(), "hello,world!42Tokyo!!!42Tokyo!!!");
 }
 
 TEST_F(HTTPTest, parse_body_by_chuncked) {
@@ -93,6 +95,20 @@ TEST_F(HTTPTest, parse_body_by_chuncked) {
     ASSERT_EQ(req.content_length(), -1);
     ASSERT_EQ(req.transfer_encoding(), "chunked");
     ASSERT_EQ(req.request_body(), "hello,world!");
+}
+
+TEST_F(HTTPTest, invalid_chunk_size) {
+    HTTPRequest req = HTTPRequest();
+    std::string str =
+        "POST /cgi-bin/file_manager.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Transfer-Encoding: chunked\r\n"
+        "\r\n"
+        "g\r\nhello,\r\n"
+        "6\r\nworld!\r\n"
+        "0\r\n\r\n";
+    req.Parse("str");
+    ASSERT_THROW(req.Parse(str), HTTPException);
 }
 
 TEST_F(HTTPTest, remove_dot_segment) {
