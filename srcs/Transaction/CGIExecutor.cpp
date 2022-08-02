@@ -105,13 +105,13 @@ static int read(int fd, std::string *ret) {
 }
 
 // タイムアウトすると1を返す
-static int wait_until(pid_t pid, int *status, int second) {
+static int WaitUntil(pid_t pid, int *status, int second) {
     int cnt = 0;
     int step_us = 10000;  // 10ms
     int target = second * 1000000 / step_us;
     while (waitpid(pid, status, WNOHANG) == 0) {
         if (cnt == target) {
-            kill(pid, SIGKILL);
+            kill(pid, SIGKILL);  // 子プロセスをkill
             return 1;
         }
         usleep(step_us);
@@ -120,9 +120,46 @@ static int wait_until(pid_t pid, int *status, int second) {
     return 0;
 }
 
-static void close_pipe(int pipe[2]) {
+static void ClosePipe(int pipe[2]) {
     close(pipe[0]);
     close(pipe[1]);
+}
+
+static void InstallIgnoreSIGPIPEHandler() {
+    struct sigaction ignore_act;
+    ignore_act.sa_handler = SIG_IGN;
+    if (sigaction(SIGPIPE, &ignore_act, NULL) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+}
+
+static int Pipe(int *fds) {
+    if (pipe(fds) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return 0;
+}
+
+static pid_t Fork() {
+    pid_t pid = fork();
+    if (pid == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return pid;
+}
+
+static int Close(int fd) {
+    if (close(fd) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return 0;
+}
+
+static int Read(int fd, std::string *buf) {
+    if (read(fd, buf) == -1) {
+        throw std::runtime_error(strerror(errno));
+    }
+    return 0;
 }
 
 // TODO(iyamada) エラー処理
@@ -130,60 +167,57 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     logging_.Debug("CGIExec start");
     int pipe_to_cgi[2], pipe_to_serv[2];
 
-    if (pipe(pipe_to_cgi) == -1) {
-        throw HTTPException(500);
-    }
+    try {
+        // SIGPIPEが送信されるとプロセスが終了するのでignore
+        InstallIgnoreSIGPIPEHandler();
 
-    if (pipe(pipe_to_serv) == -1) {
-        close_pipe(pipe_to_cgi);
-        throw HTTPException(500);
-    }
+        Pipe(pipe_to_cgi);
+        Pipe(pipe_to_serv);
 
-    pid_t pid = fork();
-    if (pid == -1) {
-        close_pipe(pipe_to_cgi);
-        close_pipe(pipe_to_serv);
-        throw HTTPException(500);
-    }
-
-    if (pid == 0) {
-        // 必要ないパイプはクローズ
-        close(pipe_to_cgi[1]);
-        close(pipe_to_serv[0]);
-
-        dup2(pipe_to_cgi[0], STDIN_FILENO);
-        dup2(pipe_to_serv[1], STDOUT_FILENO);
-        execve(req.path(), req.arg(), req.env());
-        // execvが-1を返すとき、子プロセスを終了するためexit
-        exit(1);
-    }
-    // 必要ないパイプはクローズ
-    close(pipe_to_cgi[0]);
-    close(pipe_to_serv[1]);
-
-    if (req.ShouldSendRequestBody()) {
-        if (write(pipe_to_cgi[1], req.body()) == -1) {
-            kill(pid, SIGKILL);
-            close(pipe_to_cgi[1]);
-            close(pipe_to_serv[0]);
-            throw HTTPException(500);
+        pid_t pid = Fork();
+        if (pid == 0) {
+            // 必要ないパイプはクローズ
+            if (close(pipe_to_cgi[1]) == -1 || close(pipe_to_serv[0]) == -1 ||
+                dup2(pipe_to_cgi[0], STDIN_FILENO) == -1 ||
+                dup2(pipe_to_serv[1], STDOUT_FILENO) == -1) {
+                exit(1);
+            }
+            execve(req.path(), req.arg(), req.env());
+            // execvが-1を返すとき、子プロセスを終了するためのexit
+            exit(1);
         }
-    }
-    close(pipe_to_cgi[1]);
+        // 必要ないパイプはクローズ
+        Close(pipe_to_cgi[0]);
+        Close(pipe_to_serv[1]);
 
-    int exit_status = 0;
-    if (wait_until(pid, &exit_status, 5) != 0 || exit_status != 0) {
-        close(pipe_to_serv[0]);
+        if (req.ShouldSendRequestBody()) {
+            if (write(pipe_to_cgi[1], req.body()) == -1) {
+                kill(pid, SIGKILL);  // 子プロセスをkill
+                throw std::runtime_error(strerror(errno));
+            }
+        }
+        Close(pipe_to_cgi[1]);
+
+        int exit_status = 0;
+        if (WaitUntil(pid, &exit_status, 5) != 0) {
+            throw std::runtime_error("Timeout during CGI program execution");
+        }
+        if (exit_status != 0) {
+            throw std::runtime_error("Failed to exit CGI program properly");
+        }
+
+        std::string buf;
+        Read(pipe_to_serv[0], &buf);
+
+        logging_.Debug("CGIExec finish");
+        return CGIResponse(std::string(buf));
+    } catch (const std::exception &e) {
+        logging_.Error(e.what());
+        // オープンしていないfdをcloseしても-1がリターンされるだけなので、とりあえずclose
+        ClosePipe(pipe_to_cgi);
+        ClosePipe(pipe_to_serv);
         throw HTTPException(500);
     }
-    logging_.Debug("CGIExec finish wait: exit_status=" + numtostr(exit_status));
 
-    std::string buf;
-    if (read(pipe_to_serv[0], &buf) != 0) {
-        close(pipe_to_serv[0]);
-        throw HTTPException(500);
-    }
-
-    logging_.Debug("CGIExec finish");
-    return CGIResponse(std::string(buf));
+    return CGIResponse(std::string(""));
 }
