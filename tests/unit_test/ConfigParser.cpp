@@ -988,6 +988,16 @@ TEST_F(ConfigParserDeathTest, invalid_limit_except) {
                 "Error: \".*\" directive invalid value .*");
 }
 
+TEST_F(ConfigParserDeathTest, invalid_limit_except_method) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "limit_except_invalid_method.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
 TEST_F(ConfigParserDeathTest, invalid_autoindex) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/error/invalid_value/"
