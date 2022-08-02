@@ -12,39 +12,16 @@ CGIResponse::CGIResponse(CGIResponse const &other) { *this = other; }
 void CGIResponse::ParseStatusLine(const std::string &line) {
     std::string l = SkipSpace(Consume(line, "Status:"));
     std::string status_code = GetValueCharacters(l);
-    if (IsInteger(status_code)) {
-        return;
+    if (!IsInteger(status_code)) {
+        throw HTTPException(500);
     }
     int c = ToInteger(status_code);
     if (c < 100 || 599 < c) {
-        return;
+        throw HTTPException(500);
     }
     this->status_code_ = status_code;
     l = SkipSpace(ConsumeValueCharacters(l));
     this->reason_phrase_ = GetValueCharacters(l);
-}
-
-CGIResponse::CGIResponse(std::string const &resp) {
-    std::string line = resp;
-
-    for (std::string line = resp; !line.empty();
-         line = SkipString(line, "\n")) {
-        // `Status:`から始まる行にステータスコードがある
-        if (StartsWith(line, "Status:")) {
-            this->ParseStatusLine(line);
-            continue;
-        }
-
-        // lineの先頭文字が改行だと空行を表すはずなので、それ以降はbody
-        if (StartsWith(line, "\n")) {
-            line = Consume(line, "\n");
-            this->body_ = line;
-            return;
-        }
-    }
-
-    // ここに到達するとレスポンスが不正
-    throw HTTPException(500);
 }
 
 CGIResponse &CGIResponse::operator=(CGIResponse const &other) {
@@ -72,6 +49,46 @@ HTTPResponse *CGIResponse::ToHTTPResponse() {
     http->set_response_body(this->body_);
 
     return http;
+}
+
+static bool StartsWithHeader(const std::string &line) {
+    return StartsWith(line, "Content-Type:") || StartsWith(line, "Location:") ||
+           StartsWith(line, "X-CGI-");
+}
+
+CGIResponse CGIResponse::Parse(const std::string &resp) {
+    CGIResponse cgi_resp;
+
+    std::string line = resp;
+    bool is_exist_header = false;
+
+    for (std::string line = resp; !line.empty();
+         line = SkipString(line, "\n")) {
+        // `Status:`から始まる行にステータスコードがある
+        if (StartsWith(line, "Status:")) {
+            cgi_resp.ParseStatusLine(line);
+            is_exist_header = true;
+            continue;
+        }
+
+        if (StartsWithHeader(line)) {
+            is_exist_header = true;
+            continue;
+        }
+
+        // lineの先頭文字が改行だと空行を表すはずなので、それ以降はbody
+        if (StartsWith(line, "\n")) {
+            if (!is_exist_header) {
+                throw HTTPException(500);
+            }
+            line = Consume(line, "\n");
+            cgi_resp.body_ = line;
+            return cgi_resp;
+        }
+    }
+
+    // ここに到達するとレスポンスが不正
+    throw HTTPException(500);
 }
 
 void CGIResponse::set_status_code(const std::string &status_code) {

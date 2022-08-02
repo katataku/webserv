@@ -210,7 +210,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         Read(pipe_to_serv[0], &buf);
 
         logging_.Debug("CGIExec finish");
-        return CGIResponse(std::string(buf));
+        return CGIResponse::Parse(std::string(buf));
     } catch (const std::exception &e) {
         logging_.Error(e.what());
         // オープンしていないfdをcloseしても-1がリターンされるだけなので、とりあえずclose
@@ -219,5 +219,5 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         throw HTTPException(500);
     }
 
-    return CGIResponse(std::string(""));
+    return CGIResponse::Parse("");
 }

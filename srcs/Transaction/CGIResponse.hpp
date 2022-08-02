@@ -10,13 +10,14 @@ class CGIResponse {
  public:
     CGIResponse();
     CGIResponse(CGIResponse const &other);
-    explicit CGIResponse(std::string const &resp);
     CGIResponse &operator=(CGIResponse const &other);
     ~CGIResponse();
 
     HTTPResponse *ToHTTPResponse();
 
     void set_status_code(const std::string &status_code);
+
+    static CGIResponse Parse(const std::string &resp);
 
  private:
     std::string status_code_;
