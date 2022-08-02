@@ -352,6 +352,84 @@ TEST_F(ConfigParserTest, client_max_body_size_on_http) {
               InitialValues::kClientMaxBodySize);
 }
 
+TEST_F(ConfigParserTest, limit_except_delete) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "limit_except_delete.conf");
+    WebservConfig conf = confproc.Exec();
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.auto_index(), "off");
+    std::set<std::string> expect;
+    expect.insert("DELETE");
+    ASSERT_EQ(locate_context.allow_methods(), expect);
+}
+
+TEST_F(ConfigParserTest, limit_except_get) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "limit_except_get.conf");
+    WebservConfig conf = confproc.Exec();
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.auto_index(), "off");
+    std::set<std::string> expect;
+    expect.insert("GET");
+    ASSERT_EQ(locate_context.allow_methods(), expect);
+}
+
+TEST_F(ConfigParserTest, limit_except_post) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "limit_except_post.conf");
+    WebservConfig conf = confproc.Exec();
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.auto_index(), "off");
+    std::set<std::string> expect;
+    expect.insert("POST");
+    ASSERT_EQ(locate_context.allow_methods(), expect);
+}
+
+TEST_F(ConfigParserTest, limit_except_mix) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "limit_except_mix.conf");
+    WebservConfig conf = confproc.Exec();
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.auto_index(), "off");
+    std::set<std::string> expect;
+    expect.insert("POST");
+    expect.insert("DELETE");
+    expect.insert("GET");
+    ASSERT_EQ(locate_context.allow_methods(), expect);
+}
+
 class ConfigParserDeathTest : public ::testing::Test {
  protected:
     static void SetUpTestCase() {}
