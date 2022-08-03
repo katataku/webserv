@@ -80,14 +80,9 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
     this->logging_.Debug("epoll_wait nready:" + numtostr(nready));
 
     for (int i = 0; i < nready; ++i) {
-        std::string port = this->fd_port_map_[this->GetFdFromEpollFdSetAt(i)];
-        if (this->IsListenFd(this->GetFdFromEpollFdSetAt(i))) {
-            sockets.push_back(
-                new Socket(this->GetFdFromEpollFdSetAt(i), true, port));
-        } else {
-            sockets.push_back(
-                new Socket(this->GetFdFromEpollFdSetAt(i), false, port));
-        }
+        int fd = this->GetFdFromEpollFdSetAt(i);
+        std::string port = this->fd_port_map_[fd];
+        sockets.push_back(new Socket(fd, this->IsListenFd(fd), port));
     }
 
     this->logging_.Debug("WaitAndGetReadySockets");
