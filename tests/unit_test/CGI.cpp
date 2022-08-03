@@ -77,7 +77,7 @@ TEST_F(CGITest, delete_cgi) {
 
     HTTPRequest http_req = HTTPRequest();
     http_req.Parse(
-        "DELETE /sample_data/cgi-bin/cgi_test.py HTTP/1.11\r\n"
+        "DELETE /sample_data/cgi-bin/cgi_test.py HTTP/1.1\r\n"
         "Host: test\r\n"
         "\r\n");
 
