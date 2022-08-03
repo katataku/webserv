@@ -36,7 +36,6 @@ bool ServerLocation::IsValidBodySize(int body_size) const {
 
 bool ServerLocation::IsRedirect() const { return !this->redirect_url_.empty(); }
 
-// TODO(ahayashi): 実装する。utilsに移してもいいかもしれない。
 static std::string GetExtension(std::string path) {
     std::string::size_type dot_at = path.find_last_of(".");
     if (dot_at == std::string::npos) {
