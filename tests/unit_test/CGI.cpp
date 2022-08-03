@@ -36,7 +36,6 @@ TEST_F(CGITest, hello_cgi) {
 
     delete http_resp;
 
-    // ASSERT_EQ(http_resp->status_code(), 200);
     ASSERT_EQ(http_resp->response_body(), "hello from cgi\n");
 }
 

@@ -38,8 +38,11 @@ bool ServerLocation::IsRedirect() const { return !this->redirect_url_.empty(); }
 
 // TODO(ahayashi): 実装する。utilsに移してもいいかもしれない。
 static std::string GetExtension(std::string path) {
-    (void)path;
-    return "py";
+    std::string::size_type dot_at = path.find_last_of(".");
+    if (dot_at == std::string::npos) {
+        return "";
+    }
+    return path.substr(dot_at + 1);
 }
 
 bool ServerLocation::IsCGI(std::string path) const {
