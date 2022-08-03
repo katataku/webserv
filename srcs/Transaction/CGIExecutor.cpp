@@ -65,6 +65,10 @@ extern char **environ;
 
 static int Execve(const std::string &path, std::vector<std::string> arg,
                   std::map<std::string, std::string> env) {
+    if (!IsExistRegularFile(path)) {
+        throw HTTPException(404);
+    }
+
     char **av = MakeArg(arg);
     ResisterEnv(env);
 
