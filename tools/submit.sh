@@ -3,8 +3,10 @@
 SRC_DIR=$PWD
 TARGET_DIR=$PWD/submit
 
-cp -r "$SRC_DIR"/srcs "$TARGET_DIR"
+# コピー前に提出用ディレクトリのファイルを削除する
+rm -rf "$TARGET_DIR"/*
 cp -r "$SRC_DIR"/docs "$TARGET_DIR"
+cp -r "$SRC_DIR"/srcs "$TARGET_DIR"
 cp -r "$SRC_DIR"/test_data "$TARGET_DIR"
 cp -r "$SRC_DIR"/sample_data "$TARGET_DIR"
 cp -r "$SRC_DIR"/.gitignore "$TARGET_DIR"
