@@ -60,24 +60,13 @@ void Socket::Send(std::string data) const {
 std::string Socket::Recv() const {
     char buf[kBufferSize];
     ssize_t recvsize = 0;
-    std::string data;
 
-    for (;;) {
-        recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
-        if (recvsize == -1) {       // Error occured
-            if (errno == EAGAIN) {  // No data in socket buffer
-                break;
-            }
-            throw std::runtime_error("Error: recv " +
-                                     std::string(strerror(errno)));
-        }
-        if (recvsize == 0) {  // Client closes sockets
-            break;
-        }
-        buf[recvsize] = '\0';
-        std::string bufstr = std::string(buf);
-        data += bufstr;
+    recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
+    if (recvsize == -1) {
+        throw std::runtime_error("Error: recv " + std::string(strerror(errno)));
     }
+    buf[recvsize] = '\0';
+    std::string data = std::string(buf);
 
     return data;
 }
