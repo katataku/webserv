@@ -45,7 +45,7 @@ TEST_F(CGITest, post_cgi) {
     http_req.Parse(
         "POST /sample_data/cgi-bin/cgi_test.py HTTP/1.1\r\n"
         "Host: test\r\n"
-        "Content-Length:13\r\n"
+        "Content-Length:12\r\n"
         "\r\n"
         "hello world\n");
 
