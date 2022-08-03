@@ -111,7 +111,6 @@ void ServerLocation::InsertErrorPages(
     }
 }
 
-// TODO(iyamada) HEADも追加するかも
 void ServerLocation::SetDefaultAllowMethods() {
     this->allow_methods_.insert("GET");
     this->allow_methods_.insert("POST");

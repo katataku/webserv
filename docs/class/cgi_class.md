@@ -122,7 +122,6 @@ class CGIExecutor {
       }
       close(pipe_to_cgi[1])
       int exit_status
-      // TODO CGIプログラムがクラッシュ等で終了ステータス0以外で終了した時
       wait(&exit_status)
       string res = Read(pipe_to_serv[0]) // Readは適当に実装してください
       return CGIResponse(res)
