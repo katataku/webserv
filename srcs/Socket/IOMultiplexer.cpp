@@ -103,7 +103,7 @@ void IOMultiplexer::MakeNonBlock(int fd) {
 }
 
 void IOMultiplexer::AddFdToEpollFdSet(int fd) {
-    this->ev_.events = EPOLLIN | EPOLLET;
+    this->ev_.events = EPOLLIN;
     this->ev_.data.fd = fd;
     if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, fd, &this->ev_) == -1) {
         this->DestorySockets();
@@ -113,6 +113,7 @@ void IOMultiplexer::AddFdToEpollFdSet(int fd) {
 
 void IOMultiplexer::Accept(Socket const &socket) {
     int conn_fd = socket.Accept();
+    // キューがいっぱいの時は例外を投げずそのまま続行
     if (conn_fd < 0) {
         return;
     }
