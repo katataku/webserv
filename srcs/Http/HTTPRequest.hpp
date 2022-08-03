@@ -34,7 +34,6 @@ class HTTPRequest {
     std::string transfer_encoding() const;
     std::string request_body() const;
     std::string canonical_path() const;
-    std::map<std::string, std::string> queries() const;
     bool is_finish_to_read_header() const;
     bool is_finish_to_read_body() const;
 
@@ -51,7 +50,7 @@ class HTTPRequest {
     std::string request_target_;
     std::string host_;
     int content_length_;
-    unsigned int chunked_rest_;
+    int chunked_rest_;
     std::string content_type_;
     std::string transfer_encoding_;
     std::string request_body_;

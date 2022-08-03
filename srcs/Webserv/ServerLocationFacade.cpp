@@ -39,7 +39,6 @@ ServerLocationFacade::~ServerLocationFacade() {}
 
 // 仮想サーバーの決定 -> pathの決定という順番で処理を行う
 // pathについてはtrailing slashがある前提で実装している
-// TODO(ahayashi): 相対パスの解決
 ServerLocation ServerLocationFacade::Choose(std::string port, std::string host,
                                             std::string path) {
     logging_.Debug("Choose start");

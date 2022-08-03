@@ -2,12 +2,11 @@
 
 #include <string>
 
-const std::string DefaultValues::kServerName = "";  // NOLINT
-// TODO(iyamada)
-// デフォルトのpathはどうするか。正規表現で全部マッチみたいになってそう。
-const std::string DefaultValues::kPath = "";          // NOLINT
-const std::string DefaultValues::kIndexPage = "";     // NOLINT
-const std::string DefaultValues::kRedirectUrl = "";   // NOLINT
+const std::string DefaultValues::kServerName = "";   // NOLINT
+const std::string DefaultValues::kPath = "";         // NOLINT
+const std::string DefaultValues::kIndexPage = "";    // NOLINT
+const std::string DefaultValues::kRedirectUrl = "";  // NOLINT
+// TODO(hayashi-ay): aliasのデフォルト値を設定する
 const std::string DefaultValues::kAlias = "";         // NOLINT
 const std::string DefaultValues::kCgiExtension = "";  // NOLINT
 const int DefaultValues::kPort = 80;

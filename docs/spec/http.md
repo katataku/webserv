@@ -66,6 +66,8 @@ Syntax: absolute-path [ "?" query ]
 
 - queryは、「?」+「変数名」+「=」+「変数の値」というのが、基本構造になっている。パラメーターが複数ある場合は「&」でつないでいく。
 
+- queryは結局無視されている
+
 Example:
 
 `http://www.example.org/where?q=now`というURLへのアクセスの例

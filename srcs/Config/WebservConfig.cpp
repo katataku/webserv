@@ -172,7 +172,6 @@ static std::vector<ServerLocation> CreateWithServerContext(
         serverコンテキストで設定できない値
     */
     // allow_methodsのデフォルト値は'GET', 'POST', 'DELETE'。
-    // TODO(iyamada) POSTはどうする？
     serv_sv.SetDefaultAllowMethods();
 
     // aliasはServerContextにない
@@ -180,7 +179,6 @@ static std::vector<ServerLocation> CreateWithServerContext(
 
     serv_sv.set_cgi_extension(DefaultValues::kCgiExtension);
 
-    // TODO(iyamada) デフォルトのServerLocationのpathはどうするか
     serv_sv.set_path(DefaultValues::kPath);
 
     /*
