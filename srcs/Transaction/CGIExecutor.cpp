@@ -65,10 +65,6 @@ extern char **environ;
 
 static int Execve(const std::string &path, std::vector<std::string> arg,
                   std::map<std::string, std::string> env) {
-    if (!IsExistRegularFile(path)) {
-        throw HTTPException(404);
-    }
-
     char **av = MakeArg(arg);
     ResisterEnv(env);
 
@@ -162,6 +158,11 @@ static std::string Read(int fd) {
 // TODO(iyamada) エラー処理
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     logging_.Debug("CGIExec start");
+
+    if (!IsExistRegularFile(req.path())) {
+        throw HTTPException(404);
+    }
+
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     try {
