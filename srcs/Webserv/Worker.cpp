@@ -42,8 +42,14 @@ void Worker::Exec(Socket **socket_ptr) {
             this->request_facade_->Finish(socket_ptr);
         }
     } catch (HTTPException &e) {
-        this->logging_.Debug(e.what());
-        // RequestのエラーはServerLocationの情報を使えないのでは？
-        //        return ResponseBuilder::BuildError(e.status_code(), sl);
+        // nginxの挙動に合わせる
+        // RequestのParse時のエラーはserverコンテキストの情報だけをみていそう。
+        ServerLocation sl = this->server_location_facade_->Choose(
+            socket->port(), request->host(), "");
+        HTTPResponse *response =
+            ResponseBuilder::BuildError(e.status_code(), &sl);
+        socket->Send(response->GetResponseString());
+        delete response;
+        this->request_facade_->Finish(socket_ptr);
     }
 }

@@ -1,0 +1,4 @@
+GET /hello_world.html HTTP/3.0
+Host: localhost:8080
+Connection: close
+
