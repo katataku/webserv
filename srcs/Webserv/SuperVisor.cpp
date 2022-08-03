@@ -1,5 +1,7 @@
 #include "SuperVisor.hpp"
 
+#include <stdlib.h>
+
 #include <string>
 #include <vector>
 
@@ -25,23 +27,29 @@ SuperVisor::SuperVisor(ServerLocationFacade *facade)
 
 void SuperVisor::Watch() {
     std::vector<std::string> ports = this->facade_->GetPorts();
-    IOMultiplexer iomul(ports);
 
-    this->logging_.Debug("start loop");
+    try {
+        IOMultiplexer iomul(ports);
 
-    while (true) {
-        std::vector<Socket *> sockets = iomul.WaitAndGetReadySockets();
-        for (std::vector<Socket *>::iterator itr = sockets.begin();
-             itr != sockets.end(); ++itr) {
-            if ((*itr)->is_listening()) {
-                iomul.Accept(*(*itr));
-                delete *itr;
-            } else {
-                int fd = (*itr)->sock_fd();
-                Worker worker(this->facade_);
-                worker.Exec(&(*itr));
-                if (*itr == NULL) iomul.CloseFd(fd);
+        this->logging_.Debug("start loop");
+
+        while (true) {
+            std::vector<Socket *> sockets = iomul.WaitAndGetReadySockets();
+            for (std::vector<Socket *>::iterator itr = sockets.begin();
+                 itr != sockets.end(); ++itr) {
+                if ((*itr)->is_listening()) {
+                    iomul.Accept(*(*itr));
+                    delete *itr;
+                } else {
+                    int fd = (*itr)->sock_fd();
+                    Worker worker(this->facade_);
+                    worker.Exec(&(*itr));
+                    if (*itr == NULL) iomul.CloseFd(fd);
+                }
             }
         }
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        std::exit(1);
     }
 }

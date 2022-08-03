@@ -113,6 +113,9 @@ void IOMultiplexer::AddFdToEpollFdSet(int fd) {
 
 void IOMultiplexer::Accept(Socket const &socket) {
     int conn_fd = socket.Accept();
+    if (conn_fd < 0) {
+        return;
+    }
 
     this->MakeNonBlock(conn_fd);
     this->AddFdToEpollFdSet(conn_fd);

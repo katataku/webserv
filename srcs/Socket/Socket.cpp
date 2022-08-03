@@ -94,10 +94,8 @@ int Socket::Accept() const {
 
     int new_socket = accept(this->sock_fd_, &clientaddr, &addrlen);
     if (new_socket < 0) {
-        throw std::runtime_error(MakeSysCallErrorMsg("accept"));
+        this->logging_.Warn("accept: " + std::string(strerror(errno)));
     }
-
-    this->logging_.Debug("Accept");
 
     return new_socket;
 }
