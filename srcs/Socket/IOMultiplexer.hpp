@@ -33,9 +33,8 @@ class IOMultiplexer {
     std::map<int, std::string> fd_port_map_;
 
     void Init(std::vector<std::string> ports);
-    void CreateListenerSocket(const std::string &port);
-    void CreateListenerSockets(const std::vector<std::string> &ports);
-    void DestorySockets();
+    void CreateListenerFds(const std::vector<std::string> &ports);
+    void CreateListenerFd(const std::string &port);
     void AddListenFdsToEpollFdSet();
     void AddFdToEpollFdSet(int fd);
     void CreateEpollInstance();

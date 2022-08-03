@@ -143,6 +143,13 @@ Socket *Socket::OpenListeningSocket(const std::string &port) {
     return new Socket(listenfd, true, port);  // return listen status socket
 }
 
+int Socket::OpenListenFd(const std::string &port) {
+    Socket *listen_sock = Socket::OpenListeningSocket(port);
+    int listen_fd = listen_sock->sock_fd();
+    delete listen_sock;
+    return listen_fd;
+}
+
 bool Socket::is_listening() const {
     this->logging_.Debug("is_listening");
     return this->is_listening_;
