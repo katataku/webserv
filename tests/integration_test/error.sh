@@ -28,6 +28,18 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+        REQUEST_NO=host_not_exist
+        do_test
+
+        REQUEST_NO=method_not_supported
+        do_test
+
+        REQUEST_NO=protocol_version_not_supported
+        do_test
+
+        REQUEST_NO=uri_too_long
+        do_test
+
     CONFIG_NO=client_max_body_size_on_location.conf
     start_server_container
 
