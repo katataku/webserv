@@ -14,12 +14,6 @@ void CGIRequest::PrepareArgs() {
     this->arg_.push_back(this->path_);
 }
 
-// TODO(iyamada) とりあえず適当な値を返す
-static std::string GetPathInfoFromURI(std::string const &uri) {
-    (void)uri;
-    return "";
-}
-
 // TODO(iyamada) 環境変数はデフォ値があるのでそれを詰めた方が無難そう
 void CGIRequest::PrepareEnvs(HTTPRequest const &http) {
     if (http.content_length() == -1) {
@@ -27,7 +21,7 @@ void CGIRequest::PrepareEnvs(HTTPRequest const &http) {
     } else {
         this->env_["CONTENT_LENGTH"] = numtostr<int>(http.content_length());
     }
-    this->env_["PATH_INFO"] = GetPathInfoFromURI(http.request_target());
+    this->env_["PATH_INFO"] = http.canonical_path();
     this->env_["REQUEST_METHOD"] = http.method();
     this->env_["SERVER_PROTOCOL"] = "HTTP/1.1";
 }
