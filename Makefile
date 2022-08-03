@@ -96,6 +96,10 @@ setup: ## Set up hooks for commit
 	cp ./.githooks/pre-commit ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
 
+.PHONY: submit
+submit: ## Move files for submission
+	sh tools/submit.sh
+
 # ------------------------- Rules For Docker ------------------------------
 
 CONTAINER = webserv
