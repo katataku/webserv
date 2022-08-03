@@ -32,9 +32,8 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
     std::ostringstream oss;
 
     if (!ifs) {
-        // TODO(takkatao):
-        // ファイルが存在するが、権限がなくオープンできないときはここに入る。403を返す。
-        return NULL;
+        // ファイルが存在するが、権限がなくオープンできないときはここに入る。
+        throw HTTPException(403);
     }
 
     oss << ifs.rdbuf();
@@ -74,9 +73,8 @@ HTTPResponse *FileReadExecutor::ListDirectoryExec(
     logging_.Debug("ListDirectoryExec starts");
     DIR *dir = opendir(alias_resolved_path.c_str());
     if (dir == NULL) {
-        // TODO(takkatao):
-        // ディレクトリが存在するが、権限がなく内容を確認できないときはここに入る。403を返す。
-        return NULL;
+        // ディレクトリが存在するが、権限がなく内容を確認できないときはここに入る。
+        throw HTTPException(403);
     }
 
     while ((directory_read = readdir(dir)) != NULL) {

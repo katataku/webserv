@@ -40,13 +40,7 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
             FileReadExecutor fre;
             return fre.Exec(*request, *sl);
         }
-        // TODO(takkatao): CGIプログラム以外にPOST, DELETEが来た場合はどうなる？
-        /*
-        if (request->method() == "POST" || request->method() == "DELETE") {
-            throw HTTPException(XXX);
-            //もしくは    return FileWriteExecutor(req, sl);
-        }
-        */
+        // TODO(ahayashi): POST, DELETEの実装
 
         // ここに到達するまでに処理されるべき。到達した場合はErrorレベルでログ出力。
         logging_.Error("Unexpected request incoming. Response 400.");
