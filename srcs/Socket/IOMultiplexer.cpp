@@ -29,12 +29,14 @@ int IOMultiplexer::GetSocketFdAt(int idx) {
 }
 
 void IOMultiplexer::AddListenFdsToEpollFdSet() {
+    epoll_event ev;
+
     for (std::size_t i = 0; i < this->sockets_.size(); ++i) {
-        this->listenfds_.insert(this->GetSocketFdAt(i));
-        this->ev_.events = EPOLLIN;
-        this->ev_.data.fd = this->GetSocketFdAt(i);
-        if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, this->GetSocketFdAt(i),
-                      &this->ev_) == -1) {
+        int fd = this->GetSocketFdAt(i);
+        this->listenfds_.insert(fd);
+        ev.events = EPOLLIN;
+        ev.data.fd = fd;
+        if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, fd, &ev) == -1) {
             this->DestorySockets();
             throw std::runtime_error(MakeSysCallErrorMsg("epoll_ctl"));
         }
@@ -61,18 +63,15 @@ void IOMultiplexer::Init(std::vector<std::string> ports) {
     this->logging_.Debug("Init end");
 }
 
-int IOMultiplexer::GetFdFromEpollFdSetAt(int idx) {
-    return this->events_[idx].data.fd;
-}
-
 bool IOMultiplexer::IsListenFd(int fd) {
     return this->listenfds_.find(fd) != this->listenfds_.end();
 }
 
 std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
     std::vector<Socket *> sockets;
+    epoll_event events[kMaxNEvents];
 
-    int nready = epoll_wait(this->epollfd_, this->events_, kMaxNEvents, -1);
+    int nready = epoll_wait(this->epollfd_, events, kMaxNEvents, -1);
     if (nready == -1) {
         this->DestorySockets();
         throw std::runtime_error(MakeSysCallErrorMsg("epoll_wait"));
@@ -80,7 +79,7 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
     this->logging_.Debug("epoll_wait nready:" + numtostr(nready));
 
     for (int i = 0; i < nready; ++i) {
-        int fd = this->GetFdFromEpollFdSetAt(i);
+        int fd = events[i].data.fd;
         std::string port = this->fd_port_map_[fd];
         sockets.push_back(new Socket(fd, this->IsListenFd(fd), port));
     }
@@ -98,9 +97,11 @@ void IOMultiplexer::MakeNonBlock(int fd) {
 }
 
 void IOMultiplexer::AddFdToEpollFdSet(int fd) {
-    this->ev_.events = EPOLLIN;
-    this->ev_.data.fd = fd;
-    if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, fd, &this->ev_) == -1) {
+    epoll_event ev;
+
+    ev.events = EPOLLIN;
+    ev.data.fd = fd;
+    if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, fd, &ev) == -1) {
         this->DestorySockets();
         throw std::runtime_error(MakeSysCallErrorMsg("epoll_ctl"));
     }

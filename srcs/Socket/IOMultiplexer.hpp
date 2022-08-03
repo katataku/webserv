@@ -30,8 +30,6 @@ class IOMultiplexer {
     std::vector<Socket *> sockets_;
     int epollfd_;
     std::set<int> listenfds_;
-    epoll_event ev_;
-    epoll_event events_[kMaxNEvents];
     std::map<int, std::string> fd_port_map_;
 
     void Init(std::vector<std::string> ports);
@@ -44,7 +42,6 @@ class IOMultiplexer {
     void MakeNonBlock(int fd);
     bool IsListenFd(int fd);
     int GetSocketFdAt(int idx);
-    int GetFdFromEpollFdSetAt(int idx);
 };
 
 #endif  // SRCS_SOCKET_IOMULTIPLEXER_HPP_
