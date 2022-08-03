@@ -4,7 +4,7 @@
 
 > Common Gateway Interface（CGI）\[22\]は、HTTP \[1\]、\[4\]サーバーとCGIスクリプトがクライアント要求に応答する責任を共有できます。
 
-- CGIプログラムは、次のメタ変数（環境変数）と同時に起動される。SCRIPT_NAME、PATH_INFO、QUERY_STRING
+- CGIプログラムは、次のメタ変数（環境変数）と同時に起動される。SCRIPT_NAME、PATH_INFO
 
 ```
 script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra-path> "?" <query-string>

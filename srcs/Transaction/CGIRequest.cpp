@@ -5,8 +5,7 @@
 void CGIRequest::PreparePath(HTTPRequest const &http,
                              ServerLocation const &sl) {
     // CGIプログラムの絶対パス取得
-    // TODO(iyamada) クエリ文字列があったらそれを取り除いたパスにする
-    this->path_ = sl.ResolveAlias(http.request_target());
+    this->path_ = sl.ResolveAlias(http.canonical_path());
 }
 
 void CGIRequest::PrepareArgs() {
@@ -14,7 +13,6 @@ void CGIRequest::PrepareArgs() {
     this->arg_.push_back(this->path_);
 }
 
-// TODO(iyamada) 環境変数はデフォ値があるのでそれを詰めた方が無難そう
 void CGIRequest::PrepareEnvs(HTTPRequest const &http) {
     if (http.content_length() == -1) {
         this->env_["CONTENT_LENGTH"] = "";

@@ -65,11 +65,6 @@ std::string HTTPRequest::canonical_path() const {
     return this->canonical_path_;
 }
 
-std::map<std::string, std::string> HTTPRequest::queries() const {
-    // TODO(takkatao): queryを返すように実装する。
-    return std::map<std::string, std::string>();
-}
-
 bool HTTPRequest::is_finish_to_read_header() const {
     return is_finish_to_read_header_;
 }
