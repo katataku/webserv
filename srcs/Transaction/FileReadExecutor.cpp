@@ -94,8 +94,8 @@ int FileReadExecutor::CheckFileStat(std::string file_path) {
 
     if (stat(file_path.c_str(), &stat_buf) == -1) {
         // Requestされたファイルが存在しない場合に、stat失敗する。
-        logging_.Info("stat failed");
-        logging_.Info(strerror(errno));
+        logging_.Debug("stat failed");
+        logging_.Debug(strerror(errno));
         return STAT_FILE_NOT_EXIST;
     }
     if (S_ISREG(stat_buf.st_mode)) {
