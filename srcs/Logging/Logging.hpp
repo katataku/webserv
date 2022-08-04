@@ -11,7 +11,7 @@
 #endif
 
 #ifndef DEBUG_LEVEL
-#define DEBUG_LEVEL E_DEBUG
+#define DEBUG_LEVEL E_INFO
 #endif
 
 typedef enum { E_FATAL, E_ERROR, E_WARN, E_INFO, E_DEBUG } DEBUG_LEVEL_ENUM;

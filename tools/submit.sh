@@ -10,4 +10,5 @@ cp -r "$SRC_DIR"/srcs "$TARGET_DIR"
 cp -r "$SRC_DIR"/test_data "$TARGET_DIR"
 cp -r "$SRC_DIR"/sample_data "$TARGET_DIR"
 cp -r "$SRC_DIR"/.gitignore "$TARGET_DIR"
+cp -r "$SRC_DIR"/default.conf "$TARGET_DIR"
 sed -n "/# -------------------------- Rules For Test -------------------------------/q;p" "$SRC_DIR"/Makefile > "$TARGET_DIR"/Makefile
