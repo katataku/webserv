@@ -133,12 +133,6 @@ void IOMultiplexer::ChangeEpollOutEvent(int fd) {
     }
 }
 
-void IOMultiplexer::MakeNonBlock(int fd) {
-    if (fcntl(fd, F_SETFL, O_NONBLOCK) != 0) {
-        throw std::runtime_error(MakeSysCallErrorMsg("fcntl"));
-    }
-}
-
 void IOMultiplexer::AddFdToEpollFdSet(int fd) {
     epoll_event ev;
 
@@ -156,7 +150,6 @@ void IOMultiplexer::Accept(Socket const &socket) {
         return;
     }
 
-    //    this->MakeNonBlock(conn_fd);
     this->AddFdToEpollFdSet(conn_fd);
     this->fd_port_map_.insert(
         std::pair<int, std::string>(conn_fd, socket.port()));

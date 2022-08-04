@@ -39,7 +39,6 @@ class IOMultiplexer {
     void AddListenFdsToEpollFdSet();
     void AddFdToEpollFdSet(int fd);
     void CreateEpollInstance();
-    void MakeNonBlock(int fd);
     bool IsListenFd(int fd);
     int GetSocketFdAt(int idx);
 };
