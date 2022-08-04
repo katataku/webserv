@@ -40,7 +40,6 @@ class Node {
     std::list<Node> child_contexts() const;
     NodeKind kind() const;
 
-    // TODO(iyamada) セッターだけど意味的にはAddみたいな名前にしたい
     void set_directive_vals(std::list<std::string> val);
     void set_kind(NodeKind kind);
 
@@ -63,8 +62,6 @@ class Node {
 
     void AssertValueSize(bool cond) const;
 
-    // TODO(iyamada)
-    // どっかでPopするかのと思い、PushにしたけどAddとかの方が直感的かもしれない
     void PushDirective(Node node);
     void PushChildContext(Node node);
 
@@ -85,8 +82,6 @@ class Node {
 
  private:
     NodeKind kind_;
-    // TODO(iyamada)
-    // locationコンテキストの値をdirective_vals_に持たせている。適切な命名か微妙
     std::list<std::string> directive_vals_;
     std::list<Node> child_contexts_;
     std::list<Node> directives_;
