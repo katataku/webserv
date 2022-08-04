@@ -8,6 +8,8 @@
 #include "IExecutor.hpp"
 #include "Logging.hpp"
 
+enum FileStatKind { STAT_FILE_NOT_EXIST, STAT_REGULAR_FILE, STAT_DIRECTORY };
+
 class FileReadExecutor : public IExecutor {
  public:
     FileReadExecutor();
@@ -25,6 +27,7 @@ class FileReadExecutor : public IExecutor {
                                     std::string alias_resolved_uri);
     static std::string BuildListPage(std::string request_uri,
                                      std::vector<std::string> files);
+    int CheckFileStat(std::string file_path);
 };
 
 #endif  // SRCS_TRANSACTION_FILEREADEXECUTOR_HPP_
