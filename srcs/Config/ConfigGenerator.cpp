@@ -38,18 +38,12 @@ static std::set<std::string> MakeMustExistUniqueDirectives() {
     return directives;
 }
 
-// TODO(iyamada) node_をメンバで持つ必要はない
 WebservConfig ConfigGenerator::Generate() {
     return GenerateWebservConfig(this->node_);
 }
 
 WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
     WebservConfig conf;
-
-    if (!node.IsHttpContext()) {
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error("Should be http context");
-    }
 
     std::set<std::string> dirs = MakeMustExistUniqueDirectives();
 
@@ -85,9 +79,6 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             conf.set_index_page(itr->GetValue());
             continue;
         }
-
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error("[GenerateWebservConfig]Unknown directive");
     }
 
     std::list<Node> child_context = node.child_contexts();
@@ -97,9 +88,6 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
             conf.PushServerContext(GenerateServerContext(*itr));
             continue;
         }
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error(
-            "[GenerateWebservConfig]Unknown child_context");
     }
 
     return conf;
@@ -107,11 +95,6 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
 
 ServerContext ConfigGenerator::GenerateServerContext(Node node) {
     ServerContext serv;
-
-    if (!node.IsServerContext()) {
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error("Should be server context");
-    }
 
     std::set<std::string> dirs = MakeMustExistUniqueDirectives();
 
@@ -171,9 +154,6 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             serv.AddErrorPages(itr->GetErrorPages());
             continue;
         }
-
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error("[GenerateServerContext]Unknown directive");
     }
 
     std::list<Node> child_context = node.child_contexts();
@@ -183,9 +163,6 @@ ServerContext ConfigGenerator::GenerateServerContext(Node node) {
             serv.PushLocationContext(GenerateLocationContext(*itr));
             continue;
         }
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error(
-            "[GenerateServerContext]Unknown child_context");
     }
 
     return serv;
@@ -203,11 +180,6 @@ static std::set<std::string> ToSetContainer(std::list<std::string> lis) {
 
 LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
     LocationContext locate;
-
-    if (!node.IsLocationContext()) {
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error("Should be location context");
-    }
 
     std::set<std::string> dirs = MakeMustExistUniqueDirectives();
 
@@ -278,16 +250,6 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
             locate.AddErrorPages(itr->GetErrorPages());
             continue;
         }
-
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error("[GenerateLocationContext]Unknown directive");
-    }
-
-    std::list<Node> child_context = node.child_contexts();
-    if (!child_context.empty()) {
-        // TODO(iyamada) エラー処理
-        throw std::runtime_error(
-            "[GenerateLocationContext]Unknown child_context");
     }
 
     return locate;
