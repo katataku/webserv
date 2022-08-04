@@ -64,6 +64,12 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+    CONFIG_NO=no_location.conf
+    start_server_container
+
+        REQUEST_NO=GET_simple
+        do_test
+
 
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
