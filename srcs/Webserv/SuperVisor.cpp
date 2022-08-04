@@ -51,6 +51,7 @@ void SuperVisor::Watch() {
                             int fd = socket->sock_fd();
                             iomul.ChangeEpollOutEvent(fd);
                         }
+                        delete socket;
                     } else if (socket->is_event_out()) {
                         Worker worker(this->facade_);
                         if (worker.ExecSend(socket)) {
