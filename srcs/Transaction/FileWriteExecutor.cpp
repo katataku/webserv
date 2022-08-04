@@ -49,7 +49,7 @@ static void CreateFileAndWrite(const std::string &path,
                                const std::string &content) {
     std::ofstream ofs(path.c_str());
 
-    if (IsExistRegularFile(path) && !ofs) {
+    if (!ofs) {
         throw HTTPException(500);
     }
 
