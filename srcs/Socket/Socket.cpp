@@ -9,6 +9,9 @@
 
 #include "utils.hpp"
 
+Socket::SocketIOException::SocketIOException(const std::string &what_arg)
+    : std::runtime_error(what_arg) {}
+
 Socket::Socket()
     : sock_fd_(-1), is_listening_(false), logging_(Logging(__FUNCTION__)) {}
 
@@ -46,7 +49,7 @@ void Socket::Send(HTTPResponse *response) const {
     sent_byte =
         send(this->sock_fd_, send_body.c_str(), data_size, MSG_NOSIGNAL);
     if (sent_byte == -1) {
-        throw std::runtime_error(MakeSysCallErrorMsg("send"));
+        throw Socket::SocketIOException(MakeSysCallErrorMsg("send"));
     }
     response->set_sent_bytes(response->sent_bytes() + sent_byte);
 }
@@ -57,7 +60,8 @@ std::string Socket::Recv() const {
 
     recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
     if (recvsize == -1) {
-        throw std::runtime_error("Error: recv " + std::string(strerror(errno)));
+        throw Socket::SocketIOException("Error: recv " +
+                                        std::string(strerror(errno)));
     }
     buf[recvsize] = '\0';
     std::string data = std::string(buf);

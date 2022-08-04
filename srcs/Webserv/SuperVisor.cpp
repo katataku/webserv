@@ -39,26 +39,30 @@ void SuperVisor::Watch() {
                  itr != sockets.end(); ++itr) {
                 Socket *socket = *itr;
 
-                if (socket->is_event_in()) {
-                    if (socket->is_listening()) {
-                        iomul.Accept(*socket);
-                        delete socket;
-                        continue;
+                try {
+                    if (socket->is_event_in()) {
+                        if (socket->is_listening()) {
+                            iomul.Accept(*socket);
+                            delete socket;
+                            continue;
+                        }
+                        Worker worker(this->facade_);
+                        if (worker.ExecReceive(socket)) {
+                            int fd = socket->sock_fd();
+                            iomul.ChangeEpollOutEvent(fd);
+                        }
+                    } else if (socket->is_event_out()) {
+                        Worker worker(this->facade_);
+                        if (worker.ExecSend(socket)) {
+                            int fd = socket->sock_fd();
+                            iomul.CloseFd(fd);
+                            socket->Close();
+                            delete socket;
+                        }
+                    } else {
+                        throw Socket::SocketIOException("epoll fatal event");
                     }
-                    Worker worker(this->facade_);
-                    if (worker.ExecReceive(socket)) {
-                        int fd = socket->sock_fd();
-                        iomul.ChangeEpollOutEvent(fd);
-                    }
-                } else if (socket->is_event_out()) {
-                    Worker worker(this->facade_);
-                    if (worker.ExecSend(socket)) {
-                        int fd = socket->sock_fd();
-                        iomul.CloseFd(fd);
-                        socket->Close();
-                        delete socket;
-                    }
-                } else {
+                } catch (Socket::SocketIOException &e) {
                     this->logging_.Debug("here");
                     RequestFacade *request_facade =
                         RequestFacade::GetInstance();

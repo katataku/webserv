@@ -22,6 +22,11 @@ class Socket {
     Socket &operator=(Socket const &other);
     ~Socket();
 
+    class SocketIOException : public std::runtime_error {
+     public:
+        explicit SocketIOException(const std::string &what_arg);
+    };
+
     void Send(HTTPResponse *response) const;
     std::string Recv() const;
     void Close() const;
