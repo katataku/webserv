@@ -140,6 +140,8 @@ HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                 // nginxは301だけど403にする。
                 throw HTTPException(403);
             }
+            // index_page_stat == STAT_FILE_NOT_EXISTの場合は、
+            // index_pageがない場合と同じ挙動。
         }
         if (sl.IsAutoIndexEnabled()) {
             return ListDirectoryExec(request.canonical_path(),
