@@ -64,6 +64,47 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+    CONFIG_NO=index_on_location.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=index_on_server.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=index_on_http.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=index_not_exists.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=index_not_exists_with_autoindex.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=index_to_directory.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
+
+    CONFIG_NO=index_with_autoindex.conf
+    start_server_container
+
+        REQUEST_NO=GET_directory
+        do_test
 
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
