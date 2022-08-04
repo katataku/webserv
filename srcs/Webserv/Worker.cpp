@@ -59,5 +59,10 @@ bool Worker::ExecSend(Socket *socket) {
     HTTPRequest *request = this->request_facade_->SelectRequest(*socket);
     HTTPResponse *response = request->response();
     socket->Send(response);
-    return response->IsSendAll();
+    bool is_send_all = response->IsSendAll();
+    if (is_send_all) {
+        delete response;
+        this->request_facade_->Finish(socket);
+    }
+    return is_send_all;
 }
