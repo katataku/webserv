@@ -4,6 +4,7 @@
 
 #include "CGIExecutor.hpp"
 #include "FileReadExecutor.hpp"
+#include "FileWriteExecutor.hpp"
 #include "HTTPException.hpp"
 #include "ResponseBuilder.hpp"
 
@@ -40,7 +41,11 @@ HTTPResponse *Transaction::Exec(HTTPRequest *request, ServerLocation *sl) {
             FileReadExecutor fre;
             return fre.Exec(*request, *sl);
         }
-        // TODO(ahayashi): POST, DELETEの実装
+        if (request->method() == "POST") {
+            FileWriteExecutor fwe;
+            return fwe.Exec(*request, *sl);
+        }
+        // TODO(iyamada): DELETEの実装
 
         // ここに到達するまでに処理されるべき。到達した場合はErrorレベルでログ出力。
         logging_.Error("Unexpected request incoming. Response 400.");
