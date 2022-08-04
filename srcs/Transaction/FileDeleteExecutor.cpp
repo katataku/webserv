@@ -55,5 +55,5 @@ HTTPResponse *FileDeleteExecutor::Exec(HTTPRequest const &request,
         throw HTTPException(500);
     }
 
-    return ResponseBuilder::Build(200);
+    return ResponseBuilder::BuildNoBody(200);
 }
