@@ -92,12 +92,26 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
         int fd = events[i].data.fd;
         uint32_t event_bit = events[i].events;
         int event_kind;
-        if (event_bit & EPOLLIN) {
+
+        if (event_bit & EPOLLRDHUP) {
+            this->logging_.Debug("event EPOLLRDHUP");
+            event_kind = EVENT_FATAL;
+        } else if (event_bit & EPOLLERR) {
+            this->logging_.Debug("event EPOLLERR");
+            event_kind = EVENT_FATAL;
+        } else if (event_bit & EPOLLHUP) {
+            this->logging_.Debug("event EPOLLHUP");
+            event_kind = EVENT_FATAL;
+        } else if (event_bit & EPOLLIN) {
+            this->logging_.Debug("event EPOLLIN");
             event_kind = EVENT_IN;
         } else if (event_bit & EPOLLOUT) {
+            this->logging_.Debug("event EPOLLOUT");
             event_kind = EVENT_OUT;
+        } else {
+            this->logging_.Debug("event unexpected");
+            event_kind = EVENT_FATAL;
         }
-        // EPOLLERRの対応
 
         std::string port = this->fd_port_map_[fd];
         sockets.push_back(
@@ -112,7 +126,7 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
 void IOMultiplexer::ChangeEpollOutEvent(int fd) {
     epoll_event ev;
 
-    ev.events = EPOLLOUT;
+    ev.events = EPOLLOUT | EPOLLRDHUP;
     ev.data.fd = fd;
     if (epoll_ctl(this->epollfd_, EPOLL_CTL_MOD, fd, &ev) == -1) {
         throw std::runtime_error(MakeSysCallErrorMsg("epoll_ctl"));
@@ -128,7 +142,7 @@ void IOMultiplexer::MakeNonBlock(int fd) {
 void IOMultiplexer::AddFdToEpollFdSet(int fd) {
     epoll_event ev;
 
-    ev.events = EPOLLIN;
+    ev.events = EPOLLIN | EPOLLRDHUP;
     ev.data.fd = fd;
     if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, fd, &ev) == -1) {
         throw std::runtime_error(MakeSysCallErrorMsg("epoll_ctl"));

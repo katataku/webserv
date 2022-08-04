@@ -12,7 +12,7 @@
 #include "HTTPResponse.hpp"
 #include "Logging.hpp"
 
-enum EventKind { EVENT_IN, EVENT_OUT };
+enum EventKind { EVENT_IN, EVENT_OUT, EVENT_FATAL };
 
 class Socket {
  public:
@@ -32,6 +32,7 @@ class Socket {
     bool is_listening() const;
     bool is_event_in() const;
     bool is_event_out() const;
+    bool is_event_fatal() const;
     int sock_fd() const;
     void set_is_listening(bool cond);
     std::string port() const;

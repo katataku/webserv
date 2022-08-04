@@ -56,7 +56,9 @@ void SuperVisor::Watch() {
                         int fd = socket->sock_fd();
                         iomul.CloseFd(fd);
                     }
-                } else {  // HANGUP
+                } else {
+                    this->logging_.Debug("here");
+                    // fdのclose
                 }
             }
         }

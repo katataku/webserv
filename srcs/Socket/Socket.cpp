@@ -145,6 +145,8 @@ bool Socket::is_event_in() const { return this->event_kind_ == EVENT_IN; }
 
 bool Socket::is_event_out() const { return this->event_kind_ == EVENT_OUT; }
 
+bool Socket::is_event_fatal() const { return this->event_kind_ == EVENT_FATAL; }
+
 int Socket::sock_fd() const { return this->sock_fd_; }
 
 void Socket::set_is_listening(bool cond) { this->is_listening_ = cond; }
