@@ -23,6 +23,7 @@ add_executable(main
         Transaction.cpp
         CGI.cpp
         ServerLocationFacade.cpp
+        ServerLocation.cpp
         Socket.cpp
 )
 

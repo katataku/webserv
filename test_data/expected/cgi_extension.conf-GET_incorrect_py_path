@@ -1,15 +1,15 @@
-HTTP/1.1 500 Internal Server Error
+HTTP/1.1 404 Not Found
 Connection: close
-Content-Length: 208
+Content-Length: 184
 
 <html>
 <head>
-    <title>500 Internal Server Error</title>
+    <title>404 Not Found</title>
 </head>
 
 <body>
     <center>
-        <h1>500 Internal Server Error</h1>
+        <h1>404 Not Found</h1>
     </center>
     <hr>
     <center>webserv/default</center>

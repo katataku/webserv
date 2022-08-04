@@ -39,7 +39,6 @@ HTTPResponse *FileReadExecutor::GetFileExec(std::string file_path) {
     oss << ifs.rdbuf();
 
     logging_.Debug("file read finished");
-    logging_.Debug(oss.str());
     return ResponseBuilder::Build(oss.str());
 }
 

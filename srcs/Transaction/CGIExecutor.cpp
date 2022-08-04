@@ -155,6 +155,11 @@ static std::string Read(int fd) {
 
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     logging_.Debug("CGIExec start");
+
+    if (!IsExistRegularFile(req.path())) {
+        throw HTTPException(404);
+    }
+
     int pipe_to_cgi[2], pipe_to_serv[2];
 
     try {
