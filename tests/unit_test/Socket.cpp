@@ -61,38 +61,3 @@ TEST_F(SocketTest, receive) {
     serv_sock->Close();
     delete serv_sock;
 }
-
-class DISABLED_SocketTest : public ::testing::Test {
- protected:
-    static void SetUpTestCase() {}
-    static void TearDownTestCase() {}
-    virtual void SetUp() {}
-    virtual void TearDown() {}
-};
-
-TEST_F(DISABLED_SocketTest, send) {
-    pid_t pid = fork();
-    if (pid == -1) {
-        return;
-    }
-    if (pid == 0) {
-        Socket* serv_sock = Socket::OpenListeningSocket("8082");
-        int sock_fd = serv_sock->Accept();
-        Socket sock_to_client(sock_fd, false, "8082");
-        sock_to_client.Send("bar");
-        sock_to_client.Close();
-        serv_sock->Close();
-        delete serv_sock;
-        exit(0);
-    }
-    int fd = MakeClient(8082);
-
-    char buf[1028];
-    bzero(buf, 1028);
-    ssize_t byte = read(fd, buf, 1028);
-    buf[byte] = '\0';
-
-    ASSERT_EQ(std::string(buf), "bar");
-
-    close(fd);
-}
