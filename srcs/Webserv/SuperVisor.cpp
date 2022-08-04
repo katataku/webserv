@@ -1,7 +1,6 @@
 #include "SuperVisor.hpp"
 
-#include <stdlib.h>
-
+#include <cstdlib>
 #include <string>
 #include <vector>
 

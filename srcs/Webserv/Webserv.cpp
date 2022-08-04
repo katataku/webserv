@@ -1,5 +1,6 @@
 #include "Webserv.hpp"
 
+#include <cstdlib>
 #include <string>
 #include <vector>
 
