@@ -18,13 +18,11 @@ class CGITest : public ::testing::Test {
 };
 
 TEST_F(CGITest, hello_cgi) {
-    /*
-        GET /sample_data/cgi-bin/cgi_test.py HTTP/1.1
-    */
-    HTTPRequest http_req;
-
-    http_req.set_method("GET");
-    http_req.set_request_target("/sample_data/cgi-bin/cgi_test.py");
+    HTTPRequest http_req = HTTPRequest();
+    http_req.Parse(
+        "GET /sample_data/cgi-bin/cgi_test.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n");
 
     ServerLocation sl;
 
@@ -40,20 +38,15 @@ TEST_F(CGITest, hello_cgi) {
 }
 
 TEST_F(CGITest, post_cgi) {
-    /*
-        POST /sample_data/cgi-bin/cgi_test.py HTTP/1.1
-
-        hello world
-    */
     system("mkdir -p /var/www/html");
 
-    HTTPRequest http_req;
-
-    std::string body = "hello world\n";
-    http_req.set_method("POST");
-    http_req.set_request_target("/sample_data/cgi-bin/cgi_test.py");
-    http_req.set_request_body(body);
-    http_req.set_content_length(body.size());
+    HTTPRequest http_req = HTTPRequest();
+    http_req.Parse(
+        "POST /sample_data/cgi-bin/cgi_test.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "Content-Length:12\r\n"
+        "\r\n"
+        "hello world\n");
 
     ServerLocation sl;
 
@@ -70,7 +63,7 @@ TEST_F(CGITest, post_cgi) {
 
     ss << ifs.rdbuf();
 
-    ASSERT_EQ(ss.str(), body);
+    ASSERT_EQ(ss.str(), "hello world\n");
 
     unlink("/var/www/html/hoge.file");
 
@@ -78,17 +71,14 @@ TEST_F(CGITest, post_cgi) {
 }
 
 TEST_F(CGITest, delete_cgi) {
-    /*
-        DELETE /sample_data/cgi-bin/cgi_test.py HTTP/1.1
-    */
     system("mkdir -p /var/www/html");
     system("touch /var/www/html/hoge.file");
 
-    HTTPRequest http_req;
-
-    std::string body = "hello world\n";
-    http_req.set_method("DELETE");
-    http_req.set_request_target("/sample_data/cgi-bin/cgi_test.py");
+    HTTPRequest http_req = HTTPRequest();
+    http_req.Parse(
+        "DELETE /sample_data/cgi-bin/cgi_test.py HTTP/1.1\r\n"
+        "Host: test\r\n"
+        "\r\n");
 
     ServerLocation sl;
 

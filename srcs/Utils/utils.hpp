@@ -67,4 +67,6 @@ std::string ReadFile(std::string file_path);
 bool IsExistRegularFile(std::string filepath);
 bool HasPermissionToRead(std::string filepath);
 
+std::string MakeSysCallErrorMsg(const std::string& syscall);
+
 #endif  // SRCS_UTILS_UTILS_HPP_

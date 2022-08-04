@@ -1317,3 +1317,23 @@ TEST_F(ConfigParserDeathTest, unknown_directive) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: unknown directive \".*\"");
 }
+
+TEST_F(ConfigParserDeathTest, unknown_block_directive) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unknown/"
+        "block_directive.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unknown directive \".*\"");
+}
+
+TEST_F(ConfigParserDeathTest, unknown_block_directive2) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/unknown/"
+        "block_directive2.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: unknown directive \".*\"");
+}

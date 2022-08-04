@@ -24,6 +24,7 @@ add_executable(main
         CGI.cpp
         ServerLocationFacade.cpp
         ServerLocation.cpp
+        Socket.cpp
 )
 
 target_link_libraries(main

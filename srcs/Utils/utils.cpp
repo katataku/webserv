@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include <string.h>
 #include <sys/stat.h>
 
 #include <cctype>
@@ -161,7 +162,6 @@ std::string SkipLine(const std::string& s) {
     return s.substr(nl_at + 1);
 }
 
-// TODO(iyamada) ファイルパスとして扱うべき文字を追加
 bool IsPathChar(const char c) {
     return c == '/' || c == '_' || c == '.' || c == '-' || IsAlpha(c) ||
            IsDigit(c);
@@ -206,7 +206,6 @@ std::string ReadFile(std::string file_path) {
     std::ostringstream oss;
 
     if (!ifs) {
-        // TODO(takkatao):
         // オープンできないときはここに入る。
         throw std::runtime_error("ReadFile ifs open fail");
     }
@@ -236,4 +235,8 @@ bool HasPermissionToRead(std::string filepath) {
         return false;
     }
     return true;
+}
+
+std::string MakeSysCallErrorMsg(const std::string& syscall) {
+    return "Error: " + syscall + " " + std::string(strerror(errno));
 }

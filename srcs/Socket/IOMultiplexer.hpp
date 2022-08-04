@@ -15,11 +15,11 @@ class IOMultiplexer {
  public:
     IOMultiplexer();
     IOMultiplexer(IOMultiplexer const &other);
+    explicit IOMultiplexer(std::vector<std::string> ports);
     IOMultiplexer &operator=(IOMultiplexer const &other);
     ~IOMultiplexer();
 
-    void Init(std::vector<std::string> ports);
-    std::vector<Socket *> Wait();
+    std::vector<Socket *> WaitAndGetReadySockets();
     void Accept(Socket const &socket);
     void CloseFd(int);
 
@@ -28,13 +28,19 @@ class IOMultiplexer {
 
     Logging logging_;
     std::vector<Socket *> sockets_;
-    int epollfd;
-    std::set<int> listenfds;
-    epoll_event ev;
-    epoll_event events[kMaxNEvents];
+    int epollfd_;
+    std::set<int> listenfds_;
     std::map<int, std::string> fd_port_map_;
 
-    void CreateListenerSocket(std::string port);
+    void Init(std::vector<std::string> ports);
+    void CreateListenerFds(const std::vector<std::string> &ports);
+    void CreateListenerFd(const std::string &port);
+    void AddListenFdsToEpollFdSet();
+    void AddFdToEpollFdSet(int fd);
+    void CreateEpollInstance();
+    void MakeNonBlock(int fd);
+    bool IsListenFd(int fd);
+    int GetSocketFdAt(int idx);
 };
 
 #endif  // SRCS_SOCKET_IOMULTIPLEXER_HPP_

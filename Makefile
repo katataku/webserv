@@ -63,6 +63,14 @@ itest-error: ## Exec unit tests for webserver
 	fi
 	$(INTEGRATION_TEST_SHELL_ERROR)
 
+VALGRIND_TEST_SHELL = ./tests/valgrind/valgrind.sh
+.PHONY: valgrind
+valgrind: ## Exec valgrind tests for webserver
+	@if [ ! -x $(VALGRIND_TEST_SHELL) ]; then\
+		chmod +x $(VALGRIND_TEST_SHELL);\
+	fi
+	$(VALGRIND_TEST_SHELL)
+
 # -------------------- Rules For Static Analyser --------------------------
 
 .PHONY: format
@@ -87,6 +95,10 @@ mdformat: ## Format Markdown files
 setup: ## Set up hooks for commit
 	cp ./.githooks/pre-commit ./.git/hooks/pre-commit
 	chmod +x ./.git/hooks/pre-commit
+
+.PHONY: submit
+submit: ## Move files for submission
+	sh tools/submit.sh
 
 # ------------------------- Rules For Docker ------------------------------
 

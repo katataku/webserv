@@ -4,7 +4,7 @@
 
 > Common Gateway Interface（CGI）\[22\]は、HTTP \[1\]、\[4\]サーバーとCGIスクリプトがクライアント要求に応答する責任を共有できます。
 
-- CGIプログラムは、次のメタ変数（環境変数）と同時に起動される。SCRIPT_NAME、PATH_INFO、QUERY_STRING
+- CGIプログラムは、次のメタ変数（環境変数）と同時に起動される。SCRIPT_NAME、PATH_INFO
 
 ```
 script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra-path> "?" <query-string>
@@ -14,13 +14,13 @@ script-URI = <scheme> "://" <server-name> ":" <server-port> <script-path> <extra
 
 ### pdf+testerに準拠した仕様まとめ
 
-| メタ変数名           | 説明                         | サーバー側で期待される挙動                                                                          | 値(BNF表記)                                 |
-| --------------- | -------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------- |
-| CONTENT_LENGTH  | コンテンツのバイト長。POSTメソッドが来た時必要。 | HTTPリクエストにbodyがあればセットし、なかったらセットしない。                                                    | CONTENT_LENGTH = "" \| 1\*digit          |
-| CONTENT_TYPE    | コンテンツの種類。                  | HTTPリクエストにbodyがあればセットされる。なかったら空文字列をセット。<br>HTTPリクエストヘッダーにtypeが設定されていたら、このメタ変数を設定する。    | CONTENT_TYPE = "" \| media-type<br>      |
-| PATH_INFO       | extra pathのこと              | 非US-ASCII文字が含まれている場合でも文字種別の検証はせず処理を続行する。<br>nginxではURIにextra pathがないときは空文字列が入ってそう。<br> | PATH_INFO = "" \| ( "/" path )           |
-| REQUEST_METHOD  | HTTPリクエストで指定されたメソッド        | 大文字小文字を区別                                                                              | REQUEST_METHOD   = GET \| POST \| DELETE |
-| SERVER_PROTOCOL | サーバー・CGI間のプロトコル？           | HTTP/1.1に固定で良い                                                                         | SERVER_PROTOCOL   = "HTTP/1.1"           |
+| メタ変数名           | 説明                         | サーバー側で期待される挙動                                                                       | 値(BNF表記)                                 |
+| --------------- | -------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------- |
+| CONTENT_LENGTH  | コンテンツのバイト長。POSTメソッドが来た時必要。 | HTTPリクエストにbodyがあればセットし、なかったらセットしない。                                                 | CONTENT_LENGTH = "" \| 1\*digit          |
+| CONTENT_TYPE    | コンテンツの種類。                  | HTTPリクエストにbodyがあればセットされる。なかったら空文字列をセット。<br>HTTPリクエストヘッダーにtypeが設定されていたら、このメタ変数を設定する。 | CONTENT_TYPE = "" \| media-type<br>      |
+| PATH_INFO       | extra pathのこと              | 課題要件的にfullpathをそのまま渡すので良さそう。                                                        | PATH_INFO = "" \| ( "/" path )           |
+| REQUEST_METHOD  | HTTPリクエストで指定されたメソッド        | 大文字小文字を区別                                                                           | REQUEST_METHOD   = GET \| POST \| DELETE |
+| SERVER_PROTOCOL | サーバー・CGI間のプロトコル？           | HTTP/1.1に固定で良い                                                                      | SERVER_PROTOCOL   = "HTTP/1.1"           |
 
 ## CGIからのレスポンスまとめ
 

@@ -38,8 +38,6 @@ CGIResponse::~CGIResponse() {}
 HTTPResponse *CGIResponse::ToHTTPResponse() {
     HTTPResponse *http = new HTTPResponse();
 
-    // TODO(iyamada) ResponseBuilderを使うかどうか
-    // statusが設定されていなかったらとりあえず200を返している
     if (this->status_code_.empty()) {
         http->set_status_code(200);
     } else {

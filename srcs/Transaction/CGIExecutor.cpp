@@ -33,12 +33,10 @@ HTTPResponse *CGIExecutor::Exec(HTTPRequest const &request,
     CGIRequest cgi_req(request, sl);
     CGIResponse cgi_res = this->CGIExec(cgi_req);
 
-    // POSTだったらステータスコードを201にする
     if (request.method() == "POST") {
         cgi_res.set_status_code("201");
     }
 
-    // TODO(iyamada) ResponseBuilderに任せても良いかも
     return cgi_res.ToHTTPResponse();
 }
 
@@ -155,7 +153,6 @@ static std::string Read(int fd) {
     return buf;
 }
 
-// TODO(iyamada) エラー処理
 CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
     logging_.Debug("CGIExec start");
 

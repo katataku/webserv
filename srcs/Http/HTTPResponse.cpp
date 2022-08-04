@@ -87,7 +87,6 @@ std::string HTTPResponse::GetResponseString() const {
 
     oss << this->GetStatusLineString();
     oss << this->GetHeadersString();
-    // TODO(ahayashi): HEADリクエストの場合はbodyを付与しない
     if (this->content_length() > 0) {
         oss << new_line_string_;
         oss << this->GetBodyString();
