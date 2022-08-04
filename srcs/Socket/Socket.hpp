@@ -24,6 +24,7 @@ class Socket {
     void Close() const;
     int Accept() const;
     static Socket *OpenListeningSocket(const std::string &port);
+    static int OpenListenFd(const std::string &port);
 
     bool is_listening() const;
     int sock_fd() const;

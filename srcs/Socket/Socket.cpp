@@ -45,8 +45,7 @@ void Socket::Send(std::string data) const {
         // https://doi-t.hatenablog.com/entry/2014/06/10/033309
         sendbyte = send(this->sock_fd_, rawdata, remainbyte, MSG_NOSIGNAL);
         if (sendbyte == -1) {  // Error occured
-            throw std::runtime_error("Error: send " +
-                                     std::string(strerror(errno)));
+            throw std::runtime_error(MakeSysCallErrorMsg("send"));
         }
         if (static_cast<std::size_t>(sendbyte) ==
             remainbyte) {  // Send complete
@@ -73,8 +72,7 @@ std::string Socket::Recv() const {
 
 void Socket::Close() const {
     if (close(this->sock_fd_) == -1) {
-        throw std::runtime_error("Error: close " +
-                                 std::string(strerror(errno)));
+        throw std::runtime_error(MakeSysCallErrorMsg("close"));
     }
     logging_.Debug("socket close.");
     logging_.Debug("close sock_fd : [" + numtostr(this->sock_fd_) + "]");
@@ -86,11 +84,8 @@ int Socket::Accept() const {
 
     int new_socket = accept(this->sock_fd_, &clientaddr, &addrlen);
     if (new_socket < 0) {
-        throw std::runtime_error("Error: accept " +
-                                 std::string(strerror(errno)));
+        this->logging_.Warn("accept: " + std::string(strerror(errno)));
     }
-
-    this->logging_.Debug("Accept");
 
     return new_socket;
 }
@@ -103,8 +98,7 @@ Socket *Socket::OpenListeningSocket(const std::string &port) {
     hints.ai_flags |= AI_NUMERICSERV;             // Using port
     int rc = 0;
     if ((rc = getaddrinfo(NULL, port.c_str(), &hints, &listp)) != 0) {
-        std::cerr << gai_strerror(rc) << std::endl;
-        throw std::runtime_error("Failed to getaddrinfo");
+        throw std::runtime_error(MakeSysCallErrorMsg("getaddrinfo"));
     }
     int listenfd = 0;
     for (addrinfo *p = listp; p != NULL; p = p->ai_next) {
@@ -114,22 +108,36 @@ Socket *Socket::OpenListeningSocket(const std::string &port) {
         }
         // Avoid already address bind
         int optval = 1;
-        setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval,
-                   sizeof(int));
+        if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
+                       (const void *)&optval, sizeof(int)) == -1) {
+            close(listenfd);
+            freeaddrinfo(listp);
+            throw std::runtime_error(MakeSysCallErrorMsg("setsockopt"));
+        }
 
         if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) {
             break;
         }
-        close(listenfd);
+        if (close(listenfd) == -1) {
+            freeaddrinfo(listp);
+            throw std::runtime_error(MakeSysCallErrorMsg("close"));
+        }
     }
     freeaddrinfo(listp);
 
     if (listen(listenfd, kQueueSize) < 0) {
         close(listenfd);
-        throw std::runtime_error("Failed to listen");
+        throw std::runtime_error(MakeSysCallErrorMsg("listen"));
     }
 
     return new Socket(listenfd, true, port);  // return listen status socket
+}
+
+int Socket::OpenListenFd(const std::string &port) {
+    Socket *listen_sock = Socket::OpenListeningSocket(port);
+    int listen_fd = listen_sock->sock_fd();
+    delete listen_sock;
+    return listen_fd;
 }
 
 bool Socket::is_listening() const {
