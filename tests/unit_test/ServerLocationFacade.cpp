@@ -13,8 +13,8 @@ class ServerLocationFacadeTest : public ::testing::Test {
 };
 
 TEST_F(ServerLocationFacadeTest, basic) {
-    WebservConfig config =
-        WebservConfig::Parse("../../../test_data/config/webserv/default.conf");
+    WebservConfig config = WebservConfig::Parse(
+        "../../../test_data/config/webserv/ok/default.conf");
     std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
     ServerLocation sl = facade.Choose("80", "", "/");
@@ -26,8 +26,8 @@ TEST_F(ServerLocationFacadeTest, basic) {
 }
 
 TEST_F(ServerLocationFacadeTest, default_server) {
-    WebservConfig config =
-        WebservConfig::Parse("../../../test_data/config/webserv/default.conf");
+    WebservConfig config = WebservConfig::Parse(
+        "../../../test_data/config/webserv/ok/default.conf");
     std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
     ServerLocation sl = facade.Choose("80", "not_matching", "/");
@@ -39,8 +39,8 @@ TEST_F(ServerLocationFacadeTest, default_server) {
 }
 
 TEST_F(ServerLocationFacadeTest, longest_path_match) {
-    WebservConfig config =
-        WebservConfig::Parse("../../../test_data/config/webserv/default.conf");
+    WebservConfig config = WebservConfig::Parse(
+        "../../../test_data/config/webserv/ok/default.conf");
     std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
     ServerLocation sl = facade.Choose("80", "", "/files/hoge.html");

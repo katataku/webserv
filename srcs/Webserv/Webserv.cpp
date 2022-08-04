@@ -33,7 +33,7 @@ void Webserv::Run(int argc, char **argv) {
         exit(1);
     } else {
         this->logging_.Debug("config : default");
-        config = WebservConfig::Parse();
+        config = WebservConfig::Parse("./default.conf");
     }
     std::vector<ServerLocation> locations = config.CreateServerLocations();
     ServerLocationFacade facade(locations);
