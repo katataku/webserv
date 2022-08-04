@@ -61,7 +61,6 @@ class HTTPRequest {
     bool is_finish_to_read_header_;
     bool is_finish_to_read_body_;
     HTTPResponse *response_;
-
 };
 
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs);
