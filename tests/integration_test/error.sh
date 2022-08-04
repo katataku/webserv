@@ -62,6 +62,13 @@ echo ""
         REQUEST_NO=GET_cgi_error_exit
         do_test
 
+    CONFIG_NO=default.conf
+    start_server_container
+
+        REQUEST_NO=DELETE_not_exist
+        do_test
+
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then
