@@ -55,6 +55,8 @@ void SuperVisor::Watch() {
                     if (worker.ExecSend(socket)) {
                         int fd = socket->sock_fd();
                         iomul.CloseFd(fd);
+                        socket->Close();
+                        delete socket;
                     }
                 } else {
                     this->logging_.Debug("here");

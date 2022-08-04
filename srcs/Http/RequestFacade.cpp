@@ -44,7 +44,5 @@ void RequestFacade::Finish(Socket *socket) {
                          "]");
     delete this->list_[socket->sock_fd()];
     this->list_.erase(socket->sock_fd());
-    socket->Close();
-    delete socket;
     this->logging_.Debug("Finish end");
 }
