@@ -89,30 +89,58 @@ HTTPResponse *FileReadExecutor::ListDirectoryExec(
         FileReadExecutor::BuildListPage(absolute_path, filenames));
 }
 
+int FileReadExecutor::CheckFileStat(std::string file_path) {
+    struct stat stat_buf;
+
+    if (stat(file_path.c_str(), &stat_buf) == -1) {
+        // Requestされたファイルが存在しない場合に、stat失敗する。
+        logging_.Info("stat failed");
+        logging_.Info(strerror(errno));
+        return STAT_FILE_NOT_EXIST;
+    }
+    if (S_ISREG(stat_buf.st_mode)) {
+        logging_.Debug("file indicate regular file.");
+        return STAT_REGULAR_FILE;
+    }
+    if (S_ISDIR(stat_buf.st_mode)) {
+        logging_.Debug("URI indicate Directory.");
+        return STAT_DIRECTORY;
+    }
+    return STAT_FILE_NOT_EXIST;
+}
+
 HTTPResponse *FileReadExecutor::Exec(HTTPRequest const &request,
                                      ServerLocation const &sl) {
     logging_.Debug("Exec starts");
-    struct stat stat_buf;
     logging_.Debug("request.canonical_path = [" + request.canonical_path() +
                    "]");
     std::string alias_resolved_path = sl.ResolveAlias(request.canonical_path());
 
     logging_.Debug("alias_resolved_path = [" + alias_resolved_path + "]");
+    int alias_resolved_path_stat = CheckFileStat(alias_resolved_path);
 
-    if (stat(alias_resolved_path.c_str(), &stat_buf) == -1) {
-        // Requestされたファイルが存在しない場合に、stat失敗する。
-        logging_.Info("stat failed");
-        logging_.Info(strerror(errno));
+    if (alias_resolved_path_stat == STAT_FILE_NOT_EXIST) {
         throw HTTPException(404);
     }
 
-    if (S_ISREG(stat_buf.st_mode)) {
-        logging_.Debug("URI indicate regular file.");
+    if (alias_resolved_path_stat == STAT_REGULAR_FILE) {
         return GetFileExec(alias_resolved_path);
-        //        return GetFileExecutor(request, sl);
     }
-    if (S_ISDIR(stat_buf.st_mode)) {
-        logging_.Debug("URI indicate Directory.");
+    if (alias_resolved_path_stat == STAT_DIRECTORY) {
+        if (!sl.index_page().empty()) {
+            std::string index_page_path =
+                alias_resolved_path + "/" + sl.index_page();
+            int index_page_stat = CheckFileStat(index_page_path);
+
+            if (index_page_stat == STAT_REGULAR_FILE) {
+                return GetFileExec(index_page_path);
+            }
+
+            if (index_page_stat == STAT_DIRECTORY) {
+                // nginxは301だけど403にする。
+                throw HTTPException(403);
+            }
+        }
         if (sl.IsAutoIndexEnabled()) {
             return ListDirectoryExec(request.canonical_path(),
                                      alias_resolved_path);
