@@ -64,6 +64,15 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+    CONFIG_NO=default.conf
+    start_server_container
+
+        REQUEST_NO=POST_hello_world
+        do_test
+        REQUEST_NO=GET_hello_world
+        do_test
+
+        rm -f /app/sample_data/html/hoge
 
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
