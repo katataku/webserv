@@ -60,7 +60,13 @@ void SuperVisor::Watch() {
                     }
                 } else {
                     this->logging_.Debug("here");
-                    // fdのclose
+                    RequestFacade *request_facade =
+                        RequestFacade::GetInstance();
+                    request_facade->Finish(socket);
+                    int fd = socket->sock_fd();
+                    iomul.CloseFd(fd);
+                    socket->Close();
+                    delete socket;
                 }
             }
         }
