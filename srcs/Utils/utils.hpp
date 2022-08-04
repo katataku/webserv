@@ -66,6 +66,8 @@ static std::string numtostr(T num) {
 std::string ReadFile(std::string file_path);
 bool IsExistRegularFile(std::string filepath);
 bool HasPermissionToRead(std::string filepath);
+bool IsExist(const std::string& path);
+std::string Dir(const std::string& path);
 
 std::string MakeSysCallErrorMsg(const std::string& syscall);
 

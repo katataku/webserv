@@ -30,6 +30,13 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     return res;
 }
 
+HTTPResponse *ResponseBuilder::Build(int status_code) {
+    HTTPResponse *res = new HTTPResponse();
+
+    res->set_status_code(status_code);
+    return res;
+}
+
 std::string BuildDefaultErrorResponseBody(int status_code) {
     std::ostringstream oss;
 
