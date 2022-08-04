@@ -74,6 +74,13 @@ echo ""
 
         rm -f /app/sample_data/html/hoge
 
+    CONFIG_NO=no_location.conf
+    start_server_container
+
+        REQUEST_NO=GET_simple
+        do_test
+
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then

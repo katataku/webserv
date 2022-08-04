@@ -2,10 +2,10 @@
 
 #include <errno.h>
 #include <signal.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <vector>
