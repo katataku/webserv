@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Logging.hpp"
-#include "Socket.hpp"
 
 class HTTPResponse {
  public:
@@ -14,6 +13,7 @@ class HTTPResponse {
     ~HTTPResponse();
 
     std::string GetResponseString() const;
+    bool IsSendAll() const;
 
     int status_code() const;
     std::string connection() const;
@@ -28,6 +28,8 @@ class HTTPResponse {
     void set_location(std::string);
     void set_content_length(int);
     void set_response_body(std::string);
+    int sent_bytes() const;
+    void set_sent_bytes(int sent_bytes);
 
  private:
     Logging logging_;
@@ -38,7 +40,9 @@ class HTTPResponse {
     std::string location_;
     int content_length_;
     std::string response_body_;
+    std::string::size_type sent_bytes_;
 
+ private:
     std::string GetStatusLineString() const;
     std::string GetHeadersString() const;
     std::string GetBodyString() const;

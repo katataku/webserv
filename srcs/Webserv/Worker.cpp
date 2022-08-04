@@ -23,10 +23,9 @@ Worker &Worker::operator=(Worker const &other) {
 
 Worker::~Worker() {}
 
-void Worker::Exec(Socket **socket_ptr) {
-    this->logging_.Debug("start Exec");
+bool Worker::ExecReceive(Socket *socket) {
+    this->logging_.Debug("start ExecReceive");
 
-    Socket *socket = *socket_ptr;
     this->request_facade_ = RequestFacade::GetInstance();
     HTTPRequest *request = this->request_facade_->SelectRequest(*socket);
     try {
@@ -37,10 +36,10 @@ void Worker::Exec(Socket **socket_ptr) {
                 socket->port(), request->host(), request->canonical_path());
             Transaction transaction;
             HTTPResponse *response = transaction.Exec(request, &sl);
-            socket->Send(response->GetResponseString());
-            delete response;
-            this->request_facade_->Finish(socket_ptr);
+            request->set_response(response);
+            return true;
         }
+        return false;
     } catch (HTTPException &e) {
         // nginxの挙動に合わせる
         // RequestのParse時のエラーはserverコンテキストの情報だけをみていそう。
@@ -48,8 +47,17 @@ void Worker::Exec(Socket **socket_ptr) {
             socket->port(), request->host(), "");
         HTTPResponse *response =
             ResponseBuilder::BuildError(e.status_code(), &sl);
-        socket->Send(response->GetResponseString());
-        delete response;
-        this->request_facade_->Finish(socket_ptr);
+        request->set_response(response);
+        return true;
     }
+}
+
+bool Worker::ExecSend(Socket *socket) {
+    this->logging_.Debug("start ExecSend");
+
+    this->request_facade_ = RequestFacade::GetInstance();
+    HTTPRequest *request = this->request_facade_->SelectRequest(*socket);
+    HTTPResponse *response = request->response();
+    socket->Send(response);
+    return response->IsSendAll();
 }

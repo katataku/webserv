@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "HTTPResponse.hpp"
 #include "Logging.hpp"
 #include "Socket.hpp"
 #include "utils.hpp"
@@ -36,6 +37,8 @@ class HTTPRequest {
     std::string canonical_path() const;
     bool is_finish_to_read_header() const;
     bool is_finish_to_read_body() const;
+    HTTPResponse *response() const;
+    void set_response(HTTPResponse *response);
 
  private:
     void ParseHeader(std::string str);
@@ -57,6 +60,8 @@ class HTTPRequest {
     std::string canonical_path_;
     bool is_finish_to_read_header_;
     bool is_finish_to_read_body_;
+    HTTPResponse *response_;
+
 };
 
 std::ostream &operator<<(std::ostream &ost, HTTPRequest &rhs);

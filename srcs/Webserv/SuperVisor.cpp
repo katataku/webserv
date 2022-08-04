@@ -37,14 +37,26 @@ void SuperVisor::Watch() {
             std::vector<Socket *> sockets = iomul.WaitAndGetReadySockets();
             for (std::vector<Socket *>::iterator itr = sockets.begin();
                  itr != sockets.end(); ++itr) {
-                if ((*itr)->is_listening()) {
-                    iomul.Accept(*(*itr));
-                    delete *itr;
-                } else {
-                    int fd = (*itr)->sock_fd();
+                Socket *socket = *itr;
+
+                if (socket->is_event_in()) {
+                    if (socket->is_listening()) {
+                        iomul.Accept(*socket);
+                        delete socket;
+                        continue;
+                    }
                     Worker worker(this->facade_);
-                    worker.Exec(&(*itr));
-                    if (*itr == NULL) iomul.CloseFd(fd);
+                    if (worker.ExecReceive(socket)) {
+                        int fd = socket->sock_fd();
+                        iomul.ChangeEpollOutEvent(fd);
+                    }
+                } else if (socket->is_event_out()) {
+                    Worker worker(this->facade_);
+                    if (worker.ExecSend(socket)) {
+                        int fd = socket->sock_fd();
+                        iomul.CloseFd(fd);
+                    }
+                } else {  // HANGUP
                 }
             }
         }

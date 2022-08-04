@@ -90,13 +90,33 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
 
     for (int i = 0; i < nready; ++i) {
         int fd = events[i].data.fd;
+        uint32_t event_bit = events[i].events;
+        int event_kind;
+        if (event_bit & EPOLLIN) {
+            event_kind = EVENT_IN;
+        } else if (event_bit & EPOLLOUT) {
+            event_kind = EVENT_OUT;
+        }
+        // EPOLLERRの対応
+
         std::string port = this->fd_port_map_[fd];
-        sockets.push_back(new Socket(fd, this->IsListenFd(fd), port));
+        sockets.push_back(
+            new Socket(fd, this->IsListenFd(fd), port, event_kind));
     }
 
     this->logging_.Debug("WaitAndGetReadySockets");
 
     return sockets;
+}
+
+void IOMultiplexer::ChangeEpollOutEvent(int fd) {
+    epoll_event ev;
+
+    ev.events = EPOLLOUT;
+    ev.data.fd = fd;
+    if (epoll_ctl(this->epollfd_, EPOLL_CTL_MOD, fd, &ev) == -1) {
+        throw std::runtime_error(MakeSysCallErrorMsg("epoll_ctl"));
+    }
 }
 
 void IOMultiplexer::MakeNonBlock(int fd) {

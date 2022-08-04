@@ -9,17 +9,20 @@
 #include <stdexcept>
 #include <string>
 
+#include "HTTPResponse.hpp"
 #include "Logging.hpp"
+
+enum EventKind { EVENT_IN, EVENT_OUT };
 
 class Socket {
  public:
     Socket();
-    Socket(int sock_fd, bool is_listening, std::string port);
+    Socket(int sock_fd, bool is_listening, std::string port, int event_kind);
     Socket(Socket const &other);
     Socket &operator=(Socket const &other);
     ~Socket();
 
-    void Send(std::string data) const;
+    void Send(HTTPResponse *response) const;
     std::string Recv() const;
     void Close() const;
     int Accept() const;
@@ -27,6 +30,8 @@ class Socket {
     static int OpenListenFd(const std::string &port);
 
     bool is_listening() const;
+    bool is_event_in() const;
+    bool is_event_out() const;
     int sock_fd() const;
     void set_is_listening(bool cond);
     std::string port() const;
@@ -37,6 +42,7 @@ class Socket {
     int sock_fd_;
     bool is_listening_;
     std::string port_;
+    int event_kind_;
 
     Logging logging_;
 };
