@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Length: 328
+
+<html>
+<head><title>Index of /</title></head>
+<body>
+<h1>Index of /</h1>
+<hr>
+<pre>
+<a href="error_page/"> error_page/</a>
+<a href="for_review.html"> for_review.html</a>
+<a href="hello_world.html"> hello_world.html</a>
+<a href="upload.html"> upload.html</a>
+<a href="./"> ./</a>
+<a href="../"> ../</a>
+</pre><hr></body>
+</html>
