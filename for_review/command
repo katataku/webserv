@@ -15,5 +15,8 @@
 #curl -v localhost:8080/files/fail -X POST --data "baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 # POST is not Allowed
 #curl -v localhost:8080/new -X POST 
-# DELETE 
-curl -v localhost:8080/files/success -X DELETE
+# DELETE
+# permissionがない場合のケースは権限を変えて実行する
+# VirtualBoxのShared Folderでは権限を変えることができない
+# REF: https://forums.virtualbox.org/viewtopic.php?t=79965
+#curl -v localhost:8080/files/success -X DELETE
