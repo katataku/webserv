@@ -147,11 +147,12 @@ request_uri = /files/hoge.txt
 ResolveAlias: ./sample_data/files/hoge.txt
 */
 std::string ServerLocation::ResolveAlias(std::string request_uri) const {
+    std::string resolved_alias =
+        this->alias() + request_uri.substr(this->path().size());
     logging_.Debug("alias() = [" + this->alias() + "]");
-    logging_.Debug("ResolveAlias() = [" + this->alias() +
-                   request_uri.substr(this->path().size()) + "]");
+    logging_.Debug("ResolveAlias() = [" + resolved_alias + "]");
 
-    return this->alias() + request_uri.substr(this->path().size());
+    return resolved_alias;
 }
 
 bool ServerLocation::IsAutoIndexEnabled() const {
