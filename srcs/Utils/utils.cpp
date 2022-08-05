@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
 
