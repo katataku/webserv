@@ -65,8 +65,9 @@ std::string HTTPResponse::GetHeadersString() const {
     oss << "Connection: ";
     oss << this->connection();
     oss << new_line_string_;
-    oss << "Content-Length: ";
-    oss << this->content_length();
+    if (this->content_length() >= 0) {
+        oss << "Content-Length: " << this->content_length();
+    }
     oss << new_line_string_;
     if (!this->allow().empty()) {
         oss << "Allow: ";

@@ -64,6 +64,16 @@ echo ""
         REQUEST_NO=GET_incorrect_path
         do_test
 
+    CONFIG_NO=default.conf
+    start_server_container
+
+        REQUEST_NO=POST_hello_world
+        do_test
+        REQUEST_NO=GET_hello_world
+        do_test
+
+        rm -f ./sample_data/html/hoge
+
     CONFIG_NO=index_on_location.conf
     start_server_container
 
@@ -112,6 +122,13 @@ echo ""
         REQUEST_NO=GET_simple
         do_test
 
+
+    CONFIG_NO=default.conf
+    start_server_container
+
+        touch sample_data/html/hoge
+        REQUEST_NO=DELETE
+        do_test
 
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"

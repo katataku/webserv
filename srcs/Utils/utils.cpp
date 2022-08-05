@@ -238,6 +238,20 @@ bool HasPermissionToRead(std::string filepath) {
     return true;
 }
 
+bool IsExist(const std::string& path) {
+    struct stat st;
+    return (stat(path.c_str(), &st) == 0);
+}
+
+// `/somepath/hoge` -> `/somepath`
+std::string Dir(const std::string& path) {
+    std::string::size_type slash_at = path.find_last_of("/");
+    if (slash_at == std::string::npos) {
+        return "";
+    }
+    return path.substr(0, slash_at);
+}
+
 std::string MakeSysCallErrorMsg(const std::string& syscall) {
     return "Error: " + syscall + " " + std::string(strerror(errno));
 }
