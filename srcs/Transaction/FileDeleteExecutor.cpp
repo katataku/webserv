@@ -27,7 +27,7 @@ FileDeleteExecutor &FileDeleteExecutor::operator=(
 FileDeleteExecutor::~FileDeleteExecutor() {}
 
 static bool HasAllPermission(const std::string &path) {
-    return access(path.c_str(), R_OK | W_OK | X_OK);
+    return access(path.c_str(), R_OK | W_OK | X_OK) == 0;
 }
 
 static bool IsFile(const std::string &path) {
