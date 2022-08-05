@@ -22,6 +22,7 @@ class IOMultiplexer {
     std::vector<Socket *> WaitAndGetReadySockets();
     void Accept(Socket const &socket);
     void CloseFd(int);
+    void ChangeEpollOutEvent(int fd);
 
  private:
     static const int kMaxNEvents = 10;
@@ -38,7 +39,6 @@ class IOMultiplexer {
     void AddListenFdsToEpollFdSet();
     void AddFdToEpollFdSet(int fd);
     void CreateEpollInstance();
-    void MakeNonBlock(int fd);
     bool IsListenFd(int fd);
     int GetSocketFdAt(int idx);
 };

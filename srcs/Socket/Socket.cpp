@@ -9,13 +9,17 @@
 
 #include "utils.hpp"
 
+Socket::SocketIOException::SocketIOException(const std::string &what_arg)
+    : std::runtime_error(what_arg) {}
+
 Socket::Socket()
     : sock_fd_(-1), is_listening_(false), logging_(Logging(__FUNCTION__)) {}
 
-Socket::Socket(int sock_fd, bool is_listening, std::string port)
+Socket::Socket(int sock_fd, bool is_listening, std::string port, int event_kind)
     : sock_fd_(sock_fd),
       is_listening_(is_listening),
       port_(port),
+      event_kind_(event_kind),
       logging_(Logging(__FUNCTION__)) {
     logging_.Debug("created sock_fd : [" + numtostr(this->sock_fd_) + "]");
 }
@@ -34,26 +38,20 @@ Socket &Socket::operator=(Socket const &other) {
 
 Socket::~Socket() {}
 
-void Socket::Send(std::string data) const {
-    std::size_t data_size = data.size();
-    ssize_t sendbyte = 0;
-    std::size_t remainbyte = data_size;
-    char *rawdata = const_cast<char *>(data.c_str());
+void Socket::Send(HTTPResponse *response) const {
+    std::string body = response->GetResponseString();
+    std::string send_body = body.substr(response->sent_bytes());
+    std::size_t data_size = send_body.size();
+    ssize_t sent_byte = 0;
 
-    for (;;) {
-        // Ignore SIGPIPE, See
-        // https://doi-t.hatenablog.com/entry/2014/06/10/033309
-        sendbyte = send(this->sock_fd_, rawdata, remainbyte, MSG_NOSIGNAL);
-        if (sendbyte == -1) {  // Error occured
-            throw std::runtime_error(MakeSysCallErrorMsg("send"));
-        }
-        if (static_cast<std::size_t>(sendbyte) ==
-            remainbyte) {  // Send complete
-            break;
-        }
-        remainbyte -= sendbyte;
-        rawdata += sendbyte;
+    // Ignore SIGPIPE, See
+    // https://doi-t.hatenablog.com/entry/2014/06/10/033309
+    sent_byte =
+        send(this->sock_fd_, send_body.c_str(), data_size, MSG_NOSIGNAL);
+    if (sent_byte <= 0) {
+        throw Socket::SocketIOException(MakeSysCallErrorMsg("send"));
     }
+    response->set_sent_bytes(response->sent_bytes() + sent_byte);
 }
 
 std::string Socket::Recv() const {
@@ -61,8 +59,9 @@ std::string Socket::Recv() const {
     ssize_t recvsize = 0;
 
     recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
-    if (recvsize == -1) {
-        throw std::runtime_error("Error: recv " + std::string(strerror(errno)));
+    if (recvsize <= 0) {
+        throw Socket::SocketIOException("Error: recv " +
+                                        std::string(strerror(errno)));
     }
     buf[recvsize] = '\0';
     std::string data = std::string(buf);
@@ -130,7 +129,8 @@ Socket *Socket::OpenListeningSocket(const std::string &port) {
         throw std::runtime_error(MakeSysCallErrorMsg("listen"));
     }
 
-    return new Socket(listenfd, true, port);  // return listen status socket
+    return new Socket(listenfd, true, port,
+                      EVENT_IN);  // return listen status socket
 }
 
 int Socket::OpenListenFd(const std::string &port) {
@@ -144,6 +144,12 @@ bool Socket::is_listening() const {
     this->logging_.Debug("is_listening");
     return this->is_listening_;
 }
+
+bool Socket::is_event_in() const { return this->event_kind_ == EVENT_IN; }
+
+bool Socket::is_event_out() const { return this->event_kind_ == EVENT_OUT; }
+
+bool Socket::is_event_fatal() const { return this->event_kind_ == EVENT_FATAL; }
 
 int Socket::sock_fd() const { return this->sock_fd_; }
 
