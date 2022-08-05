@@ -1,22 +1,25 @@
 # 単純なGET
-#curl -v localhost:8080/ 
+#curl -v localhost:8042/ 
 # 異なるポートに対して
-#curl -v localhost:8081/
+#curl -v localhost:8043/
 
-# これだとHostヘッダにsecond:8080が入るので直接指定するのが良いかも
-#curl -v localhost:8080 -H "Host: second"
-#curl -v --resolve second:8080:127.0.0.1 http://second:8080/ 
+# これだとHostヘッダにsecond:8042が入るので直接指定するのが良いかも
+#curl -v localhost:8042 -H "Host: second"
+#curl -v --resolve second:8042:127.0.0.1 http://second:8042/ 
 # error_pageの解決方法怪しい気がする
-#curl -v localhost:8080/not_found
-#curl -v localhost:8080/html2/
+#curl -v localhost:8042/not_found
+#curl -v localhost:8042/html2/
 # POST Success Content-Length: 64
-#curl -v localhost:8080/files/success -X POST --data "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+#curl -v localhost:8042/files/success -X POST --data "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+# 作成できたかを確認
+#curl -v localhost:8042/files/success
 # POST Failer Content-Length: 65
-#curl -v localhost:8080/files/fail -X POST --data "baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+#curl -v localhost:8042/files/fail -X POST --data "baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 # POST is not Allowed
-#curl -v localhost:8080/new -X POST 
+#curl -v localhost:8042/new -X POST 
 # DELETE
 # permissionがない場合のケースは権限を変えて実行する
 # VirtualBoxのShared Folderでは権限を変えることができない
 # REF: https://forums.virtualbox.org/viewtopic.php?t=79965
-#curl -v localhost:8080/files/success -X DELETE
+#curl -v localhost:8042/files/success -X DELETE
+curl -v localhost:8042/ -X PUT
