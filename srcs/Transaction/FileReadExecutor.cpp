@@ -71,6 +71,9 @@ HTTPResponse *FileReadExecutor::ListDirectoryExec(
     std::vector<std::string> filenames;
 
     logging_.Debug("ListDirectoryExec starts");
+    logging_.Debug("ListDirectoryExec absolute_path:[" + absolute_path + "]");
+    logging_.Debug("ListDirectoryExec alias_resolved_path:[" +
+                   alias_resolved_path + "]");
     DIR *dir = opendir(alias_resolved_path.c_str());
     if (dir == NULL) {
         // ディレクトリが存在するが、権限がなく内容を確認できないときはここに入る。
@@ -82,6 +85,7 @@ HTTPResponse *FileReadExecutor::ListDirectoryExec(
         if (directory_read->d_type == DT_DIR) {
             filename += "/";
         }
+        logging_.Debug("ListDirectoryExec file found:[" + filename + "]");
         filenames.push_back(filename);
     }
     closedir(dir);

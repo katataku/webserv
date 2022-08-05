@@ -32,8 +32,8 @@ TEST_F(TransactionTest, FileReadExecutor) {
     allow_methods.insert("GET");
 
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
-                       "index.html", "", allow_methods, "/var/www", "");
+        ServerLocation(8081, "webserv1", "/html/", error_pages, 4086, "off",
+                       "index.html", "", allow_methods, "/var/www/html/", "");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -46,7 +46,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     system("echo 'hello world' > /var/www/html/hello_world.html");
 
     HTTPRequest req = HTTPRequest();
-    req.Parse("GET /html?query=value HTTP/1.1\r\n");
+    req.Parse("GET /html/?query=value HTTP/1.1\r\n");
     req.Parse("Host: test\r\n");
     req.Parse("\r\n");
 
@@ -54,12 +54,12 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     std::set<std::string> allow_methods;
     allow_methods.insert("GET");
     ServerLocation sl =
-        ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "on",
-                       "index.html", "", allow_methods, "/var/www", "");
+        ServerLocation(8081, "webserv1", "/html/", error_pages, 4086, "on",
+                       "index.html", "", allow_methods, "/var/www/html/", "");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
-    ASSERT_NE(res->response_body().find("<h1>Index of /html</h1>"),
+    ASSERT_NE(res->response_body().find("<h1>Index of /html/</h1>"),
               std::string::npos);
     ASSERT_NE(res->response_body().find(" hello_world.html</a>"),
               std::string::npos);
