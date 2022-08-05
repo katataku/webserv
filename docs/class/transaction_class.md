@@ -4,11 +4,13 @@
 classDiagram
     CGIExecutor <|-- IExecutor
     FileReadExecutor <|-- IExecutor
+    FileDeleteExecutor <|-- IExecutor
     FileWriteExecutor <|-- IExecutor
 
     Transaction --> IExecutor : use
     CGIExecutor --> ResponseBuilder : use
     FileReadExecutor --> ResponseBuilder : use
+    FileDeleteExecutor --> ResponseBuilder : use
     FileWriteExecutor --> ResponseBuilder : use
 
     HTTPException <|-- exception
@@ -16,6 +18,9 @@ classDiagram
     class FileReadExecutor {
         -GetFileExec() HTTPResponse
         -ListDirExec() HTTPResponse
+    }
+
+    class FileDeleteExecutor {
     }
 
     class FileWriteExecutor {

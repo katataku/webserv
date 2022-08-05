@@ -27,15 +27,6 @@ FileWriteExecutor &FileWriteExecutor::operator=(
 
 FileWriteExecutor::~FileWriteExecutor() {}
 
-// `/somepath/hoge` -> `/somepath`
-static std::string Dir(const std::string &path) {
-    std::string::size_type slash_at = path.find_last_of("/");
-    if (slash_at == std::string::npos) {
-        return "";
-    }
-    return path.substr(0, slash_at);
-}
-
 static bool IsDirectory(const std::string &path) {
     struct stat st;
 
@@ -56,10 +47,6 @@ static void CreateFileAndWrite(const std::string &path,
     ofs << content;
 }
 
-static bool IsExist(const std::string &path) {
-    return access(path.c_str(), F_OK) == 0;
-}
-
 HTTPResponse *FileWriteExecutor::Exec(HTTPRequest const &request,
                                       ServerLocation const &sl) {
     std::string path = sl.ResolveAlias(request.canonical_path());
@@ -73,5 +60,5 @@ HTTPResponse *FileWriteExecutor::Exec(HTTPRequest const &request,
 
     CreateFileAndWrite(path, request.request_body());
 
-    return ResponseBuilder::Build(201);
+    return ResponseBuilder::BuildNoBody(201);
 }

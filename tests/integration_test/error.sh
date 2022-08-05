@@ -65,6 +65,9 @@ echo ""
     CONFIG_NO=default.conf
     start_server_container
 
+        REQUEST_NO=DELETE_not_exist
+        do_test
+
         REQUEST_NO=POST_dir_not_exist
         do_test
 

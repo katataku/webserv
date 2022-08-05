@@ -128,6 +128,35 @@ TEST_F(TransactionTest, redirect) {
     ASSERT_EQ(res->location(), location_string);
 }
 
+TEST_F(TransactionTest, DELETE) {
+    std::string filepath = "/app/sample_data/fuga";
+    std::string body = "hello\n";
+
+    std::ofstream ofs(filepath.c_str());
+    ofs << body;
+    ofs.close();
+
+    HTTPRequest req = HTTPRequest();
+    req.Parse("DELETE /fuga HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("Content-Length: " +
+              numtostr<std::string::size_type>(body.size()) + "\r\n");
+    req.Parse("\r\n");
+    req.Parse(body);
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    allow_methods.insert("DELETE");
+    ServerLocation sl =
+        ServerLocation(8081, "webserv1", "", error_pages, 4086, "off",
+                       "index.html", "", allow_methods, "/app/sample_data", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+
+    ASSERT_EQ(IsExist(filepath), false);
+}
+
 TEST_F(TransactionTest, POST_dont_exist_file) {
     std::string body = "hello POST\n";
 

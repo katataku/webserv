@@ -15,7 +15,7 @@ class ResponseBuilder {
     ~ResponseBuilder();
 
     static HTTPResponse *Build(std::string body);
-    static HTTPResponse *Build(int status_code);
+    static HTTPResponse *BuildNoBody(int status_code);
     static HTTPResponse *BuildError(int status_code, ServerLocation *sl);
     static HTTPResponse *BuildRedirect(std::string redirect_url);
 

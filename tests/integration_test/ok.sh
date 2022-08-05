@@ -123,6 +123,13 @@ echo ""
         do_test
 
 
+    CONFIG_NO=default.conf
+    start_server_container
+
+        touch sample_data/html/hoge
+        REQUEST_NO=DELETE
+        do_test
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then

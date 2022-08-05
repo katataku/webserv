@@ -30,10 +30,11 @@ HTTPResponse *ResponseBuilder::Build(std::string body) {
     return res;
 }
 
-HTTPResponse *ResponseBuilder::Build(int status_code) {
+HTTPResponse *ResponseBuilder::BuildNoBody(int status_code) {
     HTTPResponse *res = new HTTPResponse();
 
     res->set_status_code(status_code);
+    res->set_content_length(-1);
     return res;
 }
 
