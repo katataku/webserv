@@ -183,7 +183,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         Close(pipe_to_serv[1]);
 
         if (req.ShouldSendRequestBody()) {
-            if (Write(pipe_to_cgi[1], req.body()) == -1) {
+            if (Write(pipe_to_cgi[1], req.body()) <= 0) {
                 kill(pid, SIGKILL);  // 子プロセスをkill
                 throw std::runtime_error(strerror(errno));
             }
