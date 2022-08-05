@@ -36,10 +36,10 @@ TEST_F(ConfigParserTest, LocationContextInServerContext) {
     ASSERT_EQ(locate_contexts.size(), 2);
 
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
 
     locate_context = locate_contexts.at(1);
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/files");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/files/");
 }
 
 TEST_F(ConfigParserTest, autoindex_on_location) {
@@ -144,7 +144,7 @@ TEST_F(ConfigParserTest, contain_keyword1) {
     LocationContext locate_context = locate_contexts.at(0);
 
     ASSERT_EQ(locate_context.path(), "/");
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
     ASSERT_EQ(locate_context.auto_index(), "off");
 }
 
@@ -167,7 +167,7 @@ TEST_F(ConfigParserTest, contain_keyword2) {
     LocationContext locate_context = locate_contexts.at(0);
 
     ASSERT_EQ(locate_context.path(), "/");
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
     ASSERT_EQ(locate_context.auto_index(), "off");
 }
 
@@ -179,7 +179,7 @@ TEST_F(ConfigParserTest, alias) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
+    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc/");
 }
 
 TEST_F(ConfigParserTest, alias_no_newline) {
@@ -191,7 +191,7 @@ TEST_F(ConfigParserTest, alias_no_newline) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
+    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc/");
 }
 
 TEST_F(ConfigParserTest, block_dir_no_space) {
@@ -203,7 +203,7 @@ TEST_F(ConfigParserTest, block_dir_no_space) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc");
+    ASSERT_EQ(locate_context.alias(), "/aaa/bbb/ccc/");
 }
 
 TEST_F(ConfigParserTest, redirect_on_location) {
@@ -365,7 +365,7 @@ TEST_F(ConfigParserTest, limit_except_delete) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
     ASSERT_EQ(locate_context.auto_index(), "off");
     std::set<std::string> expect;
     expect.insert("DELETE");
@@ -384,7 +384,7 @@ TEST_F(ConfigParserTest, limit_except_get) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
     ASSERT_EQ(locate_context.auto_index(), "off");
     std::set<std::string> expect;
     expect.insert("GET");
@@ -403,7 +403,7 @@ TEST_F(ConfigParserTest, limit_except_post) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
     ASSERT_EQ(locate_context.auto_index(), "off");
     std::set<std::string> expect;
     expect.insert("POST");
@@ -422,7 +422,7 @@ TEST_F(ConfigParserTest, limit_except_mix) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html");
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/html/");
     ASSERT_EQ(locate_context.auto_index(), "off");
     std::set<std::string> expect;
     expect.insert("POST");
@@ -1043,6 +1043,26 @@ TEST_F(ConfigParserDeathTest, invalid_return_in_location) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/error/invalid_value/"
         "return_in_location.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_alias) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "alias.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" directive invalid value .*");
+}
+
+TEST_F(ConfigParserDeathTest, invalid_location) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/invalid_value/"
+        "location.conf");
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
