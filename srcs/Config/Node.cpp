@@ -184,6 +184,21 @@ void Node::ValidateCgiExtensionValue() {
     }
 }
 
+static bool IsEndedSlash(const std::string& s) {
+    if (s.empty()) {
+        return false;
+    }
+    return s[s.size() - 1] == '/';
+}
+
+void Node::ValidateAliasValue() {
+    if (!IsEndedSlash(this->GetValue())) {
+        throw std::runtime_error(this->MakeErrMsgInvalidValue());
+    }
+}
+
+void Node::ValidateLocationPathValue() { this->ValidateAliasValue(); }
+
 void Node::ValidateIsUnique(std::set<std::string>* directives,
                             const std::string& directive) {
     if (directives->find(directive) == directives->end()) {
