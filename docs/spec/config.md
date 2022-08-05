@@ -130,6 +130,8 @@ client_max_body_size 1024;
 
 ロケーションで指定されたパスに対するエイリアスを設定できる。
 
+pathの末尾は/で終了している必要がある。
+
 aliasは同一コンテキストに複数存在する場合、エラーとする。
 
 Usage:
@@ -144,7 +146,7 @@ Example:
 
 ```
 location /kapouet {
-    alias /tmp/www;
+    alias /tmp/www/;
 }
 ```
 
@@ -156,11 +158,11 @@ rootには対応しない。rootとaliasの違い。
 
 ```
 location /kapouet {
-    alias /tmp/www;
+    alias /tmp/www/;
 }
 
 location /kapouet {
-    root /tmp/www;
+    root /tmp/www/;
 }
 ```
 

@@ -137,10 +137,22 @@ ServerLocation::ServerLocation(
       alias_(alias),
       cgi_extension_(cgi_extension) {}
 
+/*
+実行動作例:
+location /files/ {
+    alias ./sample_data/files/;
+    autoindex off;
+}
+request_uri = /files/hoge.txt
+ResolveAlias: ./sample_data/files/hoge.txt
+*/
 std::string ServerLocation::ResolveAlias(std::string request_uri) const {
-    // 雑な仮実装
+    std::string resolved_alias =
+        this->alias() + request_uri.substr(this->path().size());
     logging_.Debug("alias() = [" + this->alias() + "]");
-    return this->alias() + request_uri;
+    logging_.Debug("ResolveAlias() = [" + resolved_alias + "]");
+
+    return resolved_alias;
 }
 
 bool ServerLocation::IsAutoIndexEnabled() const {
