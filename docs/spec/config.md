@@ -82,6 +82,7 @@ listen 8080;
 ### [error_page]
 
 特定のエラーに対して表示するページを設定することができる。
+uriには絶対パス、あるいはwebservプログラム実行ディレクトリからの相対パスを指定する。
 
 設定されていない場合はデフォルトのエラーページが生成され、表示される。
 
@@ -98,8 +99,8 @@ Context: http, server, location
 Example:
 
 ```
-error_page 404 /404.html;
-error_page 500 501 505 /50x.html;
+error_page 404 ./404.html;
+error_page 500 501 505 ./50x.html;
 ```
 
 ### [client_max_body_size]

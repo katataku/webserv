@@ -240,7 +240,8 @@ TEST_F(ConfigParserTest, error_page) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
+    ASSERT_EQ(locate_context.error_pages().at(404),
+              "./sample_data/html/error_page/404.html");
 }
 
 TEST_F(ConfigParserTest, error_page_multi) {
@@ -252,11 +253,16 @@ TEST_F(ConfigParserTest, error_page_multi) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
-    ASSERT_EQ(locate_context.error_pages().at(500), "/error_page/50x.html");
-    ASSERT_EQ(locate_context.error_pages().at(502), "/error_page/50x.html");
-    ASSERT_EQ(locate_context.error_pages().at(503), "/error_page/50x.html");
-    ASSERT_EQ(locate_context.error_pages().at(504), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(404),
+              "./sample_data/html/error_page/404.html");
+    ASSERT_EQ(locate_context.error_pages().at(500),
+              "./sample_data/html/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(502),
+              "./sample_data/html/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(503),
+              "./sample_data/html/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(504),
+              "./sample_data/html/error_page/50x.html");
 }
 
 TEST_F(ConfigParserTest, error_page_override) {
@@ -265,16 +271,23 @@ TEST_F(ConfigParserTest, error_page_override) {
     WebservConfig conf = confproc.Exec();
     std::vector<ServerContext> serv_contexts = conf.contexts();
     ServerContext serv_context = serv_contexts.at(0);
-    ASSERT_EQ(serv_context.error_pages().at(400), "/error_page/40x.html");
-    ASSERT_EQ(serv_context.error_pages().at(404), "/error_page/40x.html");
+    ASSERT_EQ(serv_context.error_pages().at(400),
+              "./sample_data/html/error_page/40x.html");
+    ASSERT_EQ(serv_context.error_pages().at(404),
+              "./sample_data/html/error_page/40x.html");
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
-    ASSERT_EQ(locate_context.error_pages().at(500), "/error_page/50x.html");
-    ASSERT_EQ(locate_context.error_pages().at(502), "/error_page/50x.html");
-    ASSERT_EQ(locate_context.error_pages().at(503), "/error_page/50x.html");
-    ASSERT_EQ(locate_context.error_pages().at(504), "/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(404),
+              "./sample_data/html/error_page/404.html");
+    ASSERT_EQ(locate_context.error_pages().at(500),
+              "./sample_data/html/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(502),
+              "./sample_data/html/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(503),
+              "./sample_data/html/error_page/50x.html");
+    ASSERT_EQ(locate_context.error_pages().at(504),
+              "./sample_data/html/error_page/50x.html");
 }
 
 TEST_F(ConfigParserTest, error_page_not_exist) {
@@ -286,7 +299,8 @@ TEST_F(ConfigParserTest, error_page_not_exist) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/999.html");
+    ASSERT_EQ(locate_context.error_pages().at(404),
+              "./sample_data/html/error_page/999.html");
 }
 
 TEST_F(ConfigParserTest, error_page_same_code) {
@@ -298,7 +312,8 @@ TEST_F(ConfigParserTest, error_page_same_code) {
 
     std::vector<LocationContext> locate_contexts = serv_context.contexts();
     LocationContext locate_context = locate_contexts.at(0);
-    ASSERT_EQ(locate_context.error_pages().at(404), "/error_page/404.html");
+    ASSERT_EQ(locate_context.error_pages().at(404),
+              "./sample_data/html/error_page/404.html");
 }
 
 TEST_F(ConfigParserTest, client_max_body_size_on_location) {

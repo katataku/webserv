@@ -26,28 +26,6 @@ FileDeleteExecutor &FileDeleteExecutor::operator=(
 
 FileDeleteExecutor::~FileDeleteExecutor() {}
 
-static bool HasAllPermission(const std::string &path) {
-    return access(path.c_str(), R_OK | W_OK | X_OK) == 0;
-}
-
-static bool IsFile(const std::string &path) {
-    struct stat st;
-
-    if (stat(path.c_str(), &st) == -1) {
-        throw HTTPException(500);
-    }
-    return S_ISREG(st.st_mode);
-}
-
-static bool IsDir(const std::string &path) {
-    struct stat st;
-
-    if (stat(path.c_str(), &st) == -1) {
-        throw HTTPException(500);
-    }
-    return S_ISDIR(st.st_mode);
-}
-
 HTTPResponse *FileDeleteExecutor::Exec(HTTPRequest const &request,
                                        ServerLocation const &sl) {
     std::string path = sl.ResolveAlias(request.canonical_path());
@@ -56,13 +34,9 @@ HTTPResponse *FileDeleteExecutor::Exec(HTTPRequest const &request,
         throw HTTPException(404);
     }
 
-    if ((IsFile(path) && !HasAllPermission(Dir(path))) ||
-        (IsDir(path) && !HasAllPermission(path))) {
-        throw HTTPException(403);
-    }
-
+    // ファイルの削除に失敗する場合、権限がないので403を返す
     if (std::remove(path.c_str()) != 0) {
-        throw HTTPException(500);
+        throw HTTPException(403);
     }
 
     return ResponseBuilder::BuildNoBody(200);
