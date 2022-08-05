@@ -56,8 +56,8 @@ HTTPResponse *FileDeleteExecutor::Exec(HTTPRequest const &request,
         throw HTTPException(404);
     }
 
-    if ((IsFile(path) && HasAllPermission(Dir(path))) ||
-        (IsDir(path) && HasAllPermission(path))) {
+    if ((IsFile(path) && !HasAllPermission(Dir(path))) ||
+        (IsDir(path) && !HasAllPermission(path))) {
         throw HTTPException(403);
     }
 
