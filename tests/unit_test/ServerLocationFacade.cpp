@@ -21,7 +21,7 @@ TEST_F(ServerLocationFacadeTest, basic) {
     ASSERT_EQ(80, sl.port());
     ASSERT_EQ("default", sl.host());
     ASSERT_EQ("/", sl.path());
-    ASSERT_EQ("/app/sample_data/html", sl.alias());
+    ASSERT_EQ("/app/sample_data/html/", sl.alias());
     ASSERT_EQ("off", sl.auto_index());
 }
 
@@ -34,7 +34,7 @@ TEST_F(ServerLocationFacadeTest, default_server) {
     ASSERT_EQ(80, sl.port());
     ASSERT_EQ("default", sl.host());
     ASSERT_EQ("/", sl.path());
-    ASSERT_EQ("/app/sample_data/html", sl.alias());
+    ASSERT_EQ("/app/sample_data/html/", sl.alias());
     ASSERT_EQ("off", sl.auto_index());
 }
 
@@ -47,7 +47,7 @@ TEST_F(ServerLocationFacadeTest, longest_path_match) {
     ASSERT_EQ(80, sl.port());
     ASSERT_EQ("default", sl.host());
     ASSERT_EQ("/files/", sl.path());
-    ASSERT_EQ("/app/sample_data/files", sl.alias());
+    ASSERT_EQ("/app/sample_data/files/", sl.alias());
     ASSERT_EQ("off", sl.auto_index());
 }
 
