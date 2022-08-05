@@ -68,8 +68,7 @@ HTTPResponse *ResponseBuilder::BuildError(int status_code, ServerLocation *sl) {
     bool is_return_default_response = true;
     std::string body;
     if (sl->error_pages().find(status_code) != sl->error_pages().end()) {
-        std::string error_page_filepath =
-            sl->ResolveAlias(sl->error_pages().at(status_code));
+        std::string error_page_filepath = sl->error_pages().at(status_code);
         if (!IsExistRegularFile(error_page_filepath)) {
             status_code = 404;
         } else if (!HasPermissionToRead(error_page_filepath)) {
