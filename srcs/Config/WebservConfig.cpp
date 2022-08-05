@@ -1,11 +1,14 @@
 #include "WebservConfig.hpp"
 
+#include <set>
+#include <utility>
 #include <vector>
 
 #include "ConfigProcesser.hpp"
 #include "DefaultValues.hpp"
 #include "InitialValues.hpp"
 #include "ServerLocation.hpp"
+#include "utils.hpp"
 
 WebservConfig::WebservConfig()
     : client_max_body_size_(InitialValues::kClientMaxBodySize) {}
@@ -67,6 +70,27 @@ void WebservConfig::PushErrorPage(int status_code,
                                   const std::string &error_page) {
     if (this->error_pages_.find(status_code) == this->error_pages_.end())
         this->error_pages_[status_code] = error_page;
+}
+
+static bool IsExist(std::set<std::pair<std::string, int> > container,
+                    std::pair<std::string, int> e) {
+    return container.find(e) != container.end();
+}
+
+void WebservConfig::ValidateDuplicateServerNameAndPort() {
+    std::set<std::pair<std::string, int> > serv_and_port;
+
+    std::vector<ServerContext> serv_contexts = this->contexts_;
+    for (std::vector<ServerContext>::const_iterator itr = serv_contexts.begin();
+         itr != serv_contexts.end(); ++itr) {
+        std::pair<std::string, int> p(itr->server_name(), itr->port());
+        if (IsExist(serv_and_port, p)) {
+            throw std::runtime_error("Error: \"" + itr->server_name() +
+                                     "\" and \"" + numtostr<int>(itr->port()) +
+                                     "\" exist in duplicate");
+        }
+        serv_and_port.insert(p);
+    }
 }
 
 WebservConfig WebservConfig::Parse(std::string str) {
