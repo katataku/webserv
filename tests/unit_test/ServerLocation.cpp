@@ -21,3 +21,13 @@ TEST_F(ServerLocationTest, IsCGI) {
 
     ASSERT_EQ(sl.IsCGI("/sample_data/cgi-bin/cgi_test.py"), true);
 }
+
+TEST_F(ServerLocationTest, resolveAlias_relative_path) {
+    ServerLocation sl;
+
+    sl.set_path("/files/");
+    sl.set_alias("./sample_data/files/");
+
+    ASSERT_EQ(sl.ResolveAlias("/files/hoge.txt"),
+              "./sample_data/files/hoge.txt");
+}
