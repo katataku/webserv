@@ -185,6 +185,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
 
     // locationディレクティブはpathを持つ
     node.AssertValueSize(node.GetValueSize() == 1);
+    node.ValidateLocationPathValue();
     locate.set_path(node.GetValue());
 
     std::list<Node> directives = node.directives();
@@ -193,6 +194,7 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         if (itr->IsAliasDirective()) {
             itr->ValidateIsUnique(&dirs, "alias");
             itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->ValidateAliasValue();
             locate.set_alias(itr->GetValue());
             continue;
         }

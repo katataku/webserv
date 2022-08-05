@@ -73,6 +73,8 @@ class Node {
     void ValidateErrorPageValue();
     void ValidateLimitExceptValue();
     void ValidateCgiExtensionValue();
+    void ValidateAliasValue();
+    void ValidateLocationPathValue();
     void ValidateIsUnique(std::set<std::string>* directives,
                           const std::string& directive);
 
