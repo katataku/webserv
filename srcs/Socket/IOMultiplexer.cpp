@@ -1,6 +1,5 @@
 #include "IOMultiplexer.hpp"
 
-#include <fcntl.h>
 #include <stdio.h>
 
 #include <utility>
