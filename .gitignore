@@ -2,6 +2,7 @@ webserv
 !webserv/
 localhost
 submit/
+**/files/*
 
 log/
 .DS_Store
