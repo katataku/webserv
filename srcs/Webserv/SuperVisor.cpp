@@ -1,7 +1,6 @@
 #include "SuperVisor.hpp"
 
-#include <stdlib.h>
-
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -37,14 +36,41 @@ void SuperVisor::Watch() {
             std::vector<Socket *> sockets = iomul.WaitAndGetReadySockets();
             for (std::vector<Socket *>::iterator itr = sockets.begin();
                  itr != sockets.end(); ++itr) {
-                if ((*itr)->is_listening()) {
-                    iomul.Accept(*(*itr));
-                    delete *itr;
-                } else {
-                    int fd = (*itr)->sock_fd();
-                    Worker worker(this->facade_);
-                    worker.Exec(&(*itr));
-                    if (*itr == NULL) iomul.CloseFd(fd);
+                Socket *socket = *itr;
+
+                try {
+                    if (socket->is_event_in()) {
+                        if (socket->is_listening()) {
+                            iomul.Accept(*socket);
+                            delete socket;
+                            continue;
+                        }
+                        Worker worker(this->facade_);
+                        if (worker.ExecReceive(socket)) {
+                            int fd = socket->sock_fd();
+                            iomul.ChangeEpollOutEvent(fd);
+                        }
+                        delete socket;
+                    } else if (socket->is_event_out()) {
+                        Worker worker(this->facade_);
+                        if (worker.ExecSend(socket)) {
+                            int fd = socket->sock_fd();
+                            iomul.CloseFd(fd);
+                            socket->Close();
+                            delete socket;
+                        }
+                    } else {
+                        throw Socket::SocketIOException("epoll fatal event");
+                    }
+                } catch (Socket::SocketIOException &e) {
+                    this->logging_.Debug("here");
+                    RequestFacade *request_facade =
+                        RequestFacade::GetInstance();
+                    request_facade->Finish(socket);
+                    int fd = socket->sock_fd();
+                    iomul.CloseFd(fd);
+                    socket->Close();
+                    delete socket;
                 }
             }
         }

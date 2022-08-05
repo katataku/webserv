@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cstdio>
 #include <fstream>
 
 #include "HTTPRequest.hpp"
@@ -154,4 +155,62 @@ TEST_F(TransactionTest, DELETE) {
     HTTPResponse *res = tr.Exec(&req, &sl);
 
     ASSERT_EQ(IsExist(filepath), false);
+}
+
+TEST_F(TransactionTest, POST_dont_exist_file) {
+    std::string body = "hello POST\n";
+
+    HTTPRequest req = HTTPRequest();
+    req.Parse("POST /hoge HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("Content-Length: " +
+              numtostr<std::string::size_type>(body.size()) + "\r\n");
+    req.Parse("\r\n");
+    req.Parse(body);
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    allow_methods.insert("POST");
+    ServerLocation sl =
+        ServerLocation(8081, "webserv1", "", error_pages, 4086, "off",
+                       "index.html", "", allow_methods, "/app/sample_data", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+    ASSERT_EQ(res->status_code(), 201);
+
+    std::string filepath = "/app/sample_data/hoge";
+    ASSERT_EQ(ReadFile(filepath), body);
+    unlink(filepath.c_str());
+}
+
+TEST_F(TransactionTest, POST_exist_file) {
+    std::string filepath = "/app/sample_data/fuga";
+    std::string body = "hello POST\n";
+
+    std::ofstream ofs(filepath.c_str());
+    ofs << body;
+    ofs.close();
+
+    HTTPRequest req = HTTPRequest();
+    req.Parse("POST /fuga HTTP/1.1\r\n");
+    req.Parse("Host: test\r\n");
+    req.Parse("Content-Length: " +
+              numtostr<std::string::size_type>(body.size()) + "\r\n");
+    req.Parse("\r\n");
+    req.Parse(body);
+
+    std::map<int, std::string> error_pages;
+    std::set<std::string> allow_methods;
+    allow_methods.insert("POST");
+    ServerLocation sl =
+        ServerLocation(8081, "webserv1", "", error_pages, 4086, "off",
+                       "index.html", "", allow_methods, "/app/sample_data", "");
+
+    Transaction tr;
+    HTTPResponse *res = tr.Exec(&req, &sl);
+    ASSERT_EQ(res->status_code(), 201);
+
+    ASSERT_EQ(ReadFile(filepath), body);
+    unlink(filepath.c_str());
 }

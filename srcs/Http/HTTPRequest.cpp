@@ -16,7 +16,8 @@ HTTPRequest::HTTPRequest()
       transfer_encoding_(""),
       request_body_(""),
       is_finish_to_read_header_(false),
-      is_finish_to_read_body_(false) {}
+      is_finish_to_read_body_(false),
+      response_(NULL) {}
 
 HTTPRequest::HTTPRequest(HTTPRequest const &other) { *this = other; }
 
@@ -301,3 +302,5 @@ int HTTPRequest::CalcBodySize() const { return this->request_body_.size(); }
 bool HTTPRequest::IsReady() const {
     return this->is_finish_to_read_header_ && this->is_finish_to_read_body_;
 }
+HTTPResponse *HTTPRequest::response() const { return response_; }
+void HTTPRequest::set_response(HTTPResponse *response) { response_ = response; }

@@ -5,11 +5,13 @@ classDiagram
     CGIExecutor <|-- IExecutor
     FileReadExecutor <|-- IExecutor
     FileDeleteExecutor <|-- IExecutor
+    FileWriteExecutor <|-- IExecutor
 
     Transaction --> IExecutor : use
     CGIExecutor --> ResponseBuilder : use
     FileReadExecutor --> ResponseBuilder : use
     FileDeleteExecutor --> ResponseBuilder : use
+    FileWriteExecutor --> ResponseBuilder : use
 
     HTTPException <|-- exception
 
@@ -19,6 +21,9 @@ classDiagram
     }
 
     class FileDeleteExecutor {
+    }
+
+    class FileWriteExecutor {
     }
 
     class CGIExecutor {

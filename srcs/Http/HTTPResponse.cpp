@@ -8,7 +8,8 @@ HTTPResponse::HTTPResponse()
     : logging_(Logging(__FUNCTION__)),
       new_line_string_("\r\n"),
       connection_("close"),
-      content_length_(0) {}
+      content_length_(0),
+      sent_bytes_(0) {}
 
 HTTPResponse::HTTPResponse(HTTPResponse const &other) { *this = other; }
 
@@ -94,3 +95,10 @@ std::string HTTPResponse::GetResponseString() const {
     }
     return oss.str();
 }
+
+bool HTTPResponse::IsSendAll() const {
+    return this->sent_bytes_ == this->GetResponseString().size();
+}
+
+int HTTPResponse::sent_bytes() const { return sent_bytes_; }
+void HTTPResponse::set_sent_bytes(int sent_bytes) { sent_bytes_ = sent_bytes; }

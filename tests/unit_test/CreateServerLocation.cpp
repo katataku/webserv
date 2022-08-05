@@ -150,7 +150,7 @@ TEST_F(CreateServerLocationTest, two_location_contexts) {
 
     ASSERT_EQ(sl.port(), 8080);
     ASSERT_EQ(sl.path(), "");
-    ASSERT_EQ(sl.alias(), "");
+    ASSERT_EQ(sl.alias(), "./sample_data/html");
 }
 
 class DISABLED_CreateServerLocationTest : public ::testing::Test {

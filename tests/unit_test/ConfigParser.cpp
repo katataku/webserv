@@ -16,7 +16,8 @@ class ConfigParserTest : public ::testing::Test {
 };
 
 TEST_F(ConfigParserTest, LocationContextInServerContext) {
-    ConfigProcesser confproc("../../../test_data/config/webserv/default.conf");
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/default.conf");
     WebservConfig conf = confproc.Exec();
 
     ASSERT_EQ(conf.contexts().size(), 1);

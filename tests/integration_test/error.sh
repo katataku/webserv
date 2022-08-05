@@ -68,6 +68,11 @@ echo ""
         REQUEST_NO=DELETE_not_exist
         do_test
 
+        REQUEST_NO=POST_dir_not_exist
+        do_test
+
+        REQUEST_NO=POST_dir
+        do_test
 
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
