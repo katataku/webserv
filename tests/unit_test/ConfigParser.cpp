@@ -1373,3 +1373,13 @@ TEST_F(ConfigParserDeathTest, unknown_block_directive2) {
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
                 "Error: unknown directive \".*\"");
 }
+
+TEST_F(ConfigParserDeathTest, server_name_and_port_duplicate) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/error/duplicate/"
+        "server_name_port.conf");
+    WebservConfig conf;
+
+    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
+                "Error: \".*\" and \".*\" exist in duplicate");
+}
