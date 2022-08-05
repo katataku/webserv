@@ -90,6 +90,8 @@ WebservConfig ConfigGenerator::GenerateWebservConfig(Node node) {
         }
     }
 
+    conf.ValidateDuplicateServerNameAndPort();
+
     return conf;
 }
 
