@@ -66,7 +66,7 @@ void Socket::Send(HTTPResponse *response) const {
 
 std::string Socket::Recv() const {
     char buf[kBufferSize];
-    ssize_t recvsize = 0;
+    ssize_t recvsize;
 
     recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
     // recvシステムコールがエラーの場合 -1 が返される。
@@ -82,10 +82,7 @@ std::string Socket::Recv() const {
         throw Socket::SocketIOException("Error: recv " +
                                         std::string(strerror(errno)));
     }
-    buf[recvsize] = '\0';
-    std::string data = std::string(buf);
-
-    return data;
+    return std::string(buf, recvsize);
 }
 
 void Socket::Close() const {
