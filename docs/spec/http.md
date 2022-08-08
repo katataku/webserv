@@ -121,7 +121,6 @@ HTTP/1.1 200 OK
 以下のメソッドを設定可能とする。
 
 - GET
-- HEAD
 - POST
 - DELETE
 

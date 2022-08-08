@@ -24,6 +24,21 @@ SuperVisor::~SuperVisor() {}
 SuperVisor::SuperVisor(ServerLocationFacade *facade)
     : facade_(facade), logging_(Logging(__FUNCTION__)) {}
 
+// 一連のConnectionの過程で確保したresourceを解放する
+static void FinalizeResource(Socket *socket, IOMultiplexer &iomul) {
+    // requestおよびresponseの解放
+    RequestFacade *request_facade = RequestFacade::GetInstance();
+    HTTPRequest *request = request_facade->SelectRequest(*socket);
+    HTTPResponse *response = request->response();
+    delete response;
+    request_facade->Finish(socket);
+    // socketの解放
+    int fd = socket->sock_fd();
+    iomul.CloseFd(fd);
+    socket->Close();
+    delete socket;
+}
+
 void SuperVisor::Watch() {
     std::vector<std::string> ports = this->facade_->GetPorts();
 
@@ -54,23 +69,14 @@ void SuperVisor::Watch() {
                     } else if (socket->is_event_out()) {
                         Worker worker(this->facade_);
                         if (worker.ExecSend(socket)) {
-                            int fd = socket->sock_fd();
-                            iomul.CloseFd(fd);
-                            socket->Close();
-                            delete socket;
+                            FinalizeResource(socket, iomul);
                         }
                     } else {
                         throw Socket::SocketIOException("epoll fatal event");
                     }
                 } catch (Socket::SocketIOException &e) {
-                    this->logging_.Debug("here");
-                    RequestFacade *request_facade =
-                        RequestFacade::GetInstance();
-                    request_facade->Finish(socket);
-                    int fd = socket->sock_fd();
-                    iomul.CloseFd(fd);
-                    socket->Close();
-                    delete socket;
+                    this->logging_.Debug("SocketIOException");
+                    FinalizeResource(socket, iomul);
                 }
             }
         }
