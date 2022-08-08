@@ -159,4 +159,8 @@ void IOMultiplexer::Accept(Socket const &socket) {
 void IOMultiplexer::CloseFd(int fd) {
     this->logging_.Debug("CloseFd(" + numtostr(fd) + ")");
     this->fd_port_map_.erase(fd);
+
+    if (epoll_ctl(this->epollfd_, EPOLL_CTL_DEL, fd, NULL) == -1) {
+        throw std::runtime_error(MakeSysCallErrorMsg("epoll_ctl"));
+    }
 }
