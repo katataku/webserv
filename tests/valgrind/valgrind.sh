@@ -42,6 +42,11 @@ do
         do
             REQUEST_FILE_NAME=${REQUEST_PATH}${REQUEST_NO}
             do_valgrind_test
+
+            ./tests/valgrind/log_check.sh
+            if [ $? -eq 1 ]; then
+                cat ./log/log.txt
+            fi
         done
     fi
 
