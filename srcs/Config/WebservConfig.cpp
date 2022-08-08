@@ -167,11 +167,7 @@ static std::vector<ServerLocation> CreateWithLocationContext(
     /*
         locationコンテキストでしか設定できない値
     */
-    if (locate.cgi_extension() == InitialValues::kCgiExtension) {
-        locate_sv.set_cgi_extension(DefaultValues::kCgiExtension);
-    } else {
-        locate_sv.set_cgi_extension(locate.cgi_extension());
-    }
+    locate_sv.set_cgi_extensions(locate.cgi_extensions());
 
     // pathは必ず設定されている
     locate_sv.set_path(locate.path());

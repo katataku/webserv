@@ -32,6 +32,7 @@ class ServerLocation {
     const std::set<std::string> &allow_methods() const;
     const std::string &alias() const;
     const std::string &cgi_extension() const;
+    const std::set<std::string> &cgi_extensions() const;
 
     void set_port(int port);
     void set_host(const std::string &host);
@@ -44,6 +45,7 @@ class ServerLocation {
     void set_allow_methods(const std::set<std::string> &allow_methods);
     void set_alias(const std::string &alias);
     void set_cgi_extension(const std::string &cgi_extension);
+    void set_cgi_extensions(const std::set<std::string> &cgi_extensions);
 
     void InsertErrorPages(const std::map<int, std::string> &error_pages);
     void SetDefaultAllowMethods();
@@ -70,6 +72,7 @@ class ServerLocation {
     std::set<std::string> allow_methods_;
     std::string alias_;
     std::string cgi_extension_;
+    std::set<std::string> cgi_extensions_;
 };
 
 std::ostream &operator<<(std::ostream &ost, const ServerLocation &rhs);

@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "ServerLocation.hpp"
+
+#include <gtest/gtest.h>
 
 class ServerLocationTest : public ::testing::Test {
  protected:
@@ -13,13 +13,18 @@ class ServerLocationTest : public ::testing::Test {
 TEST_F(ServerLocationTest, IsCGI) {
     ServerLocation sl;
 
-    sl.set_cgi_extension("py");
+    std::set<std::string> cgis;
+    cgis.insert("py");
+    cgis.insert("sh");
+
+    sl.set_cgi_extensions(cgis);
 
     ASSERT_EQ(sl.IsCGI("/"), false);
     ASSERT_EQ(sl.IsCGI("/html/index.html"), false);
     ASSERT_EQ(sl.IsCGI("/sample_data/cgi-bin/ubuntu_cgi_tester"), false);
 
     ASSERT_EQ(sl.IsCGI("/sample_data/cgi-bin/cgi_test.py"), true);
+    ASSERT_EQ(sl.IsCGI("/sample_data/cgi-bin/cgi_test.sh"), true);
 }
 
 TEST_F(ServerLocationTest, resolveAlias_relative_path) {
