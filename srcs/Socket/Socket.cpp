@@ -82,8 +82,9 @@ int Socket::Accept() const {
     socklen_t addrlen = sizeof(sockaddr);
 
     int new_socket = accept(this->sock_fd_, &clientaddr, &addrlen);
+    // キューがいっぱいの時は例外を投げずそのまま続行
     if (new_socket < 0) {
-        this->logging_.Warn("accept: " + std::string(strerror(errno)));
+        this->logging_.Error("accept: " + std::string(strerror(errno)));
     }
 
     return new_socket;
