@@ -293,7 +293,7 @@ cgi_extensionのディレクティブがある場合に、拡張子が値とマ�
 Usage:
 
 ```
-Syntax: cgi_extension { ... }
+Syntax: cgi_extension extension ...;
 Default: —
 Context: location
 ```
