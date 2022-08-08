@@ -19,7 +19,6 @@ LocationContext& LocationContext::operator=(const LocationContext& other) {
         this->redirect_url_ = other.redirect_url_;
         this->allow_methods_ = other.allow_methods_;
         this->alias_ = other.alias_;
-        this->cgi_extension_ = other.cgi_extension_;
         this->cgi_extensions_ = other.cgi_extensions_;
     }
     return *this;
@@ -43,9 +42,6 @@ std::set<std::string> LocationContext::allow_methods() const {
     return this->allow_methods_;
 }
 std::string LocationContext::alias() const { return this->alias_; }
-std::string LocationContext::cgi_extension() const {
-    return this->cgi_extension_;
-}
 std::set<std::string> LocationContext::cgi_extensions() const {
     return this->cgi_extensions_;
 }
@@ -65,9 +61,6 @@ void LocationContext::set_redirect_url(const std::string& redirect_url) {
 }
 void LocationContext::set_alias(const std::string& alias) {
     this->alias_ = alias;
-}
-void LocationContext::set_cgi_extension(const std::string& cgi_extension) {
-    this->cgi_extension_ = cgi_extension;
 }
 void LocationContext::set_cgi_extensions(
     const std::set<std::string>& cgi_extensions) {

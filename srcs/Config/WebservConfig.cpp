@@ -193,8 +193,6 @@ static std::vector<ServerLocation> CreateWithServerContext(
     // aliasはServerContextにない
     serv_sv.set_alias(DefaultValues::kAlias);
 
-    serv_sv.set_cgi_extension(DefaultValues::kCgiExtension);
-
     serv_sv.set_path(DefaultValues::kPath);
 
     /*
