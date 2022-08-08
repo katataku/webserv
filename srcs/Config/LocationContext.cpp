@@ -64,10 +64,7 @@ void LocationContext::set_alias(const std::string& alias) {
 }
 void LocationContext::set_cgi_extensions(
     const std::set<std::string>& cgi_extensions) {
-    for (std::set<std::string>::const_iterator itr = cgi_extensions.begin();
-         itr != cgi_extensions.end(); ++itr) {
-        this->cgi_extensions_.insert(*itr);
-    }
+    this->cgi_extensions_.insert(cgi_extensions.begin(), cgi_extensions.end());
 }
 void LocationContext::set_allow_methods(
     const std::set<std::string>& allow_methods) {
