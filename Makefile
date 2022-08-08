@@ -1,4 +1,5 @@
 NAME = webserv
+NAME_BONUS = webserv_bonus
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic -MMD -MP
 SRCS = $(wildcard srcs/*/*.cpp)
@@ -16,6 +17,11 @@ endif
 $(NAME): $(OBJS) ## Build webserver
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 
+$(NAME_BONUS): $(OBJS) ## Build webserver
+	$(CXX) $(CXXFLAGS) -o $(NAME_BONUS) $(OBJS)
+
+bonus: $(NAME_BONUS)
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCS) -o $@ -c $<
 
@@ -23,6 +29,7 @@ all: $(NAME) ## Build webserver
 
 fclean: clean ## Delete executable webserver
 	$(RM) $(NAME)
+	$(RM) $(NAME_BONUS)
 
 clean: ## Delete webserver object files
 	$(RM) $(OBJS) $(DEPS)
