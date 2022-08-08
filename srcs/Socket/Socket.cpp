@@ -65,8 +65,8 @@ void Socket::Send(HTTPResponse *response) const {
 }
 
 std::string Socket::Recv() const {
-    char buf[kBufferSize];
-    ssize_t recvsize = 0;
+    char buf[kBufferSize + 1];
+    ssize_t recvsize;
 
     recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
     // recvシステムコールがエラーの場合 -1 が返される。
