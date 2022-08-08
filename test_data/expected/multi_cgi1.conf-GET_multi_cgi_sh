@@ -1,0 +1,31 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Length: 762
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CGIRequest Dump</title>
+  </head>
+  <body>
+  <h1>CGI Request Dump shell</h1>
+    <p>AUTH_TYPE         : </p>
+    <p>CONTENT_LENGTH    : </p>
+    <p>CONTENT_TYPE      : </p>
+    <p>GATEWAY_INTERFACE : </p>
+    <p>PATH_INFO         : /app/sample_data/cgi-bin/cgi-req-dumper.sh</p>
+    <p>PATH_TRANSLATED   : </p>
+    <p>QUERY_STRING      : </p>
+    <p>REMOTE_HOST       : </p>
+    <p>REMOTE_IDENT      : </p>
+    <p>REMOTE_USER       : </p>
+    <p>SCRIPT_NAME       : </p>
+    <p>SERVER_NAME       : </p>
+    <p>SERVER_PORT       : </p>
+    <p>SERVER_PROTOCOL   : HTTP/1.1</p>
+    <p>SERVER_SOFTWARE   : </p>
+    <p>SERVER_NAME       : </p>
+    <p>REQUEST_METHOD    : GET</p>
+  </body>
+</html>
