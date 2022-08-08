@@ -82,9 +82,7 @@ std::string Socket::Recv() const {
         throw Socket::SocketIOException("Error: recv " +
                                         std::string(strerror(errno)));
     }
-    std::string data = std::string(buf, recvsize);
-
-    return data;
+    return std::string(buf, recvsize);
 }
 
 void Socket::Close() const {
