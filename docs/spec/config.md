@@ -290,12 +290,10 @@ Context: server
 
 cgi_extensionのディレクティブがある場合に、拡張子が値とマッチするファイルをCGIプログラムとしてを起動する。
 
-cgi_extensionは同一コンテキストに複数存在した場合、エラーとする。
-
 Usage:
 
 ```
-Syntax: cgi_extension extension
+Syntax: cgi_extension { ... }
 Default: —
 Context: location
 ```
@@ -303,7 +301,7 @@ Context: location
 Example:
 
 ```
-cgi_extension py;
+cgi_extension py sh;
 ```
 
 [alias]: https://nginx.org/en/docs/http/ngx_http_core_module.html#alias
