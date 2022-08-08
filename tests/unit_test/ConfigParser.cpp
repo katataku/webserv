@@ -122,7 +122,9 @@ TEST_F(ConfigParserTest, cgi_extension) {
     LocationContext locate_context = locate_contexts.at(0);
 
     ASSERT_EQ(locate_context.path(), "/");
-    ASSERT_EQ(locate_context.cgi_extension(), "py");
+    std::set<std::string> cgis = locate_context.cgi_extensions();
+    ASSERT_EQ(cgis.size(), 1);
+    ASSERT_NE(cgis.find("py"), cgis.end());
 }
 
 TEST_F(ConfigParserTest, contain_keyword1) {
@@ -444,6 +446,46 @@ TEST_F(ConfigParserTest, limit_except_mix) {
     expect.insert("DELETE");
     expect.insert("GET");
     ASSERT_EQ(locate_context.allow_methods(), expect);
+}
+
+TEST_F(ConfigParserTest, multi_cgi1) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "multi_cgi1.conf");
+    WebservConfig conf = confproc.Exec();
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/cgi-bin/");
+    ASSERT_EQ(locate_context.path(), "/cgi/");
+    std::set<std::string> cgis = locate_context.cgi_extensions();
+    ASSERT_EQ(cgis.size(), 2);
+    ASSERT_NE(cgis.find("py"), cgis.end());
+    ASSERT_NE(cgis.find("sh"), cgis.end());
+}
+
+TEST_F(ConfigParserTest, multi_cgi2) {
+    ConfigProcesser confproc(
+        "../../../test_data/config/webserv/ok/"
+        "multi_cgi2.conf");
+    WebservConfig conf = confproc.Exec();
+
+    std::vector<ServerContext> serv_contexts = conf.contexts();
+    ServerContext serv_context = serv_contexts.at(0);
+    ASSERT_EQ(serv_context.port(), 80);
+
+    std::vector<LocationContext> locate_contexts = serv_context.contexts();
+    LocationContext locate_context = locate_contexts.at(0);
+    ASSERT_EQ(locate_context.alias(), "/app/sample_data/cgi-bin/");
+    ASSERT_EQ(locate_context.path(), "/cgi/");
+    std::set<std::string> cgis = locate_context.cgi_extensions();
+    ASSERT_EQ(cgis.size(), 2);
+    ASSERT_NE(cgis.find("py"), cgis.end());
+    ASSERT_NE(cgis.find("sh"), cgis.end());
 }
 
 class ConfigParserDeathTest : public ::testing::Test {
@@ -1228,16 +1270,6 @@ TEST_F(ConfigParserDeathTest, duplicate_return_in_location) {
     ConfigProcesser confproc(
         "../../../test_data/config/webserv/error/duplicate/"
         "return_in_location.conf");
-    WebservConfig conf;
-
-    EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),
-                "Error: \".*\" directive is duplicate");
-}
-
-TEST_F(ConfigParserDeathTest, duplicate_cgi_extension) {
-    ConfigProcesser confproc(
-        "../../../test_data/config/webserv/error/duplicate/"
-        "cgi_extension.conf");
     WebservConfig conf;
 
     EXPECT_EXIT(conf = confproc.Exec(), testing::ExitedWithCode(1),

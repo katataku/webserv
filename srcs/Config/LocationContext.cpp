@@ -20,6 +20,7 @@ LocationContext& LocationContext::operator=(const LocationContext& other) {
         this->allow_methods_ = other.allow_methods_;
         this->alias_ = other.alias_;
         this->cgi_extension_ = other.cgi_extension_;
+        this->cgi_extensions_ = other.cgi_extensions_;
     }
     return *this;
 }
@@ -45,6 +46,9 @@ std::string LocationContext::alias() const { return this->alias_; }
 std::string LocationContext::cgi_extension() const {
     return this->cgi_extension_;
 }
+std::set<std::string> LocationContext::cgi_extensions() const {
+    return this->cgi_extensions_;
+}
 
 void LocationContext::set_client_max_body_size(int client_max_body_size) {
     this->client_max_body_size_ = client_max_body_size;
@@ -64,6 +68,13 @@ void LocationContext::set_alias(const std::string& alias) {
 }
 void LocationContext::set_cgi_extension(const std::string& cgi_extension) {
     this->cgi_extension_ = cgi_extension;
+}
+void LocationContext::set_cgi_extensions(
+    const std::set<std::string>& cgi_extensions) {
+    for (std::set<std::string>::const_iterator itr = cgi_extensions.begin();
+         itr != cgi_extensions.end(); ++itr) {
+        this->cgi_extensions_.insert(*itr);
+    }
 }
 void LocationContext::set_allow_methods(
     const std::set<std::string>& allow_methods) {

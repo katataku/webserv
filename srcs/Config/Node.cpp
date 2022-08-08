@@ -179,9 +179,11 @@ void Node::ValidateErrorPageValue() {
 }
 
 void Node::ValidateCgiExtensionValue() {
-    if (this->GetValue() != "py") {
-        throw std::runtime_error(this->MakeErrMsgInvalidValue());
+    std::string val = this->GetValue();
+    if (val == "py" || val == "sh") {
+        return;
     }
+    throw std::runtime_error(this->MakeErrMsgInvalidValue());
 }
 
 static bool IsEndedSlash(const std::string& s) {
