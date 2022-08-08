@@ -178,12 +178,19 @@ void Node::ValidateErrorPageValue() {
     }
 }
 
+static bool IsAlnum(const char c) { return IsAlpha(c) || IsDigit(c); }
+
 void Node::ValidateCgiExtensionValue() {
-    std::string val = this->GetValue();
-    if (val == "py" || val == "sh") {
-        return;
+    std::list<std::string> vals = this->directive_vals();
+
+    for (std::list<std::string>::iterator itr = vals.begin(); itr != vals.end();
+         ++itr) {
+        for (std::string::size_type i = 0; i < itr->size(); ++i) {
+            if (!IsAlnum((*itr)[i])) {
+                throw std::runtime_error(this->MakeErrMsgInvalidValue());
+            }
+        }
     }
-    throw std::runtime_error(this->MakeErrMsgInvalidValue());
 }
 
 static bool IsEndedSlash(const std::string& s) {
