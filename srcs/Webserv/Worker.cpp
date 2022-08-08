@@ -40,6 +40,16 @@ bool Worker::ExecReceive(Socket *socket) {
             return true;
         }
         return false;
+    } catch (std::length_error &e) {
+        // リクエストに長い文字列が含まれていて、
+        // stringクラスに上限以上の長さの文字列を入れようとした場合に発生する例外。
+        // 500エラーを返す。
+        logging_.Debug("length_error detected.");
+        ServerLocation sl = this->server_location_facade_->Choose(
+            socket->port(), request->host(), "");
+        HTTPResponse *response = ResponseBuilder::BuildError(500, &sl);
+        request->set_response(response);
+        return true;
     } catch (HTTPException &e) {
         // nginxの挙動に合わせる
         // RequestのParse時のエラーはserverコンテキストの情報だけをみていそう。
