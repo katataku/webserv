@@ -65,7 +65,7 @@ void Socket::Send(HTTPResponse *response) const {
 }
 
 std::string Socket::Recv() const {
-    char buf[kBufferSize + 1];
+    char buf[kBufferSize];
     ssize_t recvsize;
 
     recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
@@ -82,8 +82,7 @@ std::string Socket::Recv() const {
         throw Socket::SocketIOException("Error: recv " +
                                         std::string(strerror(errno)));
     }
-    buf[recvsize] = '\0';
-    std::string data = std::string(buf);
+    std::string data = std::string(buf, recvsize);
 
     return data;
 }
