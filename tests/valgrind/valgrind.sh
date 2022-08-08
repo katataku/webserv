@@ -53,7 +53,7 @@ do
 
         bash ./tests/valgrind/log_check.sh
         if [ $? -eq 1 ]; then
-            cat ./log/log.txt
+            cat ./log/valgrind.log
         fi
     fi
 
