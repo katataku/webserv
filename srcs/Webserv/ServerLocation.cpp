@@ -114,8 +114,6 @@ void ServerLocation::set_cgi_extensions(
 
 void ServerLocation::InsertErrorPages(
     const std::map<int, std::string> &error_pages) {
-    // std::copy(error_pages.begin(), error_pages.end(),
-    //           std::back_inserter(this->error_pages_));
     for (std::map<int, std::string>::const_iterator itr = error_pages.begin();
          itr != error_pages.end(); ++itr) {
         this->error_pages_[itr->first] = itr->second;
