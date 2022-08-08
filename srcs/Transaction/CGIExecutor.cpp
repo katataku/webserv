@@ -183,7 +183,17 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         Close(pipe_to_serv[1]);
 
         if (req.ShouldSendRequestBody()) {
-            if (Write(pipe_to_cgi[1], req.body()) <= 0) {
+            // writeシステムコールがエラーの場合 -1 が返される。
+            // 異常として判定し、例外を投げる。
+            if (Write(pipe_to_cgi[1], req.body()) < 0) {
+                kill(pid, SIGKILL);  // 子プロセスをkill
+                throw std::runtime_error(strerror(errno));
+            }
+
+            // writeされたバイト数が0バイトの場合 0 となる。
+            // 今回のwebservの処理では発生しないパターンであるため、
+            // 異常として判定し、例外を投げる。
+            if (Write(pipe_to_cgi[1], req.body()) == 0) {
                 kill(pid, SIGKILL);  // 子プロセスをkill
                 throw std::runtime_error(strerror(errno));
             }

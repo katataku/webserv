@@ -48,7 +48,17 @@ void Socket::Send(HTTPResponse *response) const {
     // https://doi-t.hatenablog.com/entry/2014/06/10/033309
     sent_byte =
         send(this->sock_fd_, send_body.c_str(), data_size, MSG_NOSIGNAL);
-    if (sent_byte <= 0) {
+
+    // sendシステムコールがエラーの場合 -1 が返される。
+    // ソケットの異常として判定し、クローズ処理用の例外を投げる。
+    if (sent_byte < 0) {
+        throw Socket::SocketIOException(MakeSysCallErrorMsg("send"));
+    }
+
+    // sendされたバイト数が0バイトの場合 0 となる。
+    // 今回のwebservの処理では発生しないパターンであるため、
+    // ソケットの異常として判定し、クローズ処理用の例外を投げる。
+    if (sent_byte == 0) {
         throw Socket::SocketIOException(MakeSysCallErrorMsg("send"));
     }
     response->set_sent_bytes(response->sent_bytes() + sent_byte);
@@ -59,7 +69,16 @@ std::string Socket::Recv() const {
     ssize_t recvsize = 0;
 
     recvsize = recv(this->sock_fd_, buf, kBufferSize, 0);
-    if (recvsize <= 0) {
+    // recvシステムコールがエラーの場合 -1 が返される。
+    // ソケットの異常として判定し、クローズ処理用の例外を投げる。
+    if (recvsize < 0) {
+        throw Socket::SocketIOException("Error: recv " +
+                                        std::string(strerror(errno)));
+    }
+
+    // クライアントがコネクションをcloseしEOFが入ってきた場合 0 となる。
+    // クローズ処理用の例外を投げる。
+    if (recvsize == 0) {
         throw Socket::SocketIOException("Error: recv " +
                                         std::string(strerror(errno)));
     }
