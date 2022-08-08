@@ -20,7 +20,7 @@ class LocationContext {
     std::string redirect_url() const;
     std::set<std::string> allow_methods() const;
     std::string alias() const;
-    std::string cgi_extension() const;
+    std::set<std::string> cgi_extensions() const;
 
     void set_client_max_body_size(int client_max_body_size);
     void set_auto_index(std::string auto_index);
@@ -28,7 +28,7 @@ class LocationContext {
     void set_path(const std::string& path);
     void set_redirect_url(const std::string& redirect_url);
     void set_alias(const std::string& alias);
-    void set_cgi_extension(const std::string& cgi_extension);
+    void set_cgi_extensions(const std::set<std::string>& cgi_extensions);
     void set_allow_methods(const std::set<std::string>& allow_methods);
     void AddErrorPages(const std::map<int, std::string>& error_pages);
 
@@ -44,7 +44,7 @@ class LocationContext {
     std::string redirect_url_;
     std::set<std::string> allow_methods_;
     std::string alias_;
-    std::string cgi_extension_;
+    std::set<std::string> cgi_extensions_;
 };
 
 #endif  // SRCS_CONFIG_LOCATIONCONTEXT_HPP_

@@ -33,7 +33,7 @@ TEST_F(TransactionTest, FileReadExecutor) {
 
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html/", error_pages, 4086, "off",
-                       "index.html", "", allow_methods, "/var/www/html/", "");
+                       "index.html", "", allow_methods, "/var/www/html/");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -55,7 +55,7 @@ TEST_F(TransactionTest, ListDirectoryExecutor) {
     allow_methods.insert("GET");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html/", error_pages, 4086, "on",
-                       "index.html", "", allow_methods, "/var/www/html/", "");
+                       "index.html", "", allow_methods, "/var/www/html/");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -77,7 +77,7 @@ TEST_F(TransactionTest, Allowed_methods_single) {
     allow_methods.insert("GET");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html", error_pages, 4086, "off",
-                       "index.html", "", allow_methods, "/var/www", "");
+                       "index.html", "", allow_methods, "/var/www");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -98,7 +98,7 @@ TEST_F(TransactionTest, client_max_body_size) {
     allow_methods.insert("GET");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "/html", error_pages, 1, "off",
-                       "index.html", "", allow_methods, "/var/www", "");
+                       "index.html", "", allow_methods, "/var/www");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -120,7 +120,7 @@ TEST_F(TransactionTest, redirect) {
     allow_methods.insert("GET");
     ServerLocation sl = ServerLocation(
         8081, "webserv1", "/html", error_pages, 4086, "off", "index.html",
-        location_string, allow_methods, "/var/www", "");
+        location_string, allow_methods, "/var/www");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -149,7 +149,7 @@ TEST_F(TransactionTest, DELETE) {
     allow_methods.insert("DELETE");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "", error_pages, 4086, "off",
-                       "index.html", "", allow_methods, "/app/sample_data", "");
+                       "index.html", "", allow_methods, "/app/sample_data");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -173,7 +173,7 @@ TEST_F(TransactionTest, POST_dont_exist_file) {
     allow_methods.insert("POST");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "", error_pages, 4086, "off",
-                       "index.html", "", allow_methods, "/app/sample_data", "");
+                       "index.html", "", allow_methods, "/app/sample_data");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);
@@ -205,7 +205,7 @@ TEST_F(TransactionTest, POST_exist_file) {
     allow_methods.insert("POST");
     ServerLocation sl =
         ServerLocation(8081, "webserv1", "", error_pages, 4086, "off",
-                       "index.html", "", allow_methods, "/app/sample_data", "");
+                       "index.html", "", allow_methods, "/app/sample_data");
 
     Transaction tr;
     HTTPResponse *res = tr.Exec(&req, &sl);

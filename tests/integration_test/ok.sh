@@ -130,6 +130,33 @@ echo ""
         REQUEST_NO=DELETE
         do_test
 
+    CONFIG_NO=multi_cgi1.conf
+    start_server_container
+
+        REQUEST_NO=GET_multi_cgi_py
+        do_test
+
+        REQUEST_NO=GET_multi_cgi_sh
+        do_test
+
+    CONFIG_NO=multi_cgi2.conf
+    start_server_container
+
+        REQUEST_NO=GET_multi_cgi_py
+        do_test
+
+        REQUEST_NO=GET_multi_cgi_sh
+        do_test
+
+    CONFIG_NO=multi_cgi3.conf
+    start_server_container
+
+        REQUEST_NO=GET_multi_cgi_py
+        do_test
+
+        REQUEST_NO=GET_multi_cgi_sh
+        do_test
+
 echo    "----------------------------"
 echo -n "ALL test finish. Final Conclusion:"
 if [ ${NG_SUM} -eq 0 ] ; then

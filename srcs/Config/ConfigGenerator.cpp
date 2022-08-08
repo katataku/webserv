@@ -218,10 +218,9 @@ LocationContext ConfigGenerator::GenerateLocationContext(Node node) {
         }
 
         if (itr->IsCgiExtensionDirective()) {
-            itr->ValidateIsUnique(&dirs, "cgi_extension");
-            itr->AssertValueSize(itr->GetValueSize() == 1);
+            itr->AssertValueSize(itr->GetValueSize() >= 1);
             itr->ValidateCgiExtensionValue();
-            locate.set_cgi_extension(itr->GetValue());
+            locate.set_cgi_extensions(ToSetContainer(itr->directive_vals()));
             continue;
         }
 

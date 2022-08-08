@@ -19,7 +19,7 @@ ServerLocation &ServerLocation::operator=(ServerLocation const &other) {
         this->redirect_url_ = other.redirect_url_;
         this->allow_methods_ = other.allow_methods_;
         this->alias_ = other.alias_;
-        this->cgi_extension_ = other.cgi_extension_;
+        this->cgi_extensions_ = other.cgi_extensions_;
     }
     return *this;
 }
@@ -45,10 +45,11 @@ static std::string GetExtension(std::string path) {
 }
 
 bool ServerLocation::IsCGI(std::string path) const {
-    if (this->cgi_extension_.empty()) {
+    if (this->cgi_extensions_.empty()) {
         return false;
     }
-    return GetExtension(path) == this->cgi_extension_;
+    return this->cgi_extensions_.find(GetExtension(path)) !=
+           this->cgi_extensions_.end();
 }
 
 int ServerLocation::port() const { return port_; }
@@ -69,8 +70,8 @@ const std::set<std::string> &ServerLocation::allow_methods() const {
     return allow_methods_;
 }
 const std::string &ServerLocation::alias() const { return alias_; }
-const std::string &ServerLocation::cgi_extension() const {
-    return cgi_extension_;
+const std::set<std::string> &ServerLocation::cgi_extensions() const {
+    return this->cgi_extensions_;
 }
 
 void ServerLocation::set_port(int port) { this->port_ = port; }
@@ -99,14 +100,13 @@ void ServerLocation::set_allow_methods(
 void ServerLocation::set_alias(const std::string &alias) {
     this->alias_ = alias;
 }
-void ServerLocation::set_cgi_extension(const std::string &cgi_extension) {
-    this->cgi_extension_ = cgi_extension;
+void ServerLocation::set_cgi_extensions(
+    const std::set<std::string> &cgi_extensions) {
+    this->cgi_extensions_ = cgi_extensions;
 }
 
 void ServerLocation::InsertErrorPages(
     const std::map<int, std::string> &error_pages) {
-    // std::copy(error_pages.begin(), error_pages.end(),
-    //           std::back_inserter(this->error_pages_));
     for (std::map<int, std::string>::const_iterator itr = error_pages.begin();
          itr != error_pages.end(); ++itr) {
         this->error_pages_[itr->first] = itr->second;
@@ -119,12 +119,14 @@ void ServerLocation::SetDefaultAllowMethods() {
     this->allow_methods_.insert("DELETE");
 }
 
-ServerLocation::ServerLocation(
-    int port, const std::string &host, const std::string &path,
-    const std::map<int, std::string> &error_pages, int client_max_body_size,
-    std::string auto_index, const std::string &index_page,
-    const std::string &redirect_url, const std::set<std::string> &allow_methods,
-    const std::string &alias, const std::string &cgi_extension)
+ServerLocation::ServerLocation(int port, const std::string &host,
+                               const std::string &path,
+                               const std::map<int, std::string> &error_pages,
+                               int client_max_body_size, std::string auto_index,
+                               const std::string &index_page,
+                               const std::string &redirect_url,
+                               const std::set<std::string> &allow_methods,
+                               const std::string &alias)
     : port_(port),
       host_(host),
       path_(path),
@@ -134,8 +136,7 @@ ServerLocation::ServerLocation(
       index_page_(index_page),
       redirect_url_(redirect_url),
       allow_methods_(allow_methods),
-      alias_(alias),
-      cgi_extension_(cgi_extension) {}
+      alias_(alias) {}
 
 /*
 実行動作例:
@@ -174,8 +175,6 @@ void ServerLocation::SetDefaultValue() {
         this->redirect_url_ = DefaultValues::kRedirectUrl;
     if (this->alias_ == InitialValues::kAlias)
         this->alias_ = DefaultValues::kAlias;
-    if (this->cgi_extension_ == InitialValues::kCgiExtension)
-        this->cgi_extension_ = DefaultValues::kCgiExtension;
 }
 
 std::ostream &operator<<(std::ostream &ost, const ServerLocation &rhs) {

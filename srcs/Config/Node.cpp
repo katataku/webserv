@@ -178,9 +178,18 @@ void Node::ValidateErrorPageValue() {
     }
 }
 
+static bool IsAlnum(const char c) { return IsAlpha(c) || IsDigit(c); }
+
 void Node::ValidateCgiExtensionValue() {
-    if (this->GetValue() != "py") {
-        throw std::runtime_error(this->MakeErrMsgInvalidValue());
+    std::list<std::string> vals = this->directive_vals();
+
+    for (std::list<std::string>::iterator itr = vals.begin(); itr != vals.end();
+         ++itr) {
+        for (std::string::size_type i = 0; i < itr->size(); ++i) {
+            if (!IsAlnum((*itr)[i])) {
+                throw std::runtime_error(this->MakeErrMsgInvalidValue());
+            }
+        }
     }
 }
 
