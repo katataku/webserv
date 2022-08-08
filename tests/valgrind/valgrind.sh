@@ -8,7 +8,7 @@ CONFIG_ARRAY=(`ls ${CONFIG_PATH}`)
 
 function do_valgrind_test() {
     # valgrind起動
-    docker compose -f ./docker/webserv/docker-compose.yml exec -T -d webserv valgrind --log-file="log/valgrind.log" --leak-check=full ./webserv ${CONFIG_FILE_NAME}
+    docker compose -f ./docker/webserv/docker-compose.yml exec -T -d webserv valgrind --log-file="log/valgrind.log" --leak-check=full --track-origins=yes ./webserv ${CONFIG_FILE_NAME}
     sleep 1
 
     # リクエスト実行
