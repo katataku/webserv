@@ -19,7 +19,7 @@ void CGIRequest::PrepareEnvs(HTTPRequest const &http) {
     } else {
         this->env_["CONTENT_LENGTH"] = numtostr<int>(http.content_length());
     }
-    this->env_["PATH_INFO"] = http.canonical_path();
+    this->env_["PATH_INFO"] = this->path_;
     this->env_["REQUEST_METHOD"] = http.method();
     this->env_["SERVER_PROTOCOL"] = "HTTP/1.1";
 }
