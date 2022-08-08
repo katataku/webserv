@@ -29,4 +29,4 @@ echo "    <p>SERVER_NAME       : $SERVER_NAME</p>"
 echo "    <p>REQUEST_METHOD    : $REQUEST_METHOD</p>"
 
 echo "  </body>
-</html"
+</html>"
