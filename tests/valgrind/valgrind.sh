@@ -15,7 +15,7 @@ function do_valgrind_test() {
     nc localhost 8080 < ${REQUEST_FILE_NAME} > /dev/null
 
     # killでwebservを終了させ、valgrindの結果ファイルを作成する。
-    docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv pkill -SIGINT -f webserv
+    docker compose -f ./docker/webserv/docker-compose.yml exec -T webserv pkill -SIGTERM -f webserv
     sleep 1
 
     echo "["${CONFIG_FILE_NAME}"]["${REQUEST_FILE_NAME}"]"
