@@ -181,7 +181,8 @@ void HTTPRequest::ParseHeader(std::string str) {
                 throw HTTPException(400);
             }
             // RFC3986 3.2.2.で定義がuri-hostの定義があるが全て許容する
-            this->host_ = value;
+            // ポート番号はhostに含めない ex: localhost:8080 -> localhost
+            this->host_ = Split(value, ":")[0];
         } else if (header == "content-length") {
             if (!IsInteger(value)) {
                 throw HTTPException(400);

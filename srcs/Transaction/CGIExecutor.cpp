@@ -50,20 +50,16 @@ static void ResisterEnv(std::map<std::string, std::string> env) {
     }
 }
 
-static char **MakeArg(std::vector<std::string> arg) {
+extern char **environ;
+
+static int Execve(const std::string &path, std::vector<std::string> arg,
+                  std::map<std::string, std::string> env) {
     char **av = new char *[arg.size() + 1];
     for (std::vector<std::string>::size_type i = 0; i != arg.size(); ++i) {
         av[i] = const_cast<char *>(arg[i].c_str());
     }
     av[arg.size()] = NULL;
-    return av;
-}
 
-extern char **environ;
-
-static int Execve(const std::string &path, std::vector<std::string> arg,
-                  std::map<std::string, std::string> env) {
-    char **av = MakeArg(arg);
     ResisterEnv(env);
 
     int ret = execve(path.c_str(), av, environ);
@@ -211,7 +207,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         }
 
         std::string buf = Read(pipe_to_serv[0]);
-
+        Close(pipe_to_serv[0]);
         logging_.Debug("CGIExec finish");
         return CGIResponse::Parse(std::string(buf));
     } catch (const std::exception &e) {
