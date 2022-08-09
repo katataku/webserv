@@ -211,7 +211,7 @@ CGIResponse CGIExecutor::CGIExec(CGIRequest const &req) {
         }
 
         std::string buf = Read(pipe_to_serv[0]);
-
+        Close(pipe_to_serv[0]);
         logging_.Debug("CGIExec finish");
         return CGIResponse::Parse(std::string(buf));
     } catch (const std::exception &e) {
