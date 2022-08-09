@@ -30,6 +30,7 @@ int IOMultiplexer::GetSocketFdAt(int idx) {
 void IOMultiplexer::AddListenFdsToEpollFdSet() {
     epoll_event ev;
 
+    bzero(&ev, sizeof(epoll_event));
     for (std::set<int>::iterator itr = this->listenfds_.begin();
          itr != this->listenfds_.end(); ++itr) {
         int fd = *itr;
@@ -81,6 +82,7 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
     std::vector<Socket *> sockets;
     epoll_event events[kMaxNEvents];
 
+    bzero(&events, sizeof(epoll_event) * kMaxNEvents);
     int nready = epoll_wait(this->epollfd_, events, kMaxNEvents, -1);
     if (nready == -1) {
         throw std::runtime_error(MakeSysCallErrorMsg("epoll_wait"));
@@ -125,6 +127,7 @@ std::vector<Socket *> IOMultiplexer::WaitAndGetReadySockets() {
 void IOMultiplexer::ChangeEpollOutEvent(int fd) {
     epoll_event ev;
 
+    bzero(&ev, sizeof(epoll_event));
     ev.events = EPOLLOUT | EPOLLRDHUP;
     ev.data.fd = fd;
     if (epoll_ctl(this->epollfd_, EPOLL_CTL_MOD, fd, &ev) == -1) {
@@ -135,6 +138,7 @@ void IOMultiplexer::ChangeEpollOutEvent(int fd) {
 void IOMultiplexer::AddFdToEpollFdSet(int fd) {
     epoll_event ev;
 
+    bzero(&ev, sizeof(epoll_event));
     ev.events = EPOLLIN | EPOLLRDHUP;
     ev.data.fd = fd;
     if (epoll_ctl(this->epollfd_, EPOLL_CTL_ADD, fd, &ev) == -1) {
