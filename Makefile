@@ -39,7 +39,7 @@ re: fclean all ## Rebuild webserver
 debug: fclean ## Build in debug mode
 	make DEBUG=true
 
-.PHONY: all fclean clean re
+.PHONY: all fclean clean re bonus
 
 -include $(DEPS)
 
